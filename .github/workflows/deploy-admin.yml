@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "Front_end/admin-app/**"
+      - "admin-app/**"
 
 jobs:
   deploy:
@@ -13,7 +13,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: Front_end/admin-app
+        working-directory: admin-app
 
     steps:
       - name: Checkout code

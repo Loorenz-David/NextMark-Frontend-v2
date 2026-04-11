@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "Front_end/external-operations-app/**"
+      - "external-operations-app/**"
 
 jobs:
   deploy:
@@ -13,7 +13,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: Front_end/external-operations-app
+        working-directory: external-operations-app
 
     steps:
       - name: Checkout code
