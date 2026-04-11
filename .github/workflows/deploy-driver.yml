@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "driver-app/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
 
 jobs:
   deploy:

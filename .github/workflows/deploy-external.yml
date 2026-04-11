@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - "external-operations-app/**"
+      - ".github/workflows/**"
+
+    workflow_dispatch:
 
 jobs:
   deploy:
