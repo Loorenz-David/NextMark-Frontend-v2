@@ -50,6 +50,7 @@ export default defineConfig({
       { find: '@shared-icons', replacement: path.resolve(__dirname, '../packages/shared-icons') },
       { find: '@shared-realtime', replacement: path.resolve(__dirname, '../packages/shared-realtime/src') },
       { find: '@shared-inputs', replacement: path.resolve(__dirname, '../packages/shared-inputs/src') },
+      { find: '@shared-failure-notes', replacement: path.resolve(__dirname, '../packages/shared-failure-notes/src') },
       { find: '@nextmark/ai-panel', replacement: path.resolve(__dirname, '../packages/ai-panel/src') },
       { find: /^socket\.io-client$/, replacement: path.resolve(__dirname, './node_modules/socket.io-client/build/esm/index.js') },
     ],

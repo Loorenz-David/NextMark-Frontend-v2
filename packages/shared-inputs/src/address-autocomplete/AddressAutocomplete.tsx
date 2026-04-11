@@ -23,6 +23,7 @@ type PropsAddressAutocomplete = {
   currentLocationIconClassName?: string
   embedCurrentLocationIcon?: boolean
   storageNamespace?: string
+  onCurrentLocationLoadingChange?: (isLoading: boolean) => void
 }
 
 export const AddressAutocomplete = ({
@@ -44,6 +45,7 @@ export const AddressAutocomplete = ({
   currentLocationIconClassName,
   embedCurrentLocationIcon,
   storageNamespace,
+  onCurrentLocationLoadingChange,
 }: PropsAddressAutocomplete) => {
   return (
     <AddressAutocompleteProvider
@@ -56,6 +58,7 @@ export const AddressAutocomplete = ({
       intentKey={intentKey}
       onInputValueChange={onInputValueChange}
       storageNamespace={storageNamespace}
+      onCurrentLocationLoadingChange={onCurrentLocationLoadingChange}
     >
       <AddressAutocompleteLayout
         fieldClassName={fieldClassName}

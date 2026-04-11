@@ -26,6 +26,7 @@ type AddressAutocompleteProps = {
   currentLocationIconClassName?: string;
   embedCurrentLocationIcon?: boolean;
   storageNamespace?: string;
+  onCurrentLocationLoadingChange?: (isLoading: boolean) => void;
 };
 
 export const AddressAutocomplete = ({
