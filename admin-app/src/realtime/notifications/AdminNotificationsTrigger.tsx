@@ -15,6 +15,7 @@ import {
   playAdminNotificationChime,
   primeAdminNotificationAudio,
 } from './playAdminNotificationChime'
+import { AdminNotificationsPushCta } from './AdminNotificationsPushCta'
 
 const notificationsChannel = createNotificationsChannel(adminRealtimeClient)
 
@@ -72,8 +73,19 @@ export function AdminNotificationsTrigger() {
   const content = useMemo(() => {
     if (items.length === 0) {
       return (
-        <div className="admin-glass-popover admin-surface-compact rounded-2xl p-4 text-sm text-[var(--color-muted)]">
-          No unread notifications.
+        <div className="admin-glass-popover admin-surface-compact w-[360px] rounded-2xl p-2">
+          <div className="admin-glass-divider border-b px-3 py-3">
+            <h3 className="text-sm font-semibold text-[var(--color-text)]">Notifications</h3>
+          </div>
+          <div className="admin-glass-divider border-b px-3 py-3">
+            <AdminNotificationsPushCta
+              visibility="disable-only"
+              className="w-full justify-center px-3 py-2"
+            />
+          </div>
+          <div className="px-3 py-4 text-sm text-[var(--color-muted)]">
+            No unread notifications.
+          </div>
         </div>
       )
     }
@@ -82,6 +94,12 @@ export function AdminNotificationsTrigger() {
       <div className="admin-glass-popover admin-surface-compact max-h-[420px] w-[360px] overflow-y-auto rounded-2xl p-2">
         <div className="admin-glass-divider border-b px-3 py-3">
           <h3 className="text-sm font-semibold text-[var(--color-text)]">Notifications</h3>
+        </div>
+        <div className="admin-glass-divider border-b px-3 py-3">
+          <AdminNotificationsPushCta
+            visibility="disable-only"
+            className="w-full justify-center px-3 py-2"
+          />
         </div>
         <div className="divide-y divide-white/8">
           {items.map((notification) => (

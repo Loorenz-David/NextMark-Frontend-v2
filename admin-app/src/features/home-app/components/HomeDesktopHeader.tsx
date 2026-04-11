@@ -20,7 +20,7 @@ export function HomeDesktopHeader() {
         <select
           value={activeWorkspace}
           onChange={(e) => setActiveWorkspace(e.target.value as HomeWorkspaceType)}
-          className="rounded-xl border border-[var(--color-muted)]/24 bg-transparent px-3 py-[5px] text-sm text-[var(--color-text)] outline-none focus:ring-1 focus:ring-[var(--color-muted)]/40 cursor-pointer"
+          className="cursor-pointer rounded-xl border border-[var(--color-muted)]/24 bg-transparent px-3 py-[5px] text-sm text-[var(--color-text)] outline-none focus:ring-1 focus:ring-[var(--color-muted)]/40"
         >
           {HOME_WORKSPACE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -33,7 +33,7 @@ export function HomeDesktopHeader() {
       {/* Right — actions */}
       <div className="flex shrink-0 items-center gap-2 rounded-[1.15rem]">
         {headerActions}
-        <AdminNotificationsPushCta />
+        <AdminNotificationsPushCta visibility="enable-only" />
         <div className="pr-2">
           <AdminNotificationsTrigger />
         </div>

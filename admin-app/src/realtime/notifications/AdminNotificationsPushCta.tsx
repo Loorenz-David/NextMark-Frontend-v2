@@ -4,20 +4,27 @@ import { useMessageHandler } from "@shared-message-handler";
 
 import { useAdminWebPush } from "./adminWebPush.controller";
 
-export function AdminNotificationsPushCta() {
-  const {
-    status,
-    isSupported,
-    isLoading,
-    errorMessage,
-    enable,
-    disable,
-  } = useAdminWebPush();
+type AdminNotificationsPushCtaProps = {
+  visibility?: "auto" | "enable-only" | "disable-only";
+  className?: string;
+};
+
+export function AdminNotificationsPushCta({
+  visibility = "auto",
+  className,
+}: AdminNotificationsPushCtaProps) {
+  const { status, isSupported, isLoading, errorMessage, enable, disable } =
+    useAdminWebPush();
   const { showMessage } = useMessageHandler();
 
   if (!isSupported || status === "unsupported") {
     return null;
   }
+
+  const shouldRenderSubscribed =
+    visibility === "auto" || visibility === "disable-only";
+  const shouldRenderUnsubscribed =
+    visibility === "auto" || visibility === "enable-only";
 
   const showBlockedInstructions = () => {
     showMessage({
@@ -28,13 +35,19 @@ export function AdminNotificationsPushCta() {
   };
 
   if (status === "subscribed") {
+    if (!shouldRenderSubscribed) {
+      return null;
+    }
+
     return (
       <BasicButton
         params={{
           variant: "toolbarSecondary",
           ariaLabel: "Disable background notifications",
           className:
-            "border-[rgb(var(--color-light-blue-r),0.34)] bg-[rgba(var(--color-light-blue-r),0.1)] px-4 py-[5px] text-[rgb(var(--color-light-blue-r))]",
+            `border-[rgb(var(--color-light-blue-r),0.34)] bg-[rgba(var(--color-light-blue-r),0.1)] px-4 py-[5px] text-[rgb(var(--color-light-blue-r))] ${
+              className ?? ""
+            }`.trim(),
           disabled: isLoading,
           onClick: async () => {
             const success = await disable();
@@ -42,8 +55,7 @@ export function AdminNotificationsPushCta() {
               showMessage({
                 status: 500,
                 message:
-                  errorMessage ??
-                  "Unable to disable background notifications.",
+                  errorMessage ?? "Unable to disable background notifications.",
               });
               return;
             }
@@ -56,9 +68,13 @@ export function AdminNotificationsPushCta() {
         }}
       >
         <BellIcon className="mr-2 h-4 w-4" />
-        Alerts On
+        Turn alerts off
       </BasicButton>
     );
+  }
+
+  if (!shouldRenderUnsubscribed) {
+    return null;
   }
 
   const handleEnable = async () => {
@@ -86,8 +102,7 @@ export function AdminNotificationsPushCta() {
 
     showMessage({
       status: 500,
-      message:
-        errorMessage ?? "Unable to enable background notifications.",
+      message: errorMessage ?? "Unable to enable background notifications.",
     });
   };
 
@@ -99,8 +114,9 @@ export function AdminNotificationsPushCta() {
           status === "permission_denied"
             ? "Browser notifications blocked"
             : "Enable background notifications",
-        className:
-          "border-[var(--color-muted)]/24 px-4 py-[5px]",
+        className: `border-[var(--color-muted)]/24 px-4 py-[5px] ${
+          className ?? ""
+        }`.trim(),
         disabled: isLoading,
         onClick: () => {
           void handleEnable();
