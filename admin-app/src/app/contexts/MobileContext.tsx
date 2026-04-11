@@ -1,13 +1,13 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext } from "react";
 
 export type MobileObject = {
-    isMobile: boolean
-    isMenuOpen: boolean
-    setIsMobileMenuOpen: (open: boolean) => void
-    setIsMobile: (val: boolean) => void
-}
+  isMobile: boolean;
+  isMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
+  setIsMobile: (val: boolean) => void;
+};
 
-export const MobileContext = createContext<MobileObject | null>(null)
+export const MobileContext = createContext<MobileObject | null>(null);
 
 const desktopMobileFallback: MobileObject = {
   isMobile: false,
@@ -15,12 +15,10 @@ const desktopMobileFallback: MobileObject = {
   setIsMobileMenuOpen: () => {
     // noop on desktop
   },
-  setIsMobile: ()=> {
-
-  }
-}
+  setIsMobile: () => {},
+};
 
 export function useMobile() {
-  const ctx = useContext(MobileContext)
-  return ctx ?? desktopMobileFallback
+  const ctx = useContext(MobileContext);
+  return ctx ?? desktopMobileFallback;
 }
