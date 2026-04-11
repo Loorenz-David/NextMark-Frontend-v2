@@ -1,0 +1,86 @@
+
+
+.left-section{
+    position:absolute;
+    
+}
+
+.custom-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.875rem; /* text-sm */
+  color: var(--color-text);
+}
+
+.custom-input::placeholder {
+  color: rgba(var(--color-muted-r), 0.46);
+}
+
+.custom-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.blank-field-container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.625rem;
+  background: transparent;
+  padding: 0.75rem;
+}
+.custom-field-container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(42, 52, 54, 0.96);
+  padding: 0.625rem 0.9rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.custom-field-container:focus-within {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(48, 60, 62, 0.98);
+  box-shadow: 0 0 0 1px rgba(131, 204, 185, 0.28), 0 12px 26px rgba(0, 0, 0, 0.14);
+}
+
+.custom-field-container.is-invalid {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(86, 44, 44, 0.92);
+}
+
+.custom-field-container.is-invalid:focus-within {
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.35);
+}
+
+.form-plain-input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.875rem; /* text-sm */
+  color: var(--color-text);
+  outline: none;
+}
+
+.form-plain-input::placeholder {
+  color: rgba(var(--color-muted-r), 0.56);
+}
+
+.cell-default{
+  padding: 8px 10px;
+}
+
+.row-default{
+  display:grid;
+  grid-template-columns: repeat(1, minmax(0,1fr));
+}
+.row-default > * + * {
+  border-top: 1px solid var(--color-border-accent);
+}
+

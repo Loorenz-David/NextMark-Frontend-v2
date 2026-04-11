@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared-utils": ["../packages/shared-utils/src/index.ts"],
+      "@shared-utils/*": ["../packages/shared-utils/src/*"],
+      "@shared-domain": ["../packages/shared-domain/index.ts"],
+      "@shared-domain/*": ["../packages/shared-domain/*"],
+      "@shared-api": ["../packages/shared-api/index.ts"],
+      "@shared-api/*": ["../packages/shared-api/*"],
+      "@shared-google-maps": ["../packages/shared-google-maps/index.ts"],
+      "@shared-google-maps/*": ["../packages/shared-google-maps/*"],
+      "@shared-failure-notes": [
+        "../packages/shared-failure-notes/src/index.ts"
+      ],
+      "@shared-failure-notes/*": ["../packages/shared-failure-notes/src/*"],
+      "@nextmark/ai-panel": ["../packages/ai-panel/src/index.ts"],
+      "@nextmark/ai-panel/*": ["../packages/ai-panel/src/*"]
+    }
+  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}

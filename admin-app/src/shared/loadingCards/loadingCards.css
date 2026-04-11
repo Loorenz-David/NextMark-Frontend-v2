@@ -1,0 +1,39 @@
+.shared-loading-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.shared-loading-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-140%);
+  background:
+    linear-gradient(
+      110deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.03) 30%,
+      rgba(131, 204, 185, 0.22) 50%,
+      rgba(255, 255, 255, 0.04) 70%,
+      transparent 100%
+    );
+  animation: shared-loading-shimmer 1.45s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes shared-loading-shimmer {
+  from {
+    transform: translateX(-140%);
+  }
+
+  to {
+    transform: translateX(140%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shared-loading-card::after {
+    animation: none;
+  }
+}

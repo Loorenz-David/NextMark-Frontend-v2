@@ -1,0 +1,213 @@
+@import "tailwindcss";
+@source "../../packages/shared-message-handler/src";
+
+:root {
+  color-scheme: light;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  --surface: #f6f2ea;
+  --surface-strong: #fffdfa;
+  --surface-muted: #ece3d3;
+  --text: #1f1a13;
+  --text-muted: #6f624d;
+  --accent: #1f6f5d;
+  --accent-strong: #174f43;
+  --danger: #b24c36;
+  --border: rgba(31, 26, 19, 0.12);
+  --shadow: 0 12px 40px rgba(31, 26, 19, 0.08);
+  
+  --bg-app-color: 28, 40, 40;
+  --bg-soft-light: 190, 190, 190;
+  --bg-fade-gray:rgba(177, 177, 177, 0.2);
+  --bg-soft-gray:rgb(165, 165, 165);
+  --timeline-accent: #80aaff;
+  
+  --bg-strong-light:255, 255, 255;
+  --test-pallet: rgb(169, 169, 169);
+  background: linear-gradient(180deg, #f3ede2 0%, #efe7d7 100%);
+  color: var(--text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.driver-auth-aurora {
+  position: absolute;
+  border-radius: 44% 56% 52% 48% / 45% 40% 60% 55%;
+  filter: blur(54px);
+  opacity: 0.72;
+  pointer-events: none;
+  transform-origin: center;
+  mix-blend-mode: screen;
+  animation: driver-auth-lava 24s cubic-bezier(0.37, 0, 0.22, 1) infinite;
+}
+
+.driver-auth-aurora--one {
+  top: -8%;
+  left: -18%;
+  width: 18rem;
+  height: 18rem;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(125, 221, 197, 0.54) 0%, rgba(90, 174, 151, 0.22) 46%, rgba(72, 138, 120, 0.1) 68%, transparent 86%);
+}
+
+.driver-auth-aurora--two {
+  right: -14%;
+  bottom: -8%;
+  width: 20rem;
+  height: 20rem;
+  background:
+    radial-gradient(circle at 68% 42%, rgba(242, 191, 126, 0.3) 0%, rgba(188, 128, 73, 0.16) 48%, rgba(118, 78, 45, 0.08) 70%, transparent 86%);
+  border-radius: 58% 42% 46% 54% / 52% 58% 42% 48%;
+  animation-duration: 27s;
+  animation-delay: -8s;
+}
+
+.driver-auth-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 88px 88px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.68), transparent 95%);
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.driver-auth-grid span {
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.driver-auth-grid span:nth-child(1) {
+  top: 18%;
+  left: 16%;
+  width: 7px;
+  height: 7px;
+}
+
+.driver-auth-grid span:nth-child(2) {
+  top: 34%;
+  right: 14%;
+  width: 5px;
+  height: 5px;
+}
+
+.driver-auth-grid span:nth-child(3) {
+  bottom: 20%;
+  left: 26%;
+  width: 4px;
+  height: 4px;
+}
+
+@keyframes driver-auth-lava {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    border-radius: 44% 56% 52% 48% / 45% 40% 60% 55%;
+  }
+  20% {
+    transform: translate3d(38px, 22px, 0) scale(1.08, 0.94) rotate(12deg);
+    border-radius: 57% 43% 49% 51% / 39% 55% 45% 61%;
+  }
+  42% {
+    transform: translate3d(16px, 74px, 0) scale(0.92, 1.12) rotate(-8deg);
+    border-radius: 39% 61% 58% 42% / 54% 42% 58% 46%;
+  }
+  64% {
+    transform: translate3d(-42px, 48px, 0) scale(1.1, 0.9) rotate(7deg);
+    border-radius: 62% 38% 44% 56% / 47% 63% 37% 53%;
+  }
+  82% {
+    transform: translate3d(-18px, -12px, 0) scale(0.96, 1.06) rotate(-11deg);
+    border-radius: 46% 54% 61% 39% / 59% 41% 49% 51%;
+  }
+}
+
+
+
+/* ================================
+   App Page Background System
+   ================================ */
+
+/* Base page background used by driver screens */
+.app-page-bg {
+
+  background-color: #1f2a2a;
+  overflow: hidden;
+}
+
+/* =========================================
+   Map Dark Glass Background
+   ========================================= */
+
+.map-glass-fake-bg {
+  /* base dark glass color */
+  background-color: rgba(var(--bg-app-color), 0.70);
+  /* frosted glass effect */
+  backdrop-filter: blur(18px) saturate(115%) contrast(92%);
+  -webkit-backdrop-filter: blur(18px) saturate(115%) contrast(92%);
+}
+
+.map-glass-fake-strong-bg {
+  /* base dark glass color */
+  background-color: rgba(var(--bg-app-color), 0.90);
+  /* frosted glass effect */
+  backdrop-filter: blur(40px) saturate(115%) contrast(92%);
+  -webkit-backdrop-filter: blur(40px) saturate(115%) contrast(92%);
+}
+
+/* subtle glass texture */
+.map-glass-fake-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  /* subtle diffusion layer (no tiling artifacts) */
+  background: rgba(var(--bg-app-color),0.02);
+}
+
+/* Background surface used behind UI panels and sheets */
+.surface-glass-bg {
+  background: rgba(35, 48, 48, 0.65);
+  backdrop-filter: saturate(120%);
+}
+
+/* Subtle edge highlight for glass surfaces */
+.surface-glass-bg::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+
+  background: rgba(255, 255, 255, 0.18);
+}

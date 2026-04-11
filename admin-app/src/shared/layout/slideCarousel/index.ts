@@ -1,0 +1,2 @@
+export { SlideCarousel } from './SlideCarousel'
+

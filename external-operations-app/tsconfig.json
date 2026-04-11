@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "react": ["./node_modules/@types/react/index.d.ts"],
+      "react/jsx-runtime": ["./node_modules/@types/react/jsx-runtime.d.ts"],
+      "react-dom": ["./node_modules/@types/react-dom/index.d.ts"],
+      "framer-motion": ["./node_modules/framer-motion/dist/index.d.ts"],
+      "@floating-ui/react": ["./node_modules/@floating-ui/react/dist/floating-ui.react.d.ts"],
+      "libphonenumber-js": ["./node_modules/libphonenumber-js/index.d.ts"],
+      "@shared-inputs": ["../packages/shared-inputs/src/index.ts"],
+      "@shared-inputs/*": ["../packages/shared-inputs/src/*"],
+      "@shared-google-maps": ["../packages/shared-google-maps/index.ts"],
+      "@shared-google-maps/*": ["../packages/shared-google-maps/*"],
+      "@shared-domain": ["../packages/shared-domain/index.ts"],
+      "@shared-domain/*": ["../packages/shared-domain/*"],
+      "@shared-icons": ["../packages/shared-icons/index.ts"],
+      "@shared-icons/*": ["../packages/shared-icons/*"]
+    },
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["vite/client"]
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,21 @@
+export type RouteGroupRailItem = {
+  route_group_id: number;
+  label: string;
+  completionRatio: number;
+  orderCount: number;
+  activeOrderCount: number;
+  itemCount: number;
+  totalWeightGrams: number;
+  totalVolumeCm3: number;
+  currentStateOrderCount: number;
+  earnedPoints: number;
+  maxPoints: number;
+  stateLabel: string | null;
+  stateColor: string | null;
+  nextStateLabel: string | null;
+  nextStateTargetRatio: number | null;
+  nextStateTargetPoints: number | null;
+  remainingPointsToNextState: number | null;
+  zoneLabel: string | null;
+  isActive?: boolean;
+};

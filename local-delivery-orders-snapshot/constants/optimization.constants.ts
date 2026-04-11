@@ -1,0 +1,1 @@
+export const MIN_LOADER_VISIBLE_MS = 8000

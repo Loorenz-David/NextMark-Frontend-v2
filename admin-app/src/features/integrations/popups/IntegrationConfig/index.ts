@@ -1,0 +1,1 @@
+export { IntegrationConfig } from './IntegrationConfig'

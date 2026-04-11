@@ -1,0 +1,56 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "react": ["./node_modules/@types/react/index.d.ts"],
+      "react/jsx-runtime": ["./node_modules/@types/react/jsx-runtime.d.ts"],
+      "framer-motion": ["./node_modules/framer-motion/dist/types/index.d.ts"],
+      "zustand": ["./node_modules/zustand/index.d.ts"],
+      "zustand/*": ["./node_modules/zustand/*"],
+      "@shared-domain": ["../packages/shared-domain/index.ts"],
+      "@shared-domain/*": ["../packages/shared-domain/*"],
+      "@shared-api": ["../packages/shared-api/index.ts"],
+      "@shared-api/*": ["../packages/shared-api/*"],
+      "@shared-utils": ["../packages/shared-utils/src/index.ts"],
+      "@shared-utils/*": ["../packages/shared-utils/src/*"],
+      "@shared-store": ["../packages/shared-store/src/index.ts"],
+      "@shared-store/*": ["../packages/shared-store/src/*"],
+      "@shared-optimistic": ["../packages/shared-optimistic/src/index.ts"],
+      "@shared-optimistic/*": ["../packages/shared-optimistic/src/*"],
+      "@shared-message-handler": ["../packages/shared-message-handler/src/index.ts"],
+      "@shared-message-handler/*": ["../packages/shared-message-handler/src/*"],
+      "@shared-google-maps": ["../packages/shared-google-maps/index.ts"],
+      "@shared-google-maps/*": ["../packages/shared-google-maps/*"],
+      "@shared-icons": ["../packages/shared-icons/index.ts"],
+      "@shared-icons/*": ["../packages/shared-icons/*"],
+      "@shared-realtime": ["../packages/shared-realtime/src/index.ts"],
+      "@shared-realtime/*": ["../packages/shared-realtime/src/*"],
+      "socket.io-client": ["./node_modules/socket.io-client/build/esm/index.d.ts"]
+    },
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "types": ["vite/client", "react", "react-dom"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
+}
