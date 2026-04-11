@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "check:popup-contract": "echo 'No popup contract checks for external-operations-app'",
     "preview": "vite preview"
   },
   "dependencies": {
