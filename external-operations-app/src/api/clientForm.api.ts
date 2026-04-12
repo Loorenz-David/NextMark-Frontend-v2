@@ -24,6 +24,15 @@ type ClientFormSubmitPayload = Omit<
   order_notes: ClientOrderNotePayload;
 };
 
+type ClientFormItemDto = {
+  item_type?: string | null;
+  quantity?: number | null;
+};
+
+type ClientFormMetaDto = Omit<ClientFormMeta, "items"> & {
+  items?: ClientFormItemDto[] | null;
+};
+
 const normalizePhone = (value: ClientFormData["client_primary_phone"]) => {
   if (!value) return null;
 
@@ -61,9 +70,20 @@ async function handleResponse(res: Response): Promise<unknown> {
   return res.json();
 }
 
+const mapClientFormMeta = (payload: ClientFormMetaDto): ClientFormMeta => {
+  return {
+    ...payload,
+    items: (payload.items ?? []).map((item) => ({
+      name: item.item_type?.trim() || "Unnamed item",
+      quantity: typeof item.quantity === "number" ? item.quantity : 0,
+    })),
+  };
+};
+
 export async function fetchClientForm(token: string): Promise<ClientFormMeta> {
   const res = await fetch(`${BASE}/${token}`);
-  return handleResponse(res) as Promise<ClientFormMeta>;
+  const payload = (await handleResponse(res)) as ClientFormMetaDto;
+  return mapClientFormMeta(payload);
 }
 
 export async function submitClientForm(

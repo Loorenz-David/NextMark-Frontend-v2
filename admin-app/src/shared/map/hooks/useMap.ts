@@ -17,6 +17,7 @@ import type { ZoneLayerOptions } from "../domain/types";
 import type { ZonePolygonOverlayOptions } from "../domain/types";
 import { MapController } from "../domain/services/MapController";
 import { GoogleMapAdapter } from "../infrastructure/GoogleMapAdapter";
+import { resolveBrowserCurrentCoordinates } from "@/shared/utils/browserGeolocation";
 
 export const useMap = (options?: MapConfig): MapBridge => {
   const controllerRef = useRef<MapController | null>(null);
@@ -219,26 +220,7 @@ export const useMap = (options?: MapConfig): MapBridge => {
     lat: number;
     lng: number;
   } | null> => {
-    return new Promise((resolve) => {
-      if (!navigator.geolocation) {
-        resolve(null);
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        () => resolve(null),
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-        },
-      );
-    });
+    return resolveBrowserCurrentCoordinates();
   };
 
   useEffect(() => {

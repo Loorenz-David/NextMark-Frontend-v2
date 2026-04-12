@@ -1,6 +1,7 @@
 import { buildClientId } from "@/lib/utils/clientId";
 import type { DeliveryPlan } from "@/features/plan/types/plan";
 import { normalizeByClientIdArray } from "@/features/plan/routeGroup/api/mappers/routeSolutionPayload.mapper";
+import { applyRoutePlanTargetPatch } from "@/features/plan/routeGroup/domain/applyRoutePlanTargetPatch";
 import { buildRouteGroupPlanTypeDefaults } from "@/features/plan/routeGroup/domain/planTypeDefaults/routeGroupDefaults.generator";
 import { createRouteGroupAction } from "@/features/plan/routeGroup/actions/createRouteGroup.action";
 import type { CreateRouteGroupFormState } from "@/features/plan/routeGroup/forms/createRouteGroupForm/CreateRouteGroupForm.types";
@@ -127,6 +128,8 @@ export const runCreateRouteGroupFlow = async ({
           : {}),
       },
     });
+
+    applyRoutePlanTargetPatch(payload?.route_plan);
 
     const createdRouteGroupClientId = payload?.route_group?.allIds?.[0] ?? clientId;
     const createdRouteGroup = createdRouteGroupClientId

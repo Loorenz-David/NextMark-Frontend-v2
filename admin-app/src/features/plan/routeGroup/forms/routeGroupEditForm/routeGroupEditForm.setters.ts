@@ -72,16 +72,15 @@ export const useRouteGroupEditFormSetters = ({
       const previousEndDate = parseDateOnlyUtc(prev.delivery_plan.end_date)
       const nextStartDate = parseDateOnlyUtc(value)
 
-      // Preserve day-span only when moving start beyond current end.
-      if (
-        previousStartDate &&
-        previousEndDate &&
-        nextStartDate &&
-        nextStartDate.getTime() > previousEndDate.getTime()
-      ) {
-        const deltaDays = Math.round((nextStartDate.getTime() - previousStartDate.getTime()) / MS_PER_DAY)
+      // Preserve the existing day-span whenever the start date moves.
+      if (previousStartDate && previousEndDate && nextStartDate) {
+        const deltaDays = Math.round(
+          (nextStartDate.getTime() - previousStartDate.getTime()) / MS_PER_DAY,
+        )
         const shiftedEndDate = new Date(previousEndDate.getTime() + (deltaDays * MS_PER_DAY))
         nextEndDate = formatDateOnlyUtc(shiftedEndDate)
+      } else if (!prev.delivery_plan.end_date) {
+        nextEndDate = value
       }
 
       const next = {

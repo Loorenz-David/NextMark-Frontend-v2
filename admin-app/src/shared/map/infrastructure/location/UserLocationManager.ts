@@ -1,6 +1,7 @@
 import type { Coordinates } from '../../domain/types'
 import { createUserLocationElement } from '../../presentation/mapUserLocationElement.factory'
 import type { MapInstanceManager } from '../core/MapInstanceManager'
+import { resolveBrowserCurrentCoordinates } from '@/shared/utils/browserGeolocation'
 
 export class UserLocationManager {
   private userLocationMarker: any = null
@@ -28,23 +29,12 @@ export class UserLocationManager {
       return Promise.resolve(null)
     }
 
-    return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          })
-        },
-        (error) => {
-          console.warn('Failed to retrieve user location', error)
-          resolve(null)
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-        },
-      )
+    return resolveBrowserCurrentCoordinates().then((coordinates) => {
+      if (!coordinates) {
+        console.warn('Failed to retrieve user location')
+      }
+
+      return coordinates
     })
   }
 

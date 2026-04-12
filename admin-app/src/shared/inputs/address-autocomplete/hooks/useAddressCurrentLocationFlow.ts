@@ -2,22 +2,13 @@ import { useCallback, useRef } from 'react'
 
 import { reverseGeocodeQuery } from '@shared-google-maps'
 import type { address } from '@/types/address'
+import {
+  getBrowserCurrentCoordinates,
+  mapBrowserGeolocationError,
+} from '@/shared/utils/browserGeolocation'
 import { saveCurrentLocation } from '../utils/currentLocationStorage'
 import { getStoredCurrentLocation } from '../utils/currentLocationStorage'
 import { CURRENT_LOCATION_COORD_TOLERANCE } from '../constants/location.constants'
-
-const mapGeolocationError = (error: GeolocationPositionError) => {
-  switch (error.code) {
-    case error.PERMISSION_DENIED:
-      return new Error('Geolocation permission denied')
-    case error.POSITION_UNAVAILABLE:
-      return new Error('Geolocation position unavailable')
-    case error.TIMEOUT:
-      return new Error('Geolocation timeout')
-    default:
-      return new Error(error.message || 'Geolocation failed')
-  }
-}
 
 export const useAddressCurrentLocationFlow = () => {
   const pendingPromiseRef = useRef<Promise<address> | null>(null)
@@ -28,16 +19,9 @@ export const useAddressCurrentLocationFlow = () => {
     }
 
     const pending = new Promise<address>((resolve, reject) => {
-      if (typeof navigator === 'undefined' || !navigator.geolocation) {
-        reject(new Error('Geolocation is not supported'))
-        return
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
+      getBrowserCurrentCoordinates()
+        .then(async ({ lat, lng }) => {
           try {
-            const lat = position.coords.latitude
-            const lng = position.coords.longitude
             const stored = getStoredCurrentLocation()
 
             if (stored) {
@@ -62,16 +46,10 @@ export const useAddressCurrentLocationFlow = () => {
           } catch (error) {
             reject(error)
           }
-        },
-        (error) => {
-          reject(mapGeolocationError(error))
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0,
-        },
-      )
+        })
+        .catch((error) => {
+          reject(mapBrowserGeolocationError(error))
+        })
     }).finally(() => {
       pendingPromiseRef.current = null
     })

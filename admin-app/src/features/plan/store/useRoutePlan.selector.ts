@@ -9,6 +9,7 @@ import {
 import { useShallow } from 'zustand/react/shallow'
 import { useMemo } from 'react'
 import { reactivePlanVisibility } from '@/features/plan/domain/planReactiveVisibility'
+import { sortVisiblePlans } from '@/features/plan/domain/sortVisiblePlans'
 import { selectRoutePlanListQuery, useRoutePlanListStore } from './routePlanList.store'
 
 export const useRoutePlans = () => useRoutePlanStore(useShallow(selectAllRoutePlans))
@@ -17,7 +18,9 @@ export const useVisibleRoutePlans = () => {
   const query = useRoutePlanListStore(selectRoutePlanListQuery)
 
   return useMemo(
-    () => routePlans.filter((routePlan) => reactivePlanVisibility(routePlan, query)),
+    () => sortVisiblePlans(
+      routePlans.filter((routePlan) => reactivePlanVisibility(routePlan, query)),
+    ),
     [routePlans, query],
   )
 }

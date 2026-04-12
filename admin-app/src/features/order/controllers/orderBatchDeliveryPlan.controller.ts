@@ -27,6 +27,10 @@ import { syncRouteGroupSummaries } from "@/features/plan/routeGroup/flows/syncRo
 import { selectOrderByServerId, useOrderStore } from "../store/order.store";
 import { markRouteGroupOverviewFreshAfter } from "@/features/plan/routeGroup/store/routeGroupOverviewFreshness.store";
 import { applyOrderBatchMoveStateSync } from "@/features/order/actions/applyOrderBatchMoveStateSync.action";
+import {
+  collectRouteSolutionStopsByOrderIds,
+  removeRouteSolutionStopsByOrderIds,
+} from "@/features/plan/routeGroup/actions/optimisticRouteSolutionStopRemoval.action";
 
 type UpdateOrdersDeliveryPlanBatchParams = {
   planId: number;
@@ -49,13 +53,17 @@ export const useOrderBatchDeliveryPlanController = () => {
       const state = useOrderSelectionStore.getState();
       const optimisticTargetIds = resolveBatchTargetOrderIds(selection, state);
       return optimisticTransaction({
-        snapshot: createOrderOptimisticSnapshot,
+        snapshot: () => ({
+          ...createOrderOptimisticSnapshot(),
+          removedStops: collectRouteSolutionStopsByOrderIds(optimisticTargetIds),
+        }),
         mutate: () => {
           patchOrdersPlanByServerIds({
             orderServerIds: optimisticTargetIds,
             planId,
             planType,
           });
+          removeRouteSolutionStopsByOrderIds(optimisticTargetIds);
         },
         request: async () => {
           const response = await updateOrdersDeliveryPlanBatchApi(

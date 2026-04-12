@@ -19,6 +19,7 @@ import {
 } from '@/features/plan/routeGroup/forms/routeGroupEditForm/routeGroupEditForm.storage'
 import { normalizeRouteGroupEditFormToSettingsPayload } from '@/features/plan/routeGroup/api/mappers/routeGroupSettings.mapper'
 import { normalizeByClientIdArray } from '@/features/plan/routeGroup/api/mappers/routeSolutionPayload.mapper'
+import { applyRoutePlanTargetPatch } from '@/features/plan/routeGroup/domain/applyRoutePlanTargetPatch'
 import {
   serviceTimeMinutesToSeconds,
   serviceTimeSecondsToMinutes,
@@ -33,11 +34,18 @@ import {
   updateRoutePlan,
   useRoutePlanStore,
 } from '@/features/plan/store/routePlan.slice'
+import { usePlanController } from '@/features/plan/controllers/plan.controller'
 import {
+  insertRouteGroup,
+  selectRouteGroupsByPlanId,
   selectRouteGroupByServerId,
+  removeRouteGroup,
   updateRouteGroup,
   useRouteGroupStore,
 } from '@/features/plan/routeGroup/store/routeGroup.slice'
+import {
+  routeGroupApi,
+} from '@/features/plan/routeGroup/api/routeGroup.api'
 import {
   selectRouteSolutionByServerId,
   setSelectedRouteSolution,
@@ -203,5 +211,57 @@ export function useRouteGroupSettingsMutations() {
 
   return {
     updateRouteGroupSettings,
+  }
+}
+
+export function useRouteGroupDeleteMutations() {
+  const { showMessage } = useMessageHandler()
+  const { deletePlan } = usePlanController()
+
+  const deleteRouteGroup = useCallback(
+    async (params: { planId: number; routeGroupId: number }) => {
+      const routeGroup = selectRouteGroupByServerId(params.routeGroupId)(
+        useRouteGroupStore.getState(),
+      )
+
+      if (!routeGroup?.client_id) {
+        showMessage({ status: 404, message: 'Route group not found for deletion.' })
+        return { success: false, deletedPlan: false }
+      }
+
+      const routeGroupsInPlan = selectRouteGroupsByPlanId(params.planId)(
+        useRouteGroupStore.getState(),
+      )
+      const shouldDeleteParentPlan = routeGroupsInPlan.length === 1
+
+      if (shouldDeleteParentPlan) {
+        const deletedPlan = await deletePlan(params.planId)
+        return {
+          success: Boolean(deletedPlan),
+          deletedPlan: Boolean(deletedPlan),
+        }
+      }
+
+      const snapshot = { ...routeGroup }
+      removeRouteGroup(routeGroup.client_id)
+
+      try {
+        const response = await routeGroupApi.deleteRouteGroup(params.planId, params.routeGroupId)
+        applyRoutePlanTargetPatch(response.data?.route_plan)
+
+        return { success: true, deletedPlan: false }
+      } catch (error) {
+        const resolved = resolveError(error, 'Unable to delete route group.')
+        console.error('Failed to delete route group', error)
+        insertRouteGroup(snapshot)
+        showMessage({ status: resolved.status, message: resolved.message })
+        return { success: false, deletedPlan: false }
+      }
+    },
+    [deletePlan, showMessage],
+  )
+
+  return {
+    deleteRouteGroup,
   }
 }

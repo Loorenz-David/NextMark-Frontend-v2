@@ -3,8 +3,10 @@ import type { RefObject } from 'react'
 
 import { useMessageHandler } from '@shared-message-handler'
 import { makeInitialFormCopy } from '@shared-domain'
-import { useRouteGroupSettingsMutations } from '@/features/plan/routeGroup/controllers/routeGroupSettings.controller'
-import { usePlanController } from '@/features/plan/controllers/plan.controller'
+import {
+  useRouteGroupDeleteMutations,
+  useRouteGroupSettingsMutations,
+} from '@/features/plan/routeGroup/controllers/routeGroupSettings.controller'
 import { useBaseControlls, useSectionManager } from '@/shared/resource-manager/useResourceManager'
 
 import type { RouteGroupEditFormState } from './RouteGroupEditForm.types'
@@ -22,7 +24,7 @@ export const useRouteGroupEditFormActions = ({
 }: Props) => {
   const { showMessage } = useMessageHandler()
   const { updateRouteGroupSettings } = useRouteGroupSettingsMutations()
-  const { deletePlan } = usePlanController()
+  const { deleteRouteGroup } = useRouteGroupDeleteMutations()
   const sectionManager = useSectionManager()
   const  baseControlls = useBaseControlls()
   const handleSave = useCallback(async (): Promise<boolean> => {
@@ -53,16 +55,27 @@ export const useRouteGroupEditFormActions = ({
       showMessage({ message: 'Delivery plan id is missing.', status: 'warning' })
       return false
     }
+    if (!formState.route_group_id) {
+      showMessage({ message: 'Route group id is missing.', status: 'warning' })
+      return false
+    }
 
-    const result = await deletePlan(formState.delivery_plan.id)
+    const result = await deleteRouteGroup({
+      planId: formState.delivery_plan.id,
+      routeGroupId: formState.route_group_id,
+    })
 
-    if (result) {
+    if (result.success && result.deletedPlan) {
       sectionManager.closeByKey('RouteGroupsPage')
       baseControlls.closeBase()
       return true
     }
+
+    if (result.success) {
+      return true
+    }
     return false
-  }, [baseControlls, deletePlan, formState, sectionManager, showMessage])
+  }, [baseControlls, deleteRouteGroup, formState, sectionManager, showMessage])
 
   return {
     handleSave,

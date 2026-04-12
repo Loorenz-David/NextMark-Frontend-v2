@@ -19,6 +19,48 @@ const mapGeolocationError = (error: GeolocationPositionError) => {
   }
 }
 
+const getBrowserPosition = (
+  options: PositionOptions,
+): Promise<GeolocationPosition> => {
+  return new Promise((resolve, reject) => {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      reject(new Error('Geolocation is not supported'))
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(resolve, reject, options)
+  })
+}
+
+const resolveCurrentPosition = async (): Promise<GeolocationPosition> => {
+  try {
+    return await getBrowserPosition({
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    })
+  } catch (error) {
+    if (!(error instanceof GeolocationPositionError)) {
+      throw error
+    }
+
+    if (
+      error.code !== error.POSITION_UNAVAILABLE &&
+      error.code !== error.TIMEOUT
+    ) {
+      throw error
+    }
+
+    // CoreLocation can transiently fail on the first high-accuracy request.
+    // Retry once with a less strict request before surfacing the failure.
+    return getBrowserPosition({
+      enableHighAccuracy: false,
+      timeout: 10000,
+      maximumAge: 60000,
+    })
+  }
+}
+
 export const useAddressCurrentLocationFlow = () => {
   const pendingPromiseRef = useRef<Promise<address> | null>(null)
 
@@ -28,13 +70,8 @@ export const useAddressCurrentLocationFlow = () => {
     }
 
     const pending = new Promise<address>((resolve, reject) => {
-      if (typeof navigator === 'undefined' || !navigator.geolocation) {
-        reject(new Error('Geolocation is not supported'))
-        return
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
+      resolveCurrentPosition()
+        .then(async (position) => {
           try {
             const lat = position.coords.latitude
             const lng = position.coords.longitude
@@ -62,16 +99,15 @@ export const useAddressCurrentLocationFlow = () => {
           } catch (error) {
             reject(error)
           }
-        },
-        (error) => {
-          reject(mapGeolocationError(error))
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0,
-        },
-      )
+        })
+        .catch((error) => {
+          if (error instanceof GeolocationPositionError) {
+            reject(mapGeolocationError(error))
+            return
+          }
+
+          reject(error instanceof Error ? error : new Error('Geolocation failed'))
+        })
     }).finally(() => {
       pendingPromiseRef.current = null
     })

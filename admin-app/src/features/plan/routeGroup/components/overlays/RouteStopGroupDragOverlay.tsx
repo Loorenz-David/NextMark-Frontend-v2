@@ -1,9 +1,9 @@
 type RouteStopGroupDragOverlayProps = {
-  count: number
-  label: string
-  firstStopOrder?: number | null
-  lastStopOrder?: number | null
-}
+  count: number;
+  label: string;
+  firstStopOrder?: number | null;
+  lastStopOrder?: number | null;
+};
 
 export const RouteStopGroupDragOverlay = ({
   count,
@@ -11,7 +11,7 @@ export const RouteStopGroupDragOverlay = ({
   firstStopOrder,
   lastStopOrder,
 }: RouteStopGroupDragOverlayProps) => (
-  <div className="rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 shadow-lg">
+  <div className="rounded-xl border border-white/10 admin-glass-panel admin-surface-compact px-4 py-3 ">
     <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
       Moving Stop Group
     </p>
@@ -19,8 +19,10 @@ export const RouteStopGroupDragOverlay = ({
       {count} orders
     </p>
     <p className="text-xs text-[var(--color-muted)]">
-      Stops {firstStopOrder ?? '--'} - {lastStopOrder ?? '--'}
+      Stops {firstStopOrder ?? "--"} - {lastStopOrder ?? "--"}
     </p>
-    <p className="mt-1 max-w-[240px] truncate text-xs text-[var(--color-muted)]">{label}</p>
+    <p className="mt-1 max-w-[240px] truncate text-xs text-[var(--color-muted)]">
+      {label}
+    </p>
   </div>
-)
+);

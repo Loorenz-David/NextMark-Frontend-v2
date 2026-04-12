@@ -1,6 +1,7 @@
 import type { RouteGroupSettingsPayload } from '@/features/plan/routeGroup/api/routeGroupSettings.api'
 import type { RouteGroupEditFormState } from '@/features/plan/routeGroup/forms/routeGroupEditForm/RouteGroupEditForm.types'
 import { serviceTimeMinutesToSeconds } from '@/features/plan/routeGroup/domain/serviceTimeUnits'
+import { toDateOnly } from '@/shared/data-validation/timeValidation'
 
 export const normalizeRouteGroupEditFormToSettingsPayload = (
   formState: RouteGroupEditFormState,
@@ -9,8 +10,8 @@ export const normalizeRouteGroupEditFormToSettingsPayload = (
   route_plan: {
     id: formState.delivery_plan.id,
     label: formState.delivery_plan.label,
-    start_date: formState.delivery_plan.start_date,
-    end_date: formState.delivery_plan.end_date,
+    start_date: toDateOnly(formState.delivery_plan.start_date),
+    end_date: toDateOnly(formState.delivery_plan.end_date),
   },
   route_solution: {
     id: formState.route_solution.id,

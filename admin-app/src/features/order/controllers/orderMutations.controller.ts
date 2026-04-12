@@ -4,10 +4,9 @@ import { ApiError } from "@/lib/api/ApiClient";
 import { useMessageHandler } from "@shared-message-handler";
 import { optimisticTransaction } from "@shared-optimistic";
 import {
-  removeRouteSolutionStopsByOrderId,
   selectRouteSolutionStopsByOrderId,
-  useRouteSolutionStopStore,
   upsertRouteSolutionStops,
+  useRouteSolutionStopStore,
 } from "@/features/plan/routeGroup/store/routeSolutionStop.store";
 import { upsertRouteSolution } from "@/features/plan/routeGroup/store/routeSolution.store";
 
@@ -28,6 +27,10 @@ import {
 } from "@/features/plan/store/routePlan.slice";
 import { syncRouteGroupSummaries } from "@/features/plan/routeGroup/flows/syncRouteGroupSummaries.flow";
 import { markRouteGroupOverviewFreshAfter } from "@/features/plan/routeGroup/store/routeGroupOverviewFreshness.store";
+import {
+  removeRouteSolutionStopsByOrderIds,
+  restoreCollectedRouteSolutionStops,
+} from "@/features/plan/routeGroup/actions/optimisticRouteSolutionStopRemoval.action";
 
 export const useOrderMutations = () => {
   const updateOrderDeliveryPlanApi = useUpdateOrderDeliveryPlanApi();
@@ -151,7 +154,7 @@ export const useOrderMutations = () => {
         }),
         mutate: () => {
           setOrderPlanId(order.client_id, parsedPlanId);
-          removeRouteSolutionStopsByOrderId(orderServerId);
+          removeRouteSolutionStopsByOrderIds([orderServerId]);
 
           // Optimistic: subtract this order's weight/volume/items from the old plan
           if (oldPlan?.id != null && oldPlanTotalSnapshot != null) {
@@ -204,7 +207,9 @@ export const useOrderMutations = () => {
         },
         request: () => updateOrderDeliveryPlanApi(orderServerId, parsedPlanId),
         commit: (response) => {
-          const updatedBundles = response.data?.updated ?? [];
+          const updatedBundles = Array.isArray(response.data?.updated)
+            ? response.data.updated
+            : [];
           const affectedRouteGroupIds = new Set<number>();
 
           if (typeof order.route_group_id === "number") {
@@ -219,7 +224,7 @@ export const useOrderMutations = () => {
               affectedRouteGroupIds.add(updatedOrder.route_group_id);
             }
             setOrder(updatedOrder);
-            removeRouteSolutionStopsByOrderId(updatedOrder.id);
+            removeRouteSolutionStopsByOrderIds([updatedOrder.id]);
 
             const normalizedStops = normalizeOrderStopResponse(
               bundle.order_stops,
@@ -227,7 +232,9 @@ export const useOrderMutations = () => {
             if (normalizedStops) {
               upsertRouteSolutionStops(normalizedStops);
             }
-            const changedSolutions = bundle.route_solution ?? [];
+            const changedSolutions = Array.isArray(bundle.route_solution)
+              ? bundle.route_solution
+              : [];
             changedSolutions.forEach((solution) => {
               if (solution?.client_id) {
                 upsertRouteSolution(solution);
@@ -239,7 +246,10 @@ export const useOrderMutations = () => {
           markRouteGroupOverviewFreshAfter([oldPlanId, parsedPlanId]);
 
           // Server-authoritative plan totals override the optimistic deltas
-          response.data?.plan_totals?.forEach((p) => {
+          const planTotals = Array.isArray(response.data?.plan_totals)
+            ? response.data.plan_totals
+            : [];
+          planTotals.forEach((p) => {
             patchRoutePlanTotals(p.id, {
               total_weight: p.total_weight,
               total_volume: p.total_volume,
@@ -267,22 +277,7 @@ export const useOrderMutations = () => {
           };
           setOrderPlanId(order.client_id, previousPlanId);
           if (previousStops.length) {
-            const rollbackStops = {
-              byClientId: Object.fromEntries(
-                previousStops
-                  .filter((stop: RouteSolutionStop) => !!stop?.client_id)
-                  .map((stop: RouteSolutionStop) => [stop.client_id, stop]),
-              ),
-              allIds: previousStops
-                .map((stop: RouteSolutionStop) => stop.client_id)
-                .filter(
-                  (clientId: string | null | undefined): clientId is string =>
-                    !!clientId,
-                ),
-            };
-            if (rollbackStops.allIds.length) {
-              upsertRouteSolutionStops(rollbackStops);
-            }
+            restoreCollectedRouteSolutionStops(previousStops);
           }
 
           // Restore plan total snapshots
@@ -294,6 +289,7 @@ export const useOrderMutations = () => {
           }
         },
         onError: (error) => {
+          console.error("Failed to update order delivery plan", { error });
           const message =
             error instanceof ApiError
               ? error.message

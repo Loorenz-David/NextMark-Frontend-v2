@@ -48,10 +48,20 @@ export type RouteGroupDetailsResponse = {
   route_solution_stops?: RouteSolutionStop[] | RouteSolutionStopMap | null;
 };
 
+type RoutePlanTargetResponse = {
+  id: number;
+  state_id?: number | null;
+};
+
 export type CreateRouteGroupResponse = {
   created?: boolean;
   route_group?: RouteGroupMap | null;
   route_solution?: RouteSolution | RouteSolutionMap | null;
+  route_plan?: RoutePlanTargetResponse | null;
+};
+
+export type DeleteRouteGroupResponse = {
+  route_plan?: RoutePlanTargetResponse | null;
 };
 
 export type MoveOrderToRouteGroupResponse = OrderBatchMoveResponse & {
@@ -76,6 +86,14 @@ export const routeGroupApi = {
       path: `/route_plans/${planId}/route-groups`,
       method: "POST",
       data: payload,
+    }),
+  deleteRouteGroup: (
+    planId: number | string,
+    routeGroupId: number | string,
+  ): Promise<ApiResult<DeleteRouteGroupResponse>> =>
+    apiClient.request<DeleteRouteGroupResponse>({
+      path: `/route_plans/${planId}/route-groups/${routeGroupId}`,
+      method: "DELETE",
     }),
   materializeRouteGroups: (
     planId: number | string,
