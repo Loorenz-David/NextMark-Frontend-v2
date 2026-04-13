@@ -34,40 +34,8 @@ export default defineConfig({
           ) {
             return "map-extras";
           }
-          if (id.includes("/packages/ai-panel/")) {
-            return "ai-panel";
-          }
           if (!id.includes("/node_modules/")) return;
-
-          if (id.includes("/react/") || id.includes("/react-dom/"))
-            return "react-core";
-          if (id.includes("/@dnd-kit/")) return "dnd";
-          if (id.includes("/framer-motion/")) return "motion";
-          if (id.includes("/jspdf/")) return "docs-export-jspdf";
-          if (id.includes("/html2canvas/")) return "docs-export-html2canvas";
-          if (id.includes("/socket.io-client/")) return "realtime";
-          if (
-            id.includes("/recharts/") ||
-            id.includes("/d3-") ||
-            id.includes("/victory-vendor/")
-          ) {
-            return "charts";
-          }
           if (id.includes("/libphonenumber-js/")) return "phone";
-          if (
-            id.includes("/@nextmark/ai-panel/") ||
-            id.includes("/@reduxjs/toolkit/") ||
-            id.includes("/redux/") ||
-            id.includes("/react-redux/") ||
-            id.includes("/redux-thunk/") ||
-            id.includes("/reselect/") ||
-            id.includes("/immer/") ||
-            id.includes("/decimal.js-light/")
-          ) {
-            return "ai-panel";
-          }
-          if (id.includes("/lottie-web/") || id.includes("/lottie-react/"))
-            return "lottie";
         },
       },
     },
@@ -107,7 +75,7 @@ export default defineConfig({
       },
       {
         find: /^react$/,
-        replacement: path.resolve(__dirname, "./node_modules/react/index.js"),
+        replacement: path.resolve(__dirname, "./node_modules/react"),
       },
       {
         find: /^react\/jsx-runtime$/,
@@ -117,18 +85,15 @@ export default defineConfig({
         ),
       },
       {
-        find: /^react-dom$/,
+        find: /^react\/jsx-dev-runtime$/,
         replacement: path.resolve(
           __dirname,
-          "./node_modules/react-dom/index.js",
+          "./node_modules/react/jsx-dev-runtime.js",
         ),
       },
       {
-        find: /^react-dom\/client$/,
-        replacement: path.resolve(
-          __dirname,
-          "./node_modules/react-dom/client.js",
-        ),
+        find: /^react-dom$/,
+        replacement: path.resolve(__dirname, "./node_modules/react-dom"),
       },
       {
         find: /^@floating-ui\/react$/,
