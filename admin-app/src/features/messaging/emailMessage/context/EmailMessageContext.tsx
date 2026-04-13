@@ -1,6 +1,7 @@
 import { createContext } from 'react'
 
 import type { StackActionManager } from '@/shared/stack-manager/StackActionManager'
+import type { MessageScheduleDraft } from '@/features/messaging/domain'
 
 import type { EventDefinition } from '../domain/emailEvents'
 import type { EmailMessageTemplate } from '../types/emailMessage'
@@ -24,6 +25,8 @@ export type EmailMessageContextValue = {
   setEnabled: (value: boolean) => void
   setPermission: (value: boolean) => void
   permission: boolean
+  schedule: MessageScheduleDraft
+  setSchedule: (value: MessageScheduleDraft) => void
   value: EmailTemplateValue
   setValue: (value: EmailTemplateValue) => void
   saveTemplate: () => Promise<boolean>

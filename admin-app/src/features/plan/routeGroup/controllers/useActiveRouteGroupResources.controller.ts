@@ -16,10 +16,13 @@ import {
   selectRouteSolutionStopsBySolutionId,
   useRouteSolutionStopStore,
 } from '../store/routeSolutionStop.store'
+import { useIncomingRouteGroupOrderPlaceholderKeys } from '../store/routeGroupIncomingOrderPlaceholder.store'
 
 export const useActiveRouteGroupResourcesController = (planId: number | null) => {
   const plan = useRoutePlanByServerId(planId)
   const routeGroups = useRouteGroupsByPlanId(planId)
+  const incomingPendingOrderPlaceholderKeys =
+    useIncomingRouteGroupOrderPlaceholderKeys(planId)
   const activeRouteGroupId = useActiveRouteGroupId()
   const routeGroup = routeGroups.find((candidateRouteGroup) => candidateRouteGroup.id === activeRouteGroupId)
     ?? null
@@ -106,5 +109,6 @@ export const useActiveRouteGroupResourcesController = (planId: number | null) =>
     stopByOrderId,
     ordersById,
     boundaryLocations,
+    incomingPendingOrderPlaceholderKeys,
   }
 }

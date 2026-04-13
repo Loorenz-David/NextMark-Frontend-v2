@@ -20,6 +20,7 @@ import {
 import { useResourceManager } from "@/shared/resource-manager/useResourceManager";
 import type { RouteReorderPreview } from "@/features/plan/dnd/controller/resolveDropIntent";
 import { RouteGroupReadyFooter } from "./RouteGroupReadyFooter";
+import { OrderLoadingCard } from "@/shared/loadingCards/order";
 
 type RouteGroupOrderListProps = {
   onScrollContainer?: (event: UIEvent<HTMLDivElement>) => void;
@@ -46,6 +47,7 @@ export const RouteGroupOrderList = ({
     routeSolutionWarningRegistry,
     routeGroupPageActions,
     routeGroupState,
+    incomingPendingOrderPlaceholderKeys,
   } = useRouteGroupPageContext();
 
   const isRouteGroupOpen =
@@ -177,6 +179,9 @@ export const RouteGroupOrderList = ({
               planStartDate={planStartDate}
               routeGroupId={activeRouteGroupId}
             />
+          ))}
+          {incomingPendingOrderPlaceholderKeys.map((placeholderKey) => (
+            <OrderLoadingCard key={placeholderKey} variant="routeGroup" />
           ))}
           {boundaryLocations.end.location && groupedStops.length > 0 && (
             <div className="pb-10">

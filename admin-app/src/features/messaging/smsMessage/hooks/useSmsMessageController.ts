@@ -2,6 +2,7 @@ import { useCallback, type Dispatch, type SetStateAction } from 'react'
 
 import { useMessageHandler } from '@shared-message-handler'
 import { buildClientId } from '@/lib/utils/clientId'
+import { mapMessageScheduleDraftToFields, type MessageScheduleDraft } from '@/features/messaging/domain'
 
 import { useCreateSmsMessage, useUpdateSmsMessage } from '../api/smsMessageApi'
 import { upsertSmsMessage } from '../store/smsMessageStore'
@@ -26,6 +27,7 @@ export const useSmsMessageController = ({ setActiveTrigger }: UseSmsMessageContr
     ask_permission,
     existing,
     name,
+    schedule,
   }: {
     event: string
     template: TemplateValue
@@ -33,7 +35,9 @@ export const useSmsMessageController = ({ setActiveTrigger }: UseSmsMessageContr
     ask_permission:boolean
     existing?: SmsMessageTemplate | null
     name: string
+    schedule: MessageScheduleDraft
   }) => {
+    const scheduleFields = mapMessageScheduleDraftToFields(schedule, event)
     const payload: SmsMessageTemplatePayload = {
       client_id: existing?.client_id ?? buildClientId('message_template'),
       name,
@@ -42,6 +46,7 @@ export const useSmsMessageController = ({ setActiveTrigger }: UseSmsMessageContr
       ask_permission,
       template,
       channel: 'sms',
+      ...scheduleFields,
     }
     
 

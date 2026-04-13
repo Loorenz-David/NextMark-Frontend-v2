@@ -25,16 +25,20 @@ type RouteGroupRailAvatarProps = {
   item: RouteGroupRailItem;
   onClick: (item: RouteGroupRailItem) => void;
   isDropTarget?: boolean;
+  pulseSequence?: number;
 };
 
 export const RouteGroupRailAvatar = ({
   item,
   onClick,
   isDropTarget = false,
+  pulseSequence = 0,
 }: RouteGroupRailAvatarProps) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isIncomingPulseActive, setIsIncomingPulseActive] = useState(false);
   const hoverOpenTimeoutRef = useRef<number | null>(null);
   const suppressHoverUntilLeaveRef = useRef(false);
+  const mountSequenceRef = useRef<number>(-1);
   const completionRatio = Math.round(item.completionRatio);
   const stateColor = item.stateColor ?? DEFAULT_STATE_COLOR;
   const stateBorderColor = withAlpha(stateColor, item.isActive ? "CC" : "66");
@@ -80,6 +84,26 @@ export const RouteGroupRailAvatar = ({
     setIsPopoverOpen(false);
   }, [clearHoverOpenTimeout, isDropTarget]);
 
+  useEffect(() => {
+    if (mountSequenceRef.current === -1) {
+      mountSequenceRef.current = pulseSequence;
+      return;
+    }
+
+    if (pulseSequence <= mountSequenceRef.current) {
+      return;
+    }
+
+    setIsIncomingPulseActive(true);
+    const timer = window.setTimeout(() => {
+      setIsIncomingPulseActive(false);
+    }, 1150);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [pulseSequence]);
+
   const avatarButton = (
     <button
       type="button"
@@ -93,6 +117,18 @@ export const RouteGroupRailAvatar = ({
       onBlur={handlePointerLeave}
     >
       <span className="relative flex h-12 w-12 items-center justify-center">
+        <AnimatePresence>
+          {isIncomingPulseActive ? (
+            <motion.span
+              key={`route-group-pulse-${item.route_group_id}`}
+              initial={{ scale: 0.72, opacity: 0.45 }}
+              animate={{ scale: 1.8, opacity: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.1, ease: "easeOut" }}
+              className="pointer-events-none absolute inset-0 rounded-full border border-[rgb(var(--color-light-blue-r))]/60 bg-[rgb(var(--color-light-blue-r))]/12"
+            />
+          ) : null}
+        </AnimatePresence>
         <motion.span
           aria-hidden="true"
           animate={
@@ -101,13 +137,25 @@ export const RouteGroupRailAvatar = ({
                   scale: 1.12,
                   boxShadow: "0px 0px 0px 6px rgba(0,197,49,0.20)",
                 }
+              : isIncomingPulseActive
+                ? {
+                    scale: [1, 1.08, 0.98, 1.04, 1],
+                    rotate: [0, -8, 6, -4, 0],
+                    boxShadow:
+                      "inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 22px rgba(29,74,102,0.14)",
+                  }
               : {
                   scale: 1,
+                  rotate: 0,
                   boxShadow:
                     "inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 22px rgba(29,74,102,0.14)",
                 }
           }
-          transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
+          transition={{
+            type: "tween",
+            duration: isIncomingPulseActive ? 0.7 : 0.3,
+            ease: isIncomingPulseActive ? "easeInOut" : "easeOut",
+          }}
           className={`flex h-12 w-12 items-center justify-center rounded-full border p-[3px] ${
             isDropTarget ? "border-[#00c531]" : ""
           }`}
@@ -126,6 +174,7 @@ export const RouteGroupRailAvatar = ({
             <motion.span
               aria-hidden="true"
               className="absolute inset-x-0 bottom-0"
+              initial={false}
               animate={{ height: fillHeight }}
               transition={{ duration: 0.35, ease: "easeOut" }}
               style={{
@@ -153,13 +202,20 @@ export const RouteGroupRailAvatar = ({
               >
                 <PlusIcon className="h-4 w-4" style={{ color: "#00c531" }} />
               </motion.span>
+            ) : isIncomingPulseActive ? (
+              <motion.span
+                key="incoming-pulse-progress"
+                initial={{ scale: 0.94, opacity: 0 }}
+                animate={{ scale: [1, 1.22, 1], opacity: 1 }}
+                exit={{ scale: 0.94, opacity: 0 }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+              >
+                {completionRatio}%
+              </motion.span>
             ) : (
               <motion.span
                 key="progress"
-                initial={{ scale: 0.94, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.94, opacity: 0 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
+                initial={false}
               >
                 {completionRatio}%
               </motion.span>

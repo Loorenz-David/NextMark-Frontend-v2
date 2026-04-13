@@ -25,7 +25,7 @@ export const RouteGroupRailPopoverContent = ({
   item,
 }: RouteGroupRailPopoverContentProps) => {
   return (
-    <div className="w-56 rounded-[20px] border border-[rgba(112,222,208,0.24)] bg-[linear-gradient(135deg,rgba(72,180,194,0.18),rgba(111,224,207,0.07))] p-3 text-sm text-[rgb(232,255,251)] shadow-[0_18px_40px_rgba(0,0,0,0.26)] backdrop-blur-xl">
+    <div className="admin-backdrop-blur-xl w-56 rounded-[20px] border border-[rgba(112,222,208,0.24)] bg-[linear-gradient(135deg,rgba(72,180,194,0.18),rgba(111,224,207,0.07))] p-3 text-sm text-[rgb(232,255,251)] shadow-[0_18px_40px_rgba(0,0,0,0.26)]">
       <div className="mb-3 flex flex-col gap-1">
         <div className="text-sm font-semibold text-[rgb(232,255,251)]">
           {item.label}

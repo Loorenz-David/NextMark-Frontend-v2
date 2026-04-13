@@ -225,6 +225,51 @@ export const runOrderFormSubmitControllerTests = async () => {
     const formState = {
       ...initialState,
       tracking_number: 'NEW-TRACKING',
+      order_note: { content: 'Legacy note' } as unknown as string,
+    }
+
+    const command: OrderFormSubmitCommand = {
+      mode: 'edit',
+      order: { id: 200, client_id: 'order-client-1' },
+      orderServerId: 200,
+      formState,
+      validateForm: () => true,
+      initialFormRef: { current: initialState },
+      itemDraftController: {
+        getCreatedItems: () => [],
+        getUpdatedItems: () => [],
+        getDeletedItems: () => [],
+        reset: () => undefined,
+      },
+      itemInitialByClientId: {},
+    }
+
+    const result = await executeOrderFormSubmit(
+      {
+        saveOrder: async () => {
+          saveOrderCalls += 1
+          return true
+        },
+        createItemApi: async () => okResult({} as never),
+        updateItemApi: async () => okResult({} as never),
+        deleteItemApi: async () => okResult({} as never),
+        loadItemsByOrderId: async () => null,
+        validateOrderFields: () => true,
+      },
+      command,
+    )
+
+    assert(result.status === 'success_edit', 'legacy note objects should not crash edit submit')
+    assert(saveOrderCalls === 1, 'legacy note objects should still allow saveOrder')
+  }
+
+  {
+    let saveOrderCalls = 0
+
+    const initialState = buildBaseFormState()
+    const formState = {
+      ...initialState,
+      tracking_number: 'NEW-TRACKING',
     }
 
     const command: OrderFormSubmitCommand = {

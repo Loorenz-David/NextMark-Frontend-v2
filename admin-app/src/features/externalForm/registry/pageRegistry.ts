@@ -1,5 +1,5 @@
-import { ExternalFormAccessPage } from '../pages/ExternalFormAccess.page'
+export type ExternalFormPageKey = 'externalForm.access'
 
-export const pageRegistry = {
-  'externalForm.access': ExternalFormAccessPage,
+export type ExternalFormSectionPayloads = {
+  'externalForm.access': undefined
 }

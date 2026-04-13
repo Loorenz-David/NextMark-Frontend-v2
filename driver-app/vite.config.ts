@@ -67,6 +67,9 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    cssTarget: ['chrome90', 'firefox90', 'safari15.4', 'edge90'],
+  },
   resolve: {
     alias: [
       { find: "@", replacement: path.resolve(__dirname, "src") },

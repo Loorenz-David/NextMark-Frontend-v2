@@ -2,6 +2,11 @@ import type { PropsWithChildren } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { usePopupManager, useSectionManager } from '@/shared/resource-manager/useResourceManager'
+import {
+  createImmediateMessageScheduleDraft,
+  mapMessageScheduleFieldsToDraft,
+  type MessageScheduleDraft,
+} from '@/features/messaging/domain'
 
 import { SMS_EVENTS } from '../domain/smsEvents'
 import type { EventDefinition  } from '../domain/smsEvents'
@@ -19,6 +24,7 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
   const [activeTrigger, setActiveTrigger] = useState<EventDefinition | null>(null)
   const [enabled, setEnabled] = useState(false)
   const [permission, setPermission ] = useState(false)
+  const [schedule, setSchedule] = useState<MessageScheduleDraft>(createImmediateMessageScheduleDraft)
   const { saveTemplate: persistTemplate } = useSmsMessageController({setActiveTrigger})
 
   const existingTemplate = useMemo(
@@ -39,6 +45,10 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     setEnabled(existingTemplate?.enable ?? false)
   }, [existingTemplate])
+
+  useEffect(() => {
+    setSchedule(mapMessageScheduleFieldsToDraft(existingTemplate, activeTrigger?.key))
+  }, [activeTrigger?.key, existingTemplate])
 
   const filteredTriggers = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
@@ -74,9 +84,10 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
             ask_permission: permission,
             existing: existingTemplate ?? null,
             name: activeTrigger.label,
+            schedule,
           })
         : Promise.resolve(false),
-    [activeTrigger, editorValue, enabled, existingTemplate, persistTemplate],
+    [activeTrigger, editorValue, enabled, existingTemplate, permission, persistTemplate, schedule],
   )
 
   const contextValue = useMemo(
@@ -93,6 +104,8 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
       permission,
       setEnabled,
       setPermission,
+      schedule,
+      setSchedule,
       value: editorValue,
       setValue,
       saveTemplate,
@@ -101,8 +114,10 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
       activeTrigger,
       enabled,
       filteredTriggers,
+      permission,
       popupManager,
       saveTemplate,
+      schedule,
       searchQuery,
       sectionManager,
       setValue,

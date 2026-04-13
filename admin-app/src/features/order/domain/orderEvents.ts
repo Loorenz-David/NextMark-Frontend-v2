@@ -46,11 +46,7 @@ export const ORDER_EVENTS: OrderEventDefinition[] = [
     label: "Order cancelled",
     description: "Triggered when an order is cancelled.",
   },
-  {
-    key: "order_delivery_plan_changed",
-    label: "Order changed delivery plan",
-    description: "Triggered when an order delivery plan changes.",
-  },
+
   {
     key: "client_form_link_sent",
     label: "Client form link sent",
@@ -61,6 +57,11 @@ export const ORDER_EVENTS: OrderEventDefinition[] = [
     label: "Order rescheduled",
     description:
       "Triggered when an order is rescheduled. It can trigger also if the order has state of 'Ready' and the arrival time changes.",
+  },
+  {
+    key: "order_delivery_plan_changed",
+    label: "Order changed delivery plan",
+    description: "Triggered when an order delivery plan changes.",
   },
 ];
 

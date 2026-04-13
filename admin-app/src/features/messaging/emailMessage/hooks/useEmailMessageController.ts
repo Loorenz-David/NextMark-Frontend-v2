@@ -2,6 +2,7 @@ import { useCallback, type Dispatch, type SetStateAction } from 'react'
 
 import { useMessageHandler } from '@shared-message-handler'
 import { buildClientId } from '@/lib/utils/clientId'
+import { mapMessageScheduleDraftToFields, type MessageScheduleDraft } from '@/features/messaging/domain'
 
 import { useCreateEmailMessage, useUpdateEmailMessage } from '../api/emailMessageApi'
 import { upsertEmailMessage } from '../store/emailMessageStore'
@@ -25,6 +26,7 @@ export const useEmailMessageController = ({ setActiveTrigger }: UseEmailMessageC
     ask_permission,
     existing,
     name,
+    schedule,
   }: {
     event: string
     template: TemplateValue
@@ -32,7 +34,9 @@ export const useEmailMessageController = ({ setActiveTrigger }: UseEmailMessageC
     ask_permission:boolean
     existing?: EmailMessageTemplate | null
     name: string
+    schedule: MessageScheduleDraft
   }) => {
+    const scheduleFields = mapMessageScheduleDraftToFields(schedule, event)
     const payload: EmailMessageTemplatePayload = {
       client_id: existing?.client_id ?? buildClientId('message_template'),
       name,
@@ -41,6 +45,7 @@ export const useEmailMessageController = ({ setActiveTrigger }: UseEmailMessageC
       ask_permission,
       template,
       channel: 'email',
+      ...scheduleFields,
     }
 
     try {

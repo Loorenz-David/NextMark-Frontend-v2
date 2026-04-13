@@ -33,7 +33,7 @@ const ConsumptionMetricCard = ({
   return (
     <div
       key={metric.id}
-      className={`flex min-h-[78px] flex-col justify-between rounded-2xl border bg-black/28 px-4 py-3 text-sm text-white backdrop-blur-md ${
+      className={`admin-backdrop-blur-md flex min-h-[78px] flex-col justify-between rounded-2xl border bg-black/28 px-4 py-3 text-sm text-white ${
         isEstimated ? "border-white/30" : "border-white/45"
       }`}
     >

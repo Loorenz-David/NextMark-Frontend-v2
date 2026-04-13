@@ -2,6 +2,7 @@ import type { RouteGroup } from "../types/routeGroup";
 import type { RouteGroupRailItem } from "./routeGroupRailItem";
 import type { OrderState, OrderStates } from "@/features/order/types/orderState";
 import type { DeliveryPlanState, PlanStates } from "@/features/plan/types/planState";
+import { resolveRouteGroupDisplayLabel } from "./resolveRouteGroupDisplayLabel";
 
 const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
 
@@ -52,14 +53,8 @@ const resolveRouteGroupStateMeta = (
   };
 };
 
-const resolveRouteGroupLabel = (
-  routeGroup: RouteGroup,
-  fallbackIndex: number,
-) =>
-  routeGroup.zone_snapshot?.name?.trim() ||
-  (typeof routeGroup.zone_id === "number"
-    ? `Zone ${routeGroup.zone_id}`
-    : `Group ${fallbackIndex + 1}`);
+const resolveRouteGroupLabel = (routeGroup: RouteGroup, fallbackIndex: number) =>
+  resolveRouteGroupDisplayLabel(routeGroup, `Group ${fallbackIndex + 1}`);
 
 const resolveZoneLabel = (routeGroup: RouteGroup, fallbackIndex: number) =>
   typeof routeGroup.zone_id === "number"

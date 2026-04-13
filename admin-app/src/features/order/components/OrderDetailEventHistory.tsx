@@ -70,6 +70,14 @@ const resolveEventLabel = (eventName: string) => {
   );
 };
 
+const formatActionDescription = (actionName: string | null | undefined) => {
+  if (typeof actionName !== "string" || actionName.trim().length === 0) {
+    return "No action executed";
+  }
+
+  return actionName.replace(/_/g, " ");
+};
+
 const formatOccurredAt = (value: string | null | undefined) => {
   if (!value) return "Unknown time";
 
@@ -213,7 +221,7 @@ export const OrderDetailEventHistory = ({
                     <button
                       type="button"
                       onClick={() => toggleExpanded(event.client_id)}
-                      className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-white/[0.04]"
+                      className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-white/[0.04]  rounded-[20px]"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
@@ -230,6 +238,9 @@ export const OrderDetailEventHistory = ({
                             </span>
                           ) : null}
                         </div>
+                        <p className="mt-1 text-xs text-[var(--color-muted)]">
+                          {formatActionDescription(latestAction?.action_name)}
+                        </p>
                         <p className="mt-1 text-xs text-[var(--color-muted)]">
                           {formatOccurredAt(event.occurred_at)}
                         </p>

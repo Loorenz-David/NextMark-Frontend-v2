@@ -27,13 +27,14 @@ export const SettingsPage = () => {
   const TeamMain = sectionRegistry['team.main']
   const TeamInvitations = sectionRegistry['team.invitations']
   const IntegrationsMain = sectionRegistry['integrations.main']
-  const IntegrationStatusPage = sectionRegistry['integrations.status']
-  const MessagesMainPage = sectionRegistry['messages.main']
+  const IntegrationStatusMain = sectionRegistry['integrations.status']
+  const MessagesMain = sectionRegistry['messages.main']
   const ItemsMain = sectionRegistry['item.main']
   const VehiclesMain = sectionRegistry['vehicle.main']
   const FacilitiesMain = sectionRegistry['facility.main']
   const PrintDocumentMain = sectionRegistry['printDocument.main']
   const ExternalFormAccess = sectionRegistry['externalForm.access']
+
   return (
     <SettingsProvider>
       <Routes>
@@ -43,8 +44,8 @@ export const SettingsPage = () => {
           <Route path="team" element={<TeamMain />} />
           <Route path="team/invitations" element={<TeamInvitations />} />
           <Route path="integrations" element={<IntegrationsMain />} />
-          <Route path="integrations/status" element={<IntegrationStatusPage />} />
-          <Route path="messages" element={<MessagesMainPage />} />
+          <Route path="integrations/status" element={<IntegrationStatusMain />} />
+          <Route path="messages" element={<MessagesMain />} />
           <Route path="items" element={<ItemsMain />} />
           <Route path="vehicles" element={<VehiclesMain />} />
           <Route path="facilities" element={<FacilitiesMain />} />

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -6,6 +6,7 @@ import { BackArrowIcon2 } from "@/assets/icons";
 import { apiClient } from "@/lib/api/ApiClient";
 
 import type { SectionKey } from "../registry/sectionRegistry";
+import { SettingsSectionSkeleton } from "../components/SettingsSectionSkeleton";
 
 type SettingsSections = {
   key: SectionKey | "no-section";
@@ -172,7 +173,9 @@ export const SettingsDesktopView = () => {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="flex h-full w-full min-h-0 flex-col bg-[var(--color-page)]"
           >
-            <Outlet />
+            <Suspense fallback={<SettingsSectionSkeleton />}>
+              <Outlet />
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>

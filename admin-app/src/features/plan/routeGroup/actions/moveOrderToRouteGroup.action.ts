@@ -91,8 +91,25 @@ const applyOptimisticMutation = (
   sourceRouteGroupId: number,
   targetRouteGroupId: number,
 ) => {
+  const targetRouteGroup = selectRouteGroupByServerId(targetRouteGroupId)(
+    useRouteGroupStore.getState(),
+  );
+  const targetPlanId = targetRouteGroup?.route_plan_id ?? null;
   const orderState = useOrderStore.getState();
   const stopState = useRouteSolutionStopStore.getState();
+
+  if (typeof targetPlanId === "number" && Number.isFinite(targetPlanId)) {
+    const patchedClientIds = orderIds
+      .map((orderId) => orderState.idIndex[orderId])
+      .filter((clientId): clientId is string => Boolean(clientId && orderState.byClientId[clientId]));
+
+    if (patchedClientIds.length > 0) {
+      orderState.patchMany(patchedClientIds, {
+        delivery_plan_id: targetPlanId,
+        order_plan_objective: "local_delivery",
+      });
+    }
+  }
 
   orderIds.forEach((orderId) => {
     const clientId = orderState.idIndex[orderId];

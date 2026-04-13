@@ -10,7 +10,7 @@ import { BasicButton } from "@/shared/buttons/BasicButton";
 export const SmsMessageMainPage = (_: StackComponentProps<undefined>) => {
   const hasTwilioIntegration = useIsIntegrationActive("twilio");
   const navigate = useNavigate();
-  if (!hasTwilioIntegration) {
+  if (hasTwilioIntegration) {
     return (
       <div className="flex h-full w-full items-start px-6 py-6 text-sm text-[var(--color-muted)]">
         <div className="admin-glass-panel-strong max-h-100 flex max-w-2xl flex-col items-start gap-6 rounded-[28px] p-8 shadow-none">

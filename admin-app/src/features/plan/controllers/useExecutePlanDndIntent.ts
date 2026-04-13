@@ -62,6 +62,7 @@ export const useExecutePlanDndIntent = () => {
         planId: deliveryPlan.id,
         planType: "local_delivery",
         selection: intent.selection,
+        showIncomingRouteGroupPlaceholders: intent.origin === "route_group",
       });
       return { droppedPlanClientId: intent.planClientId, success };
     } else if (intent.kind === "MOVE_ORDER_TO_ROUTE_GROUP") {

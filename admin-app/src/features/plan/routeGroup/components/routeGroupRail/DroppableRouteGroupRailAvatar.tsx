@@ -1,6 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 
 import { useDroppableRouteGroupTargetHighlight } from "@/features/plan/dnd/controllers/useDroppableTargetHighlight.controller";
+import { useIncomingRouteGroupPulseSequence } from "@/features/plan/routeGroup/store/routeGroupIncomingPulse.store";
 
 import { RouteGroupRailAvatar } from "./RouteGroupRailAvatar";
 import type { RouteGroupRailItem } from "./types";
@@ -22,6 +23,9 @@ export const DroppableRouteGroupRailAvatar = ({ item, onClick }: Props) => {
     isOver,
     targetRouteGroupId: item.route_group_id,
   });
+  const pulseSequence = useIncomingRouteGroupPulseSequence(
+    item.route_group_id,
+  );
 
   return (
     <div ref={setNodeRef}>
@@ -29,6 +33,7 @@ export const DroppableRouteGroupRailAvatar = ({ item, onClick }: Props) => {
         item={item}
         onClick={onClick}
         isDropTarget={shouldHighlightDropTarget}
+        pulseSequence={pulseSequence}
       />
     </div>
   );

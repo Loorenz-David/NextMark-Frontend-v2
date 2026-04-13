@@ -126,7 +126,7 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
             }
           : undefined
       }
-      className="pointer-events-auto relative flex min-h-[150px] w-full flex-col rounded-2xl border border-white/45 bg-black/28 p-4 pt-3 text-left text-sm text-white backdrop-blur-md transition-colors hover:bg-black/34"
+      className="admin-backdrop-blur-md pointer-events-auto relative flex min-h-[150px] w-full flex-col rounded-2xl border border-white/45 bg-black/28 p-4 pt-3 text-left text-sm text-white transition-colors hover:bg-black/34"
     >
       <ChevronDownIcon className="-rotate-90 absolute right-3 top-[10px] h-4 w-4 text-white/70" />
 

@@ -2,6 +2,11 @@ import type { PropsWithChildren } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { usePopupManager, useSectionManager } from '@/shared/resource-manager/useResourceManager'
+import {
+  createImmediateMessageScheduleDraft,
+  mapMessageScheduleFieldsToDraft,
+  type MessageScheduleDraft,
+} from '@/features/messaging/domain'
 
 import type { EventDefinition } from '../domain/emailEvents'
 import {
@@ -26,6 +31,7 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
   const [activeTrigger, setActiveTrigger] = useState<EventDefinition | null>(null)
   const [enabled, setEnabled] = useState(false) 
   const [permission, setPermission ] = useState(false)
+  const [schedule, setSchedule] = useState<MessageScheduleDraft>(createImmediateMessageScheduleDraft)
   const { existingTemplate, filteredTriggers } = useEmailMessageModel({
     templates,
     searchQuery,
@@ -46,6 +52,10 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
     setEnabled(existingTemplate?.enable ?? false)
   }, [existingTemplate])
 
+  useEffect(() => {
+    setSchedule(mapMessageScheduleFieldsToDraft(existingTemplate, activeTrigger?.key))
+  }, [activeTrigger?.key, existingTemplate])
+
   const saveTemplate = useMemo(
     () => () =>
       activeTrigger
@@ -56,9 +66,10 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
             existing: existingTemplate ?? null,
             ask_permission: permission,
             name: activeTrigger.label,
+            schedule,
           })
         : Promise.resolve(false),
-    [activeTrigger, editorValue, enabled, existingTemplate, persistTemplate],
+    [activeTrigger, editorValue, enabled, existingTemplate, permission, persistTemplate, schedule],
   )
 
   const contextValue: EmailMessageContextValue = useMemo(
@@ -75,6 +86,8 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
       setEnabled,
       setPermission,
       permission,
+      schedule,
+      setSchedule,
       value: editorValue,
       setValue,
       saveTemplate,
@@ -84,8 +97,10 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
       editorValue,
       enabled,
       filteredTriggers,
+      permission,
       popupManager,
       saveTemplate,
+      schedule,
       searchQuery,
       sectionManager,
       setValue,

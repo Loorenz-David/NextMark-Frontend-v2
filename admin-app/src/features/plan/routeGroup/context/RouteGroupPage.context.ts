@@ -33,6 +33,7 @@ export type RouteGroupPageStateContextValue = {
   isSelectedSolutionOptimized: boolean
   routeSolutionId: number | null
   routeSolutionStops: RouteSolutionStop[]
+  incomingPendingOrderPlaceholderKeys: string[]
   boundaryLocations: {
     start: BoundaryLocationMeta
     end: BoundaryLocationMeta

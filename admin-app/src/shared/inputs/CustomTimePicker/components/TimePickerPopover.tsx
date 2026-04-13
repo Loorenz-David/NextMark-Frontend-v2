@@ -9,6 +9,7 @@ type TimePickerPopoverProps = {
   children: ReactNode
   width: number
   height: number
+  renderInPortal?: boolean
 }
 
 export const TimePickerPopover = ({
@@ -18,6 +19,7 @@ export const TimePickerPopover = ({
   children,
   width,
   height,
+  renderInPortal = true,
 }: TimePickerPopoverProps) => {
   return (
     <FloatingPopover
@@ -27,8 +29,8 @@ export const TimePickerPopover = ({
       classes="w-full"
       offSetNum={6}
       crossOffSetNum={0}
-      renderInPortal
-      floatingClassName="z-[220]"
+      renderInPortal={renderInPortal}
+      floatingClassName={renderInPortal ? 'z-[220]' : 'z-[220]'}
     >
       <div
         className="admin-glass-popover rounded-xl border border-[var(--color-border-accent)] shadow-2xl"

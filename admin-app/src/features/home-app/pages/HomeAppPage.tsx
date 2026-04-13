@@ -1,10 +1,24 @@
+import { lazy, Suspense } from 'react'
+
 import { useMobile } from '@/app/contexts/MobileContext'
 import { HomeRouteOperationsPage } from '@/features/home-route-operations'
-import { HomeStorePickupPage } from '@/features/home-store-pickup/pages/HomeStorePickupPage'
-import { HomeInternationalShippingPage } from '@/features/home-international-shipping/pages/HomeInternationalShippingPage'
+import { WorkspaceSkeleton } from '../components/WorkspaceSkeleton'
 import { HomeAppProvider, useHomeApp } from '../providers/HomeAppProvider'
 import { HomeAppManagersProvider } from '../providers/HomeAppManagersProvider'
 import { HomeDesktopHeader } from '../components/HomeDesktopHeader'
+
+const HomeStorePickupPage = lazy(() =>
+  import('@/features/home-store-pickup/pages/HomeStorePickupPage').then((module) => ({
+    default: module.HomeStorePickupPage,
+  })),
+)
+const HomeInternationalShippingPage = lazy(() =>
+  import('@/features/home-international-shipping/pages/HomeInternationalShippingPage').then(
+    (module) => ({
+      default: module.HomeInternationalShippingPage,
+    }),
+  ),
+)
 
 export function Home() {
   return (
@@ -35,12 +49,13 @@ function HomeAppShell() {
 }
 
 function ActiveWorkspaceView({ workspace }: { workspace: ReturnType<typeof useHomeApp>['activeWorkspace'] }) {
-  switch (workspace) {
-    case 'route-operations':
-      return <HomeRouteOperationsPage />
-    case 'store-pickup':
-      return <HomeStorePickupPage />
-    case 'international-shipping':
-      return <HomeInternationalShippingPage />
+  if (workspace === 'route-operations') {
+    return <HomeRouteOperationsPage />
   }
+
+  return (
+    <Suspense fallback={<WorkspaceSkeleton />}>
+      {workspace === 'store-pickup' ? <HomeStorePickupPage /> : <HomeInternationalShippingPage />}
+    </Suspense>
+  )
 }

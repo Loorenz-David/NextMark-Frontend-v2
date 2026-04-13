@@ -91,7 +91,7 @@ export const RouteGroupOrderGroupCard = ({
                     }
                   >
                     <div
-                      className="w-56 rounded-[20px] border border-amber-300/25 bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.06))] p-3 text-[0.85rem] text-amber-50/95 shadow-[0_18px_40px_rgba(0,0,0,0.26)] backdrop-blur-xl"
+                      className="admin-backdrop-blur-xl w-56 rounded-[20px] border border-amber-300/25 bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.06))] p-3 text-[0.85rem] text-amber-50/95 shadow-[0_18px_40px_rgba(0,0,0,0.26)]"
                       onMouseEnter={() => setWarningOpen(true)}
                       onMouseLeave={() => setWarningOpen(false)}
                     >

@@ -29,6 +29,7 @@ export type PlanDndIntent =
       kind: "ASSIGN_ORDERS_TO_PLAN_BATCH";
       selection: OrderBatchSelectionPayload;
       planClientId: string;
+      origin?: "order_list" | "route_group";
     }
   | null;
 

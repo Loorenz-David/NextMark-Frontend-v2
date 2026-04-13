@@ -17,31 +17,124 @@ import { normalizeOrderStopResponse } from "../domain/orderStopResponse";
 import { getQueryFilters, getQuerySearch } from "../store/orderQuery.store";
 import { useOrderSelectionStore } from "../store/orderSelection.store";
 import { setOrder } from "../store/order.store";
-import {
-  createOrderOptimisticSnapshot,
-  restoreOrderOptimisticSnapshot,
-} from "../utils/orderOptimisticSnapshot";
 import type { OrderBatchSelectionPayload } from "../types/orderBatchSelection";
-import { useOrderPlanPatchController } from "./orderPlanPatch.controller";
 import { syncRouteGroupSummaries } from "@/features/plan/routeGroup/flows/syncRouteGroupSummaries.flow";
 import { selectOrderByServerId, useOrderStore } from "../store/order.store";
 import { markRouteGroupOverviewFreshAfter } from "@/features/plan/routeGroup/store/routeGroupOverviewFreshness.store";
 import { applyOrderBatchMoveStateSync } from "@/features/order/actions/applyOrderBatchMoveStateSync.action";
 import {
+  clearIncomingRouteGroupOrderPlaceholders,
+  registerIncomingRouteGroupOrderPlaceholders,
+} from "@/features/plan/routeGroup/store/routeGroupIncomingOrderPlaceholder.store";
+import {
+  selectRouteGroupByServerId,
+  useRouteGroupStore,
+} from "@/features/plan/routeGroup/store/routeGroup.slice";
+import {
+  selectRouteSolutionByServerId,
+  useRouteSolutionStore,
+} from "@/features/plan/routeGroup/store/routeSolution.store";
+import { triggerIncomingRouteGroupPulse } from "@/features/plan/routeGroup/store/routeGroupIncomingPulse.store";
+import {
   collectRouteSolutionStopsByOrderIds,
   removeRouteSolutionStopsByOrderIds,
+  restoreCollectedRouteSolutionStops,
 } from "@/features/plan/routeGroup/actions/optimisticRouteSolutionStopRemoval.action";
+import {
+  applyOptimisticOrderPlanAssignment,
+  collectAffectedRouteGroupIdsFromAssignments,
+  collectOptimisticOrderPlanAssignmentEntries,
+  restoreOptimisticOrderPlanAssignment,
+} from "../utils/orderPlanAssignmentOptimistic";
 
 type UpdateOrdersDeliveryPlanBatchParams = {
   planId: number;
   planType: string;
   selection: OrderBatchSelectionPayload;
+  showIncomingRouteGroupPlaceholders?: boolean;
+};
+
+const resolveBundleDestinationRouteGroupId = (bundle: {
+  order?: { route_group_id?: number | null } | null;
+  route_solution?: Array<{
+    id?: number | null;
+    route_group_id?: number | null;
+  }> | null;
+  order_stops?:
+    | Record<string, { route_solution_id?: number | null }>
+    | Array<{ route_solution_id?: number | null }>
+    | null;
+}) => {
+  const orderRouteGroupId = bundle.order?.route_group_id;
+  if (typeof orderRouteGroupId === "number") {
+    return orderRouteGroupId;
+  }
+
+  const changedSolutions = Array.isArray(bundle.route_solution)
+    ? bundle.route_solution
+    : [];
+  const changedSolutionRouteGroupIds = Array.from(
+    new Set(
+      changedSolutions
+        .map((solution) => solution?.route_group_id)
+        .filter(
+          (routeGroupId): routeGroupId is number =>
+            typeof routeGroupId === "number" && Number.isFinite(routeGroupId),
+        ),
+    ),
+  );
+  if (changedSolutionRouteGroupIds.length === 1) {
+    return changedSolutionRouteGroupIds[0];
+  }
+
+  const stopValues = Array.isArray(bundle.order_stops)
+    ? bundle.order_stops
+    : Object.values(bundle.order_stops ?? {});
+  const changedSolutionById = new Map(
+    changedSolutions
+      .filter(
+        (
+          solution,
+        ): solution is { id: number; route_group_id?: number | null } =>
+          typeof solution?.id === "number",
+      )
+      .map((solution) => [solution.id, solution]),
+  );
+  const routeGroupIdsFromStops = Array.from(
+    new Set(
+      stopValues
+        .map((stop) => {
+          const routeSolutionId = stop?.route_solution_id;
+          if (typeof routeSolutionId !== "number") {
+            return null;
+          }
+
+          const changedSolution = changedSolutionById.get(routeSolutionId);
+          if (typeof changedSolution?.route_group_id === "number") {
+            return changedSolution.route_group_id;
+          }
+
+          return selectRouteSolutionByServerId(routeSolutionId)(
+            useRouteSolutionStore.getState(),
+          )?.route_group_id ?? null;
+        })
+        .filter(
+          (routeGroupId): routeGroupId is number =>
+            typeof routeGroupId === "number" && Number.isFinite(routeGroupId),
+        ),
+    ),
+  );
+
+  if (routeGroupIdsFromStops.length === 1) {
+    return routeGroupIdsFromStops[0];
+  }
+
+  return null;
 };
 
 export const useOrderBatchDeliveryPlanController = () => {
   const updateOrdersDeliveryPlanBatchApi = useUpdateOrdersDeliveryPlanBatch();
   const { loadOrders } = useOrderFlow();
-  const { patchOrdersPlanByServerIds } = useOrderPlanPatchController();
   const { showMessage } = useMessageHandler();
 
   const updateOrdersDeliveryPlanBatch = useCallback(
@@ -49,21 +142,34 @@ export const useOrderBatchDeliveryPlanController = () => {
       planId,
       planType,
       selection,
+      showIncomingRouteGroupPlaceholders = false,
     }: UpdateOrdersDeliveryPlanBatchParams) => {
       const state = useOrderSelectionStore.getState();
       const optimisticTargetIds = resolveBatchTargetOrderIds(selection, state);
+      const placeholderToken = showIncomingRouteGroupPlaceholders
+        ? registerIncomingRouteGroupOrderPlaceholders(
+            planId,
+            optimisticTargetIds.length,
+          )
+        : null;
+      const assignmentEntries = collectOptimisticOrderPlanAssignmentEntries(
+        optimisticTargetIds,
+      );
       return optimisticTransaction({
         snapshot: () => ({
-          ...createOrderOptimisticSnapshot(),
+          assignmentEntries,
           removedStops: collectRouteSolutionStopsByOrderIds(optimisticTargetIds),
         }),
         mutate: () => {
-          patchOrdersPlanByServerIds({
-            orderServerIds: optimisticTargetIds,
-            planId,
+          applyOptimisticOrderPlanAssignment(assignmentEntries, {
+            targetPlanId: planId,
             planType,
+            clearRouteGroup: true,
           });
           removeRouteSolutionStopsByOrderIds(optimisticTargetIds);
+          syncRouteGroupSummaries(
+            collectAffectedRouteGroupIdsFromAssignments(assignmentEntries),
+          );
         },
         request: async () => {
           const response = await updateOrdersDeliveryPlanBatchApi(
@@ -77,6 +183,7 @@ export const useOrderBatchDeliveryPlanController = () => {
           const resolvedCount = payload?.resolved_count ?? 0;
           const updatedCount = payload?.updated_count ?? 0;
           const affectedRouteGroupIds = new Set<number>();
+          const destinationRouteGroupIdsToPulse = new Set<number>();
 
           bundles.forEach((bundle) => {
             const updatedOrder = bundle?.order;
@@ -108,6 +215,16 @@ export const useOrderBatchDeliveryPlanController = () => {
                 upsertRouteSolution(solution);
               }
             });
+
+            const destinationRouteGroupId = resolveBundleDestinationRouteGroupId({
+              order: updatedOrder,
+              route_solution: bundle.route_solution,
+              order_stops: bundle.order_stops,
+            });
+
+            if (typeof destinationRouteGroupId === "number") {
+              destinationRouteGroupIdsToPulse.add(destinationRouteGroupId);
+            }
           });
 
           const syncResult = applyOrderBatchMoveStateSync(payload);
@@ -138,9 +255,32 @@ export const useOrderBatchDeliveryPlanController = () => {
           }
 
           useOrderSelectionStore.getState().disableSelectionMode();
+          clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
+          destinationRouteGroupIdsToPulse.forEach((routeGroupId) => {
+            triggerIncomingRouteGroupPulse(routeGroupId);
+          });
         },
-        rollback: restoreOrderOptimisticSnapshot,
+        rollback: (snapshot) => {
+          clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
+          const typedSnapshot = snapshot as {
+            assignmentEntries: ReturnType<
+              typeof collectOptimisticOrderPlanAssignmentEntries
+            >;
+            removedStops: ReturnType<typeof collectRouteSolutionStopsByOrderIds>;
+          };
+
+          restoreOptimisticOrderPlanAssignment(
+            typedSnapshot.assignmentEntries ?? [],
+          );
+          restoreCollectedRouteSolutionStops(typedSnapshot.removedStops ?? []);
+          syncRouteGroupSummaries(
+            collectAffectedRouteGroupIdsFromAssignments(
+              typedSnapshot.assignmentEntries ?? [],
+            ),
+          );
+        },
         onError: (error) => {
+          clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
           const message =
             error instanceof ApiError
               ? error.message
@@ -152,7 +292,6 @@ export const useOrderBatchDeliveryPlanController = () => {
     },
     [
       loadOrders,
-      patchOrdersPlanByServerIds,
       showMessage,
       updateOrdersDeliveryPlanBatchApi,
     ],

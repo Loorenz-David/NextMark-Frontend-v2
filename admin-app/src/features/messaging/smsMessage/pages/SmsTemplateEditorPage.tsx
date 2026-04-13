@@ -6,6 +6,7 @@ import {
   MESSAGE_TEMPLATE_ENABLED_INFO,
   MESSAGE_TEMPLATE_PERMISSION_INFO,
 } from '@/features/messaging/info/templateToggles.info'
+import { MessageScheduleControl } from '@/features/messaging/components'
 import { SmsTemplateEditor } from '../components/SmsTemplateEditor'
 import { useSmsMessageContext } from '../context/useSmsMessageContext'
 
@@ -17,6 +18,8 @@ export const SmsTemplateEditorPage = () => {
     permission,
     setPermission,
     setEnabled,
+    schedule,
+    setSchedule,
     value,
     setValue,
     saveTemplate,
@@ -40,6 +43,11 @@ export const SmsTemplateEditorPage = () => {
           Back
         </BasicButton>
         <div className="flex items-end gap-10">
+          <MessageScheduleControl
+            eventKey={activeTrigger.key}
+            value={schedule}
+            onApply={setSchedule}
+          />
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">

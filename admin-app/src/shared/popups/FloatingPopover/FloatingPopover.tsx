@@ -50,6 +50,8 @@ export const FloatingPopover = ({
   strategy,
   placement,
 }: PropsConfrimPopup) => {
+  const isElementNode = (value: unknown): value is Element => value instanceof Element
+
   const { refs, floatingStyles, context } = useFloating({
     open: open,
     onOpenChange: onOpenChange,
@@ -74,6 +76,27 @@ export const FloatingPopover = ({
   });
   const dismiss = useDismiss(context, {
     outsidePressEvent: outsidePressEvent ?? "mousedown",
+    outsidePress: (event) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) {
+        return true;
+      }
+
+      const isInsideCurrentPopover =
+        (isElementNode(refs.reference.current) && refs.reference.current.contains(target)) ||
+        (isElementNode(refs.floating.current) && refs.floating.current.contains(target));
+
+      if (isInsideCurrentPopover) {
+        return false;
+      }
+
+      // Nested floating popovers should not dismiss each other during interaction.
+      if (target.closest("[data-floating-popover-root]")) {
+        return false;
+      }
+
+      return true;
+    },
   });
   const { getReferenceProps, getFloatingProps } = useInteractions([dismiss]);
 
@@ -84,6 +107,7 @@ export const FloatingPopover = ({
           ref={refs.setFloating}
           style={floatingStyles}
           {...getFloatingProps()}
+          data-floating-popover-root
           className={`${renderInPortal ? "z-[130]" : "z-50"} ${floatingClassName ?? ""}`.trim()}
           onClick={(e) => {
             if (!closeOnInsideClick) return;
@@ -109,6 +133,7 @@ export const FloatingPopover = ({
       <div
         ref={refs.setReference}
         {...getReferenceProps()}
+        data-floating-popover-root
         className={`${referenceCLassName ?? ""} h-full w-full`.trim()}
       >
         {reference}

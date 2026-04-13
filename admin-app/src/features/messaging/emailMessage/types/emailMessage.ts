@@ -1,5 +1,6 @@
 
 import type { EmailTemplateValue } from './emailTemplate'
+import type { MessageSchedulePayloadFields, MessageScheduleUnit } from '@/features/messaging/domain'
 
 export type TemplateValue = EmailTemplateValue | Record<string, unknown> | unknown[] | null
 
@@ -11,6 +12,8 @@ export type EmailMessageTemplate = {
   event: string
   enable?: boolean | null
   ask_permission?: boolean | null
+  schedule_offset_value?: number | null
+  schedule_offset_unit?: MessageScheduleUnit | null
   template?: TemplateValue
   content?: TemplateValue
   channel: 'email'
@@ -30,4 +33,4 @@ export type EmailMessageTemplatePayload = {
   enable?: boolean | null
   template?: TemplateValue
   channel: 'email'
-}
+} & MessageSchedulePayloadFields

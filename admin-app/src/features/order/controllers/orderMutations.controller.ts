@@ -17,7 +17,6 @@ import {
   setOrder,
   selectOrderByClientId,
   selectOrderByServerId,
-  setOrderPlanId,
   useOrderStore,
 } from "../store/order.store";
 import {
@@ -31,6 +30,11 @@ import {
   removeRouteSolutionStopsByOrderIds,
   restoreCollectedRouteSolutionStops,
 } from "@/features/plan/routeGroup/actions/optimisticRouteSolutionStopRemoval.action";
+import {
+  applyOptimisticOrderPlanAssignment,
+  collectOptimisticOrderPlanAssignmentEntries,
+  restoreOptimisticOrderPlanAssignment,
+} from "../utils/orderPlanAssignmentOptimistic";
 
 export const useOrderMutations = () => {
   const updateOrderDeliveryPlanApi = useUpdateOrderDeliveryPlanApi();
@@ -141,9 +145,13 @@ export const useOrderMutations = () => {
             }
           : null;
 
+      const assignmentEntries = collectOptimisticOrderPlanAssignmentEntries([
+        orderServerId,
+      ]);
+
       return optimisticTransaction({
         snapshot: () => ({
-          previousPlanId: order.delivery_plan_id ?? null,
+          assignmentEntries,
           previousStops: selectRouteSolutionStopsByOrderId(orderServerId)(
             useRouteSolutionStopStore.getState(),
           ),
@@ -153,7 +161,11 @@ export const useOrderMutations = () => {
           newPlanTotals: newPlanTotalSnapshot,
         }),
         mutate: () => {
-          setOrderPlanId(order.client_id, parsedPlanId);
+          applyOptimisticOrderPlanAssignment(assignmentEntries, {
+            targetPlanId: parsedPlanId,
+            planType: "local_delivery",
+            clearRouteGroup: true,
+          });
           removeRouteSolutionStopsByOrderIds([orderServerId]);
 
           // Optimistic: subtract this order's weight/volume/items from the old plan
@@ -261,21 +273,23 @@ export const useOrderMutations = () => {
         },
         rollback: (snapshot) => {
           const {
-            previousPlanId,
+            assignmentEntries: snapshotAssignmentEntries,
             previousStops,
             oldPlanId: snapOldPlanId,
             oldPlanTotals: snapOldTotals,
             newPlanId: snapNewPlanId,
             newPlanTotals: snapNewTotals,
           } = snapshot as {
-            previousPlanId: number | null;
+            assignmentEntries: ReturnType<
+              typeof collectOptimisticOrderPlanAssignmentEntries
+            >;
             previousStops: RouteSolutionStop[];
             oldPlanId: number | null;
             oldPlanTotals: PlanTotalsSnapshot | null;
             newPlanId: number;
             newPlanTotals: PlanTotalsSnapshot | null;
           };
-          setOrderPlanId(order.client_id, previousPlanId);
+          restoreOptimisticOrderPlanAssignment(snapshotAssignmentEntries ?? []);
           if (previousStops.length) {
             restoreCollectedRouteSolutionStops(previousStops);
           }

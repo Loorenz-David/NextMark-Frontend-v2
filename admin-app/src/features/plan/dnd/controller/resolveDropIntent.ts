@@ -268,6 +268,7 @@ export const resolveDropIntent = ({
           kind: "ASSIGN_ORDERS_TO_PLAN_BATCH",
           planClientId: overId,
           selection: buildSelectionBatchPayload(selectionState),
+          origin: "order_list",
         },
       };
     }
@@ -307,6 +308,7 @@ export const resolveDropIntent = ({
         kind: "ASSIGN_ORDERS_TO_PLAN_BATCH",
         planClientId: overId,
         selection: buildManualBatchSelection(manualIds),
+        origin: "order_list",
       },
     };
   }
@@ -367,6 +369,7 @@ export const resolveDropIntent = ({
           kind: "ASSIGN_ORDERS_TO_PLAN_BATCH",
           planClientId: overId,
           selection: buildManualBatchSelection(manualIds),
+          origin: "route_group",
         },
       };
     }
@@ -415,6 +418,7 @@ export const resolveDropIntent = ({
           kind: "ASSIGN_ORDERS_TO_PLAN_BATCH",
           planClientId: targetPlanClientId,
           selection: buildManualBatchSelection(manualIds),
+          origin: "route_group",
         },
       };
     }

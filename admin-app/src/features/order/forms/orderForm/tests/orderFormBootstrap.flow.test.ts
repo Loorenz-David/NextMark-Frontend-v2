@@ -67,6 +67,22 @@ export const runOrderFormBootstrapFlowTests = () => {
     "edit state should keep existing route group id",
   );
 
+  const restoredState = buildOrderFormInitialState({
+    mode: "edit",
+    order: null,
+    payloadDeliveryPlanId: null,
+    payloadRouteGroupId: null,
+    payloadRestoreFormState: {
+      ...createState,
+      order_note: { content: "Legacy note" } as unknown as string,
+    },
+  });
+
+  assert(
+    restoredState.order_note === "Legacy note",
+    "restored state should coerce legacy note objects into draft text",
+  );
+
   const keyA = buildOrderFormReinitKey({
     mode: "edit",
     payloadClientId: "client-1",

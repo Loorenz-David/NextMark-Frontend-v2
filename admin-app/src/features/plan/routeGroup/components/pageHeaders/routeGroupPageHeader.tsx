@@ -28,7 +28,7 @@ type RouteGroupsPageHeaderProps = {
 };
 
 const actionBarShellClassName =
-  "border-b border-[rgba(255,255,255,0.08)] bg-[rgba(14,22,23,0.72)] px-5 pb-4 pt-3 backdrop-blur-[28px] saturate-[125%] supports-[backdrop-filter]:bg-[rgba(14,22,23,0.62)]";
+  "admin-glass-action-bar border-b border-[rgba(255,255,255,0.08)] px-5 pb-4 pt-3";
 
 type RouteGroupHeaderActionBarProps = {
   showOptimizeRow: boolean;

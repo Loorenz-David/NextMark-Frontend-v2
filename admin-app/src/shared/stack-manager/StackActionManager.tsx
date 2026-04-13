@@ -1,5 +1,5 @@
 import { createElement,  } from 'react'
-import type { ComponentType, ReactNode } from 'react'
+import type { ComponentType, LazyExoticComponent, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { v4 as uuidv4 } from "uuid"
 
@@ -35,7 +35,7 @@ export interface ActionManagerOptions<
 > {
   blueprint?: ComponentType<any> | null
   stackRegistry: {
-    [K in keyof TPayloadMap]: ComponentType<any>
+    [K in keyof TPayloadMap]: StackRegistryComponent
   }
   closeDelayMs?: number
 }
@@ -58,13 +58,15 @@ export type RenderStackProps ={
   width?: number
 }
 
+type StackRegistryComponent = ComponentType<any> | LazyExoticComponent<ComponentType<any>>
+
 export class StackActionManager <
   TPayloadMap extends Record<PropertyKey, any>
 >{
   private stackEntries: StackEntryUnion<TPayloadMap>[] = []
   private listeners = new Set<() => void>()
   private readonly blueprint?: ComponentType<any> | null
-  private readonly stackRegistry:{[K in keyof TPayloadMap]: ComponentType<any>}
+  private readonly stackRegistry:{[K in keyof TPayloadMap]: StackRegistryComponent}
   private readonly closeDelayMs: number
 
   constructor(options: ActionManagerOptions<TPayloadMap>) {
@@ -263,7 +265,7 @@ export class StackActionManager <
 
     if (variant == 'dynamicSectionPanels'){
       return this.stackEntries.map((entry, index) => {
-          const component = this.stackRegistry[entry.key]
+          const component = this.stackRegistry[entry.key] as ComponentType<any>
           const isFirst = index === 0 
           const panelWidth = typeof width === 'number' && width > 0 ? width : null
           const baseClass = panelWidth == null
@@ -319,7 +321,7 @@ export class StackActionManager <
     else{
 
        return this.stackEntries.map((entry, index) => {
-        const component = this.stackRegistry[entry.key]
+        const component = this.stackRegistry[entry.key] as ComponentType<any>
         const RenderComp = createElement(component, {
             payload: entry.payload,
             onClose: () => this.close(entry.id),

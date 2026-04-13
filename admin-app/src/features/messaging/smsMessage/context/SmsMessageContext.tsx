@@ -3,6 +3,7 @@ import { createContext } from 'react'
 import type { Descendant } from 'slate'
 
 import type { StackActionManager } from '@/shared/stack-manager/StackActionManager'
+import type { MessageScheduleDraft } from '@/features/messaging/domain'
 
 import type { EventDefinition } from '../domain/smsEvents'
 import type { SmsMessageTemplate } from '../types/smsMessage'
@@ -25,6 +26,8 @@ export type SmsMessageContextValue = {
   setEnabled: (value: boolean) => void
   setPermission: (value: boolean) => void
   permission: boolean
+  schedule: MessageScheduleDraft
+  setSchedule: (value: MessageScheduleDraft) => void
   value: Descendant[]
   setValue: (value: Descendant[]) => void
   saveTemplate: () => Promise<boolean>

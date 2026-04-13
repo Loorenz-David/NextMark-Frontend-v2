@@ -5,6 +5,8 @@ import { BasicButton } from "@/shared/buttons/BasicButton";
 import { TimeColumn } from "./components/TimeColumn";
 import { TimePickerPopover } from "./components/TimePickerPopover";
 
+const SCROLL_PICKER_MAX_OPTIONS = 500;
+
 type CustomNumberPickerProps = {
   selectedValue: number | null | undefined;
   onChange: (value: number) => void;
@@ -16,6 +18,7 @@ type CustomNumberPickerProps = {
   containerClassName?: string;
   popoverWidth?: number;
   popoverHeight?: number;
+  renderInPortal?: boolean;
 };
 
 const clamp = (value: number, min: number, max: number) =>
@@ -40,6 +43,7 @@ export const CustomNumberPicker = ({
   containerClassName = "w-full h-10  rounded-xl border border-[var(--color-border)] bg-[var(--color-page)]  text-sm text-[var(--color-text)]",
   popoverWidth = 220,
   popoverHeight = 260,
+  renderInPortal = true,
 }: CustomNumberPickerProps) => {
   const range = useMemo(() => sanitizeRange(min, max), [min, max]);
   const safeSelected = useMemo(
@@ -47,13 +51,20 @@ export const CustomNumberPicker = ({
     [selectedValue, range.max, range.min],
   );
   const values = useMemo(
-    () =>
-      Array.from(
-        { length: range.max - range.min + 1 },
+    () => {
+      const totalValues = range.max - range.min + 1;
+      if (totalValues > SCROLL_PICKER_MAX_OPTIONS) {
+        return [];
+      }
+
+      return Array.from(
+        { length: totalValues },
         (_, index) => range.min + index,
-      ),
+      );
+    },
     [range.max, range.min],
   );
+  const usesLargeRangeInput = range.max - range.min + 1 > SCROLL_PICKER_MAX_OPTIONS;
 
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(safeSelected);
@@ -118,16 +129,43 @@ export const CustomNumberPicker = ({
       reference={inputReference}
       width={popoverWidth}
       height={popoverHeight}
+      renderInPortal={renderInPortal}
     >
       <div className="flex flex-col gap-3 p-3">
-        <div className="grid grid-cols-1 gap-2">
-          <TimeColumn
-            label={label}
-            values={values}
-            value={draft}
-            onChange={setDraft}
-          />
-        </div>
+        {usesLargeRangeInput ? (
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+              {label}
+            </label>
+            <input
+              type="number"
+              min={range.min}
+              max={range.max}
+              step={1}
+              value={draft}
+              onChange={(event) => {
+                const nextValue = Number(event.target.value);
+                if (!Number.isFinite(nextValue)) {
+                  return;
+                }
+                setDraft(clamp(Math.trunc(nextValue), range.min, range.max));
+              }}
+              className="h-11 w-full rounded-xl border border-[var(--color-border-accent)] bg-[var(--color-page)] px-3 text-sm text-[var(--color-text)] outline-none"
+            />
+            <p className="text-xs text-[var(--color-muted)]">
+              Enter a value between {range.min} and {range.max}.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-2">
+            <TimeColumn
+              label={label}
+              values={values}
+              value={draft}
+              onChange={setDraft}
+            />
+          </div>
+        )}
       </div>
 
       <div

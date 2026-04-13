@@ -1,6 +1,7 @@
 import { DEFAULT_PREFIX, getRememberedPhonePrefix } from '@/constants/dropDownOptions'
 import { buildClientId } from '@/lib/utils/clientId'
 import type { Phone } from '@/types/phone'
+import { coerceOrderFormNoteToDraft } from '../domain/orderFormNote'
 
 import type { Order } from '../../../types/order'
 import { sortDeliveryWindowsUtc } from './orderFormDeliveryWindows.flow'
@@ -69,7 +70,7 @@ export const buildInitialOrderForm = ({
   delivery_windows: sortDeliveryWindowsUtc(order?.delivery_windows ?? []),
   delivery_plan_id: order?.delivery_plan_id ?? deliveryPlanId ?? null,
   route_group_id: order?.route_group_id ?? routeGroupId ?? null,
-  order_note: order?.order_notes?.[0] ?? '',
+  order_note: coerceOrderFormNoteToDraft(order?.order_notes),
 })
 
 export const buildOrderFormInitialState = ({
@@ -84,6 +85,7 @@ export const buildOrderFormInitialState = ({
         ...payloadRestoreFormState,
         operation_type: payloadRestoreFormState.operation_type ?? 'dropoff',
         delivery_windows: sortDeliveryWindowsUtc(payloadRestoreFormState.delivery_windows ?? []),
+        order_note: coerceOrderFormNoteToDraft(payloadRestoreFormState.order_note),
       }
     :
   buildInitialOrderForm({

@@ -28,10 +28,25 @@ export const useRouteGroupPageInitializationFlow = (
   const invalidatedFreshAfter = useRouteGroupOverviewFreshAfter(planId);
   const lastRefreshAttemptRef = useRef<string | null>(null);
   const initialSelectionKeyRef = useRef<string | null>(null);
+  const hasHydratedWorkspaceRef = useRef(false);
+
+  useEffect(() => {
+    if (plan != null || routeGroups.length > 0) {
+      hasHydratedWorkspaceRef.current = true;
+      return;
+    }
+
+    if (planId == null) {
+      hasHydratedWorkspaceRef.current = false;
+    }
+  }, [plan, planId, routeGroups.length]);
 
   useEffect(() => {
     if (planId == null || options?.disabled || isFixtureMode) {
       initialSelectionKeyRef.current = null;
+      if (planId == null) {
+        hasHydratedWorkspaceRef.current = false;
+      }
       return;
     }
 
@@ -66,6 +81,15 @@ export const useRouteGroupPageInitializationFlow = (
     }
 
     if (planId == null) {
+      lastRefreshAttemptRef.current = null;
+      return;
+    }
+
+    const wasDeletedAfterHydration =
+      hasHydratedWorkspaceRef.current &&
+      plan == null &&
+      routeGroups.length === 0;
+    if (wasDeletedAfterHydration) {
       lastRefreshAttemptRef.current = null;
       return;
     }

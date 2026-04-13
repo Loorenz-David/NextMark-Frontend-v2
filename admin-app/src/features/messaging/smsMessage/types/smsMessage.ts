@@ -1,4 +1,6 @@
 
+import type { MessageSchedulePayloadFields, MessageScheduleUnit } from '@/features/messaging/domain'
+
 export type TemplateValue = 
   | Record<string, unknown>
   | unknown[]
@@ -11,6 +13,8 @@ export type SmsMessageTemplate = {
   event: string
   enable?: boolean | null
   ask_permission?: boolean | null
+  schedule_offset_value?: number | null
+  schedule_offset_unit?: MessageScheduleUnit | null
   template?: TemplateValue
   content?: TemplateValue
   channel: 'sms'
@@ -30,4 +34,4 @@ export type SmsMessageTemplatePayload = {
   ask_permission?: boolean | null
   template?: TemplateValue
   channel: 'sms'
-}
+} & MessageSchedulePayloadFields
