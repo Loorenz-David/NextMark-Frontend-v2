@@ -53,6 +53,10 @@ export const serializeRouteSolutionForTemplate = (
   let itemCountTotal = 0
   let weightTotal = 0
   let volumeTotal = 0
+  const itemTypeSummary = new Map<
+    string,
+    { item_type: string; quantity: number; total_weight: number; total_volume: number }
+  >()
 
   const orders = stops
     .slice()
@@ -67,9 +71,18 @@ export const serializeRouteSolutionForTemplate = (
       for (const it of items) {
         const q = it.quantity ?? 0
         itemCountTotal += q
+        const itemTypeKey = it.item_type?.trim() || 'Unknown item type'
+        const summaryEntry = itemTypeSummary.get(itemTypeKey) ?? {
+          item_type: itemTypeKey,
+          quantity: 0,
+          total_weight: 0,
+          total_volume: 0,
+        }
+        summaryEntry.quantity += q
 
         if (typeof it.weight === 'number') {
           weightTotal += it.weight * q
+          summaryEntry.total_weight += it.weight * q
         }
 
         if (
@@ -77,13 +90,17 @@ export const serializeRouteSolutionForTemplate = (
           typeof it.dimension_height === 'number' &&
           typeof it.dimension_width === 'number'
         ) {
-          volumeTotal += it.dimension_depth * it.dimension_height * it.dimension_width * q
+          const itemVolume = it.dimension_depth * it.dimension_height * it.dimension_width * q
+          volumeTotal += itemVolume
+          summaryEntry.total_volume += itemVolume
         }
+
+        itemTypeSummary.set(itemTypeKey, summaryEntry)
       }
 
       return {
         stop_order: stop.stop_order ?? null,
-        order_reference_number: order?.reference_number ?? '--',
+        order_scalar_id: order?.order_scalar_id ?? null,
         client_address: formatAddress(order?.client_address),
         expected_arrival_time: formatRouteTime(stop.expected_arrival_time, spansMultipleDays),
         items: items.map((it) => ({
@@ -110,6 +127,10 @@ export const serializeRouteSolutionForTemplate = (
     item_count: itemCountTotal,
     total_weight: weightTotal,
     total_volume: volumeTotal,
+    item_type_summary: Array.from(itemTypeSummary.values()).sort((left, right) => {
+      if (right.quantity !== left.quantity) return right.quantity - left.quantity
+      return left.item_type.localeCompare(right.item_type)
+    }),
     orders,
   }
 }

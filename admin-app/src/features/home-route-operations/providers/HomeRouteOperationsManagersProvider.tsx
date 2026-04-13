@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 
 import { ResourcesManagerProvider } from '@/shared/resource-manager/ResourceManagerContext'
-import { useMap } from '@/shared/map'
+import { preloadMapExtras, useMap } from '@/shared/map'
 import { useMobile } from '@/app/contexts/MobileContext'
 
 import { homeCollisionDetection } from '../dnd/collisionStrategies'
@@ -46,6 +46,30 @@ export function HomeRouteOperationsManagersProvider({ children }: { children: Re
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [handleKeyDown, isMobile])
+
+  useEffect(() => {
+    if (isMobile) {
+      return
+    }
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const handle = window.requestIdleCallback(() => {
+        void preloadMapExtras()
+      })
+
+      return () => {
+        window.cancelIdleCallback(handle)
+      }
+    }
+
+    const timeoutId = globalThis.setTimeout(() => {
+      void preloadMapExtras()
+    }, 300)
+
+    return () => {
+      globalThis.clearTimeout(timeoutId)
+    }
+  }, [isMobile])
 
   const dndController = useRouteOperationsDndController()
 

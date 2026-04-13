@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import svgr from "vite-plugin-svgr";
 import path from "path";
-import { visualizer } from "rollup-plugin-visualizer";
+// import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,13 +11,13 @@ export default defineConfig({
     react(),
     tailwindcss(),
     svgr(),
-    visualizer({
-      filename: "dist/stats.html",
-      template: "treemap", // important
-      gzipSize: true,
-      brotliSize: true,
-      open: true,
-    }),
+    // visualizer({
+    //   filename: "dist/stats.html",
+    //   template: "treemap", // important
+    //   gzipSize: true,
+    //   brotliSize: true,
+    //   open: true,
+    // }),
   ],
 
   build: {
@@ -25,6 +25,18 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (
+            id.includes("/src/shared/map/infrastructure/drawing/") ||
+            id.includes("/src/shared/map/infrastructure/mapExtrasLoader.ts") ||
+            id.includes(
+              "/src/shared/map/infrastructure/markers/ClusterLayerManager",
+            )
+          ) {
+            return "map-extras";
+          }
+          if (id.includes("/packages/ai-panel/")) {
+            return "ai-panel";
+          }
           if (!id.includes("/node_modules/")) return;
 
           if (id.includes("/react/") || id.includes("/react-dom/"))
@@ -34,6 +46,26 @@ export default defineConfig({
           if (id.includes("/jspdf/")) return "docs-export-jspdf";
           if (id.includes("/html2canvas/")) return "docs-export-html2canvas";
           if (id.includes("/socket.io-client/")) return "realtime";
+          if (
+            id.includes("/recharts/") ||
+            id.includes("/d3-") ||
+            id.includes("/victory-vendor/")
+          ) {
+            return "charts";
+          }
+          if (id.includes("/libphonenumber-js/")) return "phone";
+          if (
+            id.includes("/@nextmark/ai-panel/") ||
+            id.includes("/@reduxjs/toolkit/") ||
+            id.includes("/redux/") ||
+            id.includes("/react-redux/") ||
+            id.includes("/redux-thunk/") ||
+            id.includes("/reselect/") ||
+            id.includes("/immer/") ||
+            id.includes("/decimal.js-light/")
+          ) {
+            return "ai-panel";
+          }
           if (id.includes("/lottie-web/") || id.includes("/lottie-react/"))
             return "lottie";
         },
@@ -116,7 +148,7 @@ export default defineConfig({
         find: /^libphonenumber-js$/,
         replacement: path.resolve(
           __dirname,
-          "./node_modules/libphonenumber-js/index.cjs.js",
+          "./node_modules/libphonenumber-js/index.js",
         ),
       },
       {

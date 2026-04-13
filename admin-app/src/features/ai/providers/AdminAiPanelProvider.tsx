@@ -6,6 +6,7 @@ import { AiPanelProvider, type AiActionDescriptor, type AiTransportAdapter } fro
 import { resetQuery, setQueryFilters, setQuerySearch, updateQueryFilters } from '@/features/order/store/orderQuery.store'
 import type { OrderQueryFilters } from '@/features/order/types/orderMeta'
 import { AdminAiBlockRenderer } from '../components/AdminAiBlockRenderer'
+import { AdminAiChartPreloader } from '../components/AdminAiChartPreloader'
 import { adminAiPanelTransport, normalizeV2Response } from '../domain/adminAiPanelAdapter'
 import { mapLegacyAiDataToBlocks } from '../domain/mapLegacyAiDataToBlocks'
 import { normalizeApplyOrderFiltersPayload, type ApplyOrderFiltersPayload } from '../domain/normalizeApplyOrderFiltersPayload'
@@ -214,6 +215,7 @@ export function AdminAiPanelProvider({ children }: PropsWithChildren) {
       title="NextMark AI"
       transport={transport}
     >
+      <AdminAiChartPreloader />
       {children}
     </AiPanelProvider>
   )

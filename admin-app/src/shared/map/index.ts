@@ -15,8 +15,7 @@ export type {
 } from "./domain/entities/MapOrder";
 export type { Route } from "./domain/entities/Route";
 export { MAP_MARKER_LAYERS } from "./domain/constants/markerLayers";
-export { MapController } from "./domain/services/MapController";
-export { GoogleMapAdapter } from "./infrastructure/GoogleMapAdapter";
+export { preloadMapExtras } from "./infrastructure/mapExtrasLoader";
 export { useMap } from "./hooks/useMap";
 export { MapView } from "./components/MapView";
 

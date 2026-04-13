@@ -1,49 +1,52 @@
-import type { Item } from '../../../item'
-import { itemsForDownloading } from '../../../item'
-import { normalizeFormStateForSave } from '../../../api/mappers/orderForm.normalize'
-import type { useDownloadTemplateByEventFlow } from '@/features/templates/printDocument/flows'
+import type { Item } from "../../../item";
+import { itemsForDownloading } from "../../../item";
+import { normalizeFormStateForSave } from "../../../api/mappers/orderForm.normalize";
+import type { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
 
-import type { OrderFormSubmitResult } from './orderFormSubmit.controller'
+import type { OrderFormSubmitResult } from "./orderFormSubmit.controller";
 
 export const mapSubmitResultToFeedback = (result: OrderFormSubmitResult) => {
-  if (result.status === 'success_create') {
+  if (result.status === "success_create") {
     return {
       status: 200,
-      message: 'Order successfully created.',
+      message: "Order successfully created.",
       shouldClosePopup: true,
-    } as const
+    } as const;
   }
 
-  if (result.status === 'success_edit') {
+  if (result.status === "success_edit") {
     return {
       status: 200,
-      message: 'Order successfully updated.',
+      message: "Order successfully updated.",
       shouldClosePopup: true,
-    } as const
+    } as const;
   }
 
-  if (result.status === 'no_changes') {
+  if (result.status === "no_changes") {
     return {
       status: 400,
-      message: 'No changes to save.',
+      message: "No changes to save.",
       shouldClosePopup: false,
-    } as const
+    } as const;
   }
 
-  if (result.status === 'validation_error' || result.status === 'dependency_error') {
+  if (
+    result.status === "validation_error" ||
+    result.status === "dependency_error"
+  ) {
     return {
       status: 400,
       message: result.message,
       shouldClosePopup: false,
-    } as const
+    } as const;
   }
 
   return {
     status: 500,
     message: result.message,
     shouldClosePopup: false,
-  } as const
-}
+  } as const;
+};
 
 export const presentOrderFormSubmitOutcome = ({
   result,
@@ -53,30 +56,32 @@ export const presentOrderFormSubmitOutcome = ({
   showMessage,
   downloadByEvent,
 }: {
-  result: OrderFormSubmitResult
-  createdItems: Item[]
-  normalizedCurrent: ReturnType<typeof normalizeFormStateForSave>
-  closePopup: () => void
-  showMessage: (payload: { status: number; message: string }) => void
-  downloadByEvent: ReturnType<typeof useDownloadTemplateByEventFlow>['downloadByEvent']
+  result: OrderFormSubmitResult;
+  createdItems: Item[];
+  normalizedCurrent: ReturnType<typeof normalizeFormStateForSave>;
+  closePopup: () => void;
+  showMessage: (payload: { status: number; message: string }) => void;
+  downloadByEvent: ReturnType<
+    typeof useDownloadTemplateByEventFlow
+  >["downloadByEvent"];
 }) => {
-  const feedback = mapSubmitResultToFeedback(result)
+  const feedback = mapSubmitResultToFeedback(result);
 
-  if (result.status === 'success_create' && createdItems.length > 0) {
+  if (result.status === "success_create" && createdItems.length > 0) {
     downloadByEvent({
-      channel: 'item',
-      event: 'item_created',
+      channel: "item",
+      event: "item_created",
       data: itemsForDownloading(
         createdItems,
-        normalizedCurrent?.reference_number,
+        result.createdOrderScalarId,
         normalizedCurrent?.delivery_plan_id,
       ),
-      fileName: 'first test',
-    })
+      fileName: "first test",
+    });
   }
 
-  showMessage({ status: feedback.status, message: feedback.message })
+  showMessage({ status: feedback.status, message: feedback.message });
   if (feedback.shouldClosePopup) {
-    closePopup()
+    closePopup();
   }
-}
+};

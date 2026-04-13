@@ -1,9 +1,20 @@
 import { useMemo, useRef } from "react";
 
 import { useOrderActions } from "@/features/order";
+import { shouldRefreshItemsForOrder, useItemFlow } from "@/features/order/item";
+import { resolveActiveTemplateByChannelAndEvent } from "@/features/templates/printDocument/domain/resolveActiveTemplate";
 import { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
 import { serializeRouteSolutionForTemplate } from "@/features/plan/routeGroup/domain/serializeRouteSolutionForTemplate";
 import { buildRouteOptimizationPayload } from "@/features/plan/routeGroup/domain/buildRouteOptimizationPayload";
+import {
+  selectSelectedRouteSolutionByRouteGroupId,
+  useRouteSolutionStore,
+} from "@/features/plan/routeGroup/store/routeSolution.store";
+import {
+  selectRouteSolutionStopsBySolutionId,
+  useRouteSolutionStopStore,
+} from "@/features/plan/routeGroup/store/routeSolutionStop.store";
+import { selectOrderByServerId, useOrderStore } from "@/features/order/store/order.store";
 import {
   usePopupManager,
 } from "@/shared/resource-manager/useResourceManager";
@@ -58,6 +69,7 @@ export const useRouteGroupPageActions = ({
   const { updateRouteGroupSettings } = useRouteGroupSettingsMutations();
   const { showMessage } = useMessageHandler();
   const { downloadByEvent } = useDownloadTemplateByEventFlow();
+  const { loadItemsByOrderId } = useItemFlow();
   const optimizationInFlightRef = useRef(0);
   const routeWarningActionRegistry = useMemo(
     () => createRouteWarningActionRegistry(),
@@ -112,6 +124,45 @@ export const useRouteGroupPageActions = ({
   };
 
   const handlePrintRouteSolution = async () => {
+    const selectedSolution = routeGroupId
+      ? selectSelectedRouteSolutionByRouteGroupId(routeGroupId)(
+          useRouteSolutionStore.getState(),
+        )
+      : null;
+
+    const stops = selectedSolution?.id
+      ? selectRouteSolutionStopsBySolutionId(selectedSolution.id)(
+          useRouteSolutionStopStore.getState(),
+        )
+      : [];
+
+    const orderIds = Array.from(
+      new Set(
+        stops
+          .map((stop) => stop.order_id)
+          .filter((orderId): orderId is number => typeof orderId === "number"),
+      ),
+    );
+
+    await Promise.all(
+      orderIds.map(async (orderId) => {
+        const order = selectOrderByServerId(orderId)(useOrderStore.getState());
+        if (
+          !shouldRefreshItemsForOrder({
+            orderId,
+            itemsUpdatedAt: order?.items_updated_at ?? null,
+            expectedItemCount: order?.total_items ?? null,
+          })
+        ) {
+          return;
+        }
+
+        await loadItemsByOrderId(orderId, {
+          itemsUpdatedAt: order?.items_updated_at ?? null,
+        });
+      }),
+    );
+
     const payload = serializeRouteSolutionForTemplate(planId, routeGroupId);
     if (!payload) return;
 
@@ -124,7 +175,17 @@ export const useRouteGroupPageActions = ({
   };
   const routeReadyForDeliveryAction = async () => {
     if (!planId) return;
-    await routeReadyForDelivery(planId);
+    const succeeded = await routeReadyForDelivery(planId);
+    if (!succeeded) return;
+
+    const activeTemplate = resolveActiveTemplateByChannelAndEvent(
+      "route",
+      "route_solution_for_printing",
+    );
+
+    if (!activeTemplate) return;
+
+    await handlePrintRouteSolution();
   };
 
   const optimizeRoute = async () => {

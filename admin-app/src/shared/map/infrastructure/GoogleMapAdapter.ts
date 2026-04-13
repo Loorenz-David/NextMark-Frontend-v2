@@ -1,4 +1,6 @@
 import { loadGoogleMaps } from "@shared-google-maps";
+import type { DrawingManagerService } from "./drawing/DrawingManagerService";
+import type { ClusterLayerManager } from "./markers/ClusterLayerManager";
 
 import { MAP_MARKER_LAYERS } from "../domain/constants/markerLayers";
 import type { MapOrder } from "../domain/entities/MapOrder";
@@ -18,13 +20,14 @@ import type {
 } from "../domain/types";
 import type { GeoJSONPolygon, ZoneDefinition } from "@/features/zone/types";
 import { LocateControlManager } from "./controls/LocateControlManager";
-import { DrawingManagerService } from "./drawing/DrawingManagerService";
-import { ShapeSelectionService } from "./drawing/ShapeSelectionService";
 import { MapInstanceManager } from "./core/MapInstanceManager";
 import { ViewportManager } from "./core/ViewportManager";
+import {
+  createClusterLayerManager,
+  createDrawingServices,
+} from "./mapExtrasLoader";
 import { UserLocationManager } from "./location/UserLocationManager";
 import { MarkerLayerManager } from "./markers/MarkerLayerManager";
-import { ClusterLayerManager } from "./markers/ClusterLayerManager";
 import { MarkerMultiSelectionManager } from "./markers/MarkerMultiSelectionManager";
 import { MarkerSelectionManager } from "./markers/MarkerSelectionManager";
 import { RouteRenderer } from "./route/RouteRenderer";
@@ -72,15 +75,27 @@ const darkenHexColor = (hexColor: string, factor = 0.45) => {
 export class GoogleMapAdapter implements MapAdapter {
   private readonly mapInstanceManager: MapInstanceManager;
   private readonly markerLayerManager: MarkerLayerManager;
-  private readonly clusterLayerManager: ClusterLayerManager;
   private readonly markerSelectionManager: MarkerSelectionManager;
   private readonly markerMultiSelectionManager: MarkerMultiSelectionManager;
-  private readonly shapeSelectionService: ShapeSelectionService;
-  private readonly drawingManagerService: DrawingManagerService;
   private readonly routeRenderer: RouteRenderer;
   private readonly viewportManager: ViewportManager;
   private readonly userLocationManager: UserLocationManager;
   private readonly locateControlManager: LocateControlManager;
+  private clusterLayerManager: ClusterLayerManager | null = null;
+  private clusterLayerManagerPromise: Promise<ClusterLayerManager> | null = null;
+  private drawingManagerService: DrawingManagerService | null = null;
+  private drawingManagerServicePromise: Promise<DrawingManagerService> | null =
+    null;
+  private pendingClusterLayers = new Map<
+    string,
+    {
+      orders: MapOrder[];
+      options?: SetClusteredMarkerLayerOptions;
+    }
+  >();
+  private drawingOperationQueue: Array<
+    (service: DrawingManagerService) => void
+  > = [];
   private boundsChangedListeners = new Set<
     (bounds: MapBounds | null) => void
   >();
@@ -102,28 +117,11 @@ export class GoogleMapAdapter implements MapAdapter {
 
     this.mapInstanceManager = new MapInstanceManager(loadGoogleMaps);
     this.markerLayerManager = new MarkerLayerManager(this.mapInstanceManager);
-    this.clusterLayerManager = new ClusterLayerManager(
-      this.markerLayerManager,
-      (layerId) => {
-        this.markerSelectionManager.reconcileSelectionState();
-        this.markerSelectionManager.reapplySelectionStyles();
-        this.markerMultiSelectionManager.syncLayerStyles(layerId);
-      },
-    );
     this.markerSelectionManager = new MarkerSelectionManager(
       this.markerLayerManager,
     );
     this.markerMultiSelectionManager = new MarkerMultiSelectionManager(
       this.markerLayerManager,
-    );
-    this.shapeSelectionService = new ShapeSelectionService(
-      this.markerLayerManager,
-      this.markerMultiSelectionManager,
-    );
-    this.drawingManagerService = new DrawingManagerService(
-      this.mapInstanceManager,
-      this.shapeSelectionService,
-      this.markerMultiSelectionManager,
     );
     this.routeRenderer = new RouteRenderer(
       this.mapInstanceManager,
@@ -147,7 +145,7 @@ export class GoogleMapAdapter implements MapAdapter {
   async initialize(container: HTMLElement, options?: MapConfig) {
     await this.mapInstanceManager.initialize(container, options);
     const map = this.mapInstanceManager.getMap();
-    if (map) {
+    if (map && this.clusterLayerManager) {
       this.clusterLayerManager.attachMap(map);
     }
     this.bindBoundsChangedListener();
@@ -166,7 +164,7 @@ export class GoogleMapAdapter implements MapAdapter {
     this.markerSelectionManager.reconcileSelectionState();
     this.markerSelectionManager.reapplySelectionStyles();
 
-    const activeLayerId = this.drawingManagerService.getActiveLayerId();
+    const activeLayerId = this.drawingManagerService?.getActiveLayerId();
     if (activeLayerId) {
       this.markerMultiSelectionManager.syncLayerStyles(activeLayerId);
     }
@@ -186,7 +184,9 @@ export class GoogleMapAdapter implements MapAdapter {
     orders: MapOrder[],
     options?: SetMarkerLayerOptions,
   ) {
-    if (this.clusterLayerManager.hasLayer(layerId)) {
+    this.pendingClusterLayers.delete(layerId);
+
+    if (this.clusterLayerManager?.hasLayer(layerId)) {
       this.clusterLayerManager.clearLayer(layerId);
     }
 
@@ -211,10 +211,30 @@ export class GoogleMapAdapter implements MapAdapter {
     orders: MapOrder[],
     options?: SetClusteredMarkerLayerOptions,
   ) {
-    this.clusterLayerManager.setLayer(layerId, orders, options);
+    const { shouldFitBounds, removedIds } = this.markerLayerManager.setLayerMarkers(
+      layerId,
+      orders,
+      {
+        fitBounds: false,
+      },
+    );
+
+    if (removedIds.length) {
+      this.markerMultiSelectionManager.removeIds(removedIds);
+    }
+
     this.markerSelectionManager.reconcileSelectionState();
     this.markerSelectionManager.reapplySelectionStyles();
     this.markerMultiSelectionManager.syncLayerStyles(layerId);
+
+    if (shouldFitBounds) {
+      this.viewportManager.fitBounds(orders.map((order) => order.coordinates));
+    }
+
+    this.pendingClusterLayers.set(layerId, { orders, options });
+    void this.ensureClustering().then(() => {
+      this.applyPendingClusterLayer(layerId);
+    });
   }
 
   setLayerVisibility(layerId: string, visible: boolean) {
@@ -223,7 +243,9 @@ export class GoogleMapAdapter implements MapAdapter {
   }
 
   clearLayer(layerId: string) {
-    const removedIds = this.clusterLayerManager.hasLayer(layerId)
+    this.pendingClusterLayers.delete(layerId);
+
+    const removedIds = this.clusterLayerManager?.hasLayer(layerId)
       ? this.clusterLayerManager.clearLayer(layerId)
       : this.markerLayerManager.clearLayer(layerId);
 
@@ -231,30 +253,38 @@ export class GoogleMapAdapter implements MapAdapter {
       this.markerMultiSelectionManager.removeIds(removedIds);
     }
 
-    this.drawingManagerService.handleLayerCleared(layerId);
+    this.drawingManagerService?.handleLayerCleared(layerId);
     this.markerSelectionManager.reconcileSelectionState();
     this.markerSelectionManager.reapplySelectionStyles();
   }
 
   clearClusteredLayer(layerId: string) {
-    const removedIds = this.clusterLayerManager.clearLayer(layerId);
+    this.pendingClusterLayers.delete(layerId);
+    const removedIds = this.clusterLayerManager
+      ? this.clusterLayerManager.clearLayer(layerId)
+      : this.markerLayerManager.clearLayer(layerId);
 
     if (removedIds.length) {
       this.markerMultiSelectionManager.removeIds(removedIds);
     }
 
-    this.drawingManagerService.handleLayerCleared(layerId);
+    this.drawingManagerService?.handleLayerCleared(layerId);
     this.markerSelectionManager.reconcileSelectionState();
     this.markerSelectionManager.reapplySelectionStyles();
   }
 
   expandClusterIds(layerId: string, markerIds: string[]) {
+    if (!this.clusterLayerManager) {
+      return Array.from(new Set(markerIds));
+    }
+
     return this.clusterLayerManager.expandToLeafIds(layerId, markerIds);
   }
 
   clearMarkers() {
+    this.pendingClusterLayers.clear();
     const removedIds = [
-      ...this.clusterLayerManager.clearLayers(),
+      ...(this.clusterLayerManager?.clearLayers() ?? []),
       ...this.markerLayerManager.clearMarkers(),
     ];
 
@@ -263,34 +293,46 @@ export class GoogleMapAdapter implements MapAdapter {
     }
 
     this.markerSelectionManager.reset();
-    this.drawingManagerService.disableCircleSelection();
+    this.drawingManagerService?.disableCircleSelection();
   }
 
   enableCircleSelection(params: {
     layerId: string;
     callback: (ids: string[]) => void;
   }) {
-    this.drawingManagerService.enableCircleSelection(params);
+    this.queueDrawingOperation((service) => {
+      service.enableCircleSelection(params);
+    });
   }
 
   disableCircleSelection() {
-    this.drawingManagerService.disableCircleSelection();
+    this.queueDrawingOperation((service) => {
+      service.disableCircleSelection();
+    });
   }
 
   enableZoneCapture(callback: (geometry: GeoJSONPolygon) => void) {
-    this.drawingManagerService.enableZoneCapture(callback);
+    this.queueDrawingOperation((service) => {
+      service.enableZoneCapture(callback);
+    });
   }
 
   disableZoneCapture() {
-    this.drawingManagerService.disableZoneCapture();
+    this.queueDrawingOperation((service) => {
+      service.disableZoneCapture();
+    });
   }
 
   enableZonePathEdit(geometry: GeoJSONPolygon, options: ZonePathEditOptions) {
-    this.drawingManagerService.enableZonePathEdit(geometry, options);
+    this.queueDrawingOperation((service) => {
+      service.enableZonePathEdit(geometry, options);
+    });
   }
 
   disableZonePathEdit() {
-    this.drawingManagerService.disableZonePathEdit();
+    this.queueDrawingOperation((service) => {
+      service.disableZonePathEdit();
+    });
   }
 
   selectMarker(id: string) {
@@ -341,6 +383,10 @@ export class GoogleMapAdapter implements MapAdapter {
       }
 
       if (!markerId.startsWith("cluster_")) {
+        return;
+      }
+
+      if (!this.clusterLayerManager) {
         return;
       }
 
@@ -652,11 +698,11 @@ export class GoogleMapAdapter implements MapAdapter {
     }
     this.boundsChangedListeners.clear();
     this.readyListeners.clear();
-    this.clusterLayerManager.detachMap();
+    this.clusterLayerManager?.detachMap();
     this.clearMarkers();
     this.userLocationManager.clearUserLocationMarker();
     this.locateControlManager.unmountLocateControl();
-    this.drawingManagerService.destroy();
+    this.drawingManagerService?.destroy();
     this.routeRenderer.destroy();
     this.clearZonePolygonOverlay();
     this.clearZoneLayer();
@@ -767,6 +813,78 @@ export class GoogleMapAdapter implements MapAdapter {
     }
 
     return [coordinates as unknown[][]];
+  }
+
+  private async ensureClustering() {
+    if (this.clusterLayerManager) {
+      return this.clusterLayerManager;
+    }
+
+    if (!this.clusterLayerManagerPromise) {
+      this.clusterLayerManagerPromise = createClusterLayerManager(
+        this.markerLayerManager,
+        (layerId) => {
+          this.markerSelectionManager.reconcileSelectionState();
+          this.markerSelectionManager.reapplySelectionStyles();
+          this.markerMultiSelectionManager.syncLayerStyles(layerId);
+        },
+      ).then((manager) => {
+        this.clusterLayerManager = manager;
+        const map = this.mapInstanceManager.getMap();
+        if (map) {
+          manager.attachMap(map);
+        }
+        return manager;
+      });
+    }
+
+    return this.clusterLayerManagerPromise;
+  }
+
+  private async ensureDrawing() {
+    if (this.drawingManagerService) {
+      return this.drawingManagerService;
+    }
+
+    if (!this.drawingManagerServicePromise) {
+      this.drawingManagerServicePromise = createDrawingServices(
+        this.mapInstanceManager,
+        this.markerLayerManager,
+        this.markerMultiSelectionManager,
+      ).then(({ drawingManagerService }) => {
+        this.drawingManagerService = drawingManagerService;
+        const queuedOperations = [...this.drawingOperationQueue];
+        this.drawingOperationQueue = [];
+        queuedOperations.forEach((operation) => {
+          operation(drawingManagerService);
+        });
+        return drawingManagerService;
+      });
+    }
+
+    return this.drawingManagerServicePromise;
+  }
+
+  private queueDrawingOperation(operation: (service: DrawingManagerService) => void) {
+    if (this.drawingManagerService) {
+      operation(this.drawingManagerService);
+      return;
+    }
+
+    this.drawingOperationQueue.push(operation);
+    void this.ensureDrawing();
+  }
+
+  private applyPendingClusterLayer(layerId: string) {
+    const pending = this.pendingClusterLayers.get(layerId);
+    if (!pending || !this.clusterLayerManager) {
+      return;
+    }
+
+    this.clusterLayerManager.setLayer(layerId, pending.orders, pending.options);
+    this.markerSelectionManager.reconcileSelectionState();
+    this.markerSelectionManager.reapplySelectionStyles();
+    this.markerMultiSelectionManager.syncLayerStyles(layerId);
   }
 
   resize() {

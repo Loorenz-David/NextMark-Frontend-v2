@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import type {
   AiAnalyticsBarListData,
   AiAnalyticsMetricGridData,
@@ -6,7 +7,7 @@ import type {
 } from '@nextmark/ai-panel'
 import type { Order } from '@shared-domain'
 
-import { AiAnalyticsBarList } from './AiAnalyticsBarList'
+import { AiAnalyticsBarListSkeleton } from './AiAnalyticsBarListSkeleton'
 import { AiAnalyticsKpi } from './AiAnalyticsKpi'
 import { AiAnalyticsMetricGrid } from './AiAnalyticsMetricGrid'
 import { AiAnalyticsNarrativeBlock } from './AiAnalyticsNarrativeBlock'
@@ -16,6 +17,24 @@ import { AiOrdersTable, type AiOrdersTableColumnExternalId } from './AiOrdersTab
 
 interface AdminAiBlockRenderOptions {
   onOrderRowClick?: (order: Order) => void
+}
+
+const LazyAiAnalyticsBarList = lazy(() =>
+  import('./AiAnalyticsBarList').then((module) => ({
+    default: module.AiAnalyticsBarList,
+  })),
+)
+
+export function preloadAiAnalyticsBarList() {
+  return import('./AiAnalyticsBarList')
+}
+
+function renderAiAnalyticsBarList(data: AiAnalyticsBarListData, meta?: Record<string, unknown>) {
+  return (
+    <Suspense fallback={<AiAnalyticsBarListSkeleton />}>
+      <LazyAiAnalyticsBarList data={data} meta={meta} />
+    </Suspense>
+  )
 }
 
 // Trust the block's entity_type declaration — any non-null object is a valid
@@ -147,36 +166,32 @@ export function renderAdminAiBlock(
   }
 
   if (block.kind === 'analytics_trend' && isLegacyAnalyticsTrendData(block.data)) {
-    return (
-      <AiAnalyticsBarList
-        data={{
-          items: block.data.data_points.map((item, index) => ({
-            id: `trend_${index + 1}`,
-            label: item.label,
-            value: item.value,
-          })),
-        }}
-        meta={{
-          ...block.meta,
-          sourceKind: 'analytics_trend',
-        }}
-      />
+    return renderAiAnalyticsBarList(
+      {
+        items: block.data.data_points.map((item, index) => ({
+          id: `trend_${index + 1}`,
+          label: item.label,
+          value: item.value,
+        })),
+      },
+      {
+        ...block.meta,
+        sourceKind: 'analytics_trend',
+      },
     )
   }
 
   if (block.kind === 'analytics_breakdown' && isLegacyAnalyticsBreakdownData(block.data)) {
-    return (
-      <AiAnalyticsBarList
-        data={{
-          items: block.data.components.map((item, index) => ({
-            id: `breakdown_${index + 1}`,
-            label: item.label,
-            value: item.value,
-            displayValue: typeof item.percentage === 'number' ? `${item.percentage}%` : undefined,
-          })),
-        }}
-        meta={block.meta}
-      />
+    return renderAiAnalyticsBarList(
+      {
+        items: block.data.components.map((item, index) => ({
+          id: `breakdown_${index + 1}`,
+          label: item.label,
+          value: item.value,
+          displayValue: typeof item.percentage === 'number' ? `${item.percentage}%` : undefined,
+        })),
+      },
+      block.meta,
     )
   }
 
@@ -186,7 +201,7 @@ export function renderAdminAiBlock(
     }
 
     if (block.layout === 'bar_list' && isAnalyticsBarListData(block.data)) {
-      return <AiAnalyticsBarList data={block.data} meta={block.meta} />
+      return renderAiAnalyticsBarList(block.data, block.meta)
     }
 
     if (block.layout === 'table' && isAnalyticsTableData(block.data)) {

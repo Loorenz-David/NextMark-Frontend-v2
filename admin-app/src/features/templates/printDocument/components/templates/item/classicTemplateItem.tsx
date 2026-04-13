@@ -7,7 +7,7 @@ import type { availableOrientations } from '../../../types'
 
 type ExtraProps = {
     delivery_date: string
-    order_reference_number:string
+    order_scalar_id:number | null
 }
 export type ClassicTemplateItemProps =  {
   itemPayload?: Partial<Item & ExtraProps>
@@ -47,7 +47,7 @@ export const ClassicTemplateItem = ({itemPayload, orientation}: ClassicTemplateI
   const dateLabel = item?.delivery_date ?? 'missing date'
   const weekLabel = getIsoWeekLabel(item?.delivery_date) ?? 'V --'
 
-  const orderLabel = toSafeText(item?.order_reference_number)
+  const orderLabel = item?.order_scalar_id != null ? `# ${item.order_scalar_id}` : '--'
   const itemLabel = toSafeText( item?.article_number || item?.reference_number )
   const nameLabel = toSafeText(item?.item_type)
   const quantityLabel = `${toSafeText(item?.quantity)} . qua`
@@ -113,7 +113,7 @@ export const ClassicTemplateItem = ({itemPayload, orientation}: ClassicTemplateI
 const dummyItem = {
   delivery_date:'2026-01-01',
   item_type:'Bookshelf',
-  order_reference_number:'93.04.1324',
+  order_scalar_id: 1324,
   article_number: '2345324534',
   properties:{'keys': 'true', 'levels':'5'},
   quantity:12

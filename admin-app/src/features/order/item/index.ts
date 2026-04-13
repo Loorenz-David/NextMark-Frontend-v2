@@ -1,7 +1,7 @@
 export { useGetOrderItems, useCreateItem, useUpdateItem, useDeleteItem } from './api/item.api'
 export { itemsForDownloading } from './domain/itemsForDownloading'
 export { useOrderItemDraftController } from './hooks/useOrderItemDraftController'
-export { useItemFlow } from './hooks/useItemFlow'
+export { useItemFlow, shouldRefreshItemsForOrder } from './hooks/useItemFlow'
 export { ItemForm } from './popups/ItemForm/ItemForm'
 export { ItemFormLayout } from './popups/ItemForm/ItemForm.layout'
 export { ItemFormProvider } from './popups/ItemForm/ItemForm.provider'

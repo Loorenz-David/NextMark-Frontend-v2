@@ -17,7 +17,10 @@ import type { ZoneLayerOptions } from "../domain/types";
 import type { ZonePolygonOverlayOptions } from "../domain/types";
 import { MapController } from "../domain/services/MapController";
 import { GoogleMapAdapter } from "../infrastructure/GoogleMapAdapter";
+import { preloadMapExtras } from "../infrastructure/mapExtrasLoader";
 import { resolveBrowserCurrentCoordinates } from "@/shared/utils/browserGeolocation";
+
+export { preloadMapExtras }
 
 export const useMap = (options?: MapConfig): MapBridge => {
   const controllerRef = useRef<MapController | null>(null);

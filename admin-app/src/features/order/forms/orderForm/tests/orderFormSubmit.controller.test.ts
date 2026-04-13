@@ -158,8 +158,17 @@ export const runOrderFormSubmitControllerTests = async () => {
 
     const result = await executeOrderFormSubmit(
       {
-        saveOrder: async () => {
+        saveOrder: async ({ onCreateCommitted }) => {
           saveOrderCalls += 1
+          onCreateCommitted?.([
+            {
+              order: {
+                id: 100,
+                client_id: 'order-client-1',
+                order_scalar_id: 5001,
+              },
+            },
+          ])
           return true
         },
         createItemApi: async () => okResult({} as never),
@@ -173,6 +182,9 @@ export const runOrderFormSubmitControllerTests = async () => {
 
     assert(result.status === 'success_create', 'create submit should return success_create')
     assert(saveOrderCalls === 1, 'create submit should call saveOrder once')
+    if (result.status === 'success_create') {
+      assert(result.createdOrderScalarId === 5001, 'create submit should capture created order scalar id')
+    }
   }
 
   {
