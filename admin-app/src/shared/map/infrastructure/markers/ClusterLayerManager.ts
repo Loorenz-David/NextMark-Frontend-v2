@@ -15,6 +15,7 @@ type ClusterLayerEntry = {
   index: Supercluster<PointProperties, PointProperties>
   rawOrders: MapOrder[]
   signature: string
+  clusterRecordByMarkerId: Record<string, ClusterRecord>
 }
 
 type ClusterLayerRecomputeListener = (layerId: string) => void
@@ -61,6 +62,18 @@ const buildLayerSignature = (
     label: order.label ?? null,
   })),
 })
+
+const roundClusterCoordinate = (value: number) => value.toFixed(6)
+
+const buildClusterMarkerId = ({
+  lat,
+  lng,
+  pointCount,
+}: {
+  lat: number
+  lng: number
+  pointCount: number
+}) => `cluster_${roundClusterCoordinate(lat)}_${roundClusterCoordinate(lng)}_${pointCount}`
 
 export class ClusterLayerManager {
   private layers = new Map<string, ClusterLayerEntry>()
@@ -158,6 +171,7 @@ export class ClusterLayerManager {
       index,
       rawOrders: sortedOrders,
       signature: nextSignature,
+      clusterRecordByMarkerId: {},
     })
     this.recomputeLayer(layerId)
   }
@@ -192,7 +206,7 @@ export class ClusterLayerManager {
         return
       }
 
-      const clusterId = Number(markerId.replace('cluster_', ''))
+      const clusterId = entry.clusterRecordByMarkerId[markerId]?.clusterId ?? null
       if (!Number.isFinite(clusterId)) {
         return
       }
@@ -232,6 +246,7 @@ export class ClusterLayerManager {
       northEast.lat(),
     ]
     const clusters = entry.index.getClusters(bbox, Math.round(zoom))
+    const nextClusterRecordByMarkerId: Record<string, ClusterRecord> = {}
 
     const nextMarkers: ClusteredMapOrder[] = clusters.map((feature) => {
       const [lng, lat] = feature.geometry.coordinates
@@ -249,9 +264,15 @@ export class ClusterLayerManager {
           pointCount: properties.point_count,
           coordinates: { lat, lng },
         }
+        const markerId = buildClusterMarkerId({
+          lat,
+          lng,
+          pointCount: clusterRecord.pointCount,
+        })
+        nextClusterRecordByMarkerId[markerId] = clusterRecord
 
         return {
-          id: `cluster_${clusterRecord.clusterId}`,
+          id: markerId,
           coordinates: { lat, lng },
           label: '',
           onClick: (event: MouseEvent) => {
@@ -268,6 +289,7 @@ export class ClusterLayerManager {
       return properties.order
     })
 
+    entry.clusterRecordByMarkerId = nextClusterRecordByMarkerId
     this.markerLayerManager.setLayerMarkers(layerId, nextMarkers)
     this.onLayerRecomputed(layerId)
   }

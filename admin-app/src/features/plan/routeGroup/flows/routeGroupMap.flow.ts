@@ -40,6 +40,12 @@ const LOCAL_DELIVERY_GROUP_MARKER_PREFIX = 'route_stop_group_marker:'
 const ROUTE_GROUP_CLUSTER_RADIUS_PX = 60
 const ROUTE_GROUP_CLUSTER_MAX_ZOOM = 16
 
+const areSameCoordinates = (
+  left: { lat: number; lng: number } | null | undefined,
+  right: { lat: number; lng: number } | null | undefined,
+) =>
+  left?.lat === right?.lat && left?.lng === right?.lng
+
 const hasValidCoordinates = (order: Order): boolean => {
   const coordinates = order.client_address?.coordinates
   if (!coordinates) return false
@@ -109,31 +115,44 @@ export const useRouteGroupMapFlow = ({
   }, [sectionManager])
   useEffect(() => {
     const mapOrders: MapOrder[] = []
+    const boundaryMarkers: MapOrder[] = []
     const markerOrderClientIdsByMarkerId: Record<string, string[]> = {}
     const primaryOrderClientIdByMarkerId: Record<string, string> = {}
     const markerIdByOrderClientId: Record<string, string> = {}
     const solutionClientId = selectedRouteSolution?.client_id ?? 'unknown'
     
-    const startMarker = buildStartEndMarker({
-      label: 'S',
-      status: 'start',
-      boundary: boundaryLocations.start,
-      idPrefix: `route-start-${solutionClientId}`,
-      onClick: handleClickStartEndMarker,
-    })
-    if (startMarker) {
-      mapOrders.push(startMarker)
-    }
+    const startCoordinates = boundaryLocations.start.location?.coordinates ?? null
+    const endCoordinates = boundaryLocations.end.location?.coordinates ?? null
 
-    const endMarker = buildStartEndMarker({
-      label: 'E',
-      status: 'end',
-      idPrefix: `route-end-${solutionClientId}`,
-      boundary: boundaryLocations.end,
-      onClick: handleClickStartEndMarker,
-    })
-    if (endMarker) {
-      mapOrders.push(endMarker)
+    if (areSameCoordinates(startCoordinates, endCoordinates) && startCoordinates) {
+      const combinedMarker = buildCombinedStartEndMarker({
+        idPrefix: `route-start-end-${solutionClientId}`,
+        boundary: boundaryLocations.start,
+        onClick: handleClickStartEndMarker,
+      })
+      if (combinedMarker) {
+        boundaryMarkers.push(combinedMarker)
+      }
+    } else {
+      const startMarker = buildStartEndMarker({
+        status: 'start',
+        boundary: boundaryLocations.start,
+        idPrefix: `route-start-${solutionClientId}`,
+        onClick: handleClickStartEndMarker,
+      })
+      if (startMarker) {
+        boundaryMarkers.push(startMarker)
+      }
+
+      const endMarker = buildStartEndMarker({
+        status: 'end',
+        idPrefix: `route-end-${solutionClientId}`,
+        boundary: boundaryLocations.end,
+        onClick: handleClickStartEndMarker,
+      })
+      if (endMarker) {
+        boundaryMarkers.push(endMarker)
+      }
     }
 
     const stopEntries = orders
@@ -238,7 +257,9 @@ export const useRouteGroupMapFlow = ({
       radius: ROUTE_GROUP_CLUSTER_RADIUS_PX,
       maxZoom: ROUTE_GROUP_CLUSTER_MAX_ZOOM,
     })
+    mapManager.setMarkerLayer(MAP_MARKER_LAYERS.routeGroupBoundary, boundaryMarkers)
     mapManager.setMarkerLayerVisibility(MAP_MARKER_LAYERS.routeGroup, isActive)
+    mapManager.setMarkerLayerVisibility(MAP_MARKER_LAYERS.routeGroupBoundary, isActive)
 
     const routeSegments = buildRouteSegments(orders, stopByOrderId, selectedRouteSolution)
     if (isActive && routeSegments.length) {
@@ -315,6 +336,7 @@ export const useRouteGroupMapFlow = ({
 
     if (isActive) return
     mapManager.clearClusteredMarkerLayer(MAP_MARKER_LAYERS.routeGroup)
+    mapManager.clearMarkerLayer(MAP_MARKER_LAYERS.routeGroupBoundary)
     mapManager.clearMarkerLayer(MAP_MARKER_LAYERS.driverLiveRouteGroup)
     mapManager.showRoute(null)
     if (wasActive) {
@@ -329,6 +351,7 @@ export const useRouteGroupMapFlow = ({
   useEffect(() => {
     return () => {
       mapManager.clearClusteredMarkerLayer(MAP_MARKER_LAYERS.routeGroup)
+      mapManager.clearMarkerLayer(MAP_MARKER_LAYERS.routeGroupBoundary)
       mapManager.clearMarkerLayer(MAP_MARKER_LAYERS.driverLiveRouteGroup)
       mapManager.showRoute(null)
       closeGroupOverlay()
@@ -346,13 +369,11 @@ const handleClickStartEndMarker = () => {
 }
 
 export const buildStartEndMarker = ({
-  label,
   status,
   idPrefix,
   boundary,
   onClick,
 }: {
-  label: 'S' | 'E'
   status: 'start' | 'end'
   idPrefix: string
   boundary: BoundaryLocationMeta
@@ -366,8 +387,29 @@ export const buildStartEndMarker = ({
   return {
     id: idPrefix,
     coordinates,
-    label,
     status,
+    onClick,
+  }
+}
+
+export const buildCombinedStartEndMarker = ({
+  idPrefix,
+  boundary,
+  onClick,
+}: {
+  idPrefix: string
+  boundary: BoundaryLocationMeta
+  onClick: (e: MouseEvent) => void
+}): MapOrder | null => {
+  if (!boundary.location?.coordinates) return null
+
+  const coordinates = boundary.location.coordinates
+  if (typeof coordinates.lat !== 'number' || typeof coordinates.lng !== 'number') return null
+
+  return {
+    id: idPrefix,
+    coordinates,
+    status: 'start_end',
     onClick,
   }
 }

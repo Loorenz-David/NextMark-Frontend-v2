@@ -134,7 +134,7 @@ export const routeSolutionApi = {
     returnStops: boolean = false,
   ): Promise<ApiResult<RouteSolutionGetResponse>> =>
     apiClient.request<RouteSolutionGetResponse>({
-      path: `/route_operations/solutions/${routeSolutionId}`,
+      path: `/route_solutions/${routeSolutionId}`,
       method: "GET",
       query: { return_stops: returnStops ? "true" : "false" },
     }),

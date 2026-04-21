@@ -1,6 +1,7 @@
 import type { Order } from '@/features/order/types/order'
 
 import {
+  buildCombinedStartEndMarker,
   buildStartEndMarker,
   resolveRouteGroupGroupOperationBadgeDirections,
   resolveRouteGroupOperationBadgeDirections,
@@ -59,7 +60,6 @@ export const runRouteGroupMapFlowTests = () => {
 
   {
     const startMarker = buildStartEndMarker({
-      label: 'S',
       status: 'start',
       idPrefix: 'route-start-test',
       boundary: {
@@ -83,5 +83,29 @@ export const runRouteGroupMapFlowTests = () => {
       !startMarker?.operationBadgeDirections,
       'start/end boundary markers should not include operation badge directions',
     )
+    assert(startMarker?.status === 'start', 'start boundary marker should keep start status')
+  }
+
+  {
+    const combinedMarker = buildCombinedStartEndMarker({
+      idPrefix: 'route-start-end-test',
+      boundary: {
+        label: 'Start location',
+        location: {
+          street_address: 'Boundary 1',
+          city: 'Stockholm',
+          country: 'SE',
+          postal_code: '11120',
+          coordinates: { lat: 59.3293, lng: 18.0686 },
+        },
+        time: null,
+        hasWarnings: false,
+        warnings: [],
+      },
+      onClick: () => undefined,
+    })
+
+    assert(!!combinedMarker, 'combined start/end boundary marker should be created when coordinates are available')
+    assert(combinedMarker?.status === 'start_end', 'combined boundary marker should keep start_end status')
   }
 }

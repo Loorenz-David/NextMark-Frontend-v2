@@ -30,7 +30,7 @@ export type MarkerLayer = {
 const MARKER_EXIT_DURATION_MS = 140
 
 const markerZIndex = (status?: string) => {
-  if (status === 'start' || status === 'end') {
+  if (status === 'start' || status === 'end' || status === 'start_end') {
     return 1
   }
 
@@ -40,6 +40,9 @@ const markerZIndex = (status?: string) => {
 const clusterMarkerZIndex = () => 20
 
 const getInteractionVariant = (order: MapOrder) => order.interactionVariant ?? 'default'
+
+const getStatusMarkerClassName = (status?: string) =>
+  status ? `${status.replaceAll('_', '-')}-marker` : null
 
 const addClassTokens = (el: HTMLElement, className?: string | null) => {
   if (!className) return
@@ -111,7 +114,10 @@ const applyBaseMarkerAppearance = (el: HTMLElement, order: MapOrder) => {
   el.classList.add(`map-marker--variant-${interactionVariant}`)
 
   if (order.status) {
-    el.classList.add(`${order.status}-marker`)
+    const statusClassName = getStatusMarkerClassName(order.status)
+    if (statusClassName) {
+      el.classList.add(statusClassName)
+    }
   }
 
   if (order.className) {

@@ -18,6 +18,15 @@ VITE_USE_DUMMY_DATA=false
 ```
 
 When `VITE_USE_DUMMY_DATA` is `false`, all data requests go through `VITE_API_BASE_URL` (e.g., `POST http://127.0.0.1:5000/route/query_route`).
+
+Optional driver live dev markers can be injected through Vite env vars:
+
+```ini
+VITE_DRIVER_LIVE_DEV_SEED_ENABLED=false
+VITE_DRIVER_LIVE_DEV_SEED_POSITIONS=[{"driver_id":1,"coords":{"lat":59.33258,"lng":18.0649}},{"driver_id":102,"coords":{"lat":59.32893,"lng":18.07112}}]
+```
+
+Set `VITE_DRIVER_LIVE_DEV_SEED_ENABLED=true` to display those markers. When disabled or empty, no fallback dev driver locations are added.
   
 ## Scripts
 
@@ -33,4 +42,3 @@ The dev server proxies directly to the Flask backend; make sure `Back_end/run.py
 ## Authentication
 
 Sign-in flows expect the Flask API to expose `/auth/login` and `/auth/refresh_token`. Tokens are stored in `sessionStorage` and added to every request. Use the backend README for seeding credentials until a registration route is provided.
-

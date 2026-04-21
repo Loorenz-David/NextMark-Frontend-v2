@@ -13,6 +13,7 @@ import {
 } from '../clientForm/clientForm.realtime'
 import { getOrder } from '@/features/order/api/orderApi'
 import { useOrderModel } from '@/features/order/domain/useOrderModel'
+import { useOrderRouteContextFlow } from '@/features/order/flows/orderRouteContext.flow'
 import {
   selectOrderByServerId,
   updateOrderByClientId,
@@ -41,6 +42,7 @@ import {
   runDedupedGlobalOrderCasesRefresh,
   runDedupedOrderCaseRefresh,
   runDedupedOrderRefresh,
+  runDedupedOrderRouteContextRefresh,
   runDedupedPlanRefresh,
 } from './adminBusinessRealtimeCoordinator'
 
@@ -70,6 +72,7 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
     [],
   )
   const { normalizeOrderPayload } = useOrderModel()
+  const { fetchOrderRouteContext } = useOrderRouteContextFlow()
   const { normalizeOrderCaseEntity, normalizeOrderCaseMap } = useOrderCaseModel()
   const { loadAllCases } = useOrderCaseFlow()
 
@@ -85,10 +88,12 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
       const response = await getOrder(orderId)
       const payload = response.data?.order
       if (!payload) {
-        return
+        return null
       }
 
-      upsertOrders(normalizeOrderPayload(payload))
+      const normalized = normalizeOrderPayload(payload)
+      upsertOrders(normalized)
+      return normalized
     }
 
     const refreshOrderCasesByOrderId = async (orderId: number) => {
@@ -151,7 +156,22 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
         }
       }
 
-      void runDedupedOrderRefresh(orderId, () => refreshOrderById(orderId))
+      const routeFreshnessUpdatedAt =
+        typeof payload.route_freshness_updated_at === 'string'
+          ? payload.route_freshness_updated_at
+          : null
+
+      void runDedupedOrderRefresh(orderId, async () => {
+        const normalizedOrderMap = await refreshOrderById(orderId)
+        if (!routeFreshnessUpdatedAt || !normalizedOrderMap) {
+          return
+        }
+
+        await runDedupedOrderRouteContextRefresh(
+          orderId,
+          () => fetchOrderRouteContext(orderId).then(() => undefined),
+        )
+      })
     }
 
     const handleOrderChatEvent = (event: BusinessEventEnvelope<BusinessPayload>) => {
@@ -295,6 +315,7 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
     }
   }, [
     adminBusinessChannel,
+    fetchOrderRouteContext,
     loadAllCases,
     normalizeOrderCaseEntity,
     normalizeOrderCaseMap,

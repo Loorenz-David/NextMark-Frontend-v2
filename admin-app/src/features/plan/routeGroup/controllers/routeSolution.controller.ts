@@ -7,10 +7,10 @@ import { routeSolutionApi } from '@/features/plan/routeGroup/api/routeSolution.a
 import type {
   RouteSolutionAddressPayload,
   RouteSolutionFullGetResponse,
-  RouteSolutionGetResponse,
   RouteSolutionTimesPayload,
   RouteSolutionUpdateResponse,
 } from '@/features/plan/routeGroup/api/routeSolution.api'
+import { applyRouteSolutionGetPayload, useRouteSolutionReadFlow } from '@/features/plan/routeGroup/flows/routeSolutionRead.flow'
 import { normalizeByClientIdArray } from '@/features/plan/routeGroup/api/mappers/routeSolutionPayload.mapper'
 import {
   selectRouteSolutionByServerId,
@@ -59,31 +59,6 @@ const applyUpdatePayload = (payload?: RouteSolutionUpdateResponse | null) => {
   })
 }
 
-const applyGetPayload = (payload?: RouteSolutionGetResponse | null) => {
-  if (!payload?.route_solution) return
-  if ('byClientId' in payload.route_solution && 'allIds' in payload.route_solution) {
-    upsertRouteSolutions(payload.route_solution)
-  } else {
-    const solutions = normalizeByClientIdArray(payload.route_solution)
-    solutions.forEach((solution) => {
-      if (solution?.client_id) {
-        upsertRouteSolution(solution)
-      }
-    })
-  }
-  if (!payload.route_solution_stop) return
-  if ('byClientId' in payload.route_solution_stop && 'allIds' in payload.route_solution_stop) {
-    upsertRouteSolutionStops(payload.route_solution_stop)
-    return
-  }
-  const stops = normalizeByClientIdArray(payload.route_solution_stop)
-  stops.forEach((stop) => {
-    if (stop?.client_id) {
-      upsertRouteSolutionStop(stop)
-    }
-  })
-}
-
 const applyFullGetPayload = (payload?: RouteSolutionFullGetResponse | null) => {
   if (!payload?.route_solution?.client_id || payload.route_solution.id == null) return
 
@@ -117,6 +92,7 @@ export function useRouteSolutionMutations() {
   const { showMessage } = useMessageHandler()
   const { rollbackOrderStates, changeOrderStateBatch } = useOrderStateBatch()
   const { changePlanState } = usePlanStateChanges()
+  const { fetchRouteSolution } = useRouteSolutionReadFlow()
 
   const updateRouteSolutionAddress = useCallback(
     async (payload: RouteSolutionAddressPayload) => {
@@ -169,8 +145,7 @@ export function useRouteSolutionMutations() {
         applyUpdatePayload(response.data)
         const selected = selectRouteSolutionByServerId(routeSolutionId)(useRouteSolutionStore.getState())
         if (selected && selected._representation !== 'full') {
-          const getResponse = await routeSolutionApi.getRouteSolution(routeSolutionId, true)
-          applyGetPayload(getResponse.data)
+          await fetchRouteSolution(routeSolutionId, { returnStops: true })
         }
         return response.data
       } catch (error) {
@@ -186,7 +161,7 @@ export function useRouteSolutionMutations() {
         return null
       }
     },
-    [showMessage],
+    [fetchRouteSolution, showMessage],
   )
 
   const previewRouteSolution = useCallback(

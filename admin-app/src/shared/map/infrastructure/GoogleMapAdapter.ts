@@ -211,27 +211,13 @@ export class GoogleMapAdapter implements MapAdapter {
     orders: MapOrder[],
     options?: SetClusteredMarkerLayerOptions,
   ) {
-    const { shouldFitBounds, removedIds } = this.markerLayerManager.setLayerMarkers(
-      layerId,
-      orders,
-      {
-        fitBounds: false,
-      },
-    );
-
-    if (removedIds.length) {
-      this.markerMultiSelectionManager.removeIds(removedIds);
-    }
-
-    this.markerSelectionManager.reconcileSelectionState();
-    this.markerSelectionManager.reapplySelectionStyles();
-    this.markerMultiSelectionManager.syncLayerStyles(layerId);
-
-    if (shouldFitBounds) {
-      this.viewportManager.fitBounds(orders.map((order) => order.coordinates));
-    }
-
     this.pendingClusterLayers.set(layerId, { orders, options });
+
+    if (this.clusterLayerManager?.hasLayer(layerId)) {
+      this.applyPendingClusterLayer(layerId);
+      return;
+    }
+
     void this.ensureClustering().then(() => {
       this.applyPendingClusterLayer(layerId);
     });

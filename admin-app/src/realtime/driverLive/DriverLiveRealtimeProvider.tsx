@@ -2,6 +2,7 @@ import type { PropsWithChildren } from "react";
 import { useEffect, useMemo, useSyncExternalStore } from "react";
 import { createDriverLiveChannel } from "@shared-realtime";
 import type { DriverLocationUpdatedPayload } from "@shared-realtime";
+import { getDriverLiveDevSeedPositions, isDriverLiveDevSeedEnabled } from "@/app/services/driverLiveDevSeed.service";
 import { sessionStorage } from "@/features/auth/login/store/sessionStorage";
 import { adminRealtimeClient } from "../client";
 import { useDriverLiveStore } from "./driverLive.store";
@@ -14,38 +15,11 @@ const resolveTeamId = () => {
   return Number.isFinite(numericTeamId) ? numericTeamId : null;
 };
 
-const buildDevSeedDriverPositions = (
-  teamId: number,
-): DriverLocationUpdatedPayload[] => {
-  const recordedAt = new Date().toISOString();
-
-  return [
-    {
-      driver_id: 1,
-      team_id: teamId,
-      coords: { lat: 59.33258, lng: 18.0649 },
-      timestamp: recordedAt,
-    },
-    {
-      driver_id: 102,
-      team_id: teamId,
-      coords: { lat: 59.32893, lng: 18.07112 },
-      timestamp: recordedAt,
-    },
-    {
-      driver_id: 103,
-      team_id: teamId,
-      coords: { lat: 59.33621, lng: 18.05847 },
-      timestamp: recordedAt,
-    },
-  ];
-};
-
 const withDevSeedDriverPositions = (
   positions: DriverLocationUpdatedPayload[],
   teamId: number | null,
 ): DriverLocationUpdatedPayload[] => {
-  if (!import.meta.env.DEV || teamId == null) {
+  if (teamId == null || !isDriverLiveDevSeedEnabled()) {
     return positions;
   }
 
@@ -55,7 +29,7 @@ const withDevSeedDriverPositions = (
     mergedByDriverId.set(position.driver_id, position);
   });
 
-  buildDevSeedDriverPositions(teamId).forEach((position) => {
+  getDriverLiveDevSeedPositions(teamId).forEach((position) => {
     if (!mergedByDriverId.has(position.driver_id)) {
       mergedByDriverId.set(position.driver_id, position);
     }
@@ -112,13 +86,11 @@ export function DriverLiveRealtimeProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     const teamId = resolveTeamId();
 
-    if (!import.meta.env.DEV || teamId == null) {
+    if (teamId == null || !isDriverLiveDevSeedEnabled()) {
       return;
     }
 
-    useDriverLiveStore
-      .getState()
-      .setSnapshot(buildDevSeedDriverPositions(teamId));
+    useDriverLiveStore.getState().setSnapshot(getDriverLiveDevSeedPositions(teamId));
   }, []);
 
   return <>{children}</>;

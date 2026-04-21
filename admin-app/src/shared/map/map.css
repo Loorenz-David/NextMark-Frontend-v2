@@ -49,6 +49,22 @@
   justify-content: center;
 }
 
+.map-marker__icon-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.map-marker__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-marker__icon svg {
+  display: block;
+}
+
 .map-marker__operation-badges {
   position: absolute;
   top: -10px;
@@ -146,15 +162,20 @@
   box-shadow: 0 4px 10px rgba(29, 78, 216, 0.5);
 }
 
-.start-marker {
+.start-marker,
+.end-marker,
+.start-end-marker {
   background: #00fff2;
   color: #008b92;
   border: 0.5px solid #008b92;
 }
 
 .end-marker {
-  background: #008b92;
-  color: #00f2ff;
+  padding: 0 10px;
+}
+
+.start-end-marker .map-marker__icon--arrow {
+  color: rgba(0, 139, 146, 0.9);
 }
 
 .map-marker--selected-order {
