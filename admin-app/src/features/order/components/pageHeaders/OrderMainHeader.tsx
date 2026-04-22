@@ -15,6 +15,7 @@ import { ORDER_MAIN_HEADER_INFO } from "../../info/orderMainHeader.info";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
 import { createOrderFilterLabelFormatter } from "../../domain/orderFilterLabelFormatter";
+import { stripHiddenOrderQueryFilters } from "../../domain/orderHiddenQueryFilters";
 
 type OrderMainHeaderProps = {
   onCreate: () => void;
@@ -57,6 +58,7 @@ export const OrderMainHeader = ({
 }: OrderMainHeaderProps) => {
   const { setHeader } = useSectionPanel();
   const formatFilterLabel = createOrderFilterLabelFormatter(filterConfig);
+  const visibleFilters = stripHiddenOrderQueryFilters(query.filters);
 
   useEffect(() => {
     const ordersCount = orderStats?.orders?.total ?? 0;
@@ -110,7 +112,7 @@ export const OrderMainHeader = ({
             config={filterConfig}
             openPopupFilter={openPopupFilter}
             updateFilter={(key, value) => updateFilters(key, value)}
-            filters={query.filters}
+            filters={visibleFilters}
             searchValue={query.q}
           />
 
@@ -154,7 +156,7 @@ export const OrderMainHeader = ({
         <div className="flex w-full px-2">
           <ActiveFilterPills
             className="px-4"
-            filters={query.filters}
+            filters={visibleFilters}
             removeFilter={deleteFilter}
             formatFilterLabel={(key, value) => formatFilterLabel(key, value)}
           />

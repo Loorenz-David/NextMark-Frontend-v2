@@ -13,6 +13,7 @@ import {
   useArchiveOrder as useArchiveOrderApi,
   useUnarchiveOrder as useUnarchiveOrderApi,
 } from "../api/orderApi";
+import { normalizeOrderResponseForStore } from "../api/mappers/orderResponse.normalize";
 
 import {
   addVisibleOrder,
@@ -94,24 +95,32 @@ export const useOrderController = () => {
             removeOrderByClientId(baseOrder.client_id);
 
             createdBundles.forEach((bundle) => {
-              if (!bundle?.order?.client_id) return;
+              const normalizedOrder = normalizeOrderResponseForStore(
+                bundle?.order,
+              );
+              if (!normalizedOrder?.client_id) return;
 
-              handlePlanOrderCreation(bundle);
+              handlePlanOrderCreation({
+                ...bundle,
+                order: normalizedOrder,
+              });
 
               setOrder({
-                ...bundle.order,
+                ...normalizedOrder,
                 order_notes: normalizeOrderNotesForOptimistic(
-                  bundle.order.order_notes,
+                  normalizedOrder.order_notes,
                 ),
               });
-              addVisibleOrder(bundle.order.client_id);
+              addVisibleOrder(normalizedOrder.client_id);
             });
 
             const hasBaseOrder = createdBundles.some(
               (bundle) => bundle?.order?.client_id === baseOrder.client_id,
             );
             if (!hasBaseOrder) {
-              const fallback = createdBundles[0]?.order;
+              const fallback = normalizeOrderResponseForStore(
+                createdBundles[0]?.order,
+              );
               if (fallback?.client_id) {
                 setOrder({
                   ...baseOrder,
@@ -188,11 +197,14 @@ export const useOrderController = () => {
           const updatedBundles = response?.data?.updated ?? [];
           if (updatedBundles.length > 0) {
             updatedBundles.forEach((bundle) => {
-              if (bundle?.order?.client_id) {
+              const normalizedOrder = normalizeOrderResponseForStore(
+                bundle?.order,
+              );
+              if (normalizedOrder?.client_id) {
                 setOrder({
-                  ...bundle.order,
+                  ...normalizedOrder,
                   order_notes: normalizeOrderNotesForOptimistic(
-                    bundle.order.order_notes,
+                    normalizedOrder.order_notes,
                   ),
                   __optimistic: undefined,
                 });

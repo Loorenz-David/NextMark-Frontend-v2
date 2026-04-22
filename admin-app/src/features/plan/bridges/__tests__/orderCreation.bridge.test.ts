@@ -59,6 +59,26 @@ export const runOrderCreationBridgeTests = () => {
 
   {
     resetStores()
+    handlePlanOrderCreation({
+      ...buildBundle(undefined),
+      order: {
+        client_id: 'order_1',
+        id: 1,
+        route_plan_id: 101,
+      } as OrderCreateBundle['order'] & { route_plan_id: number },
+    })
+    assert(
+      useRouteSolutionStore.getState().allIds.includes('route_10'),
+      'route_plan_id alias should apply route solution updates',
+    )
+    assert(
+      useRouteSolutionStopStore.getState().allIds.includes('stop_1'),
+      'route_plan_id alias should apply route stop updates',
+    )
+  }
+
+  {
+    resetStores()
     handlePlanOrderCreation(buildBundle(101))
     assert(
       useRouteSolutionStore.getState().allIds.includes('route_10'),

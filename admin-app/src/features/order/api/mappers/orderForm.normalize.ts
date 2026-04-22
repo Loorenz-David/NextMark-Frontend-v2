@@ -59,6 +59,7 @@ export const normalizeFormStateForSave = (
     client_address: state.client_address,
     delivery_windows: sortDeliveryWindowsUtc(state.delivery_windows),
     delivery_plan_id: state.delivery_plan_id ?? null,
+    route_group_id: state.route_group_id ?? null,
     order_notes: normalizeOrderFormNoteForSave(state.order_note),
   };
 };

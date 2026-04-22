@@ -61,13 +61,6 @@ export const filterConfig: FilterConfig[] = [
   },
   {
     type: "option",
-    key: "plan_type",
-    label: "Plan Type",
-    value: "",
-  },
-
-  {
-    type: "option",
     key: "reference_number",
     label: "Reference Number",
     value: "",
