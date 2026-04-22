@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { useMessageHandler } from '@shared-message-handler'
 import { hasFormChanges } from '@shared-domain'
 
+import { normalizeItemPosition } from '../../domain/itemPosition'
 import { useItemController } from '../../hooks/useItemController'
 import type { Item, ItemPopupPayload } from '../../types'
 
@@ -31,6 +32,14 @@ export const useItemFormSubmit = ({
     [payload],
   )
 
+  const normalizeDraft = useCallback(
+    (draft: Item): Item => ({
+      ...draft,
+      item_position: normalizeItemPosition(draft.item_position),
+    }),
+    [],
+  )
+
   const handleSave = useCallback(async (): Promise<boolean> => {
     const isValid = validateForm()
     if (!isValid) {
@@ -44,16 +53,19 @@ export const useItemFormSubmit = ({
       return false
     }
 
+    const normalizedFormState = normalizeDraft(formState)
+    const normalizedInitialForm = normalizeDraft(initialForm)
+
     if (payload.mode === 'controlled') {
       payload.onSubmit({
-        ...formState,
+        ...normalizedFormState,
         order_id: payload.orderId,
       })
       await onSuccessClose?.()
       return true
     }
 
-    if (payload.itemId && !hasFormChanges(formState, initialFormRef)) {
+    if (payload.itemId && !hasFormChanges(normalizedFormState, { current: normalizedInitialForm })) {
       showMessage({ status: 400, message: 'No changes to save.' })
       return false
     }
@@ -62,7 +74,7 @@ export const useItemFormSubmit = ({
       orderId: payload.orderId,
       itemId: payload.itemId,
       draft: {
-        ...formState,
+        ...normalizedFormState,
         order_id: payload.orderId,
       },
     })
@@ -73,7 +85,7 @@ export const useItemFormSubmit = ({
 
     await onSuccessClose?.()
     return true
-  }, [formState, initialFormRef, onSuccessClose, payload, saveAutonomousItem, showMessage, validateForm])
+  }, [formState, initialFormRef, normalizeDraft, onSuccessClose, payload, saveAutonomousItem, showMessage, validateForm])
 
   const handleDelete = useCallback(async (): Promise<boolean> => {
     if (!canDelete) return false

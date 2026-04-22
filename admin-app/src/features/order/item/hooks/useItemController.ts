@@ -24,12 +24,14 @@ import {
   useOrderStore,
 } from "../../store/order.store";
 import { patchRoutePlanTotals } from "@/features/plan/store/routePlan.slice";
+import { normalizeItemPosition } from "../domain/itemPosition";
 
 const stripImmutableFields = (draft: Item): ItemUpdateFields => {
   return {
     article_number: draft.article_number,
     reference_number: draft.reference_number ?? null,
     item_type: draft.item_type,
+    item_position: normalizeItemPosition(draft.item_position),
     properties: draft.properties ?? null,
     page_link: draft.page_link ?? null,
     dimension_depth: draft.dimension_depth ?? null,
@@ -61,6 +63,7 @@ export const useItemController = () => {
         ...draft,
         order_id: orderId,
         client_id: draft.client_id || buildClientId("item"),
+        item_position: normalizeItemPosition(draft.item_position),
       };
 
       if (!validation.validateItemDraft(normalizedDraft)) {

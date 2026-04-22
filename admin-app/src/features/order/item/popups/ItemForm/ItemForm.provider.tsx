@@ -41,6 +41,7 @@ export const ItemFormProvider = ({
   const selectedItemTypeName = formState.item_type
   const {
     itemTypeOptions, 
+    itemPositionOptions,
     selectedItemTypeProperties, 
   } = useItemConfigurations({ selectedItemTypeName })
 
@@ -81,6 +82,7 @@ export const ItemFormProvider = ({
       warnings,
       hasUnsavedChanges,
       itemTypeOptions, 
+      itemPositionOptions,
       selectedItemTypeProperties, 
       ...submitters,
     }),
@@ -88,6 +90,7 @@ export const ItemFormProvider = ({
       existingItem,
       formState,
       hasUnsavedChanges,
+      itemPositionOptions,
       itemTypeOptions,
       payload,
       selectedItemTypeProperties,

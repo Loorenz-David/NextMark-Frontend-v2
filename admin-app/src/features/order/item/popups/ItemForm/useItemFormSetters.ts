@@ -1,5 +1,6 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
+import { normalizeItemPosition } from "../../domain/itemPosition";
 import type { Item } from "../../types";
 import type { ItemFormWarnings } from "./ItemForm.types";
 
@@ -24,6 +25,15 @@ export const useItemFormSetters = ({
 
   const handleItemTypeSelection = (itemType: { name: string }) => {
     handleItemTypeValue(itemType.name);
+  };
+
+  const handleItemPositionInput = (value: string) => {
+    setFormState((prev) => ({ ...prev, item_position: value }));
+  };
+
+  const commitItemPositionValue = (value?: string | null) => {
+    const itemPosition = normalizeItemPosition(value);
+    setFormState((prev) => ({ ...prev, item_position: itemPosition }));
   };
 
   const handlePropertyValue = (
@@ -69,6 +79,8 @@ export const useItemFormSetters = ({
     handleArticleNumber,
     handleItemTypeValue,
     handleItemTypeSelection,
+    handleItemPositionInput,
+    commitItemPositionValue,
     handlePropertyValue,
     handleQuantity,
     handleWeight,

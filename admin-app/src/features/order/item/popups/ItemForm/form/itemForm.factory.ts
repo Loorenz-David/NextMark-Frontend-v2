@@ -8,6 +8,7 @@ const buildDefaultItemDraft = (orderId: number): Item => ({
   order_id: orderId,
   article_number: '',
   item_type: '',
+  item_position: null,
   quantity: 1,
 })
 

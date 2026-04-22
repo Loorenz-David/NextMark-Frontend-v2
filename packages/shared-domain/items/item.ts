@@ -5,7 +5,7 @@ export type Item = {
   reference_number?: string | null
   item_type: string
   item_state_id?: number | null
-  item_position_id?: number | null
+  item_position?: string | null
   order_id: number
   properties?: Record<string, unknown> | null
   page_link?: string | null

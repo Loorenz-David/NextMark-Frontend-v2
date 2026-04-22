@@ -13,6 +13,7 @@ export const SelectInputWithPopoverLayout = <TValue,>({
   isOptionSelected,
   onInputChange,
   onInputFocus,
+  onInputBlur,
   onArrowClick,
   onOptionClick,
   closeOnSelect,
@@ -42,6 +43,7 @@ export const SelectInputWithPopoverLayout = <TValue,>({
             value={displayValue}
             onChange={(event) => onInputChange(event.target.value)}
             onFocus={onInputFocus}
+            onBlur={onInputBlur}
             placeholder={placeholder}
             fieldClassName="w-full"
             inputClassName={inputClassName}

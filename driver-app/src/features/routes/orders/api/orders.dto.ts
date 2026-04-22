@@ -11,7 +11,7 @@ export type OrderItemDto = {
   reference_number: string | null
   item_type: string | null
   item_state_id: number | null
-  item_position_id: number | null
+  item_position: string | null
   order_id: number | null
   properties: unknown
   page_link: string | null

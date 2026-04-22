@@ -4,7 +4,7 @@ import type { Item, ItemPopupPayload } from '../../types'
 import type { useItemFormWarnings } from './ItemForm.warnings'
 import type { useItemFormSubmit } from './useItemFormSubmit'
 import type { useItemFormSetters } from './useItemFormSetters'
-import type { itemTypeOption, selectedItemTypeProperties } from './useItemConfigurations'
+import type { itemPositionOption, itemTypeOption, selectedItemTypeProperties } from './useItemConfigurations'
 
 export type ItemFormWarnings = ReturnType<typeof useItemFormWarnings>
 
@@ -20,5 +20,6 @@ export type ItemFormContextValue = {
   warnings: ItemFormWarnings
   setters: ReturnType<typeof useItemFormSetters>
   itemTypeOptions: itemTypeOption[]
+  itemPositionOptions: itemPositionOption[]
   selectedItemTypeProperties: selectedItemTypeProperties
 } & ItemFormSubmitters

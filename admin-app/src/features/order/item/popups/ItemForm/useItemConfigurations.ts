@@ -1,15 +1,18 @@
 
-import type { ItemType } from "@/features/itemConfigurations/types/itemType"
 import { useMemo } from "react"
 
 import type { ItemProperty } from "@/features/itemConfigurations/types/itemProperty"
-import { useItemTypesOrFetch } from "@/features/itemConfigurations/hooks/useItemConfigSelectors"
-import { useItemPropertiesOrFetch } from "@/features/itemConfigurations/hooks/useItemConfigSelectors"
+import type { ItemType } from "@/features/itemConfigurations/types/itemType"
+import { useItemPositionsOrFetch, useItemPropertiesOrFetch, useItemTypesOrFetch } from "@/features/itemConfigurations/hooks/useItemConfigSelectors"
 
 
 export type itemTypeOption = {
   label: string
   value: ItemType
+}
+export type itemPositionOption = {
+  label: string
+  value: string
 }
 export type selectedItemTypeProperties = ItemProperty[]
 
@@ -20,6 +23,7 @@ export const useItemConfigurations = ({
 }) => {
     const itemTypes = useItemTypesOrFetch()
     const itemTypeProperties = useItemPropertiesOrFetch()
+    const itemPositions = useItemPositionsOrFetch()
 
     const itemTypeOptions = useMemo(
       () =>
@@ -28,6 +32,15 @@ export const useItemConfigurations = ({
           value: itemType,
         })),
       [itemTypes],
+    )
+
+    const itemPositionOptions = useMemo(
+      () =>
+        itemPositions.map((itemPosition) => ({
+          label: itemPosition.name,
+          value: itemPosition.name,
+        })),
+      [itemPositions],
     )
 
     const selectedItemType = useMemo(() => {
@@ -51,6 +64,7 @@ export const useItemConfigurations = ({
    
   return {
     itemTypeOptions,
+    itemPositionOptions,
     selectedItemTypeProperties,
     selectedItemType,
   }

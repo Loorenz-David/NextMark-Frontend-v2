@@ -1,19 +1,17 @@
-import { useMemo } from 'react'
+import { useMemo } from "react";
 
-import type { ItemType } from '@/features/itemConfigurations/types/itemType'
-import { BasicButton } from '@/shared/buttons/BasicButton'
-import { Field } from '@/shared/inputs/FieldContainer'
-import { InputField } from '@/shared/inputs/InputField'
-import { InputWarning } from '@/shared/inputs/InputWarning'
-import { SelectInputWithPopover } from '@/shared/inputs/SelectInputWithPopover'
-import { FeaturePopupFooter } from '@/shared/popups/featurePopup'
+import type { ItemType } from "@/features/itemConfigurations/types/itemType";
+import { BasicButton } from "@/shared/buttons/BasicButton";
+import { Field } from "@/shared/inputs/FieldContainer";
+import { InputField } from "@/shared/inputs/InputField";
+import { InputWarning } from "@/shared/inputs/InputWarning";
+import { SelectInputWithPopover } from "@/shared/inputs/SelectInputWithPopover";
+import { FeaturePopupFooter } from "@/shared/popups/featurePopup";
 
-import { ItemPropertiesInputs } from '../../components/ItemPropertiesInputs'
-import { useItemForm } from './ItemForm.context'
-import { CustomCounter } from '@/shared/inputs/CustomCounter'
-import { ITEM_FORM_ITEM_TYPE_INFO } from './info/itemType.info'
-
-
+import { ItemPropertiesInputs } from "../../components/ItemPropertiesInputs";
+import { useItemForm } from "./ItemForm.context";
+import { CustomCounter } from "@/shared/inputs/CustomCounter";
+import { ITEM_FORM_ITEM_TYPE_INFO } from "./info/itemType.info";
 
 export const ItemFormLayout = () => {
   const {
@@ -22,27 +20,29 @@ export const ItemFormLayout = () => {
     warnings,
     canDelete,
     itemTypeOptions,
+    itemPositionOptions,
     selectedItemTypeProperties,
     payload,
     handleSave,
     handleDelete,
-  } = useItemForm()
-
+  } = useItemForm();
 
   const footerConfig = useMemo(
     () => ({
-      saveButton: { label: 'Save item', action: handleSave },
-      deleteButton: canDelete ? { label: 'Delete Item', action: handleDelete } : undefined,
+      saveButton: { label: "Save item", action: handleSave },
+      deleteButton: canDelete
+        ? { label: "Delete Item", action: handleDelete }
+        : undefined,
     }),
     [canDelete, handleDelete, handleSave],
-  )
-  const isControlled = payload.mode === 'controlled'
+  );
+  const isControlled = payload.mode === "controlled";
 
   return (
     <div className="flex w-full h-full min-h-0 relative overflow-x-hidden pb-20">
       <div
         className={`flex flex-col gap-6 w-full h-full pb-30 overflow-y-auto  px-2 scroll-thin ${
-          isControlled ? 'pb-4' : 'h-full pb-[56px] '
+          isControlled ? "pb-4" : "h-full pb-[56px] "
         }`}
       >
         <Field label="Article number:" required={true}>
@@ -56,13 +56,19 @@ export const ItemFormLayout = () => {
           <InputWarning {...warnings.articleNumberWarning.warning} />
         ) : null}
 
-        <Field label="Item type:" required={true} info={ITEM_FORM_ITEM_TYPE_INFO}>
+        <Field
+          label="Item type:"
+          required={true}
+          info={ITEM_FORM_ITEM_TYPE_INFO}
+        >
           <SelectInputWithPopover<ItemType>
             selectionMode="single"
             options={itemTypeOptions}
             value={formState.item_type}
             onChange={setters.handleItemTypeValue}
-            onSelectOption={(option) => setters.handleItemTypeSelection(option.value)}
+            onSelectOption={(option) =>
+              setters.handleItemTypeSelection(option.value)
+            }
             allowCustomInput={true}
             placeholder="Type or select item type"
           />
@@ -84,7 +90,6 @@ export const ItemFormLayout = () => {
               onChange={setters.handleQuantity}
             />
           </Field>
-          
 
           <Field label="Weight ( gr ):">
             <CustomCounter
@@ -94,39 +99,74 @@ export const ItemFormLayout = () => {
               onChange={setters.handleWeight}
             />
           </Field>
-
         </div>
         <div className="flex gap-4 flex-col">
           <Field label="Width ( cm ):">
-              <CustomCounter
-                min={0}
-                step={100}
-                value={formState.dimension_width != null ? formState.dimension_width : 0}
-                onChange={(value) => setters.handleDimension('dimension_width', value)}
-                />
-            </Field>
+            <CustomCounter
+              min={0}
+              step={100}
+              value={
+                formState.dimension_width != null
+                  ? formState.dimension_width
+                  : 0
+              }
+              onChange={(value) =>
+                setters.handleDimension("dimension_width", value)
+              }
+            />
+          </Field>
 
-                
           <Field label="Height ( cm ):">
-              <CustomCounter
-                min={0}
-                step={100}
-                value={formState.dimension_height != null ? formState.dimension_height : 0}
-                onChange={(value) => setters.handleDimension('dimension_height', value)}
-                />
-            </Field>
+            <CustomCounter
+              min={0}
+              step={100}
+              value={
+                formState.dimension_height != null
+                  ? formState.dimension_height
+                  : 0
+              }
+              onChange={(value) =>
+                setters.handleDimension("dimension_height", value)
+              }
+            />
+          </Field>
 
-                
           <Field label="Depth ( cm ):">
-              <CustomCounter
-                min={0}
-                step={100}
-                value={formState.dimension_depth != null ? formState.dimension_depth : 0}
-                onChange={(value) => setters.handleDimension('dimension_depth', value)}
-                />
-            </Field>
+            <CustomCounter
+              min={0}
+              step={100}
+              value={
+                formState.dimension_depth != null
+                  ? formState.dimension_depth
+                  : 0
+              }
+              onChange={(value) =>
+                setters.handleDimension("dimension_depth", value)
+              }
+            />
+          </Field>
         </div>
 
+        <Field label="Item position:">
+          <SelectInputWithPopover<string>
+            selectionMode="single"
+            options={itemPositionOptions}
+            value={formState.item_position ?? ""}
+            onChange={(value) =>
+              setters.handleItemPositionInput(
+                typeof value === "string" ? value : String(value),
+              )
+            }
+            onSelectOption={(option) =>
+              setters.commitItemPositionValue(option.value)
+            }
+            onBlur={() =>
+              setters.commitItemPositionValue(formState.item_position)
+            }
+            allowCustomInput={true}
+            placeholder="Type or select item position"
+          />
+        </Field>
       </div>
 
       {isControlled ? (
@@ -134,21 +174,23 @@ export const ItemFormLayout = () => {
           {footerConfig.deleteButton ? (
             <BasicButton
               params={{
-                variant: 'secondary',
+                variant: "secondary",
                 onClick: footerConfig.deleteButton.action,
-                className: 'py-2 px-4',
+                className: "py-2 px-4",
               }}
             >
               {footerConfig.deleteButton.label}
             </BasicButton>
-          ) : <span />}
+          ) : (
+            <span />
+          )}
 
           <BasicButton
             params={{
-              variant: 'primary',
+              variant: "primary",
               onClick: footerConfig.saveButton.action,
-              className: 'py-3 px-4',
-              style:{backgroundColor:'var(--color-turques)'}
+              className: "py-3 px-4",
+              style: { backgroundColor: "var(--color-turques)" },
             }}
           >
             {footerConfig.saveButton.label}
@@ -159,21 +201,23 @@ export const ItemFormLayout = () => {
           {footerConfig.deleteButton ? (
             <BasicButton
               params={{
-                variant: 'secondary',
+                variant: "secondary",
                 onClick: footerConfig.deleteButton.action,
-                className: 'py-2 px-4 text-red-500 border-red-500',
+                className: "py-2 px-4 text-red-500 border-red-500",
               }}
             >
               {footerConfig.deleteButton.label}
             </BasicButton>
-          ) : <span />}
+          ) : (
+            <span />
+          )}
           <div className="flex flex-1 justify-end">
             <BasicButton
               params={{
-                variant: 'primary',
+                variant: "primary",
                 onClick: footerConfig.saveButton.action,
-                className: 'py-3 px-4',
-                style:{backgroundColor:'var(--color-turques)'}
+                className: "py-3 px-4",
+                style: { backgroundColor: "var(--color-turques)" },
               }}
             >
               {footerConfig.saveButton.label}
@@ -182,5 +226,5 @@ export const ItemFormLayout = () => {
         </FeaturePopupFooter>
       )}
     </div>
-  )
-}
+  );
+};

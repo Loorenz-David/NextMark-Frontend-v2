@@ -21,6 +21,7 @@ const toItemDraft = (item: Item): Item => ({
   article_number: item.article_number,
   reference_number: item.reference_number ?? null,
   item_type: item.item_type,
+  item_position: item.item_position ?? null,
   properties: item.properties ?? null,
   page_link: item.page_link ?? null,
   dimension_depth: item.dimension_depth ?? null,
@@ -56,6 +57,20 @@ const buildInitialState = ({
   }
 }
 
+const buildInitialItemsSignature = ({
+  mode,
+  initialItems,
+}: {
+  mode: 'create' | 'edit'
+  initialItems?: Item[]
+}) => {
+  if (mode === 'create') {
+    return 'create'
+  }
+
+  return JSON.stringify((initialItems ?? []).map((item) => toItemDraft(item)))
+}
+
 export const useOrderItemDraftController = ({
   mode,
   initialItems,
@@ -63,9 +78,22 @@ export const useOrderItemDraftController = ({
   mode: 'create' | 'edit'
   initialItems?: Item[]
 }) => {
-  const initialState = useMemo(
-    () => buildInitialState({ mode, initialItems }),
+  const initialItemsSignature = useMemo(
+    () => buildInitialItemsSignature({ mode, initialItems }),
     [initialItems, mode],
+  )
+
+  const stableInitialItems = useMemo(
+    () =>
+      mode === 'create'
+        ? []
+        : (initialItems ?? []).map((item) => toItemDraft(item)),
+    [initialItemsSignature, mode],
+  )
+
+  const initialState = useMemo(
+    () => buildInitialState({ mode, initialItems: stableInitialItems }),
+    [mode, stableInitialItems],
   )
 
   const initialByClientId = useMemo(

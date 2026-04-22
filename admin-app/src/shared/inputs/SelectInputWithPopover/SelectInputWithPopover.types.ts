@@ -13,6 +13,7 @@ type BaseProps<TValue> = {
   displayMode?: SelectDisplayMode
   allowCustomInput?: boolean
   freeTextInput?: boolean
+  onBlur?: () => void
   placeholder?: string
   noMatchMessage?: string
   className?: string
@@ -52,6 +53,7 @@ export type SelectInputWithPopoverLayoutProps<TValue = string> = {
   isOptionSelected: (option: SelectOption<TValue>) => boolean
   onInputChange: (value: string) => void
   onInputFocus: () => void
+  onInputBlur?: () => void
   onArrowClick: () => void
   onOptionClick: (option: SelectOption<TValue>) => void
   closeOnSelect: boolean

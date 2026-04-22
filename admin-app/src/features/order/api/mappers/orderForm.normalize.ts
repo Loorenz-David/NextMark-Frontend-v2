@@ -13,6 +13,7 @@ export const stripImmutableItemFields = (draft: Item): ItemUpdateFields => ({
   article_number: draft.article_number,
   reference_number: draft.reference_number ?? null,
   item_type: draft.item_type,
+  item_position: draft.item_position ?? null,
   properties: draft.properties ?? null,
   page_link: draft.page_link ?? null,
   dimension_depth: draft.dimension_depth ?? null,

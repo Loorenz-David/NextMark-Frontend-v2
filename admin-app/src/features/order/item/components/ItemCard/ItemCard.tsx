@@ -74,10 +74,14 @@ export const ItemCard = ({
           setInternalExpanded((prev) => !prev)
         }}
       >
-
-        <span className="min-w-0 whitespace-normal break-words text-sm font-semibold text-[var(--color-text)]">
-          {item.item_type || '—'}
-        </span>
+        <div className="min-w-0">
+          <span className="block min-w-0 whitespace-normal break-words text-sm font-semibold text-[var(--color-text)]">
+            {item.item_type || '—'}
+          </span>
+          <span className="mt-1 block min-w-0 truncate text-[11px] text-[var(--color-muted)]/95">
+            Position: {item.item_position ?? '—'}
+          </span>
+        </div>
         <span className="min-w-0 truncate text-xs text-[var(--color-muted)]/95">
           {item.article_number || '—'}
         </span>
@@ -147,6 +151,10 @@ export const ItemCard = ({
             <div className="flex items-start justify-between gap-4">
               <span className="text-[var(--color-muted)]/90">Quantity</span>
               <span className="text-right text-[var(--color-text)]">{item.quantity}</span>
+            </div>
+            <div className="flex items-start justify-between gap-4">
+              <span className="text-[var(--color-muted)]/90">Item position</span>
+              <span className="text-right text-[var(--color-text)]">{item.item_position ?? '—'}</span>
             </div>
             <div className="flex items-start justify-between gap-4">
               <span className="text-[var(--color-muted)]/90">Reference number</span>
