@@ -14,6 +14,7 @@ import {
 import { getOrder } from '@/features/order/api/orderApi'
 import { useOrderModel } from '@/features/order/domain/useOrderModel'
 import { useOrderRouteContextFlow } from '@/features/order/flows/orderRouteContext.flow'
+import { useItemFlow } from '@/features/order/item/hooks/useItemFlow'
 import {
   selectOrderByServerId,
   updateOrderByClientId,
@@ -73,6 +74,7 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
   )
   const { normalizeOrderPayload } = useOrderModel()
   const { fetchOrderRouteContext } = useOrderRouteContextFlow()
+  const { loadItemsByOrderId } = useItemFlow()
   const { normalizeOrderCaseEntity, normalizeOrderCaseMap } = useOrderCaseModel()
   const { loadAllCases } = useOrderCaseFlow()
 
@@ -160,10 +162,29 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
         typeof payload.route_freshness_updated_at === 'string'
           ? payload.route_freshness_updated_at
           : null
+      const changedSections = Array.isArray(payload.changed_sections)
+        ? payload.changed_sections.filter(
+            (section): section is string => typeof section === 'string',
+          )
+        : []
+      const shouldRefreshItems = changedSections.includes('items')
 
       void runDedupedOrderRefresh(orderId, async () => {
         const normalizedOrderMap = await refreshOrderById(orderId)
-        if (!routeFreshnessUpdatedAt || !normalizedOrderMap) {
+        if (!normalizedOrderMap) {
+          return
+        }
+
+        if (shouldRefreshItems) {
+          const refreshedOrder = selectOrderByServerId(orderId)(
+            useOrderStore.getState(),
+          )
+          await loadItemsByOrderId(orderId, {
+            itemsUpdatedAt: refreshedOrder?.items_updated_at ?? null,
+          })
+        }
+
+        if (!routeFreshnessUpdatedAt) {
           return
         }
 
@@ -317,6 +338,7 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
     adminBusinessChannel,
     fetchOrderRouteContext,
     loadAllCases,
+    loadItemsByOrderId,
     normalizeOrderCaseEntity,
     normalizeOrderCaseMap,
     normalizeOrderPayload,
