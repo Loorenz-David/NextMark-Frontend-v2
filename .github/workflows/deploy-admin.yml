@@ -42,7 +42,8 @@ jobs:
           echo "VITE_GOOGLE_MAPS_MAP_ID_COMON_MAP=${{ vars.VITE_GOOGLE_MAPS_MAP_ID_COMON_MAP }}" >> .env.production
           echo "VITE_USE_DUMMY_DATA=${{ vars.VITE_USE_DUMMY_DATA }}" >> .env.production
           echo "VITE_SOCKET_URL=${{ vars.VITE_SOCKET_URL }}" >> .env.production
-              
+          echo "VITE_WEB_PUSH_PUBLIC_KEY=${{ vars.VITE_WEB_PUSH_PUBLIC_KEY }}" >> .env.production
+
           npm run build
 
       - name: Sync build to S3
