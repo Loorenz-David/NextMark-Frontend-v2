@@ -205,11 +205,14 @@ export const useItemController = () => {
       try {
         const response = await createItemApi(optimisticItem);
 
-        const serverId = response.data?.item?.[optimisticItem.client_id];
-        if (typeof serverId === "number") {
+        const serverItem = response.data?.item?.find(
+          (i) => i.client_id === optimisticItem.client_id,
+        );
+        if (serverItem && typeof serverItem.id === "number") {
           updateItemByClientId(optimisticItem.client_id, (current) => ({
             ...current,
-            id: serverId,
+            id: serverItem.id,
+            item_state_id: serverItem.item_state_id,
           }));
         }
 
@@ -232,10 +235,11 @@ export const useItemController = () => {
         return {
           status: "created",
           item:
-            typeof serverId === "number"
+            serverItem && typeof serverItem.id === "number"
               ? {
                   ...optimisticItem,
-                  id: serverId,
+                  id: serverItem.id,
+                  item_state_id: serverItem.item_state_id,
                 }
               : optimisticItem,
         };

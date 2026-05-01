@@ -539,11 +539,14 @@ export const executeOrderFormSubmit = async (
             const res = await createItemApi(createPayload);
 
             createdItems.forEach((draft) => {
-              const serverId = res.data?.item?.[draft.client_id];
-              if (typeof serverId === "number") {
+              const serverItem = res.data?.item?.find(
+                (i) => i.client_id === draft.client_id,
+              );
+              if (serverItem && typeof serverItem.id === "number") {
                 updateItemByClientId(draft.client_id, (current) => ({
                   ...current,
-                  id: serverId,
+                  id: serverItem.id,
+                  item_state_id: serverItem.item_state_id,
                 }));
               }
             });

@@ -4,8 +4,11 @@ import type {
   ItemQueryFilters,
   ItemUpdateFields,
 } from "@shared-domain";
+
 import type { ApiResult } from "../core";
 import type { HttpApiClient } from "../http/createApiClient";
+
+export type ItemCreateResponseEntry = Item & { id: number };
 
 export type ItemListResponse = {
   items: ItemMap;
@@ -29,9 +32,7 @@ export type PlanTotalsEntry = {
 };
 
 export type ItemCreateResponse = {
-  item: Record<string, number> & {
-    ids_without_match?: number[];
-  };
+  item: ItemCreateResponseEntry[];
   order_totals?: OrderTotalsEntry[];
   plan_totals?: PlanTotalsEntry[];
 };
