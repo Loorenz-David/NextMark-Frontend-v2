@@ -26,6 +26,11 @@ import {
 import { patchRoutePlanTotals } from "@/features/plan/store/routePlan.slice";
 import { normalizeItemPosition } from "../domain/itemPosition";
 
+export type SaveAutonomousItemResult =
+  | { status: "created"; item: Item }
+  | { status: "updated"; item: Item }
+  | { status: "failure" };
+
 const stripImmutableFields = (draft: Item): ItemUpdateFields => {
   return {
     article_number: draft.article_number,
@@ -58,7 +63,7 @@ export const useItemController = () => {
       orderId: number;
       itemId?: string;
       draft: Item;
-    }) => {
+    }): Promise<SaveAutonomousItemResult> => {
       const normalizedDraft: Item = {
         ...draft,
         order_id: orderId,
@@ -68,14 +73,14 @@ export const useItemController = () => {
 
       if (!validation.validateItemDraft(normalizedDraft)) {
         showMessage({ status: 400, message: "Please check the item fields." });
-        return false;
+        return { status: "failure" };
       }
 
       if (itemId) {
         const existing = selectItemByClientId(itemId)(useItemStore.getState());
         if (!existing) {
           showMessage({ status: 404, message: "Item not found for update." });
-          return false;
+          return { status: "failure" };
         }
 
         if (existing.order_id !== orderId) {
@@ -83,7 +88,7 @@ export const useItemController = () => {
             status: 400,
             message: "Item does not belong to this order.",
           });
-          return false;
+          return { status: "failure" };
         }
 
         if (!existing.id) {
@@ -91,7 +96,7 @@ export const useItemController = () => {
             status: 400,
             message: "Item must be synced before update.",
           });
-          return false;
+          return { status: "failure" };
         }
 
         const previous = { ...existing };
@@ -154,7 +159,7 @@ export const useItemController = () => {
               total_orders: p.total_orders,
             });
           });
-          return true;
+          return { status: "updated", item: normalizedDraft };
         } catch (error) {
           console.error("Failed to update item", error);
           updateItemByClientId(existing.client_id, () => previous);
@@ -165,7 +170,7 @@ export const useItemController = () => {
             patchOrderTotals(existing.order_id, snapshotTotals);
           }
           showMessage({ status: 500, message: "Unable to update item." });
-          return false;
+          return { status: "failure" };
         }
       }
 
@@ -224,7 +229,16 @@ export const useItemController = () => {
           });
         });
 
-        return true;
+        return {
+          status: "created",
+          item:
+            typeof serverId === "number"
+              ? {
+                  ...optimisticItem,
+                  id: serverId,
+                }
+              : optimisticItem,
+        };
       } catch (error) {
         console.error("Failed to create item", error);
         removeItemByClientId(optimisticItem.client_id);
@@ -232,7 +246,7 @@ export const useItemController = () => {
           patchOrderTotals(orderId, snapshotTotals);
         }
         showMessage({ status: 500, message: "Unable to create item." });
-        return false;
+        return { status: "failure" };
       }
     },
     [createItemApi, showMessage, updateItemApi, validation],

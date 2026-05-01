@@ -46,6 +46,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
           onAdvanceOrderState={advanceDetailOrderState}
           order={order}
           headerBehavior={payload?.headerBehavior ?? null}
+          contextRouteGroupId={payload?.routeGroupId ?? null}
         />
 
         <div className="flex w-full flex-col gap-6 bg-[var(--color-page)] pb-6 pt-3">

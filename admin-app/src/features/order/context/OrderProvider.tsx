@@ -9,7 +9,12 @@ import { useOrderSelectionListActions } from '../actions/orderSelection.actions'
 import { useBaseControlls, useMapManager, useSectionManager } from '@/shared/resource-manager/useResourceManager'
 import { useOrderCircleSelectionFlow } from '../flows/orderCircleSelection.flow'
 import { useOrderBatchSelectionResolveFlow } from '../flows/orderBatchSelectionResolve.flow'
-import { selectOrderListLoading, useOrderListStore, useOrderStats } from '../store/orderList.store'
+import {
+  selectOrderListLoading,
+  selectOrderListQueryKey,
+  useOrderListStore,
+  useOrderStats,
+} from '../store/orderList.store'
 import {
   useHoveredOrderClientId,
   useOrderMapInteractionActions,
@@ -39,6 +44,7 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
   const isFixtureMode = isRouteOperationsFixtureModeEnabled()
   const orders = useVisibleOrders()
   const isOrderListLoading = useOrderListStore(selectOrderListLoading)
+  const completedOrderListQueryKey = useOrderListStore(selectOrderListQueryKey)
   const orderStats = useOrderStats()
   const orderActions = useOrderActions()
   const isSelectionMode = useOrderSelectionMode()
@@ -68,7 +74,8 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
   const {
     currentPage,
     hasMore,
-    isLoadingPage,
+    isLoadingFirstPage,
+    isLoadingNextPage,
     loadFirstPage,
     loadNextPage,
   } = useOrderPaginationController({
@@ -227,6 +234,10 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
 
 
 
+  const hasCompletedOrderListLoad = completedOrderListQueryKey != null
+  const isInitialLoading = isOrderListLoading && !hasCompletedOrderListLoad
+  const isRefreshingOrders = isOrderListLoading && hasCompletedOrderListLoad && isLoadingFirstPage
+
   const value = useMemo(
     () => ({
       orders,
@@ -241,11 +252,13 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
       handleOrderRowMouseLeave,
       currentPage,
       hasMorePages: hasMore,
-      isInitialLoading: isOrderListLoading && orders.length === 0,
-      isLoadingNextPage: isLoadingPage,
+      isInitialLoading,
+      isRefreshingOrders,
+      isLoadingNextPage,
       loadNextPage,
     }),
     [
+      completedOrderListQueryKey,
       currentPage,
       handleOrderRowMouseEnter,
       handleOrderRowMouseLeave,
@@ -253,8 +266,9 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
       hoveredClientId,
       isOrderSelected,
       isSelectionMode,
-      isOrderListLoading,
-      isLoadingPage,
+      isInitialLoading,
+      isLoadingNextPage,
+      isRefreshingOrders,
       loadNextPage,
       orderActions,
       orderSelectionActions,

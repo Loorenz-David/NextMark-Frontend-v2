@@ -6,10 +6,11 @@ type OrderPaginationState = {
   nextCursor: string | null
   hasMore: boolean
   isLoadingPage: boolean
+  loadingMode: 'firstPage' | 'nextPage' | null
   cursorHistory: string[]
   requestVersion: number
   reset: (queryKey: string) => void
-  startRequest: () => number
+  startRequest: (mode: 'firstPage' | 'nextPage') => number
   setLoadingPage: (loading: boolean) => void
   applyPageResult: (payload: {
     queryKey: string
@@ -28,6 +29,7 @@ export const useOrderPaginationStore = create<OrderPaginationState>((set, get) =
   nextCursor: null,
   hasMore: false,
   isLoadingPage: false,
+  loadingMode: null,
   cursorHistory: [],
   requestVersion: 0,
   reset: (queryKey) => set(() => ({
@@ -36,14 +38,23 @@ export const useOrderPaginationStore = create<OrderPaginationState>((set, get) =
     nextCursor: null,
     hasMore: false,
     isLoadingPage: false,
+    loadingMode: null,
     cursorHistory: [],
   })),
-  startRequest: () => {
+  startRequest: (mode) => {
     const nextVersion = get().requestVersion + 1
-    set(() => ({ requestVersion: nextVersion, isLoadingPage: true }))
+    set(() => ({
+      requestVersion: nextVersion,
+      isLoadingPage: true,
+      loadingMode: mode,
+    }))
     return nextVersion
   },
-  setLoadingPage: (loading) => set(() => ({ isLoadingPage: loading })),
+  setLoadingPage: (loading) =>
+    set(() => ({
+      isLoadingPage: loading,
+      loadingMode: loading ? get().loadingMode : null,
+    })),
   applyPageResult: ({ queryKey, nextCursor, hasMore, append }) =>
     set((state) => {
       const nextHistory = append && state.nextCursor
@@ -57,6 +68,7 @@ export const useOrderPaginationStore = create<OrderPaginationState>((set, get) =
         currentPage: append ? state.currentPage + 1 : 1,
         cursorHistory: nextHistory,
         isLoadingPage: false,
+        loadingMode: null,
       }
     }),
   setHasMore: (hasMore) => set(() => ({ hasMore })),
@@ -65,4 +77,5 @@ export const useOrderPaginationStore = create<OrderPaginationState>((set, get) =
 export const selectOrderCurrentPage = (state: OrderPaginationState) => state.currentPage
 export const selectOrderHasMore = (state: OrderPaginationState) => state.hasMore
 export const selectOrderIsLoadingPage = (state: OrderPaginationState) => state.isLoadingPage
+export const selectOrderLoadingMode = (state: OrderPaginationState) => state.loadingMode
 export const selectOrderNextCursor = (state: OrderPaginationState) => state.nextCursor

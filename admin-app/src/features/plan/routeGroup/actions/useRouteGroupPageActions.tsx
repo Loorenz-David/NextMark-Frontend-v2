@@ -30,7 +30,6 @@ import type { RouteGroup } from "@/features/plan/routeGroup/types/routeGroup";
 import { createRouteWarningActionRegistry } from "./routeWarningActionRegistry";
 import { useMessageHandler } from "@shared-message-handler";
 import type { useLoadingController } from "../controllers/useLoadingController";
-import { MIN_LOADER_VISIBLE_MS } from "../constants/optimization.constants";
 
 type Props = {
   routeGroupId?: number | null;
@@ -41,11 +40,6 @@ type Props = {
   isSelectedSolutionOptimized?: boolean;
   loadingController: ReturnType<typeof useLoadingController>;
 };
-
-const wait = (ms: number) =>
-  new Promise<void>((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
 
 export const useRouteGroupPageActions = ({
   routeGroupId,
@@ -79,26 +73,14 @@ export const useRouteGroupPageActions = ({
   const withOptimizationLoader = async (
     task: () => Promise<boolean>,
   ): Promise<boolean> => {
-    const startedAt = Date.now();
-    let keepMinimumVisibleTime = false;
     optimizationInFlightRef.current += 1;
     if (optimizationInFlightRef.current === 1) {
       loadingController.handleOptimizationLoader(true);
     }
 
     try {
-      const succeeded = await task();
-      keepMinimumVisibleTime = succeeded;
-      return succeeded;
+      return await task();
     } finally {
-      if (keepMinimumVisibleTime) {
-        const elapsed = Date.now() - startedAt;
-        const remaining = Math.max(MIN_LOADER_VISIBLE_MS - elapsed, 0);
-        if (remaining > 0) {
-          await wait(remaining);
-        }
-      }
-
       optimizationInFlightRef.current = Math.max(
         optimizationInFlightRef.current - 1,
         0,

@@ -252,7 +252,8 @@ export const VehicleFormFields = () => {
                 value={formState.fixed_cost ?? 0}
                 onChange={setters.handleFixedCost}
                 min={0}
-                step={1}
+                step={0.1}
+                allowFloat
                 className={PLAIN_INPUT_CONTAINER_CLASS}
               />
             </Field>
@@ -266,7 +267,8 @@ export const VehicleFormFields = () => {
                 value={formState.cost_per_km ?? 0}
                 onChange={setters.handleCostPerKm}
                 min={0}
-                step={1}
+                step={0.01}
+                allowFloat
                 className={PLAIN_INPUT_CONTAINER_CLASS}
               />
             </Field>
@@ -282,7 +284,8 @@ export const VehicleFormFields = () => {
                 value={formState.cost_per_hour ?? 0}
                 onChange={setters.handleCostPerHour}
                 min={0}
-                step={1}
+                step={0.1}
+                allowFloat
                 className={PLAIN_INPUT_CONTAINER_CLASS}
               />
             </Field>

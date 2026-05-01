@@ -1,19 +1,19 @@
-import type { Order } from '@/features/order/types/order'
-import type { RouteSolutionStop } from '@/features/plan/routeGroup/types/routeSolutionStop'
+import type { Order } from "@/features/order/types/order";
+import type { RouteSolutionStop } from "@/features/plan/routeGroup/types/routeSolutionStop";
 
-import { RouteGroupOrderCard } from './RouteGroupOrderCard'
+import { RouteGroupOrderCard } from "./RouteGroupOrderCard";
 
 type RouteGroupStopEntry = {
-  stop: RouteSolutionStop
-  order: Order
-}
+  stop: RouteSolutionStop;
+  order: Order;
+};
 
 type RouteGroupOrderGroupChildrenProps = {
-  entries: RouteGroupStopEntry[]
-  planStartDate?: string | null
-  routeGroupId?: number | null
-  projectedStopOrderByClientId?: Map<string, number> | null
-}
+  entries: RouteGroupStopEntry[];
+  planStartDate?: string | null;
+  routeGroupId?: number | null;
+  projectedStopOrderByClientId?: Map<string, number> | null;
+};
 
 export const RouteGroupOrderGroupChildren = ({
   entries,
@@ -35,7 +35,11 @@ export const RouteGroupOrderGroupChildren = ({
           <RouteGroupOrderCard
             order={entry.order}
             stop={entry.stop}
-            displayStopOrder={projectedStopOrderByClientId?.get(entry.stop.client_id) ?? entry.stop.stop_order ?? null}
+            displayStopOrder={
+              projectedStopOrderByClientId?.get(entry.stop.client_id) ??
+              entry.stop.stop_order ??
+              null
+            }
             planStartDate={planStartDate}
             routeGroupId={routeGroupId}
           />
@@ -43,4 +47,4 @@ export const RouteGroupOrderGroupChildren = ({
       ))}
     </div>
   </div>
-)
+);

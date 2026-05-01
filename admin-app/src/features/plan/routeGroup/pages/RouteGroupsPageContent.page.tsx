@@ -1,6 +1,4 @@
 import { RouteGroupOrderList, RouteGroupsActionBar } from "../components";
-import { OptimizationLoading } from "../components/spinners/Optimization.spinner";
-import { MIN_LOADER_VISIBLE_MS } from "../constants/optimization.constants";
 import { useRouteGroupPageContext } from "../context/useRouteGroupPageContext";
 import { useRouteGroupActionBarVisibility } from "../hooks/useRouteGroupActionBarVisibility";
 import { OrderLoadingList } from "@/shared/loadingCards/order";
@@ -21,8 +19,11 @@ export const RouteGroupsPageContent = ({
     useRouteGroupPageContext();
 
   const isLoading = routeGroup?.is_loading;
-  const optimizationStartedAt = routeGroup?.optimization_started_at ?? null;
   const shouldHaveStops = Math.max(0, routeGroup?.total_orders ?? 0) > 0;
+  const optimizationLoadingCount = Math.max(
+    3,
+    Math.min(orderCount || routeGroup?.total_orders || 0, 8),
+  );
   const hasFullSelectedSolution =
     selectedRouteSolution?._representation === "full";
   const hasHydratedStops = !shouldHaveStops || routeSolutionStops.length > 0;
@@ -66,9 +67,21 @@ export const RouteGroupsPageContent = ({
             </p>
           </div>
         </div>
-      ) : !isLoading ? (
+      ) : !isLoading || isLoading === "isOptimizing" ? (
         <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-          {isHydratingRouteGroupOrders ? (
+          {isLoading === "isOptimizing" ? (
+            <div className="pt-35">
+              <OrderLoadingList
+                variant="routeGroup"
+                count={optimizationLoadingCount}
+                topReservedOffset={
+                  isDesktopActionBarBehaviorEnabled
+                    ? actionBarReservedHeight
+                    : 0
+                }
+              />
+            </div>
+          ) : isHydratingRouteGroupOrders ? (
             <OrderLoadingList
               variant="routeGroup"
               topReservedOffset={
@@ -84,22 +97,6 @@ export const RouteGroupsPageContent = ({
             />
           )}
         </div>
-      ) : isLoading == "isOptimizing" ? (
-        <OptimizationLoading
-          message={
-            <>
-              <p className="font-semibold text-[var(--color-muted)]">
-                Optimization in progress
-              </p>
-              <p className="text-sm opacity-70">
-                You can come back when it is ready.
-              </p>
-            </>
-          }
-          startedAt={optimizationStartedAt}
-          orderCount={orderCount}
-          minDurationMs={MIN_LOADER_VISIBLE_MS}
-        />
       ) : null}
     </div>
   );

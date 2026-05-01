@@ -10,10 +10,6 @@ export const allowedLabels: LabelDefinition[] = [
     id: "expected_arrival_time_costumer",
     displayName: "Expected arrival time",
   },
+  { id: "driver_phone", displayName: "Driver phone" },
   { id: "client_address", displayName: "Client address" },
-  { id: "client_phone_number", displayName: "Client phone number" },
-  {
-    id: "client_phone_number_secondary",
-    displayName: "Client secondary phone number",
-  },
 ];

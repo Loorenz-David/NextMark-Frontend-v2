@@ -24,6 +24,7 @@ type OrderDetailHeaderProps = {
   onClose: () => void;
   order: Order | null;
   headerBehavior?: OrderDetailHeaderBehavior | null;
+  contextRouteGroupId?: number | null;
 };
 
 export const OrderDetailHeader = ({
@@ -33,6 +34,7 @@ export const OrderDetailHeader = ({
   onClose,
   order,
   headerBehavior = null,
+  contextRouteGroupId = null,
 }: OrderDetailHeaderProps) => {
   const registry = useOrderStateRegistry();
 
@@ -53,7 +55,11 @@ export const OrderDetailHeader = ({
               <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.1rem] border border-white/12 bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[0_12px_28px_rgba(131,204,185,0.1)]">
                 <DocumentIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
               </div>
-              <HeaderTitle order={order} headerBehavior={headerBehavior} />
+              <HeaderTitle
+                order={order}
+                headerBehavior={headerBehavior}
+                contextRouteGroupId={contextRouteGroupId}
+              />
             </div>
           </div>
 
@@ -148,16 +154,22 @@ export const OrderDetailHeader = ({
 const HeaderTitle = ({
   order,
   headerBehavior,
+  contextRouteGroupId,
 }: {
   order: Order | null;
   headerBehavior?: OrderDetailHeaderBehavior | null;
+  contextRouteGroupId?: number | null;
 }) => {
   const title = `# ${order?.order_scalar_id ?? "reference number missing"}`;
   const shouldRenderPlanMeta = headerBehavior === "order-main-context";
+  const resolvedRouteGroupId =
+    typeof order?.route_group_id === "number"
+      ? order.route_group_id
+      : (contextRouteGroupId ?? null);
   const planMeta = useOrderDetailHeaderPlanMeta({
     orderId: order?.id ?? null,
     routePlanId: order?.delivery_plan_id ?? null,
-    routeGroupId: order?.route_group_id ?? null,
+    routeGroupId: resolvedRouteGroupId,
   });
 
   return (

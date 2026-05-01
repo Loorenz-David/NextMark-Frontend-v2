@@ -16,9 +16,44 @@ import {
   upsertRouteSolutionStops,
 } from '@/features/plan/routeGroup/store/routeSolutionStop.store'
 import { upsertRouteGroups } from '@/features/plan/routeGroup/store/routeGroup.slice'
+import {
+  rememberRouteGroupForPlan,
+  setActiveRouteGroupId,
+} from '@/features/plan/routeGroup/store/activeRouteGroup.store'
+
+type ApplyRouteGroupPayloadOptions = {
+  activateRouteGroup?: boolean
+  planId?: number | string | null
+}
+
+const toNumberId = (value: number | string | null | undefined) => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  if (typeof value !== 'string' || value.trim().length === 0) return null
+
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+const resolvePayloadRouteGroupId = (
+  payload: RouteGroupOverviewResponse,
+) => {
+  const selectedRouteSolution = payload.route_solution?.allIds
+    .map((clientId) => payload.route_solution.byClientId[clientId])
+    .find((solution) => solution?.is_selected)
+
+  if (typeof selectedRouteSolution?.route_group_id === 'number') {
+    return selectedRouteSolution.route_group_id
+  }
+
+  return payload.route_group?.allIds
+    .map((clientId) => payload.route_group.byClientId[clientId])
+    .find((routeGroup) => typeof routeGroup?.id === 'number')
+    ?.id ?? null
+}
 
 export const applyRouteGroupPayload = (
   payload?: RouteGroupOverviewResponse | null,
+  options?: ApplyRouteGroupPayloadOptions,
 ) => {
   if (!payload) return
   if (payload.order) {
@@ -46,6 +81,18 @@ export const applyRouteGroupPayload = (
   if (payload.route_solution_stop && !payload.route_solution) {
     upsertRouteSolutionStops(payload.route_solution_stop)
   }
+
+  if (options?.activateRouteGroup) {
+    const routeGroupId = resolvePayloadRouteGroupId(payload)
+    if (typeof routeGroupId === 'number') {
+      setActiveRouteGroupId(routeGroupId)
+
+      const planId = toNumberId(options.planId)
+      if (planId != null) {
+        rememberRouteGroupForPlan(planId, routeGroupId)
+      }
+    }
+  }
 }
 
 export function useRouteGroupOverviewFlow() {
@@ -57,7 +104,10 @@ export function useRouteGroupOverviewFlow() {
     try {
       const response = await planOverviewApi.getRouteGroupOverview(planId)
 
-      applyRouteGroupPayload(response.data)
+      applyRouteGroupPayload(response.data, {
+        activateRouteGroup: true,
+        planId,
+      })
       
 
       return response.data

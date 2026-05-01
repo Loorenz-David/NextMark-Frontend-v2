@@ -10,6 +10,7 @@ import {
 
 type ExtraProps = {
   delivery_date?: string | null;
+  order_notes?: unknown;
   order_scalar_id?: number | null;
 };
 
@@ -21,6 +22,7 @@ export const itemsForDownloading = (
   items: Item[],
   order_scalar_id?: number | null,
   route_plan_id?: number | null,
+  order_notes?: unknown,
 ) => {
   let planDeliveryDate: string | null = null;
   if (route_plan_id) {
@@ -46,6 +48,7 @@ export const itemsForDownloading = (
           ...item,
           order_scalar_id,
           delivery_date: planDeliveryDate ?? "",
+          order_notes,
         },
       });
     }

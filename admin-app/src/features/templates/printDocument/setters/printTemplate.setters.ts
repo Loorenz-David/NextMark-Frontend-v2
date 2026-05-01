@@ -36,7 +36,15 @@ export const usePrintTemplateForm = ()=>{
         setFormState((prev) => (prev ? { ...prev, orientation: value } : prev))
     }, [])
     const changeVariant = useCallback((variant:availableVariants )=>{
-        setFormState((prev) => (prev ? { ...prev, selected_variant: variant } : prev))
+        setFormState((prev) => {
+          if (!prev) return prev
+          const variantDefinition = getTemplateVariantsMapByChannel(prev.channel)[variant]
+          return {
+            ...prev,
+            selected_variant: variant,
+            orientation: variantDefinition?.orientation ?? prev.orientation,
+          }
+        })
     }, [])
 
     const resetForm = useCallback(()=>{

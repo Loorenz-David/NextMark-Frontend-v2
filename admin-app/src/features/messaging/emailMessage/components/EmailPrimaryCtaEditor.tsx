@@ -1,17 +1,19 @@
-import { Field } from '@/shared/inputs/FieldContainer'
+import { Field } from "@/shared/inputs/FieldContainer";
 import {
   InputField,
   PLAIN_INPUT_CLASS,
   PLAIN_INPUT_CONTAINER_CLASS,
-} from '@/shared/inputs/InputField'
-import { Cell, SplitRow } from '@/shared/layout/cells'
+} from "@/shared/inputs/InputField";
+import { Cell, SplitRow } from "@/shared/layout/cells";
+
+import { EmailCtaUrlField } from "./EmailCtaUrlField";
 
 type EmailPrimaryCtaEditorProps = {
-  label: string
-  urlTemplate: string
-  onLabelChange: (value: string) => void
-  onUrlChange: (value: string) => void
-}
+  label: string;
+  urlTemplate: string;
+  onLabelChange: (value: string) => void;
+  onUrlChange: (value: string) => void;
+};
 
 export const EmailPrimaryCtaEditor = ({
   label,
@@ -25,10 +27,12 @@ export const EmailPrimaryCtaEditor = ({
         <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
           Primary CTA
         </p>
-        <h3 className="text-lg font-semibold text-[var(--color-text)]">Footer action button</h3>
+        <h3 className="text-lg font-semibold text-[var(--color-text)]">
+          Footer action button
+        </h3>
         <p className="text-sm leading-6 text-[var(--color-muted)]">
-          Configure the main action shown at the bottom of the email. Extra legacy footer buttons
-          remain preserved but are not edited here.
+          Configure the main action shown at the bottom of the email. Extra
+          legacy footer buttons remain preserved but are not edited here.
         </p>
       </div>
 
@@ -48,17 +52,11 @@ export const EmailPrimaryCtaEditor = ({
         <SplitRow splitRowClass="grid grid-cols-1">
           <Cell>
             <Field label="Button URL template:">
-              <InputField
-                value={urlTemplate}
-                onChange={(event) => onUrlChange(event.target.value)}
-                placeholder="https://..."
-                fieldClassName={PLAIN_INPUT_CONTAINER_CLASS}
-                inputClassName={PLAIN_INPUT_CLASS}
-              />
+              <EmailCtaUrlField value={urlTemplate} onChange={onUrlChange} />
             </Field>
           </Cell>
         </SplitRow>
       </div>
     </section>
-  )
-}
+  );
+};

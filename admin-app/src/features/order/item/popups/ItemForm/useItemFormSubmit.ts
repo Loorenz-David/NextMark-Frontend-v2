@@ -3,10 +3,13 @@ import { useCallback, useMemo } from 'react'
 
 import { useMessageHandler } from '@shared-message-handler'
 import { hasFormChanges } from '@shared-domain'
+import { useDownloadTemplateByEventFlow } from '@/features/templates/printDocument/flows'
 
 import { normalizeItemPosition } from '../../domain/itemPosition'
+import { startItemLabelDownload } from '../../flows/startItemLabelDownload.flow'
 import { useItemController } from '../../hooks/useItemController'
 import type { Item, ItemPopupPayload } from '../../types'
+import { useOrderModel } from '../../../domain/useOrderModel'
 
 export const useItemFormSubmit = ({
   payload,
@@ -23,6 +26,8 @@ export const useItemFormSubmit = ({
 }) => {
   const { showMessage } = useMessageHandler()
   const { saveAutonomousItem, deleteAutonomousItem } = useItemController()
+  const { downloadByEvent } = useDownloadTemplateByEventFlow()
+  const { normalizeOrderPayload } = useOrderModel()
 
   const canDelete = useMemo(
     () =>
@@ -70,7 +75,7 @@ export const useItemFormSubmit = ({
       return false
     }
 
-    const saved = await saveAutonomousItem({
+    const saveResult = await saveAutonomousItem({
       orderId: payload.orderId,
       itemId: payload.itemId,
       draft: {
@@ -79,13 +84,23 @@ export const useItemFormSubmit = ({
       },
     })
 
-    if (!saved) {
+    if (saveResult.status === 'failure') {
       return false
+    }
+
+    if (saveResult.status === 'created' || saveResult.status === 'updated') {
+      startItemLabelDownload({
+        downloadByEvent,
+        event: saveResult.status === 'created' ? 'item_created' : 'item_edited',
+        items: [saveResult.item],
+        normalizeOrderPayload,
+        orderId: payload.orderId,
+      })
     }
 
     await onSuccessClose?.()
     return true
-  }, [formState, initialFormRef, normalizeDraft, onSuccessClose, payload, saveAutonomousItem, showMessage, validateForm])
+  }, [downloadByEvent, formState, initialFormRef, normalizeDraft, normalizeOrderPayload, onSuccessClose, payload, saveAutonomousItem, showMessage, validateForm])
 
   const handleDelete = useCallback(async (): Promise<boolean> => {
     if (!canDelete) return false

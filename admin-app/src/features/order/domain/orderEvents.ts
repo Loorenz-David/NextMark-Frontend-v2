@@ -29,7 +29,7 @@ export const ORDER_EVENTS: OrderEventDefinition[] = [
   {
     key: "order_processing",
     label: "Out for delivery",
-    description: "Triggered when an order is out for delivery.",
+    description: "Triggered when an order is out for delivery ( dispatched ).",
   },
   {
     key: "order_completed",

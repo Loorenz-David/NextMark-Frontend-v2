@@ -3,6 +3,7 @@
 import type { ComponentType } from 'react'
 import type { availableChannels, availableOrientations, availableVariants } from '../types'
 import ClassicTemplateItem from '../components/templates/item/classicTemplateItem';
+import SevenByTenTemplateItem from '../components/templates/item/sevenByTenTemplateItem';
 import ClassicTemplateRoute from '../components/templates/route/classicTemplateRoute';
 
 export type TemplateVariantDefinition = {
@@ -30,13 +31,13 @@ const itemTemplateVariantsMap: TemplateVariantMap = {
     component: ClassicTemplateItem
   },
   '7cm - 10cm': {
-    label: '7cm - 10cm',
-    previewTitle: '7cm - 10cm Variant',
+    label: '10cm - 7cm',
+    previewTitle: '10cm - 7cm Variant',
     orientation:'horizontal',
     previewBody: 'Compact density optimized for high-volume label sheets.',
-    widthCm: 5,
-    heightCm: 10,
-    component: ClassicTemplateItem
+    widthCm: 10,
+    heightCm: 7,
+    component: SevenByTenTemplateItem
   },
 }
 const temporaryTemplate = () => null

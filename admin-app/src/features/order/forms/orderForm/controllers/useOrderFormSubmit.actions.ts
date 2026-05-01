@@ -11,12 +11,15 @@ import {
 import type { useOrderItemDraftController } from "../../../item";
 import type { Item } from "../../../item";
 import {
+  itemsForDownloading,
+  startItemLabelDownload,
   useCreateItem,
   useDeleteItem,
   useItemFlow,
   useUpdateItem,
 } from "../../../item";
 import { useOrderController } from "../../../controllers/order.controller";
+import { useOrderModel } from "../../../domain/useOrderModel";
 import { useOrderValidation } from "../../../domain/useOrderValidation";
 import { normalizeFormStateForSave } from "../../../api/mappers/orderForm.normalize";
 import type { Order } from "../../../types/order";
@@ -90,6 +93,7 @@ export const useOrderFormActions = ({
 }) => {
   const { showMessage } = useMessageHandler();
   const { deleteOrderByServerId, saveOrder } = useOrderController();
+  const { normalizeOrderPayload } = useOrderModel();
   const createItemApi = useCreateItem();
   const updateItemApi = useUpdateItem();
   const deleteItemApi = useDeleteItem();
@@ -122,6 +126,44 @@ export const useOrderFormActions = ({
         itemDraftController,
         itemInitialByClientId,
         selectedCostumer,
+        createCommitMode: "defer",
+        itemCommitMode: "defer",
+        onCreateCommitted: ({ resolvedOrder }) => {
+          if (
+            createdItems.length === 0 ||
+            typeof resolvedOrder?.order_scalar_id !== "number"
+          ) {
+            return;
+          }
+
+          downloadByEvent({
+            channel: "item",
+            event: "item_created",
+            data: itemsForDownloading(
+              createdItems,
+              resolvedOrder.order_scalar_id,
+              normalizedCurrent?.delivery_plan_id,
+              normalizedCurrent?.order_notes,
+            ),
+            fileName: "first test",
+          });
+        },
+        onItemMutationCommitted: ({ updatedItems: committedUpdatedItems }) => {
+          if (committedUpdatedItems.length === 0 || typeof orderServerId !== "number") {
+            return;
+          }
+
+          startItemLabelDownload({
+            downloadByEvent,
+            event: "item_edited",
+            items: committedUpdatedItems,
+            normalizeOrderPayload,
+            order,
+            orderId: orderServerId,
+          });
+        },
+        onItemMutationFailure: (message) =>
+          showMessage({ status: 500, message }),
         onOrderRollback: () =>
           reopenOrderFormOnRollback({
             popupManager,
@@ -150,6 +192,7 @@ export const useOrderFormActions = ({
     itemInitialByClientId,
     loadItemsByOrderId,
     mode,
+    normalizeOrderPayload,
     order,
     orderServerId,
     popupManager,

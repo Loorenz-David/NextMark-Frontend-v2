@@ -56,7 +56,12 @@ export const useRouteGroupPageInitializationFlow = (
     }
 
     if (activeRouteGroupId != null) {
-      initialSelectionKeyRef.current = selectionKey;
+      const activeRouteGroupBelongsToPlan = routeGroups.some(
+        (routeGroup) => routeGroup.id === activeRouteGroupId,
+      );
+      if (activeRouteGroupBelongsToPlan) {
+        initialSelectionKeyRef.current = selectionKey;
+      }
       return;
     }
 

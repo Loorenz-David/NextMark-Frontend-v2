@@ -50,7 +50,7 @@ const ExternalCustomerFormContent = () => {
   return (
     <PageLayout>
       <AnimatePresence mode="wait">
-        {!isFormVisible ? (
+        {isFormVisible ? (
           <motion.div
             key="external-form"
             initial={{ y: -26, opacity: 0 }}

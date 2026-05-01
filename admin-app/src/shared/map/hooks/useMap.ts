@@ -179,6 +179,13 @@ export const useMap = (options?: MapConfig): MapBridge => {
     [controller],
   );
 
+  const storeViewportInsets = useCallback(
+    (insets: MapViewportInsets) => {
+      controller.storeViewportInsets(insets);
+    },
+    [controller],
+  );
+
   const reframeToVisibleArea = useCallback(() => {
     controller.reframeToVisibleArea();
   }, [controller]);
@@ -258,6 +265,7 @@ export const useMap = (options?: MapConfig): MapBridge => {
       setHoveredMarker,
       setMultiSelectedMarkerIds,
       setViewportInsets,
+      storeViewportInsets,
       reframeToVisibleArea,
       setZonePolygonOverlay,
       clearZonePolygonOverlay,
@@ -291,6 +299,7 @@ export const useMap = (options?: MapConfig): MapBridge => {
       setSelectedMarker,
       setZoneLayer,
       setViewportInsets,
+      storeViewportInsets,
       setZonePolygonOverlay,
       showOrders,
       showRoute,

@@ -352,6 +352,10 @@ export class GoogleMapAdapter implements MapAdapter {
     this.viewportManager.setViewportInsets(insets);
   }
 
+  storeViewportInsets(insets: MapViewportInsets) {
+    this.viewportManager.storeViewportInsets(insets);
+  }
+
   private resolveVisibleMultiSelectedMarkerIds(layerId: string, ids: string[]) {
     const selectedLeafIds = new Set(ids);
     const layer = this.markerLayerManager.getLayer(layerId);

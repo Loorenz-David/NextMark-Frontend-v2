@@ -98,6 +98,7 @@ export type MapBridge = {
   setHoveredMarker: (id: string | null) => void;
   setMultiSelectedMarkerIds: (layerId: string, ids: string[]) => void;
   setViewportInsets: (insets: MapViewportInsets) => void;
+  storeViewportInsets: (insets: MapViewportInsets) => void;
   reframeToVisibleArea: () => void;
   setZonePolygonOverlay: (
     geometry: GeoJSONPolygonGeometry | null,
@@ -150,6 +151,7 @@ export interface MapAdapter {
   setHoveredMarker: (id: string | null) => void;
   setMultiSelectedMarkerIds: (layerId: string, ids: string[]) => void;
   setViewportInsets: (insets: MapViewportInsets) => void;
+  storeViewportInsets: (insets: MapViewportInsets) => void;
   reframeToVisibleArea: () => void;
   setZonePolygonOverlay: (
     geometry: GeoJSONPolygonGeometry | null,

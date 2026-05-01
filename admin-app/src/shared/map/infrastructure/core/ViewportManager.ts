@@ -75,6 +75,15 @@ export class ViewportManager {
     this.applyViewportInsets()
   }
 
+  storeViewportInsets(insets: MapViewportInsets) {
+    this.viewportInsets = {
+      top: Math.max(0, insets.top),
+      right: Math.max(0, insets.right),
+      bottom: Math.max(0, insets.bottom),
+      left: Math.max(0, insets.left),
+    }
+  }
+
   applyViewportInsets() {
     const map = this.mapInstanceManager.getMap()
     if (!map) return

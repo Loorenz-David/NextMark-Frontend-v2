@@ -1,89 +1,81 @@
-import type { PropsWithChildren } from 'react'
-import { lazy, Suspense, useEffect, useState } from 'react'
-import { BrowserRouter, useNavigate } from 'react-router-dom'
-import { apiClient } from '@/lib/api/ApiClient'
-import { MessageHandlerProvider } from '@shared-message-handler'
-import { MobileProvider } from '@/app/providers/MobileProvider'
-import { useBootstrap } from '@/features/bootstrap/bootstrap.hook'
-import { AdminBusinessRealtimeProvider } from '@/realtime/business/AdminBusinessRealtimeProvider'
-import { DriverLiveRealtimeProvider } from '@/realtime/driverLive/DriverLiveRealtimeProvider'
-import { AdminNotificationsProvider } from '@/realtime/notifications/AdminNotificationsProvider'
+import type { PropsWithChildren } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { BrowserRouter, useNavigate } from "react-router-dom";
+import { apiClient } from "@/lib/api/ApiClient";
+import { MessageHandlerProvider } from "@shared-message-handler";
+import { MobileProvider } from "@/app/providers/MobileProvider";
+import { useBootstrap } from "@/features/bootstrap/bootstrap.hook";
+import { AdminBusinessRealtimeProvider } from "@/realtime/business/AdminBusinessRealtimeProvider";
+import { DriverLiveRealtimeProvider } from "@/realtime/driverLive/DriverLiveRealtimeProvider";
+import { AdminNotificationsProvider } from "@/realtime/notifications/AdminNotificationsProvider";
 
-const DeferredAdminAiPanelProvider = lazy(() =>
-  import('@/features/ai/providers/AdminAiPanelProvider').then((module) => ({
-    default: module.AdminAiPanelProvider,
-  })),
-)
 const DeferredAdminNotificationsPushProvider = lazy(() =>
-  import('@/realtime/notifications/AdminNotificationsPushProvider').then((module) => ({
-    default: module.AdminNotificationsPushProvider,
-  })),
-)
+  import("@/realtime/notifications/AdminNotificationsPushProvider").then(
+    (module) => ({
+      default: module.AdminNotificationsPushProvider,
+    }),
+  ),
+);
 
 function ApiAuthBridge() {
-  const navigate = useNavigate()
-  const { fetchBootstrap } = useBootstrap()
+  const navigate = useNavigate();
+  const { fetchBootstrap } = useBootstrap();
 
   useEffect(() => {
     apiClient.setUnauthenticatedHandler(() => {
-      navigate('/auth/login', { replace: true })
-    })
-  }, [navigate])
+      navigate("/auth/login", { replace: true });
+    });
+  }, [navigate]);
 
   useEffect(() => {
     if (apiClient.getAccessToken()) {
-      void fetchBootstrap()
+      void fetchBootstrap();
     }
-  }, [fetchBootstrap])
+  }, [fetchBootstrap]);
 
-  return null
+  return null;
 }
 
 function DeferredAppEnhancers() {
-  const [shouldMountEnhancers, setShouldMountEnhancers] = useState(false)
+  const [shouldMountEnhancers, setShouldMountEnhancers] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
       const handle = window.requestIdleCallback(() => {
-        setShouldMountEnhancers(true)
-      })
+        setShouldMountEnhancers(true);
+      });
 
       return () => {
-        window.cancelIdleCallback(handle)
-      }
+        window.cancelIdleCallback(handle);
+      };
     }
 
     const timeoutId = globalThis.setTimeout(() => {
-      setShouldMountEnhancers(true)
-    }, 150)
+      setShouldMountEnhancers(true);
+    }, 150);
 
     return () => {
-      globalThis.clearTimeout(timeoutId)
-    }
-  }, [])
+      globalThis.clearTimeout(timeoutId);
+    };
+  }, []);
 
   if (!shouldMountEnhancers) {
-    return null
+    return null;
   }
 
   return (
     <Suspense fallback={null}>
       <DeferredAdminNotificationsPushProvider />
-      <DeferredAdminAiPanelProvider />
+      {/* Re-enable admin AI here later by restoring the deferred AdminAiPanelProvider import and mounting it in this enhancer block. */}
     </Suspense>
-  )
+  );
 }
 
 export function AppProviders({ children }: PropsWithChildren) {
-
-  
   return (
     <BrowserRouter>
       <MobileProvider>
-        <MessageHandlerProvider
-          defaultMessageDurationMs={8000}
-          maxMessages={2}
-        >
+        <MessageHandlerProvider defaultMessageDurationMs={8000} maxMessages={2}>
           <AdminNotificationsProvider>
             <AdminBusinessRealtimeProvider>
               <DriverLiveRealtimeProvider>
@@ -96,5 +88,5 @@ export function AppProviders({ children }: PropsWithChildren) {
         </MessageHandlerProvider>
       </MobileProvider>
     </BrowserRouter>
-  )
+  );
 }

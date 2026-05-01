@@ -122,6 +122,10 @@ export class MapController {
     this.adapter.setViewportInsets(insets);
   }
 
+  storeViewportInsets(insets: MapViewportInsets) {
+    this.adapter.storeViewportInsets(insets);
+  }
+
   reframeToVisibleArea() {
     this.adapter.reframeToVisibleArea();
   }

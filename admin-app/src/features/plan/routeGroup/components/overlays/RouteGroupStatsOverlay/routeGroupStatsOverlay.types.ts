@@ -44,8 +44,10 @@ export type RouteGroupGaussianMetricFace = {
   id: string
   label: string
   displayValue: string
+  subDisplayValue?: string | null
   progressValue: number
   accentClassName?: string
+  useCapacityColor?: boolean
   animation?: RouteGroupAnimatedMetric | null
 }
 
@@ -54,11 +56,23 @@ export type RouteGroupGaussianMetricCard = {
   faces: RouteGroupGaussianMetricFace[]
 }
 
+export type RouteGroupConsumptionMetricPopoverRow = {
+  label: string
+  value: string
+  isResult?: boolean
+}
+
+export type RouteGroupConsumptionMetricPopover = {
+  title: string
+  rows: RouteGroupConsumptionMetricPopoverRow[]
+}
+
 export type RouteGroupConsumptionMetric = {
   id: string
   label: string
   displayValue: string
   animation: RouteGroupAnimatedMetric
+  popover?: RouteGroupConsumptionMetricPopover | null
 }
 
 export type RouteGroupTimingAnalytics = {

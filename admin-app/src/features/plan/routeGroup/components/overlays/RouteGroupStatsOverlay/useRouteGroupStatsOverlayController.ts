@@ -11,7 +11,7 @@ import {
 import { classifyStopTiming } from '@/features/plan/routeGroup/domain/stopTimingClassifier'
 import { useActiveRouteGroupResourcesController } from '@/features/plan/routeGroup/controllers/useActiveRouteGroupResources.controller'
 import { useTeamMemberByServerId } from '@/features/team/members/hooks/useTeamMemberSelectors'
-import { selectVehicleByServerId, useVehicleStore } from '@/features/infrastructure/vehicle/store/vehicleStore'
+import { useVehicleStore } from '@/features/infrastructure/vehicle/store/vehicleStore'
 import { useBaseControlls } from '@/shared/resource-manager/useResourceManager'
 
 import type {
@@ -36,15 +36,41 @@ const formatDistanceLabel = (meters?: number | null) => {
   return `${Math.round((meters ?? 0) / 1000)} km`
 }
 
-const formatWeightLabel = (grams?: number | null) => {
-  if (!Number.isFinite(grams) || (grams ?? 0) <= 0) return '0.0 kg'
-  return `${((grams ?? 0) / 1000).toFixed(1)} kg`
+const toNonNegativeNumber = (value: unknown) => {
+  const numericValue =
+    typeof value === 'number'
+      ? value
+      : typeof value === 'string' && value.trim().length > 0
+        ? Number(value)
+        : Number.NaN
+
+  return Number.isFinite(numericValue) ? Math.max(0, numericValue) : 0
 }
 
-const formatVolumeLabel = (cubicCentimeters?: number | null) => {
-  if (!Number.isFinite(cubicCentimeters) || (cubicCentimeters ?? 0) <= 0) return '0.0 m³'
-  return `${((cubicCentimeters ?? 0) / 1_000_000).toFixed(1)} m³`
+const normalizeWeightLoadToGrams = (value: unknown) => {
+  const numericValue = toNonNegativeNumber(value)
+  if (numericValue <= 0) return 0
+
+  return Math.round(numericValue < 10_000 ? numericValue * 1000 : numericValue)
 }
+
+const normalizeVolumeLoadToCubicCentimeters = (value: unknown) => {
+  const numericValue = toNonNegativeNumber(value)
+  return Math.round(numericValue)
+}
+
+const formatWeightLabel = (grams?: number | string | null) => {
+  const numericGrams = toNonNegativeNumber(grams)
+  if (numericGrams <= 0) return '0.0 kg'
+  return `${(numericGrams / 1000).toFixed(1)} kg`
+}
+
+const formatVolumeLabel = (cubicCentimeters?: number | string | null) => {
+  const numericCubicCentimeters = toNonNegativeNumber(cubicCentimeters)
+  if (numericCubicCentimeters <= 0) return '0.0 m³'
+  return `${(numericCubicCentimeters / 1_000_000).toFixed(1)} m³`
+}
+
 
 const formatDistancePerStopLabel = (meters?: number | null, stopCount?: number | null) => {
   if (!Number.isFinite(meters) || !Number.isFinite(stopCount) || (stopCount ?? 0) <= 0) {
@@ -90,16 +116,23 @@ const resolveOperationCounts = (
 const resolveRouteLoadTotals = (
   routeSolutionStops: Array<{ order_id?: number | null }>,
   ordersById: Map<number, { total_weight?: number | null; total_volume?: number | null }>,
-) => routeSolutionStops.reduce(
-  (acc, stop) => {
-    if (typeof stop.order_id !== 'number') return acc
-    const order = ordersById.get(stop.order_id)
-    acc.totalWeightGrams += order?.total_weight ?? 0
-    acc.totalVolumeCubicCentimeters += order?.total_volume ?? 0
-    return acc
-  },
-  { totalWeightGrams: 0, totalVolumeCubicCentimeters: 0 },
-)
+) => {
+  const resolvedOrderIds = new Set<number>()
+
+  return routeSolutionStops.reduce(
+    (acc, stop) => {
+      if (typeof stop.order_id !== 'number') return acc
+      if (resolvedOrderIds.has(stop.order_id)) return acc
+
+      resolvedOrderIds.add(stop.order_id)
+      const order = ordersById.get(stop.order_id)
+      acc.totalWeightGrams += normalizeWeightLoadToGrams(order?.total_weight)
+      acc.totalVolumeCubicCentimeters += normalizeVolumeLoadToCubicCentimeters(order?.total_volume)
+      return acc
+    },
+    { totalWeightGrams: 0, totalVolumeCubicCentimeters: 0 },
+  )
+}
 
 const resolveCompletionCounts = (
   routeSolutionStops: Array<{ order_id?: number | null }>,
@@ -180,12 +213,16 @@ const buildGaussianCards = ({
   vehicleMaxWeightG?: number | null
 }): RouteGroupGaussianMetricCard[] => {
   const seed = totalStops + completedOrders + failedOrders
-  const volumeRatio = vehicleMaxVolumeCm3 != null && vehicleMaxVolumeCm3 > 0
-    ? clampPercent((totalVolumeCubicCentimeters / vehicleMaxVolumeCm3) * 100)
-    : clampPercent(52 + ((seed * 5) % 33))
-  const weightRatio = vehicleMaxWeightG != null && vehicleMaxWeightG > 0
-    ? clampPercent((totalWeightGrams / vehicleMaxWeightG) * 100)
-    : clampPercent(38 + ((seed * 7) % 41))
+  const normalizedVehicleMaxVolumeCm3 = toNonNegativeNumber(vehicleMaxVolumeCm3)
+  const normalizedVehicleMaxWeightG = toNonNegativeNumber(vehicleMaxWeightG)
+  const hasVehicleVolumeLimit = normalizedVehicleMaxVolumeCm3 > 0
+  const hasVehicleWeightLimit = normalizedVehicleMaxWeightG > 0
+  const volumeRatio = hasVehicleVolumeLimit
+    ? clampPercent((totalVolumeCubicCentimeters / normalizedVehicleMaxVolumeCm3) * 100)
+    : 0
+  const weightRatio = hasVehicleWeightLimit
+    ? clampPercent((totalWeightGrams / normalizedVehicleMaxWeightG) * 100)
+    : 0
 
   return [
     {
@@ -239,12 +276,13 @@ const buildGaussianCards = ({
           id: 'volume',
           label: 'Route capacity volume',
           displayValue: formatVolumeLabel(totalVolumeCubicCentimeters),
+          subDisplayValue: hasVehicleVolumeLimit ? `/ ${formatVolumeLabel(normalizedVehicleMaxVolumeCm3)}` : null,
           progressValue: volumeRatio,
-          accentClassName: 'stroke-cyan-400',
+          useCapacityColor: true,
           animation: {
             numericValue: volumeRatio,
             valueType: 'percent',
-            sourceType: vehicleMaxVolumeCm3 != null ? 'derived' : 'estimated',
+            sourceType: hasVehicleVolumeLimit ? 'derived' : 'estimated',
             compareMode: 'threshold',
             threshold: 1,
           },
@@ -253,12 +291,13 @@ const buildGaussianCards = ({
           id: 'weight',
           label: 'Route weight',
           displayValue: formatWeightLabel(totalWeightGrams),
+          subDisplayValue: hasVehicleWeightLimit ? `/ ${formatWeightLabel(normalizedVehicleMaxWeightG)}` : null,
           progressValue: weightRatio,
-          accentClassName: 'stroke-violet-400',
+          useCapacityColor: true,
           animation: {
             numericValue: weightRatio,
             valueType: 'percent',
-            sourceType: vehicleMaxWeightG != null ? 'derived' : 'estimated',
+            sourceType: hasVehicleWeightLimit ? 'derived' : 'estimated',
             compareMode: 'threshold',
             threshold: 1,
           },
@@ -520,6 +559,14 @@ const buildStatsData = ({
               id: 'fuel-cost',
               label: 'Fuel cost',
               displayValue: `${fuelCost.toFixed(1)} €`,
+              popover: {
+                title: 'Fuel Cost',
+                rows: [
+                  { label: 'Distance', value: `${distanceKm.toFixed(1)} km` },
+                  { label: 'Rate', value: `€${vehicleCostPerKm!.toFixed(2)} / km` },
+                  { label: 'Total cost', value: `€${fuelCost.toFixed(1)}`, isResult: true },
+                ],
+              },
               animation: {
                 numericValue: fuelCost,
                 valueType: 'currency' as const,
@@ -553,6 +600,14 @@ const buildStatsData = ({
               id: 'co2',
               label: 'Co2',
               displayValue: `${co2Value.toFixed(1)} kg`,
+              popover: {
+                title: 'CO₂ Emission',
+                rows: [
+                  { label: 'Distance', value: `${distanceKm.toFixed(1)} km` },
+                  { label: `Factor (${vehicleFuelType ?? ''})`, value: `${co2Factor!.toFixed(2)} kg / km` },
+                  { label: 'Total CO₂', value: `${co2Value.toFixed(1)} kg`, isResult: true },
+                ],
+              },
               animation: {
                 numericValue: co2Value,
                 valueType: 'decimal' as const,
@@ -599,10 +654,27 @@ export const useRouteGroupStatsOverlayController = () => {
   } = useActiveRouteGroupResourcesController(planId)
   const orderStateRegistry = useOrderStateRegistry()
   const driver = useTeamMemberByServerId(selectedRouteSolution?.driver_id ?? null)
-  const vehicle = useVehicleStore(selectVehicleByServerId(selectedRouteSolution?.vehicle_id ?? null))
+  const vehicleIds = useVehicleStore((state) => state.allIds)
+  const vehicleByClientId = useVehicleStore((state) => state.byClientId)
   const [hidden, setHidden] = useState(false)
   const [layoutMode, setLayoutMode] = useState<RouteGroupStatsLayoutMode>('wide')
   const overlayRef = useRef<HTMLDivElement | null>(null)
+
+  const vehicle = useMemo(() => {
+    const vehicleId = selectedRouteSolution?.vehicle_id
+    if (vehicleId == null) return null
+    const normalizedVehicleId = String(vehicleId)
+
+    return vehicleIds
+      .map((clientId) => vehicleByClientId[clientId])
+      .find((candidate) => {
+        if (!candidate) return false
+        return (
+          String(candidate.id ?? '') === normalizedVehicleId
+          || candidate.client_id === normalizedVehicleId
+        )
+      }) ?? null
+  }, [selectedRouteSolution?.vehicle_id, vehicleByClientId, vehicleIds])
 
   const ordersById = useMemo(
     () =>

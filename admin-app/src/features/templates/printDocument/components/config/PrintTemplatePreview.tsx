@@ -59,7 +59,7 @@ export const PrintTemplatePreview = ({
           <div style={{ width: `${previewModel.previewWidthCm}cm`, height: `${previewModel.previewHeightCm}cm` }}>
             <div
               style={
-                orientation === 'horizontal'
+                previewModel.shouldRotateTemplate
                   ? {
                       width: `${previewModel.widthCm}cm`,
                       height: `${previewModel.heightCm}cm`,

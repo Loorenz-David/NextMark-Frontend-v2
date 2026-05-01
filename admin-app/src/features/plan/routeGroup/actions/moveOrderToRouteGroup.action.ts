@@ -101,7 +101,9 @@ const applyOptimisticMutation = (
   if (typeof targetPlanId === "number" && Number.isFinite(targetPlanId)) {
     const patchedClientIds = orderIds
       .map((orderId) => orderState.idIndex[orderId])
-      .filter((clientId): clientId is string => Boolean(clientId && orderState.byClientId[clientId]));
+      .filter((clientId): clientId is string =>
+        Boolean(clientId && orderState.byClientId[clientId]),
+      );
 
     if (patchedClientIds.length > 0) {
       orderState.patchMany(patchedClientIds, {
@@ -138,7 +140,57 @@ const applyOptimisticMutation = (
     if (typeof stop.route_solution_id !== "number") return false;
     return sourceSolutionIds.has(stop.route_solution_id);
   });
+
+  const sourceLoadingThresholdBySolutionId = stopIdsToRemove.reduce<
+    Record<number, number>
+  >((acc, clientId) => {
+    const stop = stopState.byClientId[clientId];
+    if (
+      !stop ||
+      typeof stop.route_solution_id !== "number" ||
+      typeof stop.stop_order !== "number"
+    ) {
+      return acc;
+    }
+
+    const currentThreshold = acc[stop.route_solution_id];
+    if (
+      typeof currentThreshold !== "number" ||
+      stop.stop_order < currentThreshold
+    ) {
+      acc[stop.route_solution_id] = stop.stop_order;
+    }
+
+    return acc;
+  }, {});
+
   stopIdsToRemove.forEach((clientId) => removeRouteSolutionStop(clientId));
+
+  const sourceStopStateAfterRemoval = useRouteSolutionStopStore.getState();
+  sourceStopStateAfterRemoval.allIds.forEach((clientId) => {
+    const stop = sourceStopStateAfterRemoval.byClientId[clientId];
+    if (
+      !stop ||
+      typeof stop.route_solution_id !== "number" ||
+      typeof stop.stop_order !== "number"
+    ) {
+      return;
+    }
+
+    const threshold =
+      sourceLoadingThresholdBySolutionId[stop.route_solution_id];
+    if (typeof threshold !== "number") {
+      return;
+    }
+
+    if (stop.stop_order > threshold) {
+      sourceStopStateAfterRemoval.update(clientId, (existing) => ({
+        ...existing,
+        eta_status: "estimated",
+        expected_arrival_time: "loading",
+      }));
+    }
+  });
 
   const targetSolutions = selectRouteSolutionsByRouteGroupId(
     targetRouteGroupId,

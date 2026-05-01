@@ -80,6 +80,9 @@ const toNullableNumber = (value: number | string | null | undefined) => {
   return Number.isFinite(numericValue) ? numericValue : Number.NaN
 }
 
+const zeroToNull = (value: number | null): number | null =>
+  value === 0 ? null : value
+
 const toOptionalString = (value: string) => {
   const trimmedValue = value.trim()
   return trimmedValue ? trimmedValue : null
@@ -137,17 +140,17 @@ export const buildVehicleCreateInput = (
   if (!capabilitiesResult.ok) return capabilitiesResult
 
   const numericFields = {
-    max_volume_load_cm3: cubicMetersToCubicCentimeters(toNullableNumber(draft.max_volume_load_m3)),
-    max_weight_load_g: kilogramsToGrams(toNullableNumber(draft.max_weight_load_kg)),
-    max_speed_kmh: toNullableNumber(draft.max_speed_kmh),
-    cost_per_km: toNullableNumber(draft.cost_per_km),
-    cost_per_hour: toNullableNumber(draft.cost_per_hour),
-    travel_distance_limit_km: toNullableNumber(draft.travel_distance_limit_km),
-    travel_duration_limit_minutes: toNullableNumber(draft.travel_duration_limit_minutes),
+    max_volume_load_cm3: zeroToNull(cubicMetersToCubicCentimeters(toNullableNumber(draft.max_volume_load_m3))),
+    max_weight_load_g: zeroToNull(kilogramsToGrams(toNullableNumber(draft.max_weight_load_kg))),
+    max_speed_kmh: zeroToNull(toNullableNumber(draft.max_speed_kmh)),
+    cost_per_km: zeroToNull(toNullableNumber(draft.cost_per_km)),
+    cost_per_hour: zeroToNull(toNullableNumber(draft.cost_per_hour)),
+    travel_distance_limit_km: zeroToNull(toNullableNumber(draft.travel_distance_limit_km)),
+    travel_duration_limit_minutes: zeroToNull(toNullableNumber(draft.travel_duration_limit_minutes)),
     home_facility_id: toNullableNumber(draft.home_facility_id),
-    loading_time_per_stop_seconds: minutesToSeconds(toNullableNumber(draft.loading_time_per_stop_minutes)),
-    unloading_time_per_stop_seconds: minutesToSeconds(toNullableNumber(draft.unloading_time_per_stop_minutes)),
-    fixed_cost: toNullableNumber(draft.fixed_cost),
+    loading_time_per_stop_seconds: zeroToNull(minutesToSeconds(toNullableNumber(draft.loading_time_per_stop_minutes))),
+    unloading_time_per_stop_seconds: zeroToNull(minutesToSeconds(toNullableNumber(draft.unloading_time_per_stop_minutes))),
+    fixed_cost: zeroToNull(toNullableNumber(draft.fixed_cost)),
   }
 
   if (Object.values(numericFields).some(Number.isNaN)) {
@@ -232,7 +235,7 @@ export const buildVehicleUpdateFields = (
     if (Number.isNaN(numericValue)) {
       return { ok: false, error: 'Max volume must be a valid number.' }
     }
-    fields.max_volume_load_cm3 = cubicMetersToCubicCentimeters(numericValue)
+    fields.max_volume_load_cm3 = zeroToNull(cubicMetersToCubicCentimeters(numericValue))
   }
 
   if ('max_weight_load_kg' in draft && draft.max_weight_load_kg !== undefined) {
@@ -240,7 +243,7 @@ export const buildVehicleUpdateFields = (
     if (Number.isNaN(numericValue)) {
       return { ok: false, error: 'Max weight must be a valid number.' }
     }
-    fields.max_weight_load_g = kilogramsToGrams(numericValue)
+    fields.max_weight_load_g = zeroToNull(kilogramsToGrams(numericValue))
   }
 
   if ('loading_time_per_stop_minutes' in draft && draft.loading_time_per_stop_minutes !== undefined) {
@@ -248,7 +251,7 @@ export const buildVehicleUpdateFields = (
     if (Number.isNaN(numericValue)) {
       return { ok: false, error: 'Loading time must be a valid number.' }
     }
-    fields.loading_time_per_stop_seconds = minutesToSeconds(numericValue)
+    fields.loading_time_per_stop_seconds = zeroToNull(minutesToSeconds(numericValue))
   }
 
   if ('unloading_time_per_stop_minutes' in draft && draft.unloading_time_per_stop_minutes !== undefined) {
@@ -256,7 +259,7 @@ export const buildVehicleUpdateFields = (
     if (Number.isNaN(numericValue)) {
       return { ok: false, error: 'Unloading time must be a valid number.' }
     }
-    fields.unloading_time_per_stop_seconds = minutesToSeconds(numericValue)
+    fields.unloading_time_per_stop_seconds = zeroToNull(minutesToSeconds(numericValue))
   }
 
   for (const [fieldKey, draftKey, label] of numericFieldMap) {
@@ -269,7 +272,7 @@ export const buildVehicleUpdateFields = (
       return { ok: false, error: `${label} must be a valid number.` }
     }
 
-    ;(fields as Record<string, unknown>)[fieldKey] = numericValue
+    ;(fields as Record<string, unknown>)[fieldKey] = zeroToNull(numericValue)
   }
 
   if ('is_active' in draft && typeof draft.is_active === 'boolean') {

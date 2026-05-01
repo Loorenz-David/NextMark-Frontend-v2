@@ -1,5 +1,5 @@
 import type { Order } from "@/features/order/types/order";
-import { ItemIcon, TimeIcon } from "@/assets/icons";
+import { TimeIcon } from "@/assets/icons";
 import { StateCard } from "@/shared/layout/StateCard";
 import { useMapManager } from "@/shared/resource-manager/useResourceManager";
 import { useOrderStateByServerId } from "@/features/order/store/orderStateHooks.store";
@@ -9,6 +9,7 @@ import { formatRouteTime } from "@/features/plan/routeGroup/utils/formatRouteTim
 import { useOrderActions } from "@/features/order";
 import { StopOrderAvatar } from "./StopOrderAvatar";
 import { OrderOperationTypeBadges } from "@/features/order/components/cards/OrderOperationTypeBadges";
+import { ItemTypeCountsPill } from "@/features/order/components/cards/ItemTypeCountsPill";
 import { OrderTimeLoadingPill } from "@/shared/loadingCards/order";
 
 type RouteGroupOrderCardProps = {
@@ -100,10 +101,10 @@ export const RouteGroupOrderCard = ({
               {streetAddress}
             </span>
             <div className="flex items-center justify-end gap-3 text-xs text-[var(--color-muted)]">
-              <div className="flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-2 py-1">
-                <ItemIcon className="h-3 w-3 text-[var(--color-primary)]/85" />
-                <span>{itemCount}</span>
-              </div>
+              <ItemTypeCountsPill
+                itemCount={itemCount}
+                itemTypeCounts={order.item_type_counts}
+              />
               {expectedArrival ? (
                 <div className="flex min-w-[72px] items-center justify-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-2 py-1">
                   <>

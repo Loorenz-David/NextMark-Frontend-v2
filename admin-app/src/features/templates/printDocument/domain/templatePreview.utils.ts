@@ -7,15 +7,17 @@ export const buildTemplatePreviewModel = (
 ) => {
   const widthCm = variantDefinition.widthCm
   const heightCm = variantDefinition.heightCm
+  const shouldRotateTemplate = orientation === 'horizontal' && widthCm < heightCm
 
-  const previewWidthCm = orientation === 'horizontal' ? heightCm : widthCm
-  const previewHeightCm = orientation === 'horizontal' ? widthCm : heightCm
+  const previewWidthCm = shouldRotateTemplate ? heightCm : widthCm
+  const previewHeightCm = shouldRotateTemplate ? widthCm : heightCm
 
   return {
     widthCm,
     heightCm,
     previewWidthCm,
     previewHeightCm,
+    shouldRotateTemplate,
     widthLabel: `${previewWidthCm} cm`,
     heightLabel: `${previewHeightCm} cm`,
   }

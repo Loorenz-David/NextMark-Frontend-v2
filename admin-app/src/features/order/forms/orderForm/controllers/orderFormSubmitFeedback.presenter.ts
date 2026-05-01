@@ -67,7 +67,11 @@ export const presentOrderFormSubmitOutcome = ({
 }) => {
   const feedback = mapSubmitResultToFeedback(result);
 
-  if (result.status === "success_create" && createdItems.length > 0) {
+  if (
+    result.status === "success_create" &&
+    createdItems.length > 0 &&
+    typeof result.createdOrderScalarId === "number"
+  ) {
     downloadByEvent({
       channel: "item",
       event: "item_created",
@@ -75,6 +79,7 @@ export const presentOrderFormSubmitOutcome = ({
         createdItems,
         result.createdOrderScalarId,
         normalizedCurrent?.delivery_plan_id,
+        normalizedCurrent?.order_notes,
       ),
       fileName: "first test",
     });

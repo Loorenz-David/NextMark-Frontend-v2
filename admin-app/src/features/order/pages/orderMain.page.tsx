@@ -29,6 +29,7 @@ const OrderMainContent = ({
     handleOrderRowMouseLeave,
     hasMorePages,
     isInitialLoading,
+    isRefreshingOrders,
     isLoadingNextPage,
     loadNextPage,
   } = useOrderContext();
@@ -145,22 +146,24 @@ const OrderMainContent = ({
           )}
         </div>
       </div>
-      {!isInitialLoading && (isLoadingNextPage || hasMorePages) && (
-        <div className="flex justify-center  px-4 pb-4 pt-3">
-          <BasicButton
-            params={{
-              onClick: () => {
-                void loadNextPage();
-              },
-              disabled: isLoadingNextPage || !hasMorePages,
-              variant: "secondary",
-              ariaLabel: "Load next page of orders",
-            }}
-          >
-            {isLoadingNextPage ? "Loading…" : "Show more"}
-          </BasicButton>
-        </div>
-      )}
+      {!isInitialLoading &&
+        !isRefreshingOrders &&
+        (isLoadingNextPage || hasMorePages) && (
+          <div className="flex justify-center  px-4 pb-4 pt-3">
+            <BasicButton
+              params={{
+                onClick: () => {
+                  void loadNextPage();
+                },
+                disabled: isLoadingNextPage || !hasMorePages,
+                variant: "secondary",
+                ariaLabel: "Load next page of orders",
+              }}
+            >
+              {isLoadingNextPage ? "Loading…" : "Show more"}
+            </BasicButton>
+          </div>
+        )}
     </div>
   );
 };

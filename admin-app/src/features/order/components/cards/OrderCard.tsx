@@ -1,14 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-
 import { useOrderStateByServerId } from "@/features/order/store/orderStateHooks.store";
-import { ArchiveOrderIcon, ItemIcon, SendBackIcon } from "@/assets/icons";
-import { FloatingPopover } from "@/shared/popups/FloatingPopover/FloatingPopover";
+import { ArchiveOrderIcon, SendBackIcon } from "@/assets/icons";
 
 import type { Order } from "../../types/order";
 import { StateCard } from "@/shared/layout/StateCard";
 import { ConfirmActionButton } from "@/shared/buttons/DeleteButton";
 import { OrderMissingInfoNotifier } from "../OrderMissingInfoNotifier";
 import { OrderOperationTypeBadges } from "./OrderOperationTypeBadges";
+import { ItemTypeCountsPill } from "./ItemTypeCountsPill";
 
 type OrderCardProps = {
   order: Order;
@@ -29,84 +27,6 @@ export const OrderCard = ({
     order.order_scalar_id != null ? `#${order.order_scalar_id}` : "#—";
   const streetAddress = order.client_address?.street_address ?? "No address";
   const itemCount = order.total_items ?? 0;
-  const itemTypeCountEntries = useMemo(
-    () =>
-      Object.entries(order.item_type_counts ?? {})
-        .filter(([itemType, count]) => itemType.trim().length > 0 && count > 0)
-        .sort((leftEntry, rightEntry) => {
-          const [leftType, leftCount] = leftEntry;
-          const [rightType, rightCount] = rightEntry;
-          if (rightCount !== leftCount) return rightCount - leftCount;
-          return leftType.localeCompare(rightType);
-        }),
-    [order.item_type_counts],
-  );
-  const hasItemTypeCounts = itemTypeCountEntries.length > 0;
-  const [itemTypePopoverOpen, setItemTypePopoverOpen] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const itemTypePopoverDelayTimeoutRef = useRef<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-
-  const clearItemTypePopoverDelay = () => {
-    if (itemTypePopoverDelayTimeoutRef.current == null) return;
-    clearTimeout(itemTypePopoverDelayTimeoutRef.current);
-    itemTypePopoverDelayTimeoutRef.current = null;
-  };
-
-  const handleItemCountMouseEnter = () => {
-    if (isTouchDevice) return;
-    if (!hasItemTypeCounts) return;
-    clearItemTypePopoverDelay();
-    itemTypePopoverDelayTimeoutRef.current = setTimeout(() => {
-      setItemTypePopoverOpen(true);
-      itemTypePopoverDelayTimeoutRef.current = null;
-    }, 200);
-  };
-
-  const handleItemCountMouseLeave = () => {
-    if (isTouchDevice) return;
-    clearItemTypePopoverDelay();
-    setItemTypePopoverOpen(false);
-  };
-
-  const handleItemCountClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    if (!hasItemTypeCounts) return;
-    if (!isTouchDevice) return;
-    setItemTypePopoverOpen((current) => !current);
-  };
-
-  useEffect(() => {
-    if (
-      typeof window === "undefined" ||
-      typeof window.matchMedia !== "function"
-    ) {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia("(hover: none), (pointer: coarse)");
-    const syncDeviceType = () => {
-      setIsTouchDevice(mediaQuery.matches);
-    };
-
-    syncDeviceType();
-    mediaQuery.addEventListener("change", syncDeviceType);
-
-    return () => {
-      mediaQuery.removeEventListener("change", syncDeviceType);
-    };
-  }, []);
-
-  useEffect(
-    () => () => {
-      if (itemTypePopoverDelayTimeoutRef.current == null) return;
-      clearTimeout(itemTypePopoverDelayTimeoutRef.current);
-      itemTypePopoverDelayTimeoutRef.current = null;
-    },
-    [],
-  );
-
   const orderState = useOrderStateByServerId(order.order_state_id ?? 1);
   const external_source = order.external_source;
   return (
@@ -190,55 +110,10 @@ export const OrderCard = ({
         <span className="truncate text-xs text-[var(--color-muted)]/95">
           {streetAddress}
         </span>
-        <div
-          className="shrink-0"
-          onMouseEnter={handleItemCountMouseEnter}
-          onMouseLeave={handleItemCountMouseLeave}
-          onClick={handleItemCountClick}
-        >
-          <FloatingPopover
-            open={itemTypePopoverOpen}
-            onOpenChange={setItemTypePopoverOpen}
-            classes="relative"
-            offSetNum={8}
-            renderInPortal={true}
-            matchReferenceWidth={false}
-            floatingClassName="z-[120]"
-            reference={
-              <div
-                className={`flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-2 py-1 ${
-                  hasItemTypeCounts
-                    ? "cursor-pointer transition-all duration-200 hover:border-[rgb(var(--color-light-blue-r),0.45)] hover:shadow-[0_0_0_1px_rgba(113,205,233,0.2),0_0_16px_rgba(72,180,194,0.18)]"
-                    : ""
-                }`}
-              >
-                <ItemIcon className="h-3 w-3 text-[var(--color-primary)]/85" />
-                <span>{itemCount}</span>
-              </div>
-            }
-          >
-            <div className="admin-glass-popover min-w-[11rem] rounded-lg border border-white/14 bg-[rgba(9,16,26,0.92)] px-3 py-2 shadow-[0_10px_24px_rgba(0,0,0,0.36)] backdrop-blur-md">
-              <div className="mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted)]/90">
-                Item Types
-              </div>
-              <div className="space-y-1">
-                {itemTypeCountEntries.map(([itemType, count]) => (
-                  <div
-                    key={itemType}
-                    className="grid grid-cols-[1fr_auto] items-center gap-4 text-xs"
-                  >
-                    <span className="truncate text-[var(--color-text)]/92">
-                      {itemType}
-                    </span>
-                    <span className="font-semibold text-[var(--color-text)]">
-                      {count}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </FloatingPopover>
-        </div>
+        <ItemTypeCountsPill
+          itemCount={itemCount}
+          itemTypeCounts={order.item_type_counts}
+        />
       </div>
     </div>
   );

@@ -21,6 +21,7 @@ export type OrderContextValue = {
   currentPage: number
   hasMorePages: boolean
   isInitialLoading: boolean
+  isRefreshingOrders: boolean
   isLoadingNextPage: boolean
   loadNextPage: () => Promise<unknown>
   query: {

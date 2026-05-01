@@ -13,6 +13,29 @@ type GaussianMetricCardProps = {
 
 const TRACK_PATH = 'M 18 112 A 62 62 0 0 1 142 112'
 
+const CAPACITY_COLOR_STOPS: Array<{ at: number; rgb: [number, number, number] }> = [
+  { at: 0,    rgb: [74,  222, 128] },  // green-400
+  { at: 0.6,  rgb: [250, 204,  21] },  // yellow-400
+  { at: 0.8,  rgb: [251, 146,  60] },  // orange-400
+  { at: 1.0,  rgb: [239,  68,  68] },  // red-500
+]
+
+const interpolateCapacityColor = (progress: number): string => {
+  const p = Math.max(0, Math.min(1, progress))
+  for (let i = 0; i < CAPACITY_COLOR_STOPS.length - 1; i++) {
+    const from = CAPACITY_COLOR_STOPS[i]
+    const to = CAPACITY_COLOR_STOPS[i + 1]
+    if (p <= to.at) {
+      const t = (p - from.at) / (to.at - from.at)
+      const r = Math.round(from.rgb[0] + (to.rgb[0] - from.rgb[0]) * t)
+      const g = Math.round(from.rgb[1] + (to.rgb[1] - from.rgb[1]) * t)
+      const b = Math.round(from.rgb[2] + (to.rgb[2] - from.rgb[2]) * t)
+      return `rgb(${r},${g},${b})`
+    }
+  }
+  return 'rgb(239,68,68)'
+}
+
 const hasMeaningfulChange = (previous: number, next: number, compareMode?: 'strict' | 'epsilon' | 'threshold', epsilon?: number, threshold?: number) => {
   if (compareMode === 'epsilon') {
     return Math.abs(previous - next) >= Math.max(0.0001, epsilon ?? 0.01)
@@ -179,9 +202,14 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
                   strokeWidth="12"
                   pathLength={100}
                   initial={false}
-                  animate={{ pathLength: progressPathLength }}
+                  animate={{
+                    pathLength: progressPathLength,
+                    ...(activeFace.useCapacityColor
+                      ? { stroke: interpolateCapacityColor(progressPathLength) }
+                      : {}),
+                  }}
                   transition={{ duration: progressDuration, ease: [0.22, 1, 0.36, 1] }}
-                  className={cn('stroke-lime-400', activeFace.accentClassName)}
+                  className={activeFace.useCapacityColor ? undefined : cn('stroke-lime-400', activeFace.accentClassName)}
                 />
               </svg>
 
@@ -199,7 +227,15 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
             </div>
           </div>
 
-          <div className="  flex justify-center">
+          {activeFace.subDisplayValue ? (
+            <div className="-mt-1 flex justify-center">
+              <span className="text-center text-[10px] font-medium text-white/60">
+                {activeFace.subDisplayValue}
+              </span>
+            </div>
+          ) : null}
+
+          <div className="flex justify-center">
             <div className="text-center text-xs font-semibold text-white">
               {activeFace.label}
               {isEstimated ? (

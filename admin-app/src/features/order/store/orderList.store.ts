@@ -14,6 +14,10 @@ export const selectOrderListPagination = (
 
 export const selectOrderListQuery = (state: ListState<OrderStats, OrderQueryStoreFilters, OrderPagination>) => state.query
 
+export const selectOrderListQueryKey = (
+  state: ListState<OrderStats, OrderQueryStoreFilters, OrderPagination>,
+) => state.queryKey
+
 export const selectOrderListLoading = (state: ListState<OrderStats, OrderQueryStoreFilters, OrderPagination>) =>
   state.isLoading
 

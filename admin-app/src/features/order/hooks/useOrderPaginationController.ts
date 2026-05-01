@@ -1,6 +1,10 @@
 import { useCallback, useMemo, useRef } from 'react'
 
-import { setOrderListError, setOrderListLoading, setOrderListResult } from '../store/orderList.store'
+import {
+  setOrderListLoading,
+  setOrderListResult,
+  useOrderListStore,
+} from '../store/orderList.store'
 import { appendVisibleOrders, setVisibleOrders } from '../store/order.store'
 import { buildOrderQueryKey, useOrderFlow } from '../flows/order.flow'
 import type { OrderQueryStoreFilters } from '../types/orderMeta'
@@ -8,7 +12,7 @@ import {
   useOrderPaginationStore,
   selectOrderCurrentPage,
   selectOrderHasMore,
-  selectOrderIsLoadingPage,
+  selectOrderLoadingMode,
   selectOrderNextCursor,
 } from '../store/orderPagination.store'
 import { isRouteOperationsFixtureModeEnabled } from '@/features/home-route-operations/dev/routeOperationsFixtureMode'
@@ -25,7 +29,7 @@ export const useOrderPaginationController = ({ query, scrollToTop }: Params) => 
   loadOrdersPageRef.current = loadOrdersPage
   const currentPage = useOrderPaginationStore(selectOrderCurrentPage)
   const hasMore = useOrderPaginationStore(selectOrderHasMore)
-  const isLoadingPage = useOrderPaginationStore(selectOrderIsLoadingPage)
+  const loadingMode = useOrderPaginationStore(selectOrderLoadingMode)
   const nextCursor = useOrderPaginationStore(selectOrderNextCursor)
 
   const queryKey = useMemo(() => buildOrderQueryKey(query), [query])
@@ -40,11 +44,13 @@ export const useOrderPaginationController = ({ query, scrollToTop }: Params) => 
 
     if (!append) {
       paginationState.reset(queryKey)
-      setVisibleOrders([])
+      if (useOrderListStore.getState().queryKey == null) {
+        setVisibleOrders([])
+      }
       scrollToTop?.()
     }
 
-    const requestVersion = paginationState.startRequest()
+    const requestVersion = paginationState.startRequest(append ? 'nextPage' : 'firstPage')
 
     setOrderListLoading(true)
     const response = await loadOrdersPageRef.current({
@@ -96,14 +102,15 @@ export const useOrderPaginationController = ({ query, scrollToTop }: Params) => 
 
   const loadFirstPage = useCallback(async () => loadPage(false), [loadPage])
   const loadNextPage = useCallback(async () => {
-    if (isLoadingPage || !hasMore || !nextCursor) return null
+    if (loadingMode !== null || !hasMore || !nextCursor) return null
     return loadPage(true)
-  }, [hasMore, isLoadingPage, loadPage, nextCursor])
+  }, [hasMore, loadPage, loadingMode, nextCursor])
 
   return {
     currentPage,
     hasMore,
-    isLoadingPage,
+    isLoadingFirstPage: loadingMode === 'firstPage',
+    isLoadingNextPage: loadingMode === 'nextPage',
     loadFirstPage,
     loadNextPage,
     queryKey,

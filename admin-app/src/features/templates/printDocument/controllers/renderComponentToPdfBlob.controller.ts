@@ -42,8 +42,9 @@ export const renderComponentToPdfBlob = async (
     import('jspdf'),
   ])
 
-  const orientedWidthCm = orientation === 'horizontal' ? heightCm : widthCm
-  const orientedHeightCm = orientation === 'horizontal' ? widthCm : heightCm
+  const shouldRotateTemplate = orientation === 'horizontal' && widthCm < heightCm
+  const orientedWidthCm = shouldRotateTemplate ? heightCm : widthCm
+  const orientedHeightCm = shouldRotateTemplate ? widthCm : heightCm
 
   const container = document.createElement('div')
   container.style.position = 'fixed'
@@ -76,7 +77,7 @@ export const renderComponentToPdfBlob = async (
         orientation,
       })
 
-      const renderElement = orientation === 'horizontal'
+      const renderElement = shouldRotateTemplate
         ? createElement(
             'div',
             {

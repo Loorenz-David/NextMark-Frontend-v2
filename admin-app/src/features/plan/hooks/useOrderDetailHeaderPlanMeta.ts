@@ -2,6 +2,10 @@ import { useMemo } from "react";
 
 import { useRouteSolutionStopStore } from "../routeGroup/store/routeSolutionStop.store";
 import { useRouteSolutionStore } from "../routeGroup/store/routeSolution.store";
+import {
+  selectRouteGroupByServerId,
+  useRouteGroupStore,
+} from "../routeGroup/store/routeGroup.slice";
 import { useRoutePlanByServerId } from "../store/useRoutePlan.selector";
 import {
   extractOrderDetailHeaderPlanMeta,
@@ -25,7 +29,14 @@ export const useOrderDetailHeaderPlanMeta = ({
   routePlanId,
   routeGroupId,
 }: UseOrderDetailHeaderPlanMetaParams): OrderDetailHeaderPlanMeta => {
-  const routePlan = useRoutePlanByServerId(routePlanId ?? null) ?? null;
+  const routeGroup = useRouteGroupStore(
+    selectRouteGroupByServerId(routeGroupId ?? null),
+  );
+  const resolvedRoutePlanId =
+    typeof routePlanId === "number"
+      ? routePlanId
+      : (routeGroup?.route_plan_id ?? null);
+  const routePlan = useRoutePlanByServerId(resolvedRoutePlanId) ?? null;
   const routeSolutionIds = useRouteSolutionStore((state) => state.allIds);
   const routeSolutionByClientId = useRouteSolutionStore(
     (state) => state.byClientId,
@@ -92,8 +103,10 @@ export const useOrderDetailHeaderPlanMeta = ({
         routePlan,
         routeStop,
         fallbackPlanLabel:
-          typeof routePlanId === "number" ? `Plan #${routePlanId}` : null,
+          typeof resolvedRoutePlanId === "number"
+            ? `Plan #${resolvedRoutePlanId}`
+            : null,
       }),
-    [routePlan, routePlanId, routeStop],
+    [resolvedRoutePlanId, routePlan, routeStop],
   );
 };
