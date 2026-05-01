@@ -39,6 +39,13 @@ export const resolveDraggedOrderOwnership = ({
     };
   }
 
+  if (activeType === "order_batch") {
+    return {
+      planId: null,
+      routeGroupId: null,
+    };
+  }
+
   if (activeType === "route_stop" || activeType === "route_stop_group") {
     const stop = asRecord(data.stop);
     const routeSolutionId =

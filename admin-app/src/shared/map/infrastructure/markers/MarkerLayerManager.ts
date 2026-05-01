@@ -271,6 +271,25 @@ export class MarkerLayerManager {
     return removedIds
   }
 
+  removeMarkersByIds(layerId: string, ids: string[]) {
+    const idSet = new Set(ids.map(String).filter(Boolean))
+    if (idSet.size === 0) {
+      return [] as string[]
+    }
+
+    const snapshot = this.layerSnapshots.get(layerId)
+    if (!snapshot) {
+      return [] as string[]
+    }
+
+    const nextOrders = snapshot.filter((order) => !idSet.has(String(order.id)))
+    if (nextOrders.length === snapshot.length) {
+      return [] as string[]
+    }
+
+    return this.setLayerMarkers(layerId, nextOrders).removedIds
+  }
+
   clearMarkers() {
     const removedIds: string[] = []
     Array.from(this.layers.keys()).forEach((layerId) => {

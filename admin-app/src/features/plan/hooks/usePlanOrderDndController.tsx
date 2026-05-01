@@ -34,7 +34,6 @@ export type ActiveDrag =
   | { type: "order"; order: Order }
   | {
       type: "order_batch";
-      order: Order;
       selectedCount: number;
       isLoading: boolean;
     }
@@ -222,6 +221,22 @@ export const usePlanOrderDndController = () => {
       };
     }
 
+    if (active.data.current?.type === "order_batch") {
+      const selectionState = useOrderSelectionStore.getState();
+      const dragSelectedCount = Number(active.data.current.selectedCount);
+      setActiveDrag({
+        type: "order_batch",
+        selectedCount:
+          Number.isFinite(dragSelectedCount) && dragSelectedCount > 0
+            ? dragSelectedCount
+            : resolveSelectionAuthorityBatchCount(selectionState),
+        isLoading:
+          Boolean(active.data.current.isLoading) ||
+          selectionState.resolvedSelection.isLoading,
+      });
+      return;
+    }
+
     if (active.data.current?.type === "order" && active.data.current?.order) {
       const draggedOrder = active.data.current.order as Order;
       const selectionState = useOrderSelectionStore.getState();
@@ -232,7 +247,6 @@ export const usePlanOrderDndController = () => {
       ) {
         setActiveDrag({
           type: "order_batch",
-          order: draggedOrder,
           selectedCount: resolveSelectionAuthorityBatchCount(selectionState),
           isLoading: selectionState.resolvedSelection.isLoading,
         });
@@ -315,7 +329,8 @@ export const usePlanOrderDndController = () => {
     const selectionState = useOrderSelectionStore.getState();
     const activeOrder = (activeData?.order as Order | undefined) ?? null;
     const selectionModeEnabled =
-      selectionState.isSelectionMode && hasSelectionIntent(selectionState);
+      (selectionState.isSelectionMode && hasSelectionIntent(selectionState)) ||
+      activeData.type === "order_batch";
     const isActiveOrderSelected = isOrderSelectedForBatch(
       activeOrder,
       selectionState,
@@ -382,7 +397,8 @@ export const usePlanOrderDndController = () => {
     const selectionState = useOrderSelectionStore.getState();
     const activeOrder = (activeData?.order as Order | undefined) ?? null;
     const selectionModeEnabled =
-      selectionState.isSelectionMode && hasSelectionIntent(selectionState);
+      (selectionState.isSelectionMode && hasSelectionIntent(selectionState)) ||
+      activeData.type === "order_batch";
     const isActiveOrderSelected = isOrderSelectedForBatch(
       activeOrder,
       selectionState,

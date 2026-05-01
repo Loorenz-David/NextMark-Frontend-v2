@@ -17,6 +17,7 @@ type DraggableOrderAddressGroupCardProps = {
   onArchive?: (order: Order) => void
   onUnarchive?: (order: Order) => void
   hoveredClientId?: string | null
+  hoveredClientIds?: string[]
   onOrderMouseEnter?: (order: Order) => void
   onOrderMouseLeave?: () => void
 }
@@ -33,6 +34,7 @@ export const DraggableOrderAddressGroupCard = ({
   onArchive,
   onUnarchive,
   hoveredClientId,
+  hoveredClientIds,
   onOrderMouseEnter,
   onOrderMouseLeave,
 }: DraggableOrderAddressGroupCardProps) => {
@@ -68,7 +70,16 @@ export const DraggableOrderAddressGroupCard = ({
   }
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      onMouseEnter={() => {
+        if (representativeOrder) {
+          onOrderMouseEnter?.(representativeOrder)
+        }
+      }}
+      onMouseLeave={() => onOrderMouseLeave?.()}
+    >
       <OrderAddressGroupCard
         group={group}
         expanded={expanded}
@@ -81,6 +92,7 @@ export const DraggableOrderAddressGroupCard = ({
         onArchive={onArchive}
         onUnarchive={onUnarchive}
         hoveredClientId={hoveredClientId}
+        hoveredClientIds={hoveredClientIds}
         onOrderMouseEnter={onOrderMouseEnter}
         onOrderMouseLeave={onOrderMouseLeave}
         dragAttributes={attributes}

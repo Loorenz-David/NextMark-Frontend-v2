@@ -166,6 +166,7 @@ export const useOrderBatchDeliveryPlanController = () => {
             planType,
             clearRouteGroup: true,
           });
+          useOrderSelectionStore.getState().disableSelectionMode();
           removeRouteSolutionStopsByOrderIds(optimisticTargetIds);
           syncRouteGroupSummaries(
             collectAffectedRouteGroupIdsFromAssignments(assignmentEntries),

@@ -16,10 +16,12 @@ type OrderGroupOverlayState = {
 
 type OrderMapInteractionState = {
   hoveredClientId: string | null
+  hoveredClientIds: string[]
   hoverSource: OrderMapHoverSource | null
   markerLookup: OrderMarkerGroupLookup
   groupOverlay: OrderGroupOverlayState
   setHovered: (clientId: string, source: OrderMapHoverSource) => void
+  setHoveredMany: (clientIds: string[], source: OrderMapHoverSource) => void
   clearHovered: (source?: OrderMapHoverSource) => void
   setMarkerLookup: (lookup: OrderMarkerGroupLookup) => void
   clearMarkerLookup: () => void
@@ -80,6 +82,7 @@ const isSameLookup = (
 
 export const useOrderMapInteractionStore = create<OrderMapInteractionState>((set) => ({
   hoveredClientId: null,
+  hoveredClientIds: [],
   hoverSource: null,
   markerLookup: EMPTY_LOOKUP,
   groupOverlay: EMPTY_GROUP_OVERLAY,
@@ -91,6 +94,22 @@ export const useOrderMapInteractionStore = create<OrderMapInteractionState>((set
       return {
         ...state,
         hoveredClientId: clientId,
+        hoveredClientIds: [clientId],
+        hoverSource: source,
+      }
+    }),
+  setHoveredMany: (clientIds, source) =>
+    set((state) => {
+      const nextClientIds = Array.from(new Set(clientIds.filter(Boolean)))
+      const currentKey = state.hoveredClientIds.join('|')
+      const nextKey = nextClientIds.join('|')
+      if (currentKey === nextKey && state.hoverSource === source) {
+        return state
+      }
+      return {
+        ...state,
+        hoveredClientId: nextClientIds[0] ?? null,
+        hoveredClientIds: nextClientIds,
         hoverSource: source,
       }
     }),
@@ -99,12 +118,17 @@ export const useOrderMapInteractionStore = create<OrderMapInteractionState>((set
       if (source && state.hoverSource !== source) {
         return state
       }
-      if (state.hoveredClientId == null && state.hoverSource == null) {
+      if (
+        state.hoveredClientId == null &&
+        state.hoveredClientIds.length === 0 &&
+        state.hoverSource == null
+      ) {
         return state
       }
       return {
         ...state,
         hoveredClientId: null,
+        hoveredClientIds: [],
         hoverSource: null,
       }
     }),

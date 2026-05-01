@@ -15,6 +15,9 @@ export type MapOrder = {
   onClick: (e:MouseEvent) => void
   onMouseEnter?: (e: MouseEvent) => void
   onMouseLeave?: (e: MouseEvent) => void
+  hoverIds?: string[]
+  onHoverIdsEnter?: (e: MouseEvent, ids: string[]) => void
+  onHoverIdsLeave?: (e: MouseEvent, ids: string[]) => void
   className?: string
   interactionVariant?: MapOrderInteractionVariant
   operationBadgeDirections?: MapMarkerOperationDirection[]

@@ -100,6 +100,7 @@ export function HomeRouteOperationsManagersProvider({ children }: { children: Re
         baseControlls,
         planDropFeedback,
         routeReorderPreview,
+        routeOperationsActiveDrag: activeDrag,
       }}
     >
       <DndContext

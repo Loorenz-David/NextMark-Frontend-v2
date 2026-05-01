@@ -115,6 +115,10 @@ export class HttpApiClient {
       query,
     } = options
 
+    if (requiresAuth && attempt === 0) {
+      await this.ensureFreshToken()
+    }
+
     const url = this.composeUrl(path, query)
     const session = this.options.sessionAccessor.getSession()
     const finalHeaders: Record<string, string> = { ...headers }
@@ -263,17 +267,20 @@ export class HttpApiClient {
   }
 
   private isAuthError(status: number, envelope?: ApiEnvelope<unknown>): boolean {
-    if (status === 413) {
-      return true
+    if (status === 401) return true
+
+    if (status === 403) {
+      const errorPayload = this.asErrorPayload(envelope)
+      if (!errorPayload?.error) return false
+      const message = errorPayload.error.toLowerCase()
+      return (
+        message.includes('token') ||
+        message.includes('expired') ||
+        message.includes('authorization')
+      )
     }
 
-    const errorPayload = this.asErrorPayload(envelope)
-    if (!errorPayload?.error) {
-      return false
-    }
-
-    const message = errorPayload.error.toLowerCase()
-    return message.includes('token') || message.includes('authorization')
+    return false
   }
 
   private asErrorPayload(envelope?: ApiEnvelope<unknown>): ApiErrorPayload | undefined {
@@ -330,6 +337,27 @@ export class HttpApiClient {
     const queryString = parts.join('&')
 
     return queryString ? `${trimmedPath}?${queryString}` : trimmedPath
+  }
+
+  private isTokenExpiredSoon(token: string, bufferSeconds = 30): boolean {
+    try {
+      const parts = token.split('.')
+      if (parts.length < 2) return false
+      const payload = JSON.parse(decodeBase64Url(parts[1] ?? '')) as Record<string, unknown>
+      const exp = payload?.exp
+      if (typeof exp !== 'number') return false
+      return Date.now() / 1000 >= exp - bufferSeconds
+    } catch {
+      return false
+    }
+  }
+
+  private async ensureFreshToken(): Promise<void> {
+    const session = this.options.sessionAccessor.getSession()
+    if (!session?.accessToken) return
+    if (this.isTokenExpiredSoon(session.accessToken)) {
+      await this.tryRefresh()
+    }
   }
 
   private async tryRefresh(): Promise<boolean> {

@@ -79,6 +79,7 @@ export type MapBridge = {
   setMarkerLayerVisibility: (layerId: string, visible: boolean) => void;
   clearMarkerLayer: (layerId: string) => void;
   clearClusteredMarkerLayer: (layerId: string) => void;
+  removeMarkerLayerEntries: (layerId: string, markerIds: string[]) => void;
   expandClusterIds: (layerId: string, markerIds: string[]) => string[];
   enableCircleSelection: (params: {
     layerId: string;
@@ -130,6 +131,7 @@ export interface MapAdapter {
   setLayerVisibility: (layerId: string, visible: boolean) => void;
   clearLayer: (layerId: string) => void;
   clearClusteredLayer: (layerId: string) => void;
+  removeLayerEntries: (layerId: string, markerIds: string[]) => void;
   expandClusterIds: (layerId: string, markerIds: string[]) => string[];
   enableCircleSelection: (params: {
     layerId: string;

@@ -25,6 +25,10 @@ type BuildOrderMarkersParams = {
     orders: Order[]
     primaryOrder: Order
   }) => void
+  onGroupMarkerMouseEnter?: (event: MouseEvent, orders: Order[], primaryOrder: Order) => void
+  onGroupMarkerMouseLeave?: () => void
+  onMarkerClientIdsMouseEnter?: (event: MouseEvent, clientIds: string[]) => void
+  onMarkerClientIdsMouseLeave?: () => void
   onMarkerMouseEnter?: (event: MouseEvent, order: Order) => void
   onMarkerMouseLeave?: (event: MouseEvent, order: Order) => void
 }
@@ -77,6 +81,10 @@ export const buildOrderMarkers = ({
   markerClassName,
   onMarkerClick,
   onGroupMarkerClick,
+  onGroupMarkerMouseEnter,
+  onGroupMarkerMouseLeave,
+  onMarkerClientIdsMouseEnter,
+  onMarkerClientIdsMouseLeave,
   onMarkerMouseEnter,
   onMarkerMouseLeave,
 }: BuildOrderMarkersParams): OrderMarkerBuildResult => {
@@ -86,6 +94,54 @@ export const buildOrderMarkers = ({
   const markerOrderClientIdsByMarkerId: Record<string, string[]> = {}
   const primaryOrderClientIdByMarkerId: Record<string, string> = {}
   const markerIdByOrderClientId: Record<string, string> = {}
+  const ordersByClientId = new Map(orders.map((order) => [order.client_id, order]))
+  const resolveHoverOrders = (clientIds: string[]) =>
+    clientIds
+      .map((clientId) => ordersByClientId.get(clientId) ?? null)
+      .filter((order): order is Order => Boolean(order))
+
+  const handleHoverIdsEnter = (
+    event: MouseEvent,
+    clientIds: string[],
+  ) => {
+    if (onMarkerClientIdsMouseEnter) {
+      onMarkerClientIdsMouseEnter(event, clientIds)
+      return
+    }
+
+    const hoverOrders = resolveHoverOrders(clientIds)
+    const primaryOrder = hoverOrders[0] ?? null
+    if (!primaryOrder) {
+      return
+    }
+
+    if (onGroupMarkerMouseEnter) {
+      onGroupMarkerMouseEnter(event, hoverOrders, primaryOrder)
+      return
+    }
+
+    onMarkerMouseEnter?.(event, primaryOrder)
+  }
+
+  const handleHoverIdsLeave = (
+    event: MouseEvent,
+    clientIds: string[],
+  ) => {
+    if (onMarkerClientIdsMouseLeave) {
+      onMarkerClientIdsMouseLeave()
+      return
+    }
+
+    if (onGroupMarkerMouseLeave) {
+      onGroupMarkerMouseLeave()
+      return
+    }
+
+    const primaryOrder = resolveHoverOrders(clientIds)[0] ?? null
+    if (primaryOrder) {
+      onMarkerMouseLeave?.(event, primaryOrder)
+    }
+  }
 
   groupedOrders.forEach((group) => {
     const markerRepresentative = group.orders.find(hasValidCoordinates)
@@ -124,6 +180,15 @@ export const buildOrderMarkers = ({
             group.orders.map((order) => order.operation_type),
           )
           : resolveOrderOperationBadgeDirections(primaryOrder.operation_type),
+      hoverIds: orderClientIds,
+      onHoverIdsEnter:
+        onMarkerClientIdsMouseEnter || onGroupMarkerMouseEnter || onMarkerMouseEnter
+          ? handleHoverIdsEnter
+          : undefined,
+      onHoverIdsLeave:
+        onMarkerClientIdsMouseLeave || onGroupMarkerMouseLeave || onMarkerMouseLeave
+          ? handleHoverIdsLeave
+          : undefined,
       onClick: (event: MouseEvent) => {
         if (group.orders.length > 1 && onGroupMarkerClick) {
           const markerAnchorEl = event.currentTarget as HTMLElement | null
@@ -140,12 +205,19 @@ export const buildOrderMarkers = ({
         }
         onMarkerClick(event, primaryOrder)
       },
-      onMouseEnter: onMarkerMouseEnter
-        ? (event: MouseEvent) => onMarkerMouseEnter(event, primaryOrder)
-        : undefined,
-      onMouseLeave: onMarkerMouseLeave
-        ? (event: MouseEvent) => onMarkerMouseLeave(event, primaryOrder)
-        : undefined,
+      onMouseEnter:
+        group.orders.length > 1 && onGroupMarkerMouseEnter
+          ? (event: MouseEvent) =>
+              onGroupMarkerMouseEnter(event, markerAnchorOrders, primaryOrder)
+          : onMarkerMouseEnter
+            ? (event: MouseEvent) => onMarkerMouseEnter(event, primaryOrder)
+            : undefined,
+      onMouseLeave:
+        group.orders.length > 1 && onGroupMarkerMouseLeave
+          ? () => onGroupMarkerMouseLeave()
+          : onMarkerMouseLeave
+            ? (event: MouseEvent) => onMarkerMouseLeave(event, primaryOrder)
+            : undefined,
     })
   })
 
@@ -164,6 +236,10 @@ export const useOrderMapMarkersFlow = ({
   markerClassName,
   onMarkerClick,
   onGroupMarkerClick,
+  onGroupMarkerMouseEnter,
+  onGroupMarkerMouseLeave,
+  onMarkerClientIdsMouseEnter,
+  onMarkerClientIdsMouseLeave,
   onMarkerMouseEnter,
   onMarkerMouseLeave,
   visible,
@@ -177,6 +253,10 @@ export const useOrderMapMarkersFlow = ({
       markerClassName,
       onMarkerClick,
       onGroupMarkerClick,
+      onGroupMarkerMouseEnter,
+      onGroupMarkerMouseLeave,
+      onMarkerClientIdsMouseEnter,
+      onMarkerClientIdsMouseLeave,
       onMarkerMouseEnter,
       onMarkerMouseLeave,
     })
@@ -190,12 +270,15 @@ export const useOrderMapMarkersFlow = ({
 
     if (visible) {
       mapManager.showRoute(null)
-      mapManager.reframeToVisibleArea()
     }
   }, [
     mapManager,
     markerClassName,
     onGroupMarkerClick,
+    onGroupMarkerMouseEnter,
+    onGroupMarkerMouseLeave,
+    onMarkerClientIdsMouseEnter,
+    onMarkerClientIdsMouseLeave,
     onMarkerClick,
     onMarkerMouseEnter,
     onMarkerMouseLeave,

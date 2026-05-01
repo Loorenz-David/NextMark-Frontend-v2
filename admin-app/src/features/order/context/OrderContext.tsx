@@ -16,6 +16,7 @@ export type OrderContextValue = {
   isOrderSelected: (order: Order) => boolean
   orderStats?: OrderStats
   hoveredClientId: string | null
+  hoveredClientIds: string[]
   handleOrderRowMouseEnter: (order: Order) => void
   handleOrderRowMouseLeave: () => void
   currentPage: number

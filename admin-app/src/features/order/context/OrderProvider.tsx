@@ -17,6 +17,7 @@ import {
 } from '../store/orderList.store'
 import {
   useHoveredOrderClientId,
+  useHoveredOrderClientIds,
   useOrderMapInteractionActions,
   useOrderMarkerLookup,
 } from '../store/orderMapInteractionHooks.store'
@@ -57,9 +58,10 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
   const sectionManager = useSectionManager()
   const sectionEntries = useStackActionEntries(sectionManager)
   const hoveredClientId = useHoveredOrderClientId()
+  const hoveredClientIds = useHoveredOrderClientIds()
   const selectedOrderClientIds = useSelectedOrderClientIds()
   const markerLookup = useOrderMarkerLookup()
-  const { setHovered, clearHovered, openGroupOverlay, closeGroupOverlay } = useOrderMapInteractionActions()
+  const { setHovered, setHoveredMany, clearHovered, openGroupOverlay, closeGroupOverlay } = useOrderMapInteractionActions()
   const handleScrollToTop = useCallback(() => {
     if (scrollContainerRef?.current) {
       scrollContainerRef.current.scrollTop = 0
@@ -116,6 +118,31 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
     clearHovered('map')
   }, [clearHovered])
 
+  const handleGroupMarkerMouseEnter = useCallback(
+    (_event: MouseEvent, groupedOrders: Order[]) => {
+      setHoveredMany(
+        groupedOrders.map((order) => order.client_id),
+        'map',
+      )
+    },
+    [setHoveredMany],
+  )
+
+  const handleGroupMarkerMouseLeave = useCallback(() => {
+    clearHovered('map')
+  }, [clearHovered])
+
+  const handleMarkerClientIdsMouseEnter = useCallback(
+    (_event: MouseEvent, clientIds: string[]) => {
+      setHoveredMany(clientIds, 'map')
+    },
+    [setHoveredMany],
+  )
+
+  const handleMarkerClientIdsMouseLeave = useCallback(() => {
+    clearHovered('map')
+  }, [clearHovered])
+
   const handleGroupMarkerClick = useCallback(
     ({ markerId, markerAnchorEl, orders: groupedOrders }: {
       markerId: string
@@ -137,11 +164,15 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
     bootstrapOrders: orders,
     onMarkerClick: orderActions.handleOrderMarkerClick,
     onGroupMarkerClick: handleGroupMarkerClick,
+    onGroupMarkerMouseEnter: handleGroupMarkerMouseEnter,
+    onGroupMarkerMouseLeave: handleGroupMarkerMouseLeave,
+    onMarkerClientIdsMouseEnter: handleMarkerClientIdsMouseEnter,
+    onMarkerClientIdsMouseLeave: handleMarkerClientIdsMouseLeave,
     onMarkerMouseEnter: handleOrderMarkerMouseEnter,
     onMarkerMouseLeave: handleOrderMarkerMouseLeave,
     markerClassName: 'order-marker',
     visible: !baseControlls.isBaseOpen,
-    refreshEnabled: !isFixtureMode && activeOrderDetailClientId == null,
+    refreshEnabled: !isFixtureMode,
   })
   useOrderDriverLiveMapFlow()
   useOrderCircleSelectionFlow()
@@ -248,6 +279,7 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
       query,
       orderStats,
       hoveredClientId,
+      hoveredClientIds,
       handleOrderRowMouseEnter,
       handleOrderRowMouseLeave,
       currentPage,
@@ -262,8 +294,11 @@ export const OrderProvider = ({ children, scrollContainerRef }: OrderProviderPro
       currentPage,
       handleOrderRowMouseEnter,
       handleOrderRowMouseLeave,
+      handleGroupMarkerMouseEnter,
+      handleGroupMarkerMouseLeave,
       hasMore,
       hoveredClientId,
+      hoveredClientIds,
       isOrderSelected,
       isSelectionMode,
       isInitialLoading,

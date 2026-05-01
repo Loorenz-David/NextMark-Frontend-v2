@@ -126,6 +126,13 @@ export const useMap = (options?: MapConfig): MapBridge => {
     [controller],
   );
 
+  const removeMarkerLayerEntries = useCallback(
+    (layerId: string, markerIds: string[]) => {
+      controller.removeMarkerLayerEntries(layerId, markerIds);
+    },
+    [controller],
+  );
+
   const expandClusterIds = useCallback(
     (layerId: string, markerIds: string[]) =>
       controller.expandClusterIds(layerId, markerIds),
@@ -252,6 +259,7 @@ export const useMap = (options?: MapConfig): MapBridge => {
       setMarkerLayerVisibility,
       clearMarkerLayer,
       clearClusteredMarkerLayer,
+      removeMarkerLayerEntries,
       expandClusterIds,
       enableCircleSelection,
       disableCircleSelection,
@@ -288,6 +296,7 @@ export const useMap = (options?: MapConfig): MapBridge => {
       enableCircleSelection,
       expandClusterIds,
       initialize,
+      removeMarkerLayerEntries,
       reframeToVisibleArea,
       resize,
       selectOrder,

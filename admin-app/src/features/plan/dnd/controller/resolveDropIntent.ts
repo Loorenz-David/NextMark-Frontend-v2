@@ -285,6 +285,22 @@ export const resolveDropIntent = ({
     };
   }
 
+  if (activeType === "order_batch") {
+    if (overType !== "plan" || !overId || !selectionModeEnabled) {
+      return { type: "noop" };
+    }
+
+    return {
+      type: "intent",
+      intent: {
+        kind: "ASSIGN_ORDERS_TO_PLAN_BATCH",
+        planClientId: overId,
+        selection: buildSelectionBatchPayload(selectionState),
+        origin: "order_list",
+      },
+    };
+  }
+
   if (activeType === "order_group") {
     if (overType !== "plan" || !overId) {
       return { type: "noop" };

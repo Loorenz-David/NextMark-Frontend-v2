@@ -5,8 +5,9 @@ import { useMapManager } from '@/shared/resource-manager/useResourceManager'
 
 import { useListOrderMapMarkers } from '../api/orderApi'
 import type { Order } from '../types/order'
-import type { OrderQueryStoreFilters } from '../types/orderMeta'
+import type { OrderQueryFilters, OrderQueryStoreFilters } from '../types/orderMeta'
 import { orderStringFilters } from '../domain/orderFilterConfig'
+import { reactiveOrderVisibility } from '../domain/orderReactiveVisibility'
 import { normalizeQuery } from '@shared-utils'
 import { buildOrderMarkers } from './orderMapMarkers.flow'
 import {
@@ -15,7 +16,11 @@ import {
 } from '../domain/orderOperationBadgeDirections'
 import { useUpsertOrdersStore } from '../store/orderHooks.store'
 import { useOrderMapInteractionActions } from '../store/orderMapInteractionHooks.store'
-import type { OrderMarkerGroupLookup } from '../store/orderMapInteraction.store'
+import {
+  useOrderMapInteractionStore,
+  type OrderMarkerGroupLookup,
+} from '../store/orderMapInteraction.store'
+import { useOrderStore } from '../store/order.store'
 
 type UseOrderMapDataFlowParams = {
   query: OrderQueryStoreFilters
@@ -31,6 +36,10 @@ type UseOrderMapDataFlowParams = {
     orders: Order[]
     primaryOrder: Order
   }) => void
+  onGroupMarkerMouseEnter?: (event: MouseEvent, orders: Order[], primaryOrder: Order) => void
+  onGroupMarkerMouseLeave?: () => void
+  onMarkerClientIdsMouseEnter?: (event: MouseEvent, clientIds: string[]) => void
+  onMarkerClientIdsMouseLeave?: () => void
   onMarkerMouseEnter?: (event: MouseEvent, order: Order) => void
   onMarkerMouseLeave?: (event: MouseEvent, order: Order) => void
 }
@@ -93,9 +102,14 @@ const getOrderMarkerColor = (order: Order): string => {
 const buildMarkersFromResponse = ({
   markers,
   ordersByClientId,
+  resolveOrderForMarker,
   markerClassName,
   onMarkerClick,
   onGroupMarkerClick,
+  onGroupMarkerMouseEnter,
+  onGroupMarkerMouseLeave,
+  onMarkerClientIdsMouseEnter,
+  onMarkerClientIdsMouseLeave,
   onMarkerMouseEnter,
   onMarkerMouseLeave,
 }: {
@@ -110,6 +124,7 @@ const buildMarkersFromResponse = ({
     count: number
   }>
   ordersByClientId: Record<string, Order>
+  resolveOrderForMarker?: (clientId: string, responseOrder: Order | null) => Order | null
   markerClassName: string
   onMarkerClick: (event: MouseEvent, order: Order) => void
   onGroupMarkerClick?: (params: {
@@ -119,6 +134,10 @@ const buildMarkersFromResponse = ({
     orders: Order[]
     primaryOrder: Order
   }) => void
+  onGroupMarkerMouseEnter?: (event: MouseEvent, orders: Order[], primaryOrder: Order) => void
+  onGroupMarkerMouseLeave?: () => void
+  onMarkerClientIdsMouseEnter?: (event: MouseEvent, clientIds: string[]) => void
+  onMarkerClientIdsMouseLeave?: () => void
   onMarkerMouseEnter?: (event: MouseEvent, order: Order) => void
   onMarkerMouseLeave?: (event: MouseEvent, order: Order) => void
 }): {
@@ -129,20 +148,83 @@ const buildMarkersFromResponse = ({
   const markerOrderClientIdsByMarkerId: Record<string, string[]> = {}
   const primaryOrderClientIdByMarkerId: Record<string, string> = {}
   const markerIdByOrderClientId: Record<string, string> = {}
+  const resolveHoverOrders = (clientIds: string[]) =>
+    clientIds
+      .map((clientId) => {
+        const responseOrder = ordersByClientId[clientId] ?? null
+        return resolveOrderForMarker
+          ? resolveOrderForMarker(clientId, responseOrder)
+          : responseOrder
+      })
+      .filter((order): order is Order => Boolean(order))
+
+  const handleHoverIdsEnter = (
+    event: MouseEvent,
+    clientIds: string[],
+  ) => {
+    if (onMarkerClientIdsMouseEnter) {
+      onMarkerClientIdsMouseEnter(event, clientIds)
+      return
+    }
+
+    const hoverOrders = resolveHoverOrders(clientIds)
+    const primaryOrder = hoverOrders[0] ?? null
+    if (!primaryOrder) {
+      return
+    }
+
+    if (onGroupMarkerMouseEnter) {
+      onGroupMarkerMouseEnter(event, hoverOrders, primaryOrder)
+      return
+    }
+
+    onMarkerMouseEnter?.(event, primaryOrder)
+  }
+
+  const handleHoverIdsLeave = (
+    event: MouseEvent,
+    clientIds: string[],
+  ) => {
+    if (onMarkerClientIdsMouseLeave) {
+      onMarkerClientIdsMouseLeave()
+      return
+    }
+
+    if (onGroupMarkerMouseLeave) {
+      onGroupMarkerMouseLeave()
+      return
+    }
+
+    const primaryOrder = resolveHoverOrders(clientIds)[0] ?? null
+    if (primaryOrder) {
+      onMarkerMouseLeave?.(event, primaryOrder)
+    }
+  }
 
   markers.forEach((marker) => {
     const groupedOrders = marker.order_client_ids
-      .map((clientId) => ordersByClientId[clientId])
+      .map((clientId) => {
+        const responseOrder = ordersByClientId[clientId] ?? null
+        return resolveOrderForMarker
+          ? resolveOrderForMarker(clientId, responseOrder)
+          : responseOrder
+      })
       .filter((order): order is Order => Boolean(order))
 
-    const primaryOrder = ordersByClientId[marker.primary_order_client_id]
+    const responsePrimaryOrder = ordersByClientId[marker.primary_order_client_id] ?? null
+    const primaryOrder =
+      (resolveOrderForMarker
+        ? resolveOrderForMarker(marker.primary_order_client_id, responsePrimaryOrder)
+        : responsePrimaryOrder) ?? groupedOrders[0] ?? null
     if (!primaryOrder || groupedOrders.length === 0) {
       return
     }
 
-    markerOrderClientIdsByMarkerId[marker.id] = marker.order_client_ids
+    const groupedOrderClientIds = groupedOrders.map((order) => order.client_id)
+
+    markerOrderClientIdsByMarkerId[marker.id] = groupedOrderClientIds
     primaryOrderClientIdByMarkerId[marker.id] = primaryOrder.client_id
-    marker.order_client_ids.forEach((clientId) => {
+    groupedOrderClientIds.forEach((clientId) => {
       markerIdByOrderClientId[clientId] = marker.id
     })
 
@@ -153,11 +235,20 @@ const buildMarkersFromResponse = ({
       route_plan_id: primaryOrder.delivery_plan_id ?? null,
       className: markerClassName,
       interactionVariant: 'order',
-      label: marker.count > 1 ? String(marker.count) : undefined,
+      label: groupedOrders.length > 1 ? String(groupedOrders.length) : undefined,
       operationBadgeDirections:
-        marker.count > 1
+        groupedOrders.length > 1
           ? resolveOrderGroupOperationBadgeDirections(groupedOrders.map((order) => order.operation_type))
           : resolveOrderOperationBadgeDirections(primaryOrder.operation_type),
+      hoverIds: groupedOrderClientIds,
+      onHoverIdsEnter:
+        onMarkerClientIdsMouseEnter || onGroupMarkerMouseEnter || onMarkerMouseEnter
+          ? handleHoverIdsEnter
+          : undefined,
+      onHoverIdsLeave:
+        onMarkerClientIdsMouseLeave || onGroupMarkerMouseLeave || onMarkerMouseLeave
+          ? handleHoverIdsLeave
+          : undefined,
       onClick: (event: MouseEvent) => {
         if (marker.count > 1 && onGroupMarkerClick) {
           const markerAnchorEl = event.currentTarget as HTMLElement | null
@@ -174,12 +265,19 @@ const buildMarkersFromResponse = ({
         }
         onMarkerClick(event, primaryOrder)
       },
-      onMouseEnter: onMarkerMouseEnter
-        ? (event: MouseEvent) => onMarkerMouseEnter(event, primaryOrder)
-        : undefined,
-      onMouseLeave: onMarkerMouseLeave
-        ? (event: MouseEvent) => onMarkerMouseLeave(event, primaryOrder)
-        : undefined,
+      onMouseEnter:
+        groupedOrders.length > 1 && onGroupMarkerMouseEnter
+          ? (event: MouseEvent) =>
+              onGroupMarkerMouseEnter(event, groupedOrders, primaryOrder)
+          : onMarkerMouseEnter
+            ? (event: MouseEvent) => onMarkerMouseEnter(event, primaryOrder)
+            : undefined,
+      onMouseLeave:
+        groupedOrders.length > 1 && onGroupMarkerMouseLeave
+          ? () => onGroupMarkerMouseLeave()
+          : onMarkerMouseLeave
+            ? (event: MouseEvent) => onMarkerMouseLeave(event, primaryOrder)
+            : undefined,
     })
   })
 
@@ -193,6 +291,50 @@ const buildMarkersFromResponse = ({
   }
 }
 
+const filterOrderMapForCurrentLocalState = (
+  responseOrderMap: {
+    byClientId: Record<string, Order>
+    allIds: string[]
+    idIndex?: Record<number, string>
+  },
+  filters: OrderQueryFilters,
+) => {
+  const localOrdersByClientId = useOrderStore.getState().byClientId
+  const byClientId: Record<string, Order> = {}
+  const allIds: string[] = []
+  const idIndex: Record<number, string> = {}
+
+  responseOrderMap.allIds.forEach((clientId) => {
+    const responseOrder = responseOrderMap.byClientId[clientId]
+    if (!responseOrder) {
+      return
+    }
+
+    const localOrder = localOrdersByClientId[clientId]
+    if (localOrder && !reactiveOrderVisibility(localOrder, filters)) {
+      return
+    }
+
+    const order = localOrder ?? responseOrder
+    byClientId[clientId] = order
+    allIds.push(clientId)
+
+    if (typeof order.id === 'number') {
+      idIndex[order.id] = clientId
+    }
+  })
+
+  return {
+    ...responseOrderMap,
+    byClientId,
+    allIds,
+    idIndex: {
+      ...(responseOrderMap.idIndex ?? {}),
+      ...idIndex,
+    },
+  }
+}
+
 export const useOrderMapDataFlow = ({
   query,
   visible,
@@ -201,6 +343,10 @@ export const useOrderMapDataFlow = ({
   markerClassName,
   onMarkerClick,
   onGroupMarkerClick,
+  onGroupMarkerMouseEnter,
+  onGroupMarkerMouseLeave,
+  onMarkerClientIdsMouseEnter,
+  onMarkerClientIdsMouseLeave,
   onMarkerMouseEnter,
   onMarkerMouseLeave,
 }: UseOrderMapDataFlowParams) => {
@@ -214,18 +360,42 @@ export const useOrderMapDataFlow = ({
   const hasBootstrappedRef = useRef(false)
   const fetchedBoundsRef = useRef<ReturnType<typeof bucketBounds>>(null)
   const fetchedQueryKeyRef = useRef<string | null>(null)
+  const previousBootstrapOrderClientIdsRef = useRef<string[] | null>(null)
 
   const normalizedQuery = useMemo(() => normalizeQuery({
     q: query.q,
     filters: query.filters,
   }, orderStringFilters), [query.filters, query.q])
+  const bootstrapOrdersSignature = useMemo(
+    () =>
+      bootstrapOrders
+        .map((order) =>
+          [
+            order.client_id,
+            order.delivery_plan_id ?? 'none',
+            order.operation_type ?? 'none',
+          ].join(':'),
+        )
+        .sort()
+        .join('|'),
+    [bootstrapOrders],
+  )
+  const bootstrapOrderClientIds = useMemo(
+    () => bootstrapOrders.map((order) => order.client_id).sort(),
+    [bootstrapOrders],
+  )
 
   const normalizedQueryRef = useRef(normalizedQuery)
+  const queryFiltersRef = useRef(query.filters)
   const visibleRef = useRef(visible)
   const refreshEnabledRef = useRef(refreshEnabled)
   const markerClassNameRef = useRef(markerClassName)
   const onMarkerClickRef = useRef(onMarkerClick)
   const onGroupMarkerClickRef = useRef(onGroupMarkerClick)
+  const onGroupMarkerMouseEnterRef = useRef(onGroupMarkerMouseEnter)
+  const onGroupMarkerMouseLeaveRef = useRef(onGroupMarkerMouseLeave)
+  const onMarkerClientIdsMouseEnterRef = useRef(onMarkerClientIdsMouseEnter)
+  const onMarkerClientIdsMouseLeaveRef = useRef(onMarkerClientIdsMouseLeave)
   const onMarkerMouseEnterRef = useRef(onMarkerMouseEnter)
   const onMarkerMouseLeaveRef = useRef(onMarkerMouseLeave)
   const listOrderMapMarkersRef = useRef(listOrderMapMarkers)
@@ -233,11 +403,16 @@ export const useOrderMapDataFlow = ({
 
   useEffect(() => {
     normalizedQueryRef.current = normalizedQuery
+    queryFiltersRef.current = query.filters
     visibleRef.current = visible
     refreshEnabledRef.current = refreshEnabled
     markerClassNameRef.current = markerClassName
     onMarkerClickRef.current = onMarkerClick
     onGroupMarkerClickRef.current = onGroupMarkerClick
+    onGroupMarkerMouseEnterRef.current = onGroupMarkerMouseEnter
+    onGroupMarkerMouseLeaveRef.current = onGroupMarkerMouseLeave
+    onMarkerClientIdsMouseEnterRef.current = onMarkerClientIdsMouseEnter
+    onMarkerClientIdsMouseLeaveRef.current = onMarkerClientIdsMouseLeave
     onMarkerMouseEnterRef.current = onMarkerMouseEnter
     onMarkerMouseLeaveRef.current = onMarkerMouseLeave
     listOrderMapMarkersRef.current = listOrderMapMarkers
@@ -247,10 +422,15 @@ export const useOrderMapDataFlow = ({
     markerClassName,
     normalizedQuery,
     onGroupMarkerClick,
+    onGroupMarkerMouseEnter,
+    onGroupMarkerMouseLeave,
+    onMarkerClientIdsMouseEnter,
+    onMarkerClientIdsMouseLeave,
     onMarkerClick,
     onMarkerMouseEnter,
     onMarkerMouseLeave,
     refreshEnabled,
+    query.filters,
     upsertOrdersStore,
     visible,
   ])
@@ -291,14 +471,36 @@ export const useOrderMapDataFlow = ({
         return
       }
 
-      upsertOrdersStoreRef.current(payload.order)
+      const localFilteredOrderMap = filterOrderMapForCurrentLocalState(
+        payload.order,
+        queryFiltersRef.current as OrderQueryFilters,
+      )
+
+      upsertOrdersStoreRef.current(localFilteredOrderMap)
 
       const { markers, lookup } = buildMarkersFromResponse({
         markers: payload.markers,
-        ordersByClientId: payload.order.byClientId,
+        ordersByClientId: localFilteredOrderMap.byClientId,
+        resolveOrderForMarker: (clientId, responseOrder) => {
+          const localOrder = useOrderStore.getState().byClientId[clientId]
+          if (
+            localOrder &&
+            !reactiveOrderVisibility(
+              localOrder,
+              queryFiltersRef.current as OrderQueryFilters,
+            )
+          ) {
+            return null
+          }
+          return localOrder ?? responseOrder
+        },
         markerClassName: markerClassNameRef.current,
         onMarkerClick: onMarkerClickRef.current,
         onGroupMarkerClick: onGroupMarkerClickRef.current,
+        onGroupMarkerMouseEnter: onGroupMarkerMouseEnterRef.current,
+        onGroupMarkerMouseLeave: onGroupMarkerMouseLeaveRef.current,
+        onMarkerClientIdsMouseEnter: onMarkerClientIdsMouseEnterRef.current,
+        onMarkerClientIdsMouseLeave: onMarkerClientIdsMouseLeaveRef.current,
         onMarkerMouseEnter: onMarkerMouseEnterRef.current,
         onMarkerMouseLeave: onMarkerMouseLeaveRef.current,
       })
@@ -367,6 +569,55 @@ export const useOrderMapDataFlow = ({
   }, [normalizedQuery, refreshMarkers, scheduleRefresh])
 
   useEffect(() => {
+    const previousClientIds = previousBootstrapOrderClientIdsRef.current
+    previousBootstrapOrderClientIdsRef.current = bootstrapOrderClientIds
+
+    if (!visible || !refreshEnabled || !previousClientIds) {
+      return
+    }
+
+    const currentClientIdSet = new Set(bootstrapOrderClientIds)
+    const removedClientIds = previousClientIds.filter(
+      (clientId) => !currentClientIdSet.has(clientId),
+    )
+
+    if (!removedClientIds.length) {
+      return
+    }
+
+    const markerLookup = useOrderMapInteractionStore.getState().markerLookup
+    const markerIds = Array.from(
+      new Set(
+        removedClientIds.map(
+          (clientId) => markerLookup.markerIdByOrderClientId[clientId] ?? clientId,
+        ),
+      ),
+    )
+
+    if (markerIds.length) {
+      mapManager.removeMarkerLayerEntries(MAP_MARKER_LAYERS.orders, markerIds)
+      clearMarkerLookup()
+    }
+  }, [
+    bootstrapOrderClientIds,
+    clearMarkerLookup,
+    mapManager,
+    refreshEnabled,
+    visible,
+  ])
+
+  useEffect(() => {
+    if (!refreshEnabled) {
+      return
+    }
+
+    fetchedBoundsRef.current = null
+    fetchedQueryKeyRef.current = null
+    lastSuccessfulOrderMarkerRequestKey = null
+    scheduleRefresh()
+  }, [bootstrapOrdersSignature, refreshEnabled, scheduleRefresh])
+
+  useEffect(() => {
     if (refreshEnabled) {
       return
     }
@@ -388,6 +639,10 @@ export const useOrderMapDataFlow = ({
       markerClassName,
       onMarkerClick,
       onGroupMarkerClick,
+      onGroupMarkerMouseEnter,
+      onGroupMarkerMouseLeave,
+      onMarkerClientIdsMouseEnter,
+      onMarkerClientIdsMouseLeave,
       onMarkerMouseEnter,
       onMarkerMouseLeave,
     })
@@ -399,16 +654,17 @@ export const useOrderMapDataFlow = ({
     })
     mapManager.setMarkerLayerVisibility(MAP_MARKER_LAYERS.orders, true)
 
-    if (!hasBootstrappedRef.current) {
-      hasBootstrappedRef.current = true
-      mapManager.reframeToVisibleArea()
-    }
+    hasBootstrappedRef.current = true
   }, [
     bootstrapOrders,
     clearMarkerLookup,
     mapManager,
     markerClassName,
     onGroupMarkerClick,
+    onGroupMarkerMouseEnter,
+    onGroupMarkerMouseLeave,
+    onMarkerClientIdsMouseEnter,
+    onMarkerClientIdsMouseLeave,
     onMarkerClick,
     onMarkerMouseEnter,
     onMarkerMouseLeave,

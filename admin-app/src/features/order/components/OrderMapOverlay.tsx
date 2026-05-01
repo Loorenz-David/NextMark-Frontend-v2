@@ -15,10 +15,13 @@ import { usePopupManager } from "@/shared/resource-manager/useResourceManager";
 
 import {
   useOrderSelectionActions,
+  useOrderBatchSelectedCount,
   useOrderSelectionMode,
+  useResolvedOrderSelection,
   useSelectedOrderServerIds,
   useSelectedOrdersSummary,
 } from "../store/orderSelectionHooks.store";
+import { OrderBatchPlanDragButton } from "./OrderBatchPlanDragButton";
 import { OrderMarkerGroupOverlay } from "./overlays/OrderMarkerGroupOverlay";
 
 export const OrderMapOverlay = () => {
@@ -26,6 +29,8 @@ export const OrderMapOverlay = () => {
   const popupManager = usePopupManager();
   const isSelectionMode = useOrderSelectionMode();
   const selectedOrderServerIds = useSelectedOrderServerIds();
+  const selectedBatchCount = useOrderBatchSelectedCount();
+  const resolvedSelection = useResolvedOrderSelection();
   const { count, totalWeight, totalItems, totalVolume, itemTypeCounts } =
     useSelectedOrdersSummary();
 
@@ -94,16 +99,10 @@ export const OrderMapOverlay = () => {
         }
         actions={
           <>
-            <BasicButton
-              params={{
-                variant: "secondary",
-                onClick: () => undefined,
-                ariaLabel: "Select plan",
-                disabled: true,
-              }}
-            >
-              Select Plan
-            </BasicButton>
+            <OrderBatchPlanDragButton
+              selectedCount={selectedBatchCount}
+              isLoading={resolvedSelection.isLoading}
+            />
             <BasicButton
               params={{
                 variant: "primary",

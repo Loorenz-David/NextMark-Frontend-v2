@@ -259,6 +259,25 @@ export class GoogleMapAdapter implements MapAdapter {
     this.markerSelectionManager.reapplySelectionStyles();
   }
 
+  removeLayerEntries(layerId: string, markerIds: string[]) {
+    const ids = Array.from(new Set(markerIds.map(String).filter(Boolean)));
+    if (!ids.length) {
+      return;
+    }
+
+    const removedIds = this.clusterLayerManager?.hasLayer(layerId)
+      ? this.clusterLayerManager.removeOrdersByIds(layerId, ids)
+      : this.markerLayerManager.removeMarkersByIds(layerId, ids);
+
+    if (removedIds.length) {
+      this.markerMultiSelectionManager.removeIds(removedIds);
+    }
+    this.markerMultiSelectionManager.removeIds(ids);
+    this.markerSelectionManager.reconcileSelectionState();
+    this.markerSelectionManager.reapplySelectionStyles();
+    this.markerMultiSelectionManager.syncLayerStyles(layerId);
+  }
+
   expandClusterIds(layerId: string, markerIds: string[]) {
     if (!this.clusterLayerManager) {
       return Array.from(new Set(markerIds));
@@ -322,15 +341,19 @@ export class GoogleMapAdapter implements MapAdapter {
   }
 
   selectMarker(id: string) {
-    this.markerSelectionManager.selectMarker(id);
+    this.markerSelectionManager.selectMarker(this.resolveVisibleMarkerId(id));
   }
 
   setSelectedMarker(id: string | null) {
-    this.markerSelectionManager.setSelectedMarker(id);
+    this.markerSelectionManager.setSelectedMarker(
+      id ? this.resolveVisibleMarkerId(id) : null,
+    );
   }
 
   setHoveredMarker(id: string | null) {
-    this.markerSelectionManager.setHoveredMarker(id);
+    this.markerSelectionManager.setHoveredMarker(
+      id ? this.resolveVisibleMarkerId(id) : null,
+    );
   }
 
   setMultiSelectedMarkerIds(layerId: string, ids: string[]) {
@@ -393,6 +416,10 @@ export class GoogleMapAdapter implements MapAdapter {
     });
 
     return resolvedIds;
+  }
+
+  private resolveVisibleMarkerId(id: string) {
+    return this.clusterLayerManager?.resolveVisibleMarkerId(id) ?? id;
   }
 
   reframeToVisibleArea() {

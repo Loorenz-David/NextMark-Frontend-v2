@@ -31,15 +31,16 @@ export const OrderCard = ({
   const external_source = order.external_source;
   return (
     <div
-      className={`admin-glass-panel admin-surface-compact group relative flex flex-col gap-2.5 overflow-visible rounded-lg p-4 transition-all duration-200 ${
+      className={`admin-glass-panel admin-surface-compact group relative flex flex-col gap-2.5 overflow-vissible rounded-lg p-4 transition-all duration-200 ${
         isHovered
           ? "border-[rgb(var(--color-light-blue-r),0.7)] shadow-[0_18px_42px_rgba(45,95,170,0.22)]"
           : "border-white/10 hover:border-white/18 hover:bg-white/[0.08]"
       }`}
       onClick={() => onOpen?.(order)}
     >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
       <OrderMissingInfoNotifier order={order} />
+
+      <div className="pointer-events-none absolute rounded-lg inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
 
       <div className="relative z-10 flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">

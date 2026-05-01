@@ -17,6 +17,7 @@ type OrderListProps = {
   onArchive?:(order:Order) => void
   onUnarchive?: (order: Order) => void
   hoveredClientId?: string | null
+  hoveredClientIds?: string[]
   onOrderMouseEnter?: (order: Order) => void
   onOrderMouseLeave?: () => void
   scrollContainerRef?: RefObject<HTMLElement | null>
@@ -36,6 +37,7 @@ export const OrderList = ({
   onArchive,
   onUnarchive,
   hoveredClientId,
+  hoveredClientIds,
   onOrderMouseEnter,
   onOrderMouseLeave,
   scrollContainerRef: _scrollContainerRef,
@@ -43,6 +45,10 @@ export const OrderList = ({
   const groups = useMemo(() => buildOrderAddressGroups(orders), [orders])
   const expandedGroupsByKey = useOrderGroupUIStore((state) => state.expandedGroupsByKey)
   const { toggleGroup } = useOrderGroupUIActions()
+  const hoveredClientIdSet = useMemo(
+    () => new Set(hoveredClientIds ?? (hoveredClientId ? [hoveredClientId] : [])),
+    [hoveredClientId, hoveredClientIds],
+  )
 
   const rows = useMemo<OrderRow[]>(() => groups.map((group) => {
     if (group.orders.length <= 1) {
@@ -58,7 +64,7 @@ export const OrderList = ({
               onOpen={isSelectionMode ? undefined : onOpenOrder}
               onArchive={onArchive}
               onUnarchive={onUnarchive}
-              isHovered={hoveredClientId === order.client_id}
+              isHovered={hoveredClientIdSet.has(order.client_id)}
               onMouseEnter={onOrderMouseEnter}
               onMouseLeave={onOrderMouseLeave}
               isSelectionMode={isSelectionMode}
@@ -73,7 +79,7 @@ export const OrderList = ({
     const uiKey = `order:${group.key}`
     const expanded = expandedGroupsByKey[uiKey] ?? false
     const isGroupHovered = Boolean(
-      hoveredClientId && group.orders.some((order) => order.client_id === hoveredClientId),
+      group.orders.some((order) => hoveredClientIdSet.has(order.client_id)),
     )
 
     return {
@@ -92,6 +98,7 @@ export const OrderList = ({
           onArchive={onArchive}
           onUnarchive={onUnarchive}
           hoveredClientId={hoveredClientId}
+          hoveredClientIds={hoveredClientIds}
           onOrderMouseEnter={onOrderMouseEnter}
           onOrderMouseLeave={onOrderMouseLeave}
         />
@@ -101,6 +108,8 @@ export const OrderList = ({
     expandedGroupsByKey,
     groups,
     hoveredClientId,
+    hoveredClientIdSet,
+    hoveredClientIds,
     isOrderSelected,
     isSelectionMode,
     onArchive,

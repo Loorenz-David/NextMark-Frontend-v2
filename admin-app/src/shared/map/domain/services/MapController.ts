@@ -76,6 +76,10 @@ export class MapController {
     this.adapter.clearClusteredLayer(layerId);
   }
 
+  removeMarkerLayerEntries(layerId: string, markerIds: string[]) {
+    this.adapter.removeLayerEntries(layerId, markerIds);
+  }
+
   expandClusterIds(layerId: string, markerIds: string[]) {
     return this.adapter.expandClusterIds(layerId, markerIds);
   }

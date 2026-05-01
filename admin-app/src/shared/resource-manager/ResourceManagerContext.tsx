@@ -31,6 +31,7 @@ export type KnownResourceRegistry = {
   baseControlls?: BaseControls<unknown>
   planDropFeedback?: PlanDropFeedback | null
   routeReorderPreview?: unknown
+  routeOperationsActiveDrag?: unknown
 }
 
 export type ResourceRegistry<T extends Record<string, unknown> = KnownResourceRegistry> =

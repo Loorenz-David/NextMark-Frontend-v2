@@ -5,6 +5,9 @@ import { useOrderMapInteractionStore } from './orderMapInteraction.store'
 export const useHoveredOrderClientId = () =>
   useOrderMapInteractionStore((state) => state.hoveredClientId)
 
+export const useHoveredOrderClientIds = () =>
+  useOrderMapInteractionStore((state) => state.hoveredClientIds)
+
 export const useOrderMarkerLookup = () =>
   useOrderMapInteractionStore((state) => state.markerLookup)
 
@@ -15,6 +18,7 @@ export const useOrderMapInteractionActions = () =>
   useOrderMapInteractionStore(
     useShallow((state) => ({
       setHovered: state.setHovered,
+      setHoveredMany: state.setHoveredMany,
       clearHovered: state.clearHovered,
       setMarkerLookup: state.setMarkerLookup,
       clearMarkerLookup: state.clearMarkerLookup,

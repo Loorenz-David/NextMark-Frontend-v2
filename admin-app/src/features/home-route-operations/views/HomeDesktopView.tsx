@@ -1,4 +1,4 @@
-import { useRef, useEffect, type CSSProperties } from "react";
+import { useCallback, useRef, useEffect, type CSSProperties } from "react";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import {
   useSectionManager,
@@ -19,6 +19,8 @@ import { useHomeDesktopKeyboardFlow } from "@/features/home-route-operations/flo
 import { useHomeDesktopRailSettleFlow } from "@/features/home-route-operations/flows/homeDesktopRailSettle.flow";
 import { useHomeDesktopDerivedStateFlow } from "@/features/home-route-operations/flows/homeDesktopDerivedState.flow";
 import { RouteGroupsPage } from "@/features/plan/routeGroup/pages/RouteGroups.page";
+import { useOrderSelectionMode } from "@/features/order/store/orderSelectionHooks.store";
+import { useResourceManager } from "@/shared/resource-manager/useResourceManager";
 
 import { HomeDesktopLayout } from "../layout/HomeDesktopLayout";
 import { useHomeDesktopLayout } from "../hooks/useHomeDesktopLayout";
@@ -70,20 +72,62 @@ export function HomeDesktopView() {
 
   const { initialize, resize, setViewportInsets, reframeToVisibleArea } =
     useMapManager();
+  const { routeOperationsActiveDrag, planDropFeedback } = useResourceManager();
   const sectionManager = useSectionManager();
   const popupManager = usePopupManager();
   const baseControlls = useBaseControlls<PayloadBase>();
+  const isOrderSelectionMode = useOrderSelectionMode();
   const isOrderOverlayOpen =
     baseControlls.isBaseOpen &&
     typeof baseControlls.payload?.planId === "number";
+  const previousOrderOverlayOpenRef = useRef(isOrderOverlayOpen);
+  const isOrderOverlayClosing =
+    previousOrderOverlayOpenRef.current && !isOrderOverlayOpen;
+  previousOrderOverlayOpenRef.current = isOrderOverlayOpen;
+  const reframeBlockersRef = useRef({
+    hasOverlay: false,
+    isOrderOverlayOpen: false,
+    isOrderOverlayClosing: false,
+    isDynamicSectionClosing: false,
+    isOrderSelectionMode: false,
+    hasActiveDrag: false,
+    hasPlanDropFeedback: false,
+  });
 
   const derivedState = useHomeDesktopDerivedStateFlow({
     sectionManager,
     baseControlls,
   });
+  const previousOpenSectionsCountRef = useRef(derivedState.openSectionsCount);
+  const isDynamicSectionClosing =
+    previousOpenSectionsCountRef.current > derivedState.openSectionsCount;
+  previousOpenSectionsCountRef.current = derivedState.openSectionsCount;
   const layout = useHomeDesktopLayout({
     openSectionsCount: derivedState.openSectionsCount,
   });
+  reframeBlockersRef.current = {
+    hasOverlay: layout.hasOverlay,
+    isOrderOverlayOpen,
+    isOrderOverlayClosing,
+    isDynamicSectionClosing,
+    isOrderSelectionMode,
+    hasActiveDrag: Boolean(routeOperationsActiveDrag),
+    hasPlanDropFeedback: Boolean(planDropFeedback),
+  };
+
+  const shouldReframeToVisibleArea = useCallback(() => {
+    const blockers = reframeBlockersRef.current;
+    if (
+      blockers.isOrderOverlayClosing ||
+      blockers.isDynamicSectionClosing ||
+      blockers.isOrderSelectionMode ||
+      blockers.hasActiveDrag ||
+      blockers.hasPlanDropFeedback
+    ) {
+      return false;
+    }
+    return !blockers.hasOverlay && !blockers.isOrderOverlayOpen;
+  }, []);
 
   useEffect(() => {
     void initialize(mapContainerRef.current);
@@ -108,6 +152,7 @@ export function HomeDesktopView() {
       },
       resize,
       reframeToVisibleArea,
+      shouldReframeToVisibleArea,
     });
 
   useHomeDesktopKeyboardFlow({

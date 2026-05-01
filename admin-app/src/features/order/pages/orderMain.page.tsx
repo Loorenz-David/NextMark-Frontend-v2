@@ -25,6 +25,7 @@ const OrderMainContent = ({
     query,
     orderStats,
     hoveredClientId,
+    hoveredClientIds,
     handleOrderRowMouseEnter,
     handleOrderRowMouseLeave,
     hasMorePages,
@@ -140,6 +141,7 @@ const OrderMainContent = ({
               onArchive={orderActions.handleArchiveOrder}
               onUnarchive={orderActions.handleUnarchiveOrder}
               hoveredClientId={hoveredClientId}
+              hoveredClientIds={hoveredClientIds}
               onOrderMouseEnter={handleOrderRowMouseEnter}
               onOrderMouseLeave={handleOrderRowMouseLeave}
             />

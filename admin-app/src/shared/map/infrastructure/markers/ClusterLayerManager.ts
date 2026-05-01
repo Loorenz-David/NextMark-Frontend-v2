@@ -14,8 +14,10 @@ type PointProperties = {
 type ClusterLayerEntry = {
   index: Supercluster<PointProperties, PointProperties>
   rawOrders: MapOrder[]
+  options: Required<SetClusteredMarkerLayerOptions>
   signature: string
   clusterRecordByMarkerId: Record<string, ClusterRecord>
+  visibleMarkerIdByLeafId: Record<string, string>
 }
 
 type ClusterLayerRecomputeListener = (layerId: string) => void
@@ -75,6 +77,8 @@ const buildClusterMarkerId = ({
   pointCount: number
 }) => `cluster_${roundClusterCoordinate(lat)}_${roundClusterCoordinate(lng)}_${pointCount}`
 
+const uniqueStrings = (values: string[]) => Array.from(new Set(values))
+
 export class ClusterLayerManager {
   private layers = new Map<string, ClusterLayerEntry>()
   private mapInstance: google.maps.Map | null = null
@@ -132,7 +136,7 @@ export class ClusterLayerManager {
     layerId: string,
     orders: MapOrder[],
     options?: SetClusteredMarkerLayerOptions,
-  ): void {
+  ): string[] {
     const opts = { ...CLUSTER_DEFAULTS, ...options }
     const sortedOrders = sortOrdersForClusterIndex(orders)
     const nextSignature = buildLayerSignature(sortedOrders, {
@@ -143,8 +147,7 @@ export class ClusterLayerManager {
     const existing = this.layers.get(layerId)
 
     if (existing?.signature === nextSignature) {
-      this.recomputeLayer(layerId)
-      return
+      return this.recomputeLayer(layerId)
     }
 
     const index = new Supercluster<PointProperties, PointProperties>({
@@ -170,10 +173,16 @@ export class ClusterLayerManager {
     this.layers.set(layerId, {
       index,
       rawOrders: sortedOrders,
+      options: {
+        radius: opts.radius,
+        minZoom: opts.minZoom,
+        maxZoom: opts.maxZoom,
+      },
       signature: nextSignature,
       clusterRecordByMarkerId: {},
+      visibleMarkerIdByLeafId: {},
     })
-    this.recomputeLayer(layerId)
+    return this.recomputeLayer(layerId)
   }
 
   clearLayer(layerId: string): string[] {
@@ -191,6 +200,31 @@ export class ClusterLayerManager {
 
   hasLayer(layerId: string): boolean {
     return this.layers.has(layerId)
+  }
+
+  removeOrdersByIds(layerId: string, ids: string[]): string[] {
+    const entry = this.layers.get(layerId)
+    if (!entry) {
+      return []
+    }
+
+    const idSet = new Set(ids.map(String).filter(Boolean))
+    if (idSet.size === 0) {
+      return []
+    }
+
+    const nextOrders = entry.rawOrders.filter(
+      (order) => !idSet.has(String(order.id)),
+    )
+    if (nextOrders.length === entry.rawOrders.length) {
+      return []
+    }
+
+    if (nextOrders.length === 0) {
+      return this.clearLayer(layerId)
+    }
+
+    return this.setLayer(layerId, nextOrders, entry.options)
   }
 
   expandToLeafIds(layerId: string, markerIds: string[]): string[] {
@@ -219,22 +253,34 @@ export class ClusterLayerManager {
     return Array.from(new Set(expanded))
   }
 
+  resolveVisibleMarkerId(markerId: string): string {
+    const normalizedId = String(markerId)
+    for (const entry of this.layers.values()) {
+      const visibleMarkerId = entry.visibleMarkerIdByLeafId[normalizedId]
+      if (visibleMarkerId) {
+        return visibleMarkerId
+      }
+    }
+
+    return normalizedId
+  }
+
   private recomputeAll(): void {
     Array.from(this.layers.keys()).forEach((layerId) => {
       this.recomputeLayer(layerId)
     })
   }
 
-  private recomputeLayer(layerId: string): void {
+  private recomputeLayer(layerId: string): string[] {
     const entry = this.layers.get(layerId)
     if (!entry || !this.mapInstance) {
-      return
+      return []
     }
 
     const bounds = this.mapInstance.getBounds()
     const zoom = this.mapInstance.getZoom()
     if (!bounds || zoom == null) {
-      return
+      return []
     }
 
     const northEast = bounds.getNorthEast()
@@ -247,6 +293,7 @@ export class ClusterLayerManager {
     ]
     const clusters = entry.index.getClusters(bbox, Math.round(zoom))
     const nextClusterRecordByMarkerId: Record<string, ClusterRecord> = {}
+    const nextVisibleMarkerIdByLeafId: Record<string, string> = {}
 
     const nextMarkers: ClusteredMapOrder[] = clusters.map((feature) => {
       const [lng, lat] = feature.geometry.coordinates
@@ -270,6 +317,17 @@ export class ClusterLayerManager {
           pointCount: clusterRecord.pointCount,
         })
         nextClusterRecordByMarkerId[markerId] = clusterRecord
+        const leaves = entry.index.getLeaves(clusterRecord.clusterId, Infinity)
+        const leafOrders = leaves.map((leaf) => leaf.properties.order)
+        const hoverIds = uniqueStrings(
+          leafOrders.flatMap((order) => order.hoverIds ?? [String(order.id)]),
+        )
+        const hoverIdsEnter = leafOrders.find((order) => order.onHoverIdsEnter)?.onHoverIdsEnter
+        const hoverIdsLeave = leafOrders.find((order) => order.onHoverIdsLeave)?.onHoverIdsLeave
+
+        leaves.forEach((leaf) => {
+          nextVisibleMarkerIdByLeafId[leaf.properties.originalId] = markerId
+        })
 
         return {
           id: markerId,
@@ -282,15 +340,25 @@ export class ClusterLayerManager {
             map?.setZoom?.(expansionZoom)
             map?.panTo({ lat, lng })
           },
+          hoverIds,
+          onMouseEnter: hoverIdsEnter
+            ? (event: MouseEvent) => hoverIdsEnter(event, hoverIds)
+            : undefined,
+          onMouseLeave: hoverIdsLeave
+            ? (event: MouseEvent) => hoverIdsLeave(event, hoverIds)
+            : undefined,
           _clusterRecord: clusterRecord,
         }
       }
 
+      nextVisibleMarkerIdByLeafId[properties.originalId] = properties.originalId
       return properties.order
     })
 
     entry.clusterRecordByMarkerId = nextClusterRecordByMarkerId
-    this.markerLayerManager.setLayerMarkers(layerId, nextMarkers)
+    entry.visibleMarkerIdByLeafId = nextVisibleMarkerIdByLeafId
+    const { removedIds } = this.markerLayerManager.setLayerMarkers(layerId, nextMarkers)
     this.onLayerRecomputed(layerId)
+    return removedIds
   }
 }

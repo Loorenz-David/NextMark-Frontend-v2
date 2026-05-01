@@ -22,6 +22,7 @@ type OrderAddressGroupCardProps = {
   onArchive?: (order: Order) => void
   onUnarchive?: (order: Order) => void
   hoveredClientId?: string | null
+  hoveredClientIds?: string[]
   onOrderMouseEnter?: (order: Order) => void
   onOrderMouseLeave?: () => void
   dragAttributes?: DraggableAttributes
@@ -40,6 +41,7 @@ export const OrderAddressGroupCard = ({
   onArchive,
   onUnarchive,
   hoveredClientId,
+  hoveredClientIds,
   onOrderMouseEnter,
   onOrderMouseLeave,
   dragAttributes,
@@ -54,8 +56,10 @@ export const OrderAddressGroupCard = ({
   }, [group.orders, hasRenderCap, showAllChildren])
 
   return (
-    <div className={`flex flex-col border-y-1 border-y-[var(--color-muted)]/60 transition-colors ${
-      isGroupHovered ? 'bg-[var(--color-light-blue)]/10' : ''
+    <div className={`flex flex-col border-y-1 transition-all duration-200 ${
+      isGroupHovered
+        ? 'border-y-[rgb(var(--color-light-blue-r),0.7)] bg-white/[0.08] shadow-[0_18px_42px_rgba(45,95,170,0.18)]'
+        : 'border-y-[var(--color-muted)]/60'
     }`}
     >
       <div className="py-4 pr-4 pl-2 z-2">
@@ -65,7 +69,11 @@ export const OrderAddressGroupCard = ({
           {...dragAttributes}
           {...dragListeners}
         >
-          <div className="flex h-7 min-w-7 items-center justify-center rounded-full bg-[var(--color-primary)]/60 px-2 text-sm font-semibold text-[var(--color-page)]">
+          <div className={`flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-sm font-semibold text-[var(--color-page)] transition-all duration-200 ${
+            isGroupHovered
+              ? 'bg-[var(--color-light-blue)] shadow-[0_0_0_3px_rgba(255,255,255,0.08)]'
+              : 'bg-[var(--color-primary)]/60'
+          }`}>
             {group.orders.length}
           </div>
           <div className="min-w-0 flex-1">
@@ -89,6 +97,7 @@ export const OrderAddressGroupCard = ({
               onArchive={onArchive}
               onUnarchive={onUnarchive}
               hoveredClientId={hoveredClientId}
+              hoveredClientIds={hoveredClientIds}
               onOrderMouseEnter={onOrderMouseEnter}
               onOrderMouseLeave={onOrderMouseLeave}
             />
