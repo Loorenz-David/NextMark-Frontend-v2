@@ -1,5 +1,6 @@
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '';
-const API_BASE = `${BASE_URL}/api_v2/public/order-tracking`;
+const BASE_URL =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "";
+const API_BASE = `${BASE_URL}/public/order-tracking`;
 
 export interface TrackingTimelineEntry {
   event_name: string;
@@ -18,7 +19,9 @@ export interface OrderTrackingData {
   timeline: TrackingTimelineEntry[];
 }
 
-export async function fetchOrderTracking(token: string): Promise<OrderTrackingData> {
+export async function fetchOrderTracking(
+  token: string,
+): Promise<OrderTrackingData> {
   const res = await fetch(`${API_BASE}/${token}`);
   if (res.status === 404) {
     throw new Error("not_found");

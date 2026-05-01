@@ -9,16 +9,64 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     resolve: {
       alias: [
-        { find: "@shared-inputs", replacement: path.resolve(__dirname, "../packages/shared-inputs/src") },
-        { find: "@shared-google-maps", replacement: path.resolve(__dirname, "../packages/shared-google-maps") },
-        { find: "@shared-domain", replacement: path.resolve(__dirname, "../packages/shared-domain") },
-        { find: "@shared-icons", replacement: path.resolve(__dirname, "../packages/shared-icons") },
-        { find: /^react$/, replacement: path.resolve(__dirname, "node_modules/react/index.js") },
-        { find: /^react\/jsx-runtime$/, replacement: path.resolve(__dirname, "node_modules/react/jsx-runtime.js") },
-        { find: /^react-dom$/, replacement: path.resolve(__dirname, "node_modules/react-dom/index.js") },
-        { find: /^libphonenumber-js$/, replacement: path.resolve(__dirname, "node_modules/libphonenumber-js/index.cjs.js") },
-        { find: /^framer-motion$/, replacement: path.resolve(__dirname, "node_modules/framer-motion/dist/es/index.mjs") },
-        { find: /^@floating-ui\/react$/, replacement: path.resolve(__dirname, "node_modules/@floating-ui/react/dist/floating-ui.react.mjs") },
+        {
+          find: "@shared-inputs",
+          replacement: path.resolve(__dirname, "../packages/shared-inputs/src"),
+        },
+        {
+          find: "@shared-google-maps",
+          replacement: path.resolve(
+            __dirname,
+            "../packages/shared-google-maps",
+          ),
+        },
+        {
+          find: "@shared-domain",
+          replacement: path.resolve(__dirname, "../packages/shared-domain"),
+        },
+        {
+          find: "@shared-icons",
+          replacement: path.resolve(__dirname, "../packages/shared-icons"),
+        },
+        {
+          find: /^react$/,
+          replacement: path.resolve(__dirname, "node_modules/react/index.js"),
+        },
+        {
+          find: /^react\/jsx-runtime$/,
+          replacement: path.resolve(
+            __dirname,
+            "node_modules/react/jsx-runtime.js",
+          ),
+        },
+        {
+          find: /^react-dom$/,
+          replacement: path.resolve(
+            __dirname,
+            "node_modules/react-dom/index.js",
+          ),
+        },
+        {
+          find: /^libphonenumber-js$/,
+          replacement: path.resolve(
+            __dirname,
+            "node_modules/libphonenumber-js/index.cjs.js",
+          ),
+        },
+        {
+          find: /^framer-motion$/,
+          replacement: path.resolve(
+            __dirname,
+            "node_modules/framer-motion/dist/es/index.mjs",
+          ),
+        },
+        {
+          find: /^@floating-ui\/react$/,
+          replacement: path.resolve(
+            __dirname,
+            "node_modules/@floating-ui/react/dist/floating-ui.react.mjs",
+          ),
+        },
       ],
     },
     server: {
