@@ -103,7 +103,7 @@ export const extractNormalizedNotes = (
 export const canEditOrderNote = (type: NormalizedNoteType) =>
   type === "COSTUMER" || type === "GENERAL";
 
-export const toMutableOrderNotes = (notes: Order["order_notes"]): string[] => {
+export const toMutableOrderNotes = (notes: Order["order_notes"]): NonNullable<Order["order_notes"]> => {
   if (Array.isArray(notes)) return [...notes];
   if (notes == null) return [];
   return [String(notes)];
@@ -118,7 +118,7 @@ export const replaceOrderNoteAtIndex = (
   notes: Order["order_notes"],
   noteIndex: number,
   nextNote: string,
-): string[] => {
+): NonNullable<Order["order_notes"]> => {
   const nextEntries = toMutableOrderNotes(notes);
   nextEntries[noteIndex] = nextNote;
   return nextEntries;
@@ -127,7 +127,7 @@ export const replaceOrderNoteAtIndex = (
 export const removeOrderNoteAtIndex = (
   notes: Order["order_notes"],
   noteIndex: number,
-): string[] | null => {
+): NonNullable<Order["order_notes"]> | null => {
   const nextEntries = toMutableOrderNotes(notes).filter((_, index) => index !== noteIndex);
   return nextEntries.length > 0 ? nextEntries : null;
 };

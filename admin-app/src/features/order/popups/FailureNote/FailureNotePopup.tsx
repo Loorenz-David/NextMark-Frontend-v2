@@ -62,7 +62,7 @@ export const FailureNotePopup = ({
       const success = await setOrderState(
         payload.clientId,
         payload.targetStateId,
-        { order_notes: [failureNote] },
+        { order_notes: { type: "FAILURE", content: failureNote } },
       );
 
       if (success) {

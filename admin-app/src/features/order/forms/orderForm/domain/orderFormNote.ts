@@ -42,7 +42,9 @@ type OrderFormTypedNote = {
   [key: string]: unknown;
 };
 
-const normalizeOrderFormNoteType = (value: unknown): OrderFormNoteType | null => {
+const normalizeOrderFormNoteType = (
+  value: unknown,
+): OrderFormNoteType | null => {
   const normalized = String(value ?? "").toUpperCase();
   if (normalized === "GENERAL") return "GENERAL";
   if (normalized === "COSTUMER") return "COSTUMER";
@@ -61,7 +63,10 @@ const findTypedNoteIndex = (
 ): number =>
   entries.findIndex((entry) => {
     if (!entry || typeof entry !== "object") return false;
-    return normalizeOrderFormNoteType((entry as OrderFormTypedNote).type) === noteType;
+    return (
+      normalizeOrderFormNoteType((entry as OrderFormTypedNote).type) ===
+      noteType
+    );
   });
 
 const removeEntryAtIndex = (entries: unknown[], index: number): unknown[] => {
@@ -82,7 +87,9 @@ const upsertTypedNote = (
   }
 
   const nextNote: OrderFormTypedNote =
-    existingIndex >= 0 && entries[existingIndex] && typeof entries[existingIndex] === "object"
+    existingIndex >= 0 &&
+    entries[existingIndex] &&
+    typeof entries[existingIndex] === "object"
       ? {
           ...(entries[existingIndex] as OrderFormTypedNote),
           type: noteType,
@@ -102,7 +109,9 @@ const upsertTypedNote = (
   return [...entries, nextNote];
 };
 
-export const coerceOrderFormNotesToDraft = (value: unknown): {
+export const coerceOrderFormNotesToDraft = (
+  value: unknown,
+): {
   generalNote: string;
   customerNote: string;
   sourceNotes: unknown[];
@@ -154,6 +163,10 @@ export const normalizeOrderFormNotesForSave = ({
   const normalizedCustomer = coerceOrderFormNoteToDraft(customerNote);
   const baseEntries = toNoteEntries(sourceNotes);
 
-  const withGeneral = upsertTypedNote(baseEntries, "GENERAL", normalizedGeneral);
+  const withGeneral = upsertTypedNote(
+    baseEntries,
+    "GENERAL",
+    normalizedGeneral,
+  );
   return upsertTypedNote(withGeneral, "COSTUMER", normalizedCustomer);
 };

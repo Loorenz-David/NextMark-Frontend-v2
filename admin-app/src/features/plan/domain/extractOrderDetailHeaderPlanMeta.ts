@@ -1,4 +1,7 @@
-import { coerceUtcFromOffset, toDateOnly } from "@/shared/data-validation/timeValidation";
+import {
+  coerceUtcFromOffset,
+  toDateOnly,
+} from "@/shared/data-validation/timeValidation";
 
 import { formatRouteTime } from "../routeGroup/utils/formatRouteTime";
 import type { RouteSolutionStop } from "../routeGroup/types/routeSolutionStop";

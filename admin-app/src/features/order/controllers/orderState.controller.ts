@@ -5,6 +5,7 @@ import { useMessageHandler } from "@shared-message-handler";
 
 import { applyOrderStateUpdatePayload } from "../actions/applyOrderStateUpdatePayload.action";
 import { useUpdateOrderState } from "../api/orderState.api";
+import type { OrderStateFields } from "../api/orderState.api";
 import { useOrderStateRegistry } from "../domain/useOrderStateRegistry";
 import type { Order, OrderUpdateFields } from "../types/order";
 import {
@@ -13,13 +14,13 @@ import {
   useOrderStore,
 } from "../store/order.store";
 
-const appendOrderNotes = (
+const appendOrderNote = (
   currentNotes: Order["order_notes"],
-  incomingNotes: OrderUpdateFields["order_notes"],
+  incomingNote: OrderStateFields["order_notes"],
 ): Order["order_notes"] => {
-  if (incomingNotes == null) return incomingNotes;
+  if (incomingNote == null) return currentNotes ?? null;
   const existing = currentNotes ?? [];
-  return [...existing, ...incomingNotes];
+  return [...existing, incomingNote];
 };
 
 export const useOrderStateController = () => {
@@ -31,7 +32,7 @@ export const useOrderStateController = () => {
     async (
       clientId: string,
       targetStateId: number,
-      fields?: OrderUpdateFields,
+      fields?: OrderStateFields,
     ): Promise<boolean> => {
       const order = selectOrderByClientId(clientId)(useOrderStore.getState());
       if (!order) return false;
@@ -45,17 +46,17 @@ export const useOrderStateController = () => {
       if (!targetState) return false;
 
       const normalizedFields: OrderUpdateFields | undefined = fields
-        ? {
+        ? ({
             ...fields,
             ...(Object.prototype.hasOwnProperty.call(fields, "order_notes")
               ? {
-                  order_notes: appendOrderNotes(
+                  order_notes: appendOrderNote(
                     order.order_notes,
                     fields.order_notes,
                   ),
                 }
               : {}),
-          }
+          } as OrderUpdateFields)
         : undefined;
 
       const previousFieldSnapshot: OrderUpdateFields | null = normalizedFields
