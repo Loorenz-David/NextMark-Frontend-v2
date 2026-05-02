@@ -1,84 +1,93 @@
-import { useCallback } from 'react'
+import { useCallback } from "react";
 
-import { ApiError } from '@/lib/api/ApiClient'
-import { useMessageHandler } from '@shared-message-handler'
+import { ApiError } from "@/lib/api/ApiClient";
+import { useMessageHandler } from "@shared-message-handler";
 
-import { useGetOrders } from '../api/orderApi'
-import { useOrderModel } from '../domain/useOrderModel'
+import { useGetOrders } from "../api/orderApi";
+import { useOrderModel } from "../domain/useOrderModel";
+import { normalizeOrderMapResponseForStore } from "../api/mappers/orderResponse.normalize";
 
-import { setOrderListError, setOrderListResult } from '../store/orderList.store'
-import { useUpsertOrdersStore } from '../store/orderHooks.store'
-import { setVisibleOrders } from '../store/order.store'
-import type {  OrderQueryStoreFilters } from '../types/orderMeta'
-import { normalizeQuery } from '@shared-utils'
-import { orderStringFilters } from '../domain/orderFilterConfig'
+import {
+  setOrderListError,
+  setOrderListResult,
+} from "../store/orderList.store";
+import { useUpsertOrdersStore } from "../store/orderHooks.store";
+import { setVisibleOrders } from "../store/order.store";
+import type { OrderQueryStoreFilters } from "../types/orderMeta";
+import { normalizeQuery } from "@shared-utils";
+import { orderStringFilters } from "../domain/orderFilterConfig";
 
-
-export const buildOrderQueryKey = (query?:  OrderQueryStoreFilters) => JSON.stringify(query ?? {})
+export const buildOrderQueryKey = (query?: OrderQueryStoreFilters) =>
+  JSON.stringify(query ?? {});
 
 export const useOrderFlow = () => {
-  const getOrders = useGetOrders()
-  const { normalizeOrderPayload } = useOrderModel()
-  const upsertOrdersStore = useUpsertOrdersStore()
-  const { showMessage } = useMessageHandler()
-  
+  const getOrders = useGetOrders();
+  const { normalizeOrderPayload } = useOrderModel();
+  const upsertOrdersStore = useUpsertOrdersStore();
+  const { showMessage } = useMessageHandler();
 
-  const loadOrdersPage = useCallback(
-    async (query?: OrderQueryStoreFilters) => {
-      const normalizedQuery = normalizeQuery(query ?? {}, orderStringFilters)
-     
-      try {
-        const response = await getOrders(normalizedQuery)
+  const loadOrdersPage = useCallback(async (query?: OrderQueryStoreFilters) => {
+    const normalizedQuery = normalizeQuery(query ?? {}, orderStringFilters);
 
-        const payload = response.data
-       
-        if (!payload?.order) {
-          setOrderListError('Missing orders response.')
-          return null
-        }
+    try {
+      const response = await getOrders(normalizedQuery);
 
-        const normalized = normalizeOrderPayload(payload.order)
+      const payload = response.data;
 
-        upsertOrdersStore(normalized)
-
-        return {
-          normalized,
-          pagination: payload.order_pagination,
-          stats: payload.order_stats,
-        }
-      } catch (error) {
-        const message = error instanceof ApiError ? error.message : 'Unable to load orders.'
-        const status = error instanceof ApiError ? error.status : 500
-        setOrderListError(message)
-        showMessage({ status, message })
-        return null
+      if (!payload?.order) {
+        setOrderListError("Missing orders response.");
+        return null;
       }
-    },
-    [],
-  )
+
+      const normalizedPayload = normalizeOrderMapResponseForStore(
+        payload.order,
+      );
+      if (!normalizedPayload) {
+        setOrderListError("Unable to normalize order list response.");
+        return null;
+      }
+
+      const normalized = normalizeOrderPayload(normalizedPayload);
+
+      upsertOrdersStore(normalized);
+
+      return {
+        normalized,
+        pagination: payload.order_pagination,
+        stats: payload.order_stats,
+      };
+    } catch (error) {
+      const message =
+        error instanceof ApiError ? error.message : "Unable to load orders.";
+      const status = error instanceof ApiError ? error.status : 500;
+      setOrderListError(message);
+      showMessage({ status, message });
+      return null;
+    }
+  }, []);
 
   const loadOrders = useCallback(
     async (query?: OrderQueryStoreFilters, _firstLoad?: boolean) => {
-      const response = await loadOrdersPage(query)
+      const response = await loadOrdersPage(query);
       if (!response) {
-        return null
+        return null;
       }
 
-      setVisibleOrders(response.normalized.allIds)
+      setVisibleOrders(response.normalized.allIds);
       setOrderListResult({
         queryKey: buildOrderQueryKey(query),
         query,
         stats: response.stats,
         pagination: response.pagination,
-      })
+      });
 
-      return response.normalized
+      return response.normalized;
     },
     [loadOrdersPage],
-  )
+  );
 
   return {
     loadOrdersPage,
     loadOrders,
-  }
-}
+  };
+};

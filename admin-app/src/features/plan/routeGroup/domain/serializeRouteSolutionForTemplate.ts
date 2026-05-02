@@ -1,4 +1,4 @@
-import type { ClassicTemplateRouteProps } from '@/features/templates/printDocument/components/templates/route/classicTemplateRoute'
+import type { ClassicTemplateRouteData } from '@/features/templates/printDocument/components/templates/route/classicTemplateRoute.pdf'
 
 import { toDateOnly, validateDateComparison } from '@/shared/data-validation/timeValidation'
 
@@ -28,7 +28,7 @@ import { useTeamMemberStore, selectTeamMemberByServerId } from '@/features/team/
 export const serializeRouteSolutionForTemplate = (
   planId: number | null | undefined,
   routeGroupId: number | null | undefined,
-): ClassicTemplateRouteProps | null => {
+): ClassicTemplateRouteData | null => {
   if (!planId || !routeGroupId) return null
 
   const plan = selectRoutePlanByServerId(planId)(useRoutePlanStore.getState())
@@ -105,6 +105,7 @@ export const serializeRouteSolutionForTemplate = (
         expected_arrival_time: formatRouteTime(stop.expected_arrival_time, spansMultipleDays),
         items: items.map((it) => ({
           article_number: it.article_number,
+          item_position: it.item_position ?? null,
           item_type: it.item_type,
           quantity: it.quantity,
           properties: it.properties ?? null,

@@ -27,6 +27,7 @@ export const ShopifyIntegrationForm = ({
           }}
         />
       </Field>
+      Waiting for Shopify approval
     </div>
   );
 };

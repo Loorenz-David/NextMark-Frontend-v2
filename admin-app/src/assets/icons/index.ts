@@ -74,3 +74,4 @@ export { default as RetryIcon } from "./RetryIcon.svg?react";
 export { default as QuestionIcon } from "./QuestionIcon.svg?react";
 export { default as DriverIcon } from "./DriverIcon.svg?react";
 export { default as DriverIconSrc } from "./DriverIcon.svg";
+export { default as PrintIcon } from "./PrintIcon.svg?react";

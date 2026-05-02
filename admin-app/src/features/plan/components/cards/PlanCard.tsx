@@ -35,8 +35,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
   const { openPlanSection } = usePlanHeaderAction();
 
   const PlanTypeIcon = planIconTypeMap.local_delivery;
-  const startDate = formatPlanDate(plan.start_date);
-  const endDate = formatPlanDate(plan.end_date);
+  const planDateLabel = formatPlanDateLabel(plan.start_date, plan.end_date);
   const orderCount = plan.total_orders ?? 0;
   const itemCount = plan.total_items ?? 0;
   const totalVolume = plan.total_volume ?? 0;
@@ -184,7 +183,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
               </AnimatePresence>
             </div>
             <span className="text-xs text-[var(--color-muted)]">
-              {startDate} - {endDate}
+              {planDateLabel}
             </span>
           </div>
         </div>
@@ -330,8 +329,30 @@ const formatPlanDate = (value?: string | null) => {
   if (!date || Number.isNaN(date.getTime())) return "TBD";
   return date.toLocaleDateString("en-US", {
     timeZone: "UTC",
+    weekday: "short",
     month: "short",
     day: "numeric",
-    year: "numeric",
   });
+};
+
+const formatPlanDateLabel = (
+  startDateValue?: string | null,
+  endDateValue?: string | null,
+) => {
+  const startDate = startDateValue ? coerceUtcFromOffset(startDateValue) : null;
+  const endDate = endDateValue ? coerceUtcFromOffset(endDateValue) : null;
+  const startLabel = formatPlanDate(startDateValue);
+  const endLabel = formatPlanDate(endDateValue);
+
+  const hasSameUtcDay =
+    Boolean(startDate) &&
+    Boolean(endDate) &&
+    !Number.isNaN(startDate!.getTime()) &&
+    !Number.isNaN(endDate!.getTime()) &&
+    startDate!.getUTCFullYear() === endDate!.getUTCFullYear() &&
+    startDate!.getUTCMonth() === endDate!.getUTCMonth() &&
+    startDate!.getUTCDate() === endDate!.getUTCDate();
+
+  if (hasSameUtcDay) return startLabel;
+  return `${startLabel} - ${endLabel}`;
 };

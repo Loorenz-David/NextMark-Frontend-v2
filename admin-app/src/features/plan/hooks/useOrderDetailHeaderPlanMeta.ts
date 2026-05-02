@@ -1,4 +1,7 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { normalizeEntityMap } from "@/lib/utils/entities/normalizeEntityMap";
+
+import { planApi } from "../api/plan.api";
 
 import { useRouteSolutionStopStore } from "../routeGroup/store/routeSolutionStop.store";
 import { useRouteSolutionStore } from "../routeGroup/store/routeSolution.store";
@@ -11,12 +14,27 @@ import {
   extractOrderDetailHeaderPlanMeta,
   type OrderDetailHeaderPlanMeta,
 } from "../domain/extractOrderDetailHeaderPlanMeta";
+import type { DeliveryPlan, DeliveryPlanMap } from "../types/plan";
 import type { RouteSolutionStop } from "../routeGroup/types/routeSolutionStop";
+import { upsertRoutePlan, upsertRoutePlans } from "../store/routePlan.slice";
 
 type UseOrderDetailHeaderPlanMetaParams = {
   orderId?: number | null;
   routePlanId?: number | null;
   routeGroupId?: number | null;
+};
+
+const toFiniteNumberOrNull = (value: unknown): number | null => {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim().length > 0) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
 };
 
 const rankStop = (stop: RouteSolutionStop): number =>
@@ -29,14 +47,62 @@ export const useOrderDetailHeaderPlanMeta = ({
   routePlanId,
   routeGroupId,
 }: UseOrderDetailHeaderPlanMetaParams): OrderDetailHeaderPlanMeta => {
+  const hydrateAttemptedForPlanIdRef = useRef<number | null>(null);
+  const normalizedRouteGroupId = toFiniteNumberOrNull(routeGroupId);
   const routeGroup = useRouteGroupStore(
-    selectRouteGroupByServerId(routeGroupId ?? null),
+    selectRouteGroupByServerId(normalizedRouteGroupId),
   );
-  const resolvedRoutePlanId =
-    typeof routePlanId === "number"
-      ? routePlanId
-      : (routeGroup?.route_plan_id ?? null);
+  const normalizedRoutePlanId = toFiniteNumberOrNull(routePlanId);
+  const routePlanIdFromGroup = toFiniteNumberOrNull(routeGroup?.route_plan_id);
+  const resolvedRoutePlanId = normalizedRoutePlanId ?? routePlanIdFromGroup;
   const routePlan = useRoutePlanByServerId(resolvedRoutePlanId) ?? null;
+
+  useEffect(() => {
+    if (typeof resolvedRoutePlanId !== "number") {
+      hydrateAttemptedForPlanIdRef.current = null;
+      return;
+    }
+
+    if (routePlan) {
+      hydrateAttemptedForPlanIdRef.current = null;
+      return;
+    }
+
+    if (hydrateAttemptedForPlanIdRef.current === resolvedRoutePlanId) {
+      return;
+    }
+
+    hydrateAttemptedForPlanIdRef.current = resolvedRoutePlanId;
+    let cancelled = false;
+
+    const hydrateRoutePlan = async () => {
+      try {
+        const response = await planApi.getPlan(resolvedRoutePlanId);
+        if (cancelled) return;
+
+        const normalized = normalizeEntityMap<DeliveryPlan>(
+          response.data?.route_plan as DeliveryPlanMap | DeliveryPlan,
+        );
+        if (!normalized) return;
+
+        if (normalized.allIds.length === 1) {
+          upsertRoutePlan(normalized.byClientId[normalized.allIds[0]]);
+          return;
+        }
+
+        upsertRoutePlans(normalized);
+      } catch {
+        // Header hydration is best-effort; keep fallback label when fetch fails.
+      }
+    };
+
+    void hydrateRoutePlan();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [resolvedRoutePlanId, routePlan]);
+
   const routeSolutionIds = useRouteSolutionStore((state) => state.allIds);
   const routeSolutionByClientId = useRouteSolutionStore(
     (state) => state.byClientId,
@@ -52,12 +118,12 @@ export const useOrderDetailHeaderPlanMeta = ({
     }
 
     const selectedSolutionId =
-      typeof routeGroupId === "number"
+      typeof normalizedRouteGroupId === "number"
         ? (routeSolutionIds
             .map((clientId) => routeSolutionByClientId[clientId])
             .find(
               (solution) =>
-                solution?.route_group_id === routeGroupId &&
+                solution?.route_group_id === normalizedRouteGroupId &&
                 solution.is_selected,
             )?.id ?? null)
         : null;
@@ -90,7 +156,7 @@ export const useOrderDetailHeaderPlanMeta = ({
     );
   }, [
     orderId,
-    routeGroupId,
+    normalizedRouteGroupId,
     routeSolutionByClientId,
     routeSolutionIds,
     routeStopByClientId,

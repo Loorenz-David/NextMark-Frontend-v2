@@ -27,7 +27,7 @@ const formatPlanDateRange = (
   if (!start && !end) return null;
   if (!start) return end || null;
   if (!end || start === end) return start;
-  return `${start} -- ${end}`;
+  return `${start} - ${end}`;
 };
 
 const formatShortPlanDate = (value?: string | null): string | null => {
@@ -39,6 +39,7 @@ const formatShortPlanDate = (value?: string | null): string | null => {
 
   return parsed.toLocaleDateString("en-US", {
     timeZone: "UTC",
+    weekday: "short",
     month: "short",
     day: "numeric",
   });

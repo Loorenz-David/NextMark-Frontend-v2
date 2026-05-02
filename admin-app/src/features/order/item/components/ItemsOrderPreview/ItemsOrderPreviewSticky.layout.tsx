@@ -1,16 +1,22 @@
-import { BasicButton } from '@/shared/buttons/BasicButton'
+import { BasicButton } from "@/shared/buttons/BasicButton";
 
-import { ItemCard } from '../ItemCard'
-import type { ItemsOrderPreviewLayoutProps } from './ItemsOrderPreview.types'
+import { ItemCard } from "../ItemCard";
+import { ItemPrintProgressIcon } from "./ItemPrintProgressIcon";
+import type { ItemsOrderPreviewLayoutProps } from "./ItemsOrderPreview.types";
 
 type ItemsOrderPreviewStickyLayoutProps = ItemsOrderPreviewLayoutProps & {
-  enableScrollBody?: boolean
-}
+  enableScrollBody?: boolean;
+};
 
 export const ItemsOrderPreviewStickyLayout = ({
   header,
   resolvedLoading,
   resolvedItems,
+  showPrintAction,
+  disablePrintAction,
+  isPrintActionLoading,
+  printProgress,
+  onPrintLabels,
   controlled,
   expandedItemClientId,
   onToggleExpand,
@@ -29,20 +35,54 @@ export const ItemsOrderPreviewStickyLayout = ({
       <div>
         <p className="text-sm font-semibold text-[var(--color-text)]">Items</p>
         <p className="text-xs text-[var(--color-muted)]">
-          {totalItems} items • {totalWeight.toFixed(2)} kg • {totalVolume.toFixed(2)} ㎥
+          {totalItems} items • {totalWeight.toFixed(2)} kg •{" "}
+          {totalVolume.toFixed(2)} ㎥
         </p>
       </div>
 
-      <BasicButton params={{ variant: 'primary', onClick: onAddItem, ariaLabel: 'Add item' }}>
-        + Item
-      </BasicButton>
+      <div className="flex items-center gap-2">
+        {showPrintAction ? (
+          <BasicButton
+            params={{
+              variant: "secondary",
+              onClick: onPrintLabels,
+              ariaLabel: "Print item labels",
+              disabled: disablePrintAction,
+              className: "h-8 w-8 rounded-lg p-0",
+            }}
+          >
+            <ItemPrintProgressIcon
+              isLoading={isPrintActionLoading}
+              progress={printProgress}
+            />
+          </BasicButton>
+        ) : null}
+
+        <BasicButton
+          params={{
+            variant: "primary",
+            onClick: onAddItem,
+            ariaLabel: "Add item",
+          }}
+        >
+          + Item
+        </BasicButton>
+      </div>
     </div>
-  )
+  );
 
   const renderBody = (useFillHeight: boolean) => (
-    <div className={useFillHeight ? 'flex min-h-0 flex-1 flex-col gap-3 px-5 py-5' : 'flex flex-col gap-3 px-5 py-5'}>
+    <div
+      className={
+        useFillHeight
+          ? "flex min-h-0 flex-1 flex-col gap-3 px-5 py-5"
+          : "flex flex-col gap-3 px-5 py-5"
+      }
+    >
       {resolvedLoading ? (
-        <div className="text-xs text-[var(--color-muted)]">Loading items...</div>
+        <div className="text-xs text-[var(--color-muted)]">
+          Loading items...
+        </div>
       ) : resolvedItems.length ? (
         resolvedItems.map((item) => (
           <ItemCard
@@ -55,8 +95,8 @@ export const ItemsOrderPreviewStickyLayout = ({
               onEditItem
                 ? () => onEditItem(item)
                 : () => {
-                    if (typeof orderId !== 'number') return
-                    onOpenEditItem(orderId, item.client_id)
+                    if (typeof orderId !== "number") return;
+                    onOpenEditItem(orderId, item.client_id);
                   }
             }
           />
@@ -67,7 +107,7 @@ export const ItemsOrderPreviewStickyLayout = ({
 
       {testNodes.map((node) => node)}
     </div>
-  )
+  );
 
   if (enableScrollBody) {
     return (
@@ -77,7 +117,7 @@ export const ItemsOrderPreviewStickyLayout = ({
           {renderBody(false)}
         </div>
       </section>
-    )
+    );
   }
 
   return (
@@ -85,5 +125,5 @@ export const ItemsOrderPreviewStickyLayout = ({
       {header ?? defaultHeader}
       {renderBody(false)}
     </section>
-  )
-}
+  );
+};

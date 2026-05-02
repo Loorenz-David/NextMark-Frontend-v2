@@ -1,12 +1,18 @@
-import { BasicButton } from '@/shared/buttons/BasicButton'
+import { BasicButton } from "@/shared/buttons/BasicButton";
 
-import { ItemCard } from '../ItemCard'
-import type { ItemsOrderPreviewLayoutProps } from './ItemsOrderPreview.types'
+import { ItemCard } from "../ItemCard";
+import { ItemPrintProgressIcon } from "./ItemPrintProgressIcon";
+import type { ItemsOrderPreviewLayoutProps } from "./ItemsOrderPreview.types";
 
 export const ItemsOrderPreviewScrollLayout = ({
   header,
   resolvedLoading,
   resolvedItems,
+  showPrintAction,
+  disablePrintAction,
+  isPrintActionLoading,
+  printProgress,
+  onPrintLabels,
   controlled,
   expandedItemClientId,
   onToggleExpand,
@@ -23,21 +29,51 @@ export const ItemsOrderPreviewScrollLayout = ({
     {header ?? (
       <div className="flex items-center justify-between gap-3 bg-[var(--color-page)] px-5 py-5 shadow-md">
         <div>
-          <p className="text-sm font-semibold text-[var(--color-text)]">Items</p>
+          <p className="text-sm font-semibold text-[var(--color-text)]">
+            Items
+          </p>
           <p className="text-xs text-[var(--color-muted)]">
-            {totalItems} items • {totalWeight.toFixed(2)} kg • {totalVolume.toFixed(2)} ㎥
+            {totalItems} items • {totalWeight.toFixed(2)} kg •{" "}
+            {totalVolume.toFixed(2)} ㎥
           </p>
         </div>
 
-        <BasicButton params={{ variant: 'primary', onClick: onAddItem, ariaLabel: 'Add item' }}>
-          + Item
-        </BasicButton>
+        <div className="flex items-center gap-2">
+          {showPrintAction ? (
+            <BasicButton
+              params={{
+                variant: "secondary",
+                onClick: onPrintLabels,
+                ariaLabel: "Print item labels",
+                disabled: disablePrintAction,
+                className: "h-8 w-8 rounded-lg p-0",
+              }}
+            >
+              <ItemPrintProgressIcon
+                isLoading={isPrintActionLoading}
+                progress={printProgress}
+              />
+            </BasicButton>
+          ) : null}
+
+          <BasicButton
+            params={{
+              variant: "primary",
+              onClick: onAddItem,
+              ariaLabel: "Add item",
+            }}
+          >
+            + Item
+          </BasicButton>
+        </div>
       </div>
     )}
 
     <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-scroll px-5 py-5">
       {resolvedLoading ? (
-        <div className="text-xs text-[var(--color-muted)]">Loading items...</div>
+        <div className="text-xs text-[var(--color-muted)]">
+          Loading items...
+        </div>
       ) : resolvedItems.length ? (
         resolvedItems.map((item) => (
           <ItemCard
@@ -50,8 +86,8 @@ export const ItemsOrderPreviewScrollLayout = ({
               onEditItem
                 ? () => onEditItem(item)
                 : () => {
-                    if (typeof orderId !== 'number') return
-                    onOpenEditItem(orderId, item.client_id)
+                    if (typeof orderId !== "number") return;
+                    onOpenEditItem(orderId, item.client_id);
                   }
             }
           />
@@ -63,4 +99,4 @@ export const ItemsOrderPreviewScrollLayout = ({
       {testNodes.map((node) => node)}
     </div>
   </section>
-)
+);
