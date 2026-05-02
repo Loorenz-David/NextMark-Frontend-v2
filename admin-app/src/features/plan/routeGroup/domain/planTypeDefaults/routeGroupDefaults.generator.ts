@@ -67,7 +67,10 @@ const resolveDefaultStartTime = (
   planStartDate: string | Date | null | undefined,
   storedStartTime: string | null,
 ) => {
-  if (isPlanStartToday(planStartDate)) {
+  if (
+    isPlanStartToday(planStartDate)
+    && (!storedStartTime || isTimeInPastForTeamToday(storedStartTime))
+  ) {
     return getTeamNowPlusFiveMinutes()
   }
   return storedStartTime ?? LOCAL_DELIVERY_DEFAULT_START_TIME
@@ -91,6 +94,54 @@ const getTeamNowPlusFiveMinutes = () => {
   const timeZone = getTeamTimeZone()
   const futureTime = new Date(Date.now() + 5 * 60_000)
   return formatTimeInTimeZone(futureTime, timeZone)
+}
+
+const isTimeInPastForTeamToday = (value: string) => {
+  const parsed = parseHHmm(value)
+  if (!parsed) {
+    return true
+  }
+
+  const timeZone = getTeamTimeZone()
+  const now = new Date()
+  const parts = new Intl.DateTimeFormat('sv-SE', {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(now)
+
+  const hour = Number(parts.find((part) => part.type === 'hour')?.value)
+  const minute = Number(parts.find((part) => part.type === 'minute')?.value)
+
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+    return true
+  }
+
+  return parsed.hours * 60 + parsed.minutes < hour * 60 + minute
+}
+
+const parseHHmm = (value: string) => {
+  const match = value.match(/^(\d{2}):(\d{2})$/)
+  if (!match) {
+    return null
+  }
+
+  const hours = Number(match[1])
+  const minutes = Number(match[2])
+
+  if (
+    !Number.isInteger(hours)
+    || !Number.isInteger(minutes)
+    || hours < 0
+    || hours > 23
+    || minutes < 0
+    || minutes > 59
+  ) {
+    return null
+  }
+
+  return { hours, minutes }
 }
 
 const resolveCurrentUserId = (): number | null => {

@@ -44,13 +44,17 @@ const resolveTeamScope = (): string => {
 
 const resolveStorageKey = (): string => `${STORAGE_NAMESPACE}.team:${resolveTeamScope()}`
 
-const isValidTime = (value: unknown): value is string => {
-  if (typeof value !== 'string') return false
-  const match = value.match(/^(\d{2}):(\d{2})$/)
-  if (!match) return false
+const normalizeTimeValue = (value: unknown): string | null => {
+  if (typeof value !== 'string') return null
+  const match = value.trim().match(/^(\d{2}):(\d{2})(?::\d{2})?$/)
+  if (!match) return null
   const hours = Number(match[1])
   const minutes = Number(match[2])
-  return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59
+  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+    return null
+  }
+
+  return `${match[1]}:${match[2]}`
 }
 
 const normalizeStrategy = (value: unknown): RouteEndStrategy => {
@@ -113,8 +117,8 @@ const sanitizePreferences = (raw: unknown): RouteGroupEditFormPreferences => {
   const candidate = raw as Record<string, unknown>
 
   return {
-    set_start_time: isValidTime(candidate.set_start_time) ? candidate.set_start_time : null,
-    set_end_time: isValidTime(candidate.set_end_time) ? candidate.set_end_time : null,
+    set_start_time: normalizeTimeValue(candidate.set_start_time),
+    set_end_time: normalizeTimeValue(candidate.set_end_time),
     eta_tolerance_minutes: normalizeEtaToleranceMinutes(candidate.eta_tolerance_minutes),
     eta_message_tolerance_minutes: normalizeEtaToleranceMinutes(
       candidate.eta_message_tolerance_minutes,
@@ -165,13 +169,13 @@ export const loadRouteGroupEditFormPreferences = (): RouteGroupEditFormPreferenc
 
 export const saveStartTimePreference = (value: string | null): void => {
   persistPreferences({
-    set_start_time: isValidTime(value) ? value : null,
+    set_start_time: normalizeTimeValue(value),
   })
 }
 
 export const saveEndTimePreference = (value: string | null): void => {
   persistPreferences({
-    set_end_time: isValidTime(value) ? value : null,
+    set_end_time: normalizeTimeValue(value),
   })
 }
 
