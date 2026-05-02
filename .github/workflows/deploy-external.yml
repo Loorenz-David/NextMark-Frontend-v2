@@ -1,5 +1,5 @@
 name: Deploy External Operations Frontend to S3 + CloudFront
-
+ 
 on:
   push:
     branches:
@@ -7,8 +7,7 @@ on:
     paths:
       - "external-operations-app/**"
       - ".github/workflows/**"
-
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   deploy:
