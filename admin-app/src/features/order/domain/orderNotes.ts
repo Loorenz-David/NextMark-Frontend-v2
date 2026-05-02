@@ -110,14 +110,17 @@ export const toMutableOrderNotes = (notes: Order["order_notes"]): NonNullable<Or
 };
 
 export const toOrderNotePayload = (
-  note: Pick<NormalizedOrderNote, "content">,
+  note: Pick<NormalizedOrderNote, "type" | "content">,
   contentOverride?: string,
-): string => (contentOverride ?? note.content).trim();
+): { type: string; content: string } => ({
+  type: note.type,
+  content: (contentOverride ?? note.content).trim(),
+});
 
 export const replaceOrderNoteAtIndex = (
   notes: Order["order_notes"],
   noteIndex: number,
-  nextNote: string,
+  nextNote: { type: string; content: string },
 ): NonNullable<Order["order_notes"]> => {
   const nextEntries = toMutableOrderNotes(notes);
   nextEntries[noteIndex] = nextNote;
