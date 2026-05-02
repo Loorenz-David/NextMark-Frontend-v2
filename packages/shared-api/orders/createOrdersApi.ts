@@ -108,12 +108,12 @@ export type UpdateOrderDeliveryPlanPayload = {
 
 export type OrderNoteMutationPayload = {
   target_id: number | string;
-  order_notes: string | string[];
+  order_notes: { type: string; content: string };
 };
 
 export type OrderNoteMutationResponse = {
   order?: Order | null;
-  order_notes?: string[] | null;
+  order_notes?: (string | { type: string; content: string; creation_date?: string | null })[] | null;
 };
 
 export const createOrdersApi = (client: Pick<HttpApiClient, "request">) => ({
