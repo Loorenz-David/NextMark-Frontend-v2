@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { unstable_batchedUpdates } from "react-dom";
 
 import { ApiError } from "@/lib/api/ApiClient";
 import { useMessageHandler } from "@shared-message-handler";
@@ -315,23 +316,25 @@ export const useOrderBatchDeliveryPlanController = () => {
           }
         },
         rollback: (snapshot) => {
-          clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
-          const typedSnapshot = snapshot as {
-            assignmentEntries: ReturnType<
-              typeof collectOptimisticOrderPlanAssignmentEntries
-            >;
-            removedStops: ReturnType<typeof collectRouteSolutionStopsByOrderIds>;
-          };
+          unstable_batchedUpdates(() => {
+            clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
+            const typedSnapshot = snapshot as {
+              assignmentEntries: ReturnType<
+                typeof collectOptimisticOrderPlanAssignmentEntries
+              >;
+              removedStops: ReturnType<typeof collectRouteSolutionStopsByOrderIds>;
+            };
 
-          restoreOptimisticOrderPlanAssignment(
-            typedSnapshot.assignmentEntries ?? [],
-          );
-          restoreCollectedRouteSolutionStops(typedSnapshot.removedStops ?? []);
-          syncRouteGroupSummaries(
-            collectAffectedRouteGroupIdsFromAssignments(
+            restoreOptimisticOrderPlanAssignment(
               typedSnapshot.assignmentEntries ?? [],
-            ),
-          );
+            );
+            restoreCollectedRouteSolutionStops(typedSnapshot.removedStops ?? []);
+            syncRouteGroupSummaries(
+              collectAffectedRouteGroupIdsFromAssignments(
+                typedSnapshot.assignmentEntries ?? [],
+              ),
+            );
+          });
           if (DEV) {
             console.warn("[plan-order-move] rollback", {
               planId,
@@ -342,7 +345,9 @@ export const useOrderBatchDeliveryPlanController = () => {
           }
         },
         onError: (error) => {
-          clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
+          unstable_batchedUpdates(() => {
+            clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
+          });
           if (DEV) {
             console.error("[plan-order-move] error", {
               planId,

@@ -5,8 +5,15 @@ import svgr from "vite-plugin-svgr";
 import path from "path";
 // import { visualizer } from "rollup-plugin-visualizer";
 
+const buildId = `${Date.now()}`;
+const buildTimestamp = new Date().toISOString();
+
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    __APP_BUILD_ID__: JSON.stringify(buildId),
+    __APP_BUILD_TIMESTAMP__: JSON.stringify(buildTimestamp),
+  },
   plugins: [
     react(),
     tailwindcss(),

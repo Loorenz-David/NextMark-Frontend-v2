@@ -23,6 +23,8 @@ import { planIconTypeMap } from "../../utils/planIconTypeMap";
 import { PlusIcon } from "@/assets/icons/index";
 import { coerceUtcFromOffset } from "@/shared/data-validation/timeValidation";
 import { usePlanHeaderAction } from "../../actions/usePlanActions";
+import { useBaseControlls } from "@/shared/resource-manager/useResourceManager";
+import type { PayloadBase } from "@/features/home-route-operations/types/types";
 import type { PlanDropFeedback } from "@/shared/resource-manager/ResourceManagerContext";
 
 type PropsPlanCard = {
@@ -33,6 +35,11 @@ type PropsPlanCard = {
 
 export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
   const { openPlanSection } = usePlanHeaderAction();
+  const baseControlls = useBaseControlls<PayloadBase>();
+  const isActive =
+    baseControlls.isBaseOpen &&
+    baseControlls.payload?.planId != null &&
+    baseControlls.payload.planId === plan.id;
 
   const PlanTypeIcon = planIconTypeMap.local_delivery;
   const planDateLabel = formatPlanDateLabel(plan.start_date, plan.end_date);
@@ -123,7 +130,11 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
 
   return (
     <motion.div
-      className="flex flex-col gap-6 rounded-2xl border border-[var(--color-border)] p-4 shadow-sm cursor-pointer"
+      className={`flex flex-col gap-6 rounded-2xl border p-4 shadow-sm cursor-pointer transition-all duration-200 ${
+        isActive
+          ? "border-[var(--color-light-blue)] shadow-[0_0_0_2px_rgba(113,205,233,0.35),0_0_18px_rgba(72,180,194,0.18)] bg-[rgba(113,205,233,0.04)]"
+          : "border-[var(--color-border)]"
+      }`}
       onClick={(e) => {
         if (e.defaultPrevented) return;
         openPlanSection(plan);

@@ -1,4 +1,5 @@
 import { optimisticTransaction } from "@shared-optimistic";
+import { unstable_batchedUpdates } from "react-dom";
 
 import { normalizeOrderStopResponse } from "@/features/order/domain/orderStopResponse";
 import { setOrder, useOrderStore } from "@/features/order/store/order.store";
@@ -41,8 +42,10 @@ const takeSnapshot = () => ({
 });
 
 const restoreSnapshot = (snapshot: ReturnType<typeof takeSnapshot>) => {
-  restoreOrderOptimisticSnapshot(snapshot);
-  restoreRouteGroupSnapshot(snapshot.routeGroups);
+  unstable_batchedUpdates(() => {
+    restoreOrderOptimisticSnapshot(snapshot);
+    restoreRouteGroupSnapshot(snapshot.routeGroups);
+  });
 };
 
 const applyResponse = (
