@@ -120,9 +120,14 @@ export const useOrderFormSetters = ({
     updateFormState((prev) => ({ ...prev, delivery_windows: sorted }))
   }
 
-  const handleOrderNote = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleGeneralNote = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
-    updateFormState((prev) => ({ ...prev, order_note: value }))
+    updateFormState((prev) => ({ ...prev, general_note: value }))
+  }
+
+  const handleCustomerNote = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+    updateFormState((prev) => ({ ...prev, customer_note: value }))
   }
 
   return {
@@ -141,7 +146,8 @@ export const useOrderFormSetters = ({
     handleSecondaryPhone,
     handleAddress,
     handleDeliveryWindows,
-    handleOrderNote,
+    handleGeneralNote,
+    handleCustomerNote,
     mergeExternalClientData,
   }
 }

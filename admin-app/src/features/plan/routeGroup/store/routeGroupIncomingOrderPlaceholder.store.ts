@@ -28,6 +28,40 @@ const normalizePlanId = (planId: number | null | undefined) =>
 const normalizeCount = (count: number) =>
   Number.isFinite(count) && count > 0 ? Math.floor(count) : 0;
 
+const DEV = import.meta.env.DEV
+
+const logPlaceholderState = (
+  event: string,
+  params: {
+    planId: number | null
+    token?: string | null
+    count?: number
+    entriesByPlanId: Record<number, IncomingOrderPlaceholderEntry[]>
+  },
+) => {
+  if (!DEV) {
+    return
+  }
+
+  const summary = Object.fromEntries(
+    Object.entries(params.entriesByPlanId).map(([planId, entries]) => [
+      planId,
+      {
+        entryCount: entries.length,
+        placeholderCount: entries.reduce((total, entry) => total + entry.count, 0),
+        tokens: entries.map((entry) => entry.token),
+      },
+    ]),
+  )
+
+  console.debug(`[route-group-placeholders] ${event}`, {
+    planId: params.planId,
+    token: params.token ?? null,
+    count: params.count ?? null,
+    summary,
+  })
+}
+
 export const useRouteGroupIncomingOrderPlaceholderStore =
   create<RouteGroupIncomingOrderPlaceholderState>((set) => ({
     entriesByPlanId: {},
@@ -39,15 +73,24 @@ export const useRouteGroupIncomingOrderPlaceholderStore =
       }
 
       const token = buildClientId("incoming-route-group-order");
-      set((state) => ({
-        entriesByPlanId: {
+      set((state) => {
+        const entriesByPlanId = {
           ...state.entriesByPlanId,
           [normalizedPlanId]: [
             ...(state.entriesByPlanId[normalizedPlanId] ?? []),
             { token, count: normalizedCount },
           ],
-        },
-      }));
+        }
+
+        logPlaceholderState('add', {
+          planId: normalizedPlanId,
+          token,
+          count: normalizedCount,
+          entriesByPlanId,
+        })
+
+        return { entriesByPlanId }
+      });
       return token;
     },
     removePlaceholders: (planId, token) => {
@@ -71,6 +114,12 @@ export const useRouteGroupIncomingOrderPlaceholderStore =
         } else {
           nextEntriesByPlanId[normalizedPlanId] = nextEntries;
         }
+
+        logPlaceholderState('remove', {
+          planId: normalizedPlanId,
+          token,
+          entriesByPlanId: nextEntriesByPlanId,
+        })
 
         return { entriesByPlanId: nextEntriesByPlanId };
       });

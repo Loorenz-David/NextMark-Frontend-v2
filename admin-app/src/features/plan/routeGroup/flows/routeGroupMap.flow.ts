@@ -107,10 +107,35 @@ export const useRouteGroupMapFlow = ({
   const isDriverLiveVisible = useDriverLiveVisibilityStore(selectDriverLiveVisibility)
 
   const handleClickMarker = useCallback((order: Order) => {
+    const key = "order.details"
+    const payload = {
+      mode: "edit",
+      clientId: order.client_id,
+      headerBehavior: "order-main-context",
+    }
+    const parentParams = { borderLeft: 'rgb(var(--color-light-blue-r),0.7)' }
+    const latestOpenEntry = sectionManager
+      .getSnapshot()
+      .filter((entry) => entry.key === key && !entry.isClosing)
+      .at(-1)
+
+    const openPayload = latestOpenEntry?.payload as
+      | { clientId?: string | null }
+      | undefined
+
+    if (openPayload?.clientId === order.client_id) {
+      return
+    }
+
+    if (latestOpenEntry) {
+      sectionManager.atomicOpenClose({ key, payload, parentParams }, latestOpenEntry.id)
+      return
+    }
+
     sectionManager.open({
-        key:"order.details",
-        payload:{mode:"edit", clientId:order.client_id, headerBehavior:"order-main-context"},
-        parentParams:{borderLeft:'rgb(var(--color-light-blue-r),0.7)'}
+      key,
+      payload,
+      parentParams,
     })
   }, [sectionManager])
   useEffect(() => {

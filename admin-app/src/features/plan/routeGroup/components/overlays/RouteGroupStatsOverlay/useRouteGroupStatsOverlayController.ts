@@ -49,9 +49,7 @@ const toNonNegativeNumber = (value: unknown) => {
 
 const normalizeWeightLoadToGrams = (value: unknown) => {
   const numericValue = toNonNegativeNumber(value)
-  if (numericValue <= 0) return 0
-
-  return Math.round(numericValue < 10_000 ? numericValue * 1000 : numericValue)
+  return Math.round(numericValue)
 }
 
 const normalizeVolumeLoadToCubicCentimeters = (value: unknown) => {

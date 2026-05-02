@@ -154,12 +154,29 @@ export const OrderFormFields = ({
             >
               <Field
                 warningPlacement="besidesLabel"
-                label="Note:"
-                info="Short note visible to the driver."
+                label="General Note:"
+                info="Internal note visible to the driver."
               >
                 <InputField
-                  value={formState.order_note}
-                  onChange={formSetters.handleOrderNote}
+                  value={formState.general_note}
+                  onChange={formSetters.handleGeneralNote}
+                  fieldClassName={PLAIN_INPUT_CONTAINER_CLASS}
+                  inputClassName={PLAIN_INPUT_CLASS}
+                />
+              </Field>
+            </div>
+
+            <div
+              className={`border-t border-[var(--color-border-accent)] cell-default`}
+            >
+              <Field
+                warningPlacement="besidesLabel"
+                label="Customer Note:"
+                info="Customer-facing note imported from external order links."
+              >
+                <InputField
+                  value={formState.customer_note}
+                  onChange={formSetters.handleCustomerNote}
                   fieldClassName={PLAIN_INPUT_CONTAINER_CLASS}
                   inputClassName={PLAIN_INPUT_CLASS}
                 />

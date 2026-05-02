@@ -25,7 +25,9 @@ const buildState = (): OrderFormState => ({
   client_address: null,
   delivery_windows: [],
   delivery_plan_id: null,
-  order_note: '',
+  general_note: '',
+  customer_note: '',
+  order_notes_source: [],
 })
 
 export const runOrderFormCostumerApplyFlowTests = () => {

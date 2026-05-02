@@ -3,6 +3,7 @@ import {
   buildOrderFormReinitKey,
   shouldReinitializeForm,
 } from "../flows/orderFormBootstrap.flow";
+import { normalizeFormStateForSave } from "@/features/order/api/mappers/orderForm.normalize";
 
 const assert = (condition: boolean, message: string) => {
   if (!condition) {
@@ -74,13 +75,67 @@ export const runOrderFormBootstrapFlowTests = () => {
     payloadRouteGroupId: null,
     payloadRestoreFormState: {
       ...createState,
-      order_note: { content: "Legacy note" } as unknown as string,
+      general_note: { content: "Legacy note" } as unknown as string,
     },
   });
 
   assert(
-    restoredState.order_note === "Legacy note",
+    restoredState.general_note === "Legacy note",
     "restored state should coerce legacy note objects into draft text",
+  );
+
+  const typedNotesState = buildOrderFormInitialState({
+    mode: "edit",
+    order: {
+      id: 11,
+      client_id: "order-client-typed",
+      order_notes: [
+        { type: "COSTUMER", content: "Customer from link" },
+        { type: "GENERAL", content: "General internal" },
+      ] as unknown as string[],
+    },
+    payloadDeliveryPlanId: null,
+    payloadRouteGroupId: null,
+  });
+
+  assert(
+    typedNotesState.general_note === "General internal",
+    "typed GENERAL note should map to general_note field",
+  );
+  assert(
+    typedNotesState.customer_note === "Customer from link",
+    "typed COSTUMER note should map to customer_note field",
+  );
+
+  const normalized = normalizeFormStateForSave({
+    ...typedNotesState,
+    general_note: "General updated",
+    customer_note: "Customer updated",
+  });
+
+  const normalizedOrderNotes = normalized.order_notes as Array<
+    { type?: unknown; content?: unknown } | string
+  >;
+  const generalEntry = normalizedOrderNotes.find(
+    (entry) =>
+      typeof entry === "object" &&
+      entry != null &&
+      String((entry as { type?: unknown }).type).toUpperCase() === "GENERAL",
+  ) as { content?: unknown } | undefined;
+  const customerEntry = normalizedOrderNotes.find(
+    (entry) =>
+      typeof entry === "object" &&
+      entry != null &&
+      String((entry as { type?: unknown }).type).toUpperCase() === "COSTUMER",
+  ) as { content?: unknown } | undefined;
+
+  assert(
+    generalEntry?.content === "General updated",
+    "saving should target and update GENERAL note object",
+  );
+  assert(
+    customerEntry?.content === "Customer updated",
+    "saving should target and update COSTUMER note object",
   );
 
   const keyA = buildOrderFormReinitKey({

@@ -37,7 +37,9 @@ export type OrderFormState = {
   delivery_windows: OrderDeliveryWindow[]
   delivery_plan_id?: number | null
   route_group_id?: number | null
-  order_note: string
+  general_note: string
+  customer_note: string
+  order_notes_source?: unknown[] | null
 }
 
 export type OrderFormPayload = {

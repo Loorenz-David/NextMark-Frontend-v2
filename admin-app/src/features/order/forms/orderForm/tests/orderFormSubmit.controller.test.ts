@@ -44,7 +44,9 @@ const buildBaseFormState = (): OrderFormState => ({
   delivery_windows: [],
   delivery_plan_id: 10,
   route_group_id: 77,
-  order_note: "",
+  general_note: "",
+  customer_note: "",
+  order_notes_source: [],
 });
 
 const buildItem = (overrides?: Partial<Item>): Item => ({
@@ -338,7 +340,7 @@ export const runOrderFormSubmitControllerTests = async () => {
     const formState = {
       ...initialState,
       tracking_number: "NEW-TRACKING",
-      order_note: { content: "Legacy note" } as unknown as string,
+      general_note: { content: "Legacy note" } as unknown as string,
     };
 
     const command: OrderFormSubmitCommand = {

@@ -33,6 +33,8 @@ import {
 import { syncRouteGroupSummaries } from "@/features/plan/routeGroup/flows/syncRouteGroupSummaries.flow";
 import { applyOrderBatchMoveStateSync } from "@/features/order/actions/applyOrderBatchMoveStateSync.action";
 
+const DEV = import.meta.env.DEV;
+
 const takeSnapshot = () => ({
   ...createOrderOptimisticSnapshot(),
   routeGroups: getRouteGroupSnapshot(),
@@ -51,6 +53,17 @@ const applyResponse = (
   const bundles = data.updated_bundles ?? data.updated ?? [];
   const resolvedCount = data.resolved_count ?? 0;
   const updatedCount = data.updated_count ?? bundles.length;
+
+  if (DEV) {
+    console.debug("[route-group-move] commit:start", {
+      bundleCount: bundles.length,
+      resolvedCount,
+      updatedCount,
+      affectedRouteGroupIds,
+      routeSolutionStopCountBefore:
+        useRouteSolutionStopStore.getState().allIds.length,
+    });
+  }
 
   bundles.forEach((bundle) => {
     const updatedOrder = bundle.order;
@@ -81,6 +94,16 @@ const applyResponse = (
     syncRouteGroupSummaries(affectedRouteGroupIds);
   }
 
+  if (DEV) {
+    console.debug("[route-group-move] commit:end", {
+      hasDrift,
+      hasRouteGroupStateChanges: syncResult.hasRouteGroupStateChanges,
+      routeSolutionStopCountAfter: useRouteSolutionStopStore.getState().allIds.length,
+      routeGroupCount: useRouteGroupStore.getState().allIds.length,
+      orderCount: useOrderStore.getState().allIds.length,
+    });
+  }
+
   if (hasDrift) {
     onDrift();
   }
@@ -97,6 +120,16 @@ const applyOptimisticMutation = (
   const targetPlanId = targetRouteGroup?.route_plan_id ?? null;
   const orderState = useOrderStore.getState();
   const stopState = useRouteSolutionStopStore.getState();
+
+  if (DEV) {
+    console.debug("[route-group-move] optimistic:start", {
+      orderIds,
+      sourceRouteGroupId,
+      targetRouteGroupId,
+      targetPlanId,
+      routeSolutionStopCountBefore: stopState.allIds.length,
+    });
+  }
 
   if (typeof targetPlanId === "number" && Number.isFinite(targetPlanId)) {
     const patchedClientIds = orderIds
@@ -210,6 +243,17 @@ const applyOptimisticMutation = (
   });
 
   syncRouteGroupSummaries([sourceRouteGroupId, targetRouteGroupId]);
+
+  if (DEV) {
+    console.debug("[route-group-move] optimistic:end", {
+      orderIds,
+      sourceRouteGroupId,
+      targetRouteGroupId,
+      removedStopCount: stopIdsToRemove.length,
+      insertedOptimisticStopCount: targetSolutions.length * orderIds.length,
+      routeSolutionStopCountAfter: useRouteSolutionStopStore.getState().allIds.length,
+    });
+  }
 };
 
 export const moveOrderToRouteGroupAction = async (params: {
@@ -220,6 +264,15 @@ export const moveOrderToRouteGroupAction = async (params: {
   onDrift?: () => void;
 }): Promise<{ success: boolean }> => {
   let success = false;
+
+  if (DEV) {
+    console.debug("[route-group-move] request:start", {
+      planId: params.planId,
+      orderIds: params.orderIds,
+      sourceRouteGroupId: params.sourceRouteGroupId,
+      targetRouteGroupId: params.targetRouteGroupId,
+    });
+  }
 
   await optimisticTransaction({
     snapshot: takeSnapshot,
@@ -245,10 +298,28 @@ export const moveOrderToRouteGroupAction = async (params: {
         params.sourceRouteGroupId,
         params.targetRouteGroupId,
       ]);
+      if (DEV) {
+        console.debug("[route-group-move] request:success", {
+          planId: params.planId,
+          orderIds: params.orderIds,
+          sourceRouteGroupId: params.sourceRouteGroupId,
+          targetRouteGroupId: params.targetRouteGroupId,
+        });
+      }
       success = true;
     },
     rollback: (snapshot) => {
       restoreSnapshot(snapshot as ReturnType<typeof takeSnapshot>);
+      if (DEV) {
+        console.warn("[route-group-move] request:rollback", {
+          planId: params.planId,
+          orderIds: params.orderIds,
+          sourceRouteGroupId: params.sourceRouteGroupId,
+          targetRouteGroupId: params.targetRouteGroupId,
+          routeSolutionStopCountAfterRollback:
+            useRouteSolutionStopStore.getState().allIds.length,
+        });
+      }
     },
     onError: (error) => {
       console.error("Failed to move order to route group", error);

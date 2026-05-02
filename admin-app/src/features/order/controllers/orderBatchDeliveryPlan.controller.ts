@@ -6,6 +6,7 @@ import { optimisticTransaction } from "@shared-optimistic";
 
 import {
   removeRouteSolutionStopsByOrderId,
+  useRouteSolutionStopStore,
   upsertRouteSolutionStops,
 } from "@/features/plan/routeGroup/store/routeSolutionStop.store";
 import { upsertRouteSolution } from "@/features/plan/routeGroup/store/routeSolution.store";
@@ -46,6 +47,8 @@ import {
   collectOptimisticOrderPlanAssignmentEntries,
   restoreOptimisticOrderPlanAssignment,
 } from "../utils/orderPlanAssignmentOptimistic";
+
+const DEV = import.meta.env.DEV;
 
 type UpdateOrdersDeliveryPlanBatchParams = {
   planId: number;
@@ -146,6 +149,16 @@ export const useOrderBatchDeliveryPlanController = () => {
     }: UpdateOrdersDeliveryPlanBatchParams) => {
       const state = useOrderSelectionStore.getState();
       const optimisticTargetIds = resolveBatchTargetOrderIds(selection, state);
+      if (DEV) {
+        console.debug("[plan-order-move] request:start", {
+          planId,
+          planType,
+          optimisticTargetIds,
+          showIncomingRouteGroupPlaceholders,
+          routeSolutionStopCountBefore:
+            useRouteSolutionStopStore.getState().allIds.length,
+        });
+      }
       const placeholderToken = showIncomingRouteGroupPlaceholders
         ? registerIncomingRouteGroupOrderPlaceholders(
             planId,
@@ -161,6 +174,15 @@ export const useOrderBatchDeliveryPlanController = () => {
           removedStops: collectRouteSolutionStopsByOrderIds(optimisticTargetIds),
         }),
         mutate: () => {
+          if (DEV) {
+            console.debug("[plan-order-move] optimistic:start", {
+              planId,
+              optimisticTargetIds,
+              assignmentEntryCount: assignmentEntries.length,
+              routeSolutionStopCountBefore:
+                useRouteSolutionStopStore.getState().allIds.length,
+            });
+          }
           applyOptimisticOrderPlanAssignment(assignmentEntries, {
             targetPlanId: planId,
             planType,
@@ -171,6 +193,14 @@ export const useOrderBatchDeliveryPlanController = () => {
           syncRouteGroupSummaries(
             collectAffectedRouteGroupIdsFromAssignments(assignmentEntries),
           );
+          if (DEV) {
+            console.debug("[plan-order-move] optimistic:end", {
+              planId,
+              optimisticTargetIds,
+              routeSolutionStopCountAfter:
+                useRouteSolutionStopStore.getState().allIds.length,
+            });
+          }
         },
         request: async () => {
           const response = await updateOrdersDeliveryPlanBatchApi(
@@ -228,6 +258,18 @@ export const useOrderBatchDeliveryPlanController = () => {
             }
           });
 
+          if (DEV) {
+            console.debug("[plan-order-move] commit:before-sync", {
+              planId,
+              placeholderToken,
+              bundleCount: bundles.length,
+              resolvedCount,
+              updatedCount,
+              routeSolutionStopCount:
+                useRouteSolutionStopStore.getState().allIds.length,
+            });
+          }
+
           const syncResult = applyOrderBatchMoveStateSync(payload);
 
           if (!syncResult.hasRouteGroupStateChanges) {
@@ -260,6 +302,17 @@ export const useOrderBatchDeliveryPlanController = () => {
           destinationRouteGroupIdsToPulse.forEach((routeGroupId) => {
             triggerIncomingRouteGroupPulse(routeGroupId);
           });
+          if (DEV) {
+            console.debug("[plan-order-move] commit:end", {
+              planId,
+              placeholderToken,
+              hasPotentialDrift,
+              hasRouteGroupStateChanges: syncResult.hasRouteGroupStateChanges,
+              pulsedRouteGroupIds: Array.from(destinationRouteGroupIdsToPulse),
+              routeSolutionStopCount:
+                useRouteSolutionStopStore.getState().allIds.length,
+            });
+          }
         },
         rollback: (snapshot) => {
           clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
@@ -279,9 +332,24 @@ export const useOrderBatchDeliveryPlanController = () => {
               typedSnapshot.assignmentEntries ?? [],
             ),
           );
+          if (DEV) {
+            console.warn("[plan-order-move] rollback", {
+              planId,
+              placeholderToken,
+              routeSolutionStopCount:
+                useRouteSolutionStopStore.getState().allIds.length,
+            });
+          }
         },
         onError: (error) => {
           clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
+          if (DEV) {
+            console.error("[plan-order-move] error", {
+              planId,
+              placeholderToken,
+              error,
+            });
+          }
           const message =
             error instanceof ApiError
               ? error.message

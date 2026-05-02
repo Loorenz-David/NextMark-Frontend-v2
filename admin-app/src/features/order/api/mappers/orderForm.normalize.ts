@@ -1,7 +1,7 @@
 import type { Item, ItemUpdateFields } from "@/features/order/item";
 import type { OrderUpdateFields } from "@/features/order/types/order";
 import type { OrderFormState } from "@/features/order/forms/orderForm/state/OrderForm.types";
-import { normalizeOrderFormNoteForSave } from "@/features/order/forms/orderForm/domain/orderFormNote";
+import { normalizeOrderFormNotesForSave } from "@/features/order/forms/orderForm/domain/orderFormNote";
 import { sortDeliveryWindowsUtc } from "@/features/order/forms/orderForm/flows/orderFormDeliveryWindows.flow";
 
 const toNullableString = (value: string | null) => {
@@ -60,6 +60,10 @@ export const normalizeFormStateForSave = (
     delivery_windows: sortDeliveryWindowsUtc(state.delivery_windows),
     delivery_plan_id: state.delivery_plan_id ?? null,
     route_group_id: state.route_group_id ?? null,
-    order_notes: normalizeOrderFormNoteForSave(state.order_note),
+    order_notes: normalizeOrderFormNotesForSave({
+      generalNote: state.general_note,
+      customerNote: state.customer_note,
+      sourceNotes: state.order_notes_source,
+    }) as OrderUpdateFields["order_notes"],
   };
 };
