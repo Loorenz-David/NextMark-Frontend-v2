@@ -10,6 +10,7 @@ import { useItemController } from '../../hooks/useItemController'
 import type { Item } from '../../types'
 import { useItemStateByServerId } from '@/features/itemConfigurations/hooks/useItemSelectors'
 import { StateCard } from '@/shared/layout/StateCard'
+import { ItemImagePopover } from './ItemImagePopover'
 
 export type ItemCardProps = {
   item: Item
@@ -40,6 +41,7 @@ export const ItemCard = ({
   const dimensionsValue = hasDimensions ? `W ${dimensions[0] ?? 0}  x  H ${dimensions[1] ?? 0}  x  D ${dimensions[2] ?? 0}` : '—'
   const propertyEntries = Object.entries(item.properties ?? {})
   const itemState = useItemStateByServerId(item.item_state_id ?? null)
+  const itemImages = (item.item_images ?? []).map((imageUrl) => imageUrl.trim()).filter(Boolean)
  
   const handleEdit = () => {
     if (onEdit) {
@@ -63,9 +65,10 @@ export const ItemCard = ({
   return (
     <div className="admin-glass-panel admin-surface-compact relative shrink-0 overflow-hidden rounded-[1.1rem] border border-white/10 p-3 px-2 transition-all duration-200 hover:border-white/18 hover:bg-white/[0.08] hover:shadow-[0_16px_38px_rgba(0,0,0,0.16)]">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
-      <button
-        type="button"
-        className="relative z-10 grid w-full grid-cols-[minmax(0,1.8fr)_minmax(0,1.2fr)_minmax(0,0.8fr)_auto] items-center gap-3 px-1 py-1 text-left"
+      <div
+        role="button"
+        tabIndex={0}
+        className="relative z-10 flex w-full cursor-pointer items-start gap-3 px-1 py-1 text-left focus:outline-none focus:ring-2 focus:ring-[var(--color-turques)]/50"
         onClick={() => {
           if (onToggleExpand) {
             onToggleExpand()
@@ -73,32 +76,42 @@ export const ItemCard = ({
           }
           setInternalExpanded((prev) => !prev)
         }}
+        onKeyDown={(event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return
+          event.preventDefault()
+          if (onToggleExpand) {
+            onToggleExpand()
+            return
+          }
+          setInternalExpanded((prev) => !prev)
+        }}
       >
-        <div className="min-w-0">
+        {itemImages.length ? (
+          <ItemImagePopover imageUrls={itemImages} itemType={item.item_type} />
+        ) : null}
+
+        <div className="min-w-0 flex-1">
           <span className="block min-w-0 whitespace-normal break-words text-sm font-semibold text-[var(--color-text)]">
             {item.item_type || '—'}
+          </span>
+          <span className="mt-1 block min-w-0 truncate text-xs text-[var(--color-muted)]/95">
+            {item.article_number || '—'}
           </span>
           <span className="mt-1 block min-w-0 truncate text-[11px] text-[var(--color-muted)]/95">
             Position: {item.item_position ?? '—'}
           </span>
         </div>
-        <span className="min-w-0 truncate text-xs text-[var(--color-muted)]/95">
-          {item.article_number || '—'}
-        </span>
 
-        <span className="min-w-0 truncate text-xs text-[var(--color-muted)]/95">
-          Qty: {item.quantity}
-        </span>
-
-        <div className="shrink-0 justify-self-end">
+        <div className="flex shrink-0 flex-col items-end gap-2">
           <StateCard
             label={itemState ? itemState.name : 'No state'}
             color={itemState ? itemState.color : null}
           />
+          <span className="text-xs text-[var(--color-muted)]/95">
+            Qty: {item.quantity}
+          </span>
         </div>
-
-
-      </button>
+      </div>
 
       <AnimatePresence initial={false}>
         {expanded ? (

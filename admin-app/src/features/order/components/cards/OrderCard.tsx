@@ -24,7 +24,11 @@ export const OrderCard = ({
   isHovered = false,
 }: OrderCardProps) => {
   const orderLabel =
-    order.order_scalar_id != null ? `#${order.order_scalar_id}` : "#—";
+    order.external_source && order.reference_number
+      ? order.reference_number
+      : order.order_scalar_id != null
+        ? `#${order.order_scalar_id}`
+        : "#—";
   const streetAddress = order.client_address?.street_address ?? "No address";
   const itemCount = order.total_items ?? 0;
   const orderState = useOrderStateByServerId(order.order_state_id ?? 1);

@@ -209,6 +209,14 @@ function buildDimensionsLabel(item: DriverOrderRecord['items']['byClientId'][str
   return `W ${item.dimension_width ?? 0} x H ${item.dimension_height ?? 0} x D ${item.dimension_depth ?? 0}`
 }
 
+function buildItemImages(item: DriverOrderRecord['items']['byClientId'][string]) {
+  return Array.isArray(item.item_images)
+    ? item.item_images
+      .map((imageUrl) => imageUrl.trim())
+      .filter(Boolean)
+    : []
+}
+
 function mapOrderItem(item: DriverOrderRecord['items']['byClientId'][string]): AssignedStopOrderItemViewModel {
   return {
     clientId: item.client_id,
@@ -218,6 +226,7 @@ function mapOrderItem(item: DriverOrderRecord['items']['byClientId'][string]): A
     quantity: item.quantity,
     weight: item.weight,
     pageLink: item.page_link?.trim() || null,
+    itemImages: buildItemImages(item),
     dimensionsLabel: buildDimensionsLabel(item),
     properties: buildOrderItemProperties(item.properties),
   }
@@ -502,7 +511,7 @@ export function mapDriverRouteRecordToAssignedRouteViewModel(
 
   return {
     routeClientId: route.client_id,
-    label: route.label ?? route.delivery_plan?.label ?? 'Assigned route',
+    label: route.delivery_plan?.label ?? route.label ?? 'Assigned route',
     score: route.score ?? null,
     deliveryPlanStartDate: route.delivery_plan?.start_date ?? null,
     deliveryPlanEndDate: route.delivery_plan?.end_date ?? null,

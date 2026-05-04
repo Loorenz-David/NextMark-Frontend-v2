@@ -1,6 +1,7 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 import { normalizeItemPosition } from "../../domain/itemPosition";
+import { parseItemImagesInput } from "../../domain/itemImages";
 import type { Item } from "../../types";
 import type { ItemFormWarnings } from "./ItemForm.types";
 
@@ -29,6 +30,21 @@ export const useItemFormSetters = ({
 
   const handleItemPositionInput = (value: string) => {
     setFormState((prev) => ({ ...prev, item_position: value }));
+  };
+
+  const handleItemImages = (event: ChangeEvent<HTMLInputElement>) => {
+    setFormState((prev) => ({
+      ...prev,
+      item_images: parseItemImagesInput(event.target.value),
+    }));
+  };
+
+  const handlePageLink = (event: ChangeEvent<HTMLInputElement>) => {
+    const pageLink = event.target.value.trim();
+    setFormState((prev) => ({
+      ...prev,
+      page_link: pageLink ? pageLink : null,
+    }));
   };
 
   const commitItemPositionValue = (value?: string | null) => {
@@ -80,6 +96,8 @@ export const useItemFormSetters = ({
     handleItemTypeValue,
     handleItemTypeSelection,
     handleItemPositionInput,
+    handleItemImages,
+    handlePageLink,
     commitItemPositionValue,
     handlePropertyValue,
     handleQuantity,

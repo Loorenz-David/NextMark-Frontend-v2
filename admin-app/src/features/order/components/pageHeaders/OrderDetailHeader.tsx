@@ -160,7 +160,12 @@ const HeaderTitle = ({
   headerBehavior?: OrderDetailHeaderBehavior | null;
   contextRouteGroupId?: number | null;
 }) => {
-  const title = `# ${order?.order_scalar_id ?? "reference number missing"}`;
+  const title =
+    order?.external_source && order.reference_number
+      ? order.reference_number
+      : order?.order_scalar_id != null
+        ? `# ${order.order_scalar_id}`
+        : "#—";
   const shouldRenderPlanMeta = headerBehavior === "order-main-context";
   const resolvedRouteGroupId =
     typeof order?.route_group_id === "number"

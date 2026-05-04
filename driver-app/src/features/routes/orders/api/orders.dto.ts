@@ -14,6 +14,7 @@ export type OrderItemDto = {
   item_position: string | null
   order_id: number | null
   properties: unknown
+  item_images?: string[] | null
   page_link: string | null
   dimension_depth: number | null
   dimension_height: number | null

@@ -6,17 +6,21 @@ import { AssignedRouteTimelineStart } from "./AssignedRouteTimelineStart";
 type AssignedRouteTimelineSurfaceProps = {
   timeline: NonNullable<AssignedRoutePageDisplay["timeline"]>;
   onOpenStopDetail: (stopClientId: string) => void;
+  onNavigateToStart: () => void;
+  onNavigateToEnd: () => void;
   focusedStopClientId?: string | null;
 };
 
 export function AssignedRouteTimelineSurface({
   timeline,
   onOpenStopDetail,
+  onNavigateToStart,
+  onNavigateToEnd,
   focusedStopClientId,
 }: AssignedRouteTimelineSurfaceProps) {
   return (
     <section className=" overflow-hidden  ">
-      <AssignedRouteTimelineStart start={timeline.start} />
+      <AssignedRouteTimelineStart start={timeline.start} onNavigate={onNavigateToStart} />
 
       <div>
         {timeline.stops.map((stop) => (
@@ -30,7 +34,7 @@ export function AssignedRouteTimelineSurface({
         ))}
       </div>
 
-      <AssignedRouteTimelineEnd end={timeline.end} />
+      <AssignedRouteTimelineEnd end={timeline.end} onNavigate={onNavigateToEnd} />
     </section>
   );
 }

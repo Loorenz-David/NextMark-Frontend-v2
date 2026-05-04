@@ -23,6 +23,7 @@ const toItemDraft = (item: Item): Item => ({
   item_type: item.item_type,
   item_position: item.item_position ?? null,
   properties: item.properties ?? null,
+  item_images: item.item_images ?? null,
   page_link: item.page_link ?? null,
   dimension_depth: item.dimension_depth ?? null,
   dimension_height: item.dimension_height ?? null,

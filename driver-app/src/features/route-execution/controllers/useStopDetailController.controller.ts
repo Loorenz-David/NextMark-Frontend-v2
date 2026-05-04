@@ -4,12 +4,6 @@ import { useMessageHandler } from "@shared-message-handler";
 import { useDriverServices } from "@/app/providers/driverServices.context";
 import { useDriverOrderStateRegistry } from "@/features/order-states";
 import { adjustRouteDatesToTodayAction } from "../actions/adjustRouteDatesToToday.action";
-import {
-  selectActiveOrderCasesByOrderId,
-  selectOrderCaseListScope,
-  useOrderCaseListStore,
-  useOrderCasesStore,
-} from "@/features/order-case";
 import { useDriverAppShell } from "@/app/shell/providers/driverAppShell.context";
 import { handleCallPhoneFlow } from "../flows/handleCallPhone.flow";
 import { handleNavigateStopFlow } from "../flows/handleNavigateStop.flow";
@@ -44,8 +38,6 @@ export function useStopDetailController(stopClientId?: string) {
     snapBottomSheetTo,
   } = useDriverAppShell();
   const route = useSelectedAssignedRoute();
-  const orderCaseListState = useOrderCaseListStore((state) => state);
-  const orderCasesState = useOrderCasesStore((state) => state);
   const stop = useMemo(
     () =>
       route?.stops.find(
@@ -53,28 +45,6 @@ export function useStopDetailController(stopClientId?: string) {
       ) ?? null,
     [route, stopClientId],
   );
-  const activeOrderCases = useMemo(
-    () => selectActiveOrderCasesByOrderId(orderCasesState, stop?.order?.id),
-    [orderCasesState, stop?.order?.id],
-  );
-  const orderCaseListScope = useMemo(
-    () => selectOrderCaseListScope(orderCaseListState, stop?.order?.id),
-    [orderCaseListState, stop?.order?.id],
-  );
-  const activeCasesCount = useMemo(() => {
-    if (!stop?.order) {
-      return 0;
-    }
-
-    if (orderCaseListScope) {
-      return activeOrderCases.length;
-    }
-
-    return typeof stop.order.open_order_cases === "number"
-      ? stop.order.open_order_cases
-      : 0;
-  }, [activeOrderCases.length, orderCaseListScope, stop]);
-
   const nextStopClientId = useMemo(() => {
     if (!stop) {
       return null;
@@ -247,17 +217,6 @@ export function useStopDetailController(stopClientId?: string) {
           stopClientId: stop.stopClientId,
         });
       },
-      openOrderCases: () => {
-        if (!stop.order?.id || !stop.order.client_id) {
-          return;
-        }
-
-        openOverlay("order-case-main", {
-          orderId: stop.order.id,
-          orderClientId: stop.order.client_id,
-          stopClientId: stop.stopClientId,
-        });
-      },
       openFailureForm: () => {
         const orderId = stop.order?.id;
         if (!orderId) {
@@ -286,7 +245,6 @@ export function useStopDetailController(stopClientId?: string) {
         });
       },
       undoTerminal: () => void sendAction("undo-stop-terminal"),
-      activeCasesCount,
       orderStateIds: {
         processingId: orderStateRegistry.getStateIdByName("Processing"),
         completedId: orderStateRegistry.getStateIdByName("Completed"),
@@ -294,10 +252,8 @@ export function useStopDetailController(stopClientId?: string) {
       },
     });
   }, [
-    activeCasesCount,
     callOrderPhone,
     navigateToStop,
-    openOverlay,
     openSlidingPage,
     orderStateRegistry,
     route,

@@ -61,7 +61,7 @@ export function AssignedRouteToolbar({
             autoFocus={isSearchMode}
             onChange={onSearchValueChange}
             onFocus={onSearchFocus}
-            placeholder={isSearchMode ? 'Search destination or route' : 'Search route'}
+            placeholder={isSearchMode ? 'Find orders by number, address, customer, phone, items' : 'Search orders'}
             readOnly={!isSearchMode}
             value={searchValue}
           />

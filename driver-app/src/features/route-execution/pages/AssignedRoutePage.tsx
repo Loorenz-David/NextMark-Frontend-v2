@@ -100,6 +100,8 @@ export function AssignedRoutePage() {
                     <AssignedRouteTimelineSurface
                       focusedStopClientId={lastOpenedStopClientId}
                       onOpenStopDetail={handleOpenStopDetail}
+                      onNavigateToStart={controller.navigateToStart}
+                      onNavigateToEnd={controller.navigateToEnd}
                       timeline={controller.pageDisplay.timeline}
                     />
                     <AssignedRouteFooterAction

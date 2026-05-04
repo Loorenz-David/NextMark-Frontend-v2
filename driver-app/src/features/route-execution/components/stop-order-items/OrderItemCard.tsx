@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { BoldArrowIcon } from '@/assets/icons'
 import type { AssignedStopOrderItemViewModel } from '@/app/contracts/routeExecution.types'
+import { OrderItemImageViewer } from './OrderItemImageViewer'
 
 type OrderItemCardProps = {
   item: AssignedStopOrderItemViewModel
@@ -34,12 +35,25 @@ export function OrderItemCard({
 
   return (
     <article className="shrink-0 overflow-hidden rounded-3xl border border-white/12 bg-white/[0.06] backdrop-blur-md">
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={onToggle}
-        className="flex w-full items-center gap-3 px-4 py-4 text-left"
+        onKeyDown={(event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return
+          event.preventDefault()
+          onToggle()
+        }}
+        className="flex w-full cursor-pointer items-start gap-3 px-4 py-4 text-left focus:outline-none focus:ring-2 focus:ring-white/20"
         aria-expanded={isExpanded}
       >
+        {item.itemImages.length > 0 ? (
+          <OrderItemImageViewer
+            imageUrls={item.itemImages}
+            itemType={item.itemType}
+          />
+        ) : null}
+
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-white">
             {item.itemType ?? 'Unknown item type'}
@@ -47,13 +61,16 @@ export function OrderItemCard({
           <p className="mt-1 truncate text-xs text-white/55">
             {item.articleNumber ?? 'No article number'}
           </p>
+          <p className="mt-1 truncate text-xs text-white/55">
+            Qty: {item.quantity != null ? item.quantity : '—'}
+          </p>
         </div>
 
         <BoldArrowIcon
           aria-hidden="true"
           className={`h-4 w-4 shrink-0 text-white/72 transition-transform ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
         />
-      </button>
+      </div>
 
       <AnimatePresence initial={false}>
         {isExpanded ? (

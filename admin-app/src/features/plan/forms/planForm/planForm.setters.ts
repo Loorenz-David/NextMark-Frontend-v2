@@ -3,6 +3,10 @@ import type { ChangeEvent } from "react";
 import type { DeliveryPlan, PlanDateStrategy } from "../../types/plan";
 import type { PlanWarningsControllers } from "./PlanForm.types";
 import type { CustomDatePickerIsoRange } from "@/shared/inputs/CustomDatePicker";
+import {
+  inferPlanStartDateFromLabel,
+  syncPlanLabelDateToken,
+} from "./planFormLabelDateSync";
 type SetDeliveryPlanState = Dispatch<SetStateAction<DeliveryPlan>>;
 
 type PropsUsePlanFormSetters = {
@@ -19,19 +23,35 @@ export const usePlanFormSetters = ({
   const handlePlanType = () => undefined;
   const handlePlanName = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    planFormWarnings.planNameWarning.validate(value);
-    setPlanForm((prev) => ({ ...prev, label: value }));
+    setPlanForm((prev) => {
+      const parsedStartDate = inferPlanStartDateFromLabel(value, prev.start_date);
+      const nextStartDate = parsedStartDate ?? prev.start_date;
+
+      planFormWarnings.planNameWarning.validate(value);
+      planFormWarnings.planStartDateWarning.validate({
+        start_date: nextStartDate,
+        end_date: prev.date_strategy === "range" ? prev.end_date : null,
+      });
+
+      return {
+        ...prev,
+        label: value,
+        start_date: nextStartDate,
+      };
+    });
   };
 
   const handleStartDate = (value: string) => {
     setPlanForm((prev) => {
       const { end_date, date_strategy } = prev;
+      const nextLabel = value ? syncPlanLabelDateToken(prev.label, value) : prev.label;
+
       planFormWarnings.planStartDateWarning.validate({
         start_date: value,
         end_date: date_strategy === "range" ? end_date : null,
       });
 
-      return { ...prev, start_date: value };
+      return { ...prev, start_date: value, label: nextLabel };
     });
   };
   const handleEndDate = (value: string) => {
@@ -99,6 +119,9 @@ export const usePlanFormSetters = ({
     setPlanForm((prev) => {
       const nextStartDate = value.start ?? prev.start_date ?? null;
       const nextEndDate = value.end ?? null;
+      const nextLabel = nextStartDate
+        ? syncPlanLabelDateToken(prev.label, nextStartDate)
+        : prev.label;
 
       planFormWarnings.planStartDateWarning.validate({
         start_date: nextStartDate,
@@ -110,6 +133,7 @@ export const usePlanFormSetters = ({
         date_strategy: "range",
         start_date: nextStartDate,
         end_date: nextEndDate,
+        label: nextLabel,
       };
     });
   };

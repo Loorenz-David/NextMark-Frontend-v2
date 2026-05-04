@@ -12,6 +12,7 @@ import { ItemPropertiesInputs } from "../../components/ItemPropertiesInputs";
 import { useItemForm } from "./ItemForm.context";
 import { CustomCounter } from "@/shared/inputs/CustomCounter";
 import { ITEM_FORM_ITEM_TYPE_INFO } from "./info/itemType.info";
+import { formatItemImagesInput } from "../../domain/itemImages";
 
 export const ItemFormLayout = () => {
   const {
@@ -165,6 +166,22 @@ export const ItemFormLayout = () => {
             }
             allowCustomInput={true}
             placeholder="Type or select item position"
+          />
+        </Field>
+
+        <Field label="Image URLs:">
+          <InputField
+            value={formatItemImagesInput(formState.item_images)}
+            onChange={setters.handleItemImages}
+            placeholder="https://example.com/item.jpg,https://example.com/label.jpg"
+          />
+        </Field>
+
+        <Field label="Page link:">
+          <InputField
+            value={formState.page_link ?? ""}
+            onChange={setters.handlePageLink}
+            placeholder="https://example.com/item"
           />
         </Field>
       </div>

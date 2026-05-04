@@ -11,13 +11,11 @@ type StopDetailPageDisplayDependencies = {
   openTestSlidingPage: (title: string) => void
   openStopOrderItems: () => void
   openStopCustomer: () => void
-  openOrderCases: () => void
   openFailureForm: () => void
   navigateToStop: () => void
   callOrderPhone: () => void
   completeStop: () => void
   undoTerminal: () => void
-  activeCasesCount: number
   orderStateIds: DriverOrderStateIds
 }
 
@@ -100,12 +98,6 @@ export function mapStopDetailToPageDisplay(
         onPress: deps.callOrderPhone,
       },
       {
-        id: 'items',
-        label: 'Items',
-        value: stop.orderItems.length > 0 ? formatItemCountLabel(stop.orderItems.length) : 'No items',
-        onPress: deps.openStopOrderItems,
-      },
-      {
         id: 'customer',
         label: 'Customer',
         value: formatCustomerName(stop),
@@ -118,10 +110,10 @@ export function mapStopDetailToPageDisplay(
         onPress: () => deps.openTestSlidingPage('Service time'),
       },
       {
-        id: 'cases',
-        label: 'Cases',
-        value: String(deps.activeCasesCount),
-        onPress: deps.openOrderCases,
+        id: 'items',
+        label: 'Items',
+        value: stop.orderItems.length > 0 ? formatItemCountLabel(stop.orderItems.length) : 'No items',
+        onPress: deps.openStopOrderItems,
       },
     ],
   }

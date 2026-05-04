@@ -38,6 +38,7 @@ const stripImmutableFields = (draft: Item): ItemUpdateFields => {
     item_type: draft.item_type,
     item_position: normalizeItemPosition(draft.item_position),
     properties: draft.properties ?? null,
+    item_images: draft.item_images ?? null,
     page_link: draft.page_link ?? null,
     dimension_depth: draft.dimension_depth ?? null,
     dimension_height: draft.dimension_height ?? null,

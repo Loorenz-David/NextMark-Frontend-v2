@@ -8,6 +8,7 @@ export type Item = {
   item_position?: string | null
   order_id: number
   properties?: Record<string, unknown> | null
+  item_images?: string[] | null
   page_link?: string | null
   dimension_depth?: number | null
   dimension_height?: number | null

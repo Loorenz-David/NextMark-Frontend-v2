@@ -28,7 +28,11 @@ export const RouteGroupOrderCard = ({
 }: RouteGroupOrderCardProps) => {
   const { openOrderDetail } = useOrderActions();
   const orderLabel =
-    order.order_scalar_id != null ? `#${order.order_scalar_id}` : "#—";
+    order.external_source && order.reference_number
+      ? order.reference_number
+      : order.order_scalar_id != null
+        ? `#${order.order_scalar_id}`
+        : "#—";
   const streetAddress = order.client_address?.street_address ?? "No address";
   const expectedArrival =
     stop && stop.expected_arrival_time !== "loading"

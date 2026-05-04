@@ -1,16 +1,23 @@
 import { useCallback, useMemo, useSyncExternalStore } from 'react'
 import { useMessageHandler } from '@shared-message-handler'
 import { useWorkspace } from '@/app/providers/workspace.context'
+import { useDriverServices } from '@/app/providers/driverServices.context'
+import { useDriverBootstrapState } from '@/app/bootstrap'
+import { useDriverAppShell } from '@/app/shell/providers/driverAppShell.context'
 import { markRouteActualEndTimeManualAction } from '../actions/markRouteActualEndTimeManual.action'
 import { useOpenRouteStopDetail } from './useOpenRouteStopDetail.controller'
 import { useRouteExecutionShell } from '../providers/routeExecutionShell.context'
 import { mapAssignedRouteToPageDisplay } from '../domain/mapAssignedRouteToPageDisplay'
 import { selectRouteExecutionWorkspaceState } from '../stores/routeExecution.selectors'
 import { useSelectedAssignedRoute } from './useSelectedAssignedRoute.controller'
+import { buildMapNavigationDestinationFromAddress } from '../domain/buildMapNavigationDestinationFromAddress'
 
 export function useAssignedRouteController() {
   const { showMessage } = useMessageHandler()
   const { workspace } = useWorkspace()
+  const bootstrapState = useDriverBootstrapState()
+  const { browserLocationService, mapAppPreferenceService, mapNavigationService } = useDriverServices()
+  const { openSlidingPage } = useDriverAppShell()
   const { store, initializeRouteWorkspace, submitRouteAction } = useRouteExecutionShell()
   const openRouteStopDetail = useOpenRouteStopDetail()
   const selectedRoute = useSelectedAssignedRoute()
@@ -39,6 +46,35 @@ export function useAssignedRouteController() {
   const openStopDetail = useCallback((stopClientId: string) => {
     openRouteStopDetail(stopClientId, { snap: 'expanded' })
   }, [openRouteStopDetail])
+
+  const navigateToLocation = useCallback(async (label: string, address: typeof selectedRoute['startLocation']) => {
+    const destination = buildMapNavigationDestinationFromAddress(label, address)
+    if (!destination) {
+      showMessage({ status: 'warning', message: 'This location has no usable destination for navigation.' })
+      return
+    }
+
+    const preferredApp = mapAppPreferenceService.getPreferredApp()
+    if (preferredApp && mapNavigationService.isKnownAppId(preferredApp)) {
+      mapNavigationService.launch(preferredApp, destination)
+    } else {
+      openSlidingPage('map-app-chooser', { destination })
+    }
+  }, [mapAppPreferenceService, mapNavigationService, openSlidingPage, showMessage])
+
+  const navigateToStart = useCallback(() => {
+    if (!selectedRoute) {
+      return
+    }
+    void navigateToLocation('Start location', selectedRoute.startLocation)
+  }, [selectedRoute, navigateToLocation])
+
+  const navigateToEnd = useCallback(() => {
+    if (!selectedRoute) {
+      return
+    }
+    void navigateToLocation('End location', selectedRoute.endLocation)
+  }, [selectedRoute, navigateToLocation])
 
   const completeRoute = useCallback(async () => {
     const routeId = selectedRoute?.route?.id
@@ -86,5 +122,7 @@ export function useAssignedRouteController() {
     startRoute,
     completeRoute,
     openStopDetail,
-  }), [completeRoute, mergedRouteState, openStopDetail, pageDisplay, refreshAssignedRoute, startRoute, workspace])
+    navigateToStart,
+    navigateToEnd,
+  }), [completeRoute, mergedRouteState, navigateToEnd, navigateToStart, openStopDetail, pageDisplay, refreshAssignedRoute, startRoute, workspace])
 }

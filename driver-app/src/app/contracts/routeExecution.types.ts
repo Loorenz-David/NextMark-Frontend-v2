@@ -51,6 +51,7 @@ export type AssignedStopOrderItemViewModel = {
   quantity: number | null
   weight: number | null
   pageLink: string | null
+  itemImages: string[]
   dimensionsLabel: string | null
   properties: AssignedStopOrderItemPropertyViewModel[]
 }
