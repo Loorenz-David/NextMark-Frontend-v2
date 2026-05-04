@@ -1,7 +1,6 @@
 import type { Order } from "@/features/order/types/order";
 import { TimeIcon } from "@/assets/icons";
 import { StateCard } from "@/shared/layout/StateCard";
-import { useMapManager } from "@/shared/resource-manager/useResourceManager";
 import { useOrderStateByServerId } from "@/features/order/store/orderStateHooks.store";
 import type { RouteSolutionStop } from "@/features/plan/routeGroup/types/routeSolutionStop";
 import { RouteStopWarnings } from "../warnings/RouteStopWarnings";
@@ -28,7 +27,6 @@ export const RouteGroupOrderCard = ({
   routeGroupId,
 }: RouteGroupOrderCardProps) => {
   const { openOrderDetail } = useOrderActions();
-  const mapManager = useMapManager();
   const orderLabel =
     order.order_scalar_id != null ? `#${order.order_scalar_id}` : "#—";
   const streetAddress = order.client_address?.street_address ?? "No address";
@@ -45,11 +43,11 @@ export const RouteGroupOrderCard = ({
         : null;
   const orderState = useOrderStateByServerId(order.order_state_id ?? 1);
   const openOrder = () => {
-    mapManager.selectOrder(order.client_id);
     openOrderDetail(
       {
         mode: "edit",
         clientId: order.client_id,
+        openSource: "card",
         routeGroupId: routeGroupId ?? order.route_group_id ?? null,
         planStartDate: planStartDate ?? null,
         headerBehavior: "order-main-context",

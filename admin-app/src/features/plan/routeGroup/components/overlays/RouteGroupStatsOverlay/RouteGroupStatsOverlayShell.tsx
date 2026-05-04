@@ -23,15 +23,16 @@ type RouteGroupStatsOverlayShellProps = {
 };
 
 const bodyClassByMode: Record<RouteGroupStatsLayoutMode, string> = {
-  wide: "grid grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] items-start gap-4",
-  medium: "grid grid-cols-1 items-start gap-4",
-  narrow: "flex flex-col gap-4",
+  wide: "grid min-w-max grid-cols-[minmax(300px,1.25fr)_max-content] items-start gap-4",
+  medium: "grid min-w-max grid-cols-[minmax(300px,1.25fr)_max-content] items-start gap-4",
+  narrow: "grid min-w-max grid-cols-[minmax(300px,1.25fr)_max-content] items-start gap-4",
 };
 
 const useShellMapInsets = (shellRef: React.RefObject<HTMLDivElement | null>, hidden: boolean) => {
   const { storeViewportInsets, reframeToVisibleArea } = useMapManager()
   const rafRef = useRef<number | null>(null)
   const hiddenRef = useRef(hidden)
+  const bottomInsetRef = useRef<number | null>(null)
   hiddenRef.current = hidden
 
   // When the panel closes, start the map animation immediately — concurrent with the
@@ -42,6 +43,7 @@ const useShellMapInsets = (shellRef: React.RefObject<HTMLDivElement | null>, hid
       window.cancelAnimationFrame(rafRef.current)
       rafRef.current = null
     }
+    bottomInsetRef.current = MAP_SAFE_GUTTER
     storeViewportInsets({
       top: MAP_SAFE_GUTTER,
       right: MAP_SAFE_GUTTER,
@@ -66,10 +68,14 @@ const useShellMapInsets = (shellRef: React.RefObject<HTMLDivElement | null>, hid
     const observer = new ResizeObserver((entries) => {
       if (hiddenRef.current) return
       const height = entries[0]?.contentRect.height ?? 0
+      const bottomInset = height + MAP_SAFE_GUTTER
+      if (bottomInsetRef.current === bottomInset) return
+
+      bottomInsetRef.current = bottomInset
       storeViewportInsets({
         top: MAP_SAFE_GUTTER,
         right: MAP_SAFE_GUTTER,
-        bottom: height + MAP_SAFE_GUTTER,
+        bottom: bottomInset,
         left: MAP_SAFE_GUTTER,
       })
       scheduleReframe()
@@ -83,6 +89,7 @@ const useShellMapInsets = (shellRef: React.RefObject<HTMLDivElement | null>, hid
         window.cancelAnimationFrame(rafRef.current)
         rafRef.current = null
       }
+      bottomInsetRef.current = MAP_SAFE_GUTTER
       storeViewportInsets({
         top: MAP_SAFE_GUTTER,
         right: MAP_SAFE_GUTTER,
@@ -147,10 +154,10 @@ export const RouteGroupStatsOverlayShell = ({
                 <RouteGroupDriverCard driver={data.driver} />
               </div>
 
-              <div className="pointer-events-auto max-h-[40vh] overflow-y-auto scroll-thin">
+              <div className="pointer-events-auto max-h-[40vh] overflow-x-auto overflow-y-auto scroll-thin">
                 <div className="px-4">
                   <div className={bodyClassByMode[layoutMode]}>
-                    <div className="flex min-w-0 flex-col gap-4 flex-wrap">
+                    <div className="flex min-w-0 flex-col flex-nowrap gap-4">
                       <RouteGroupStatsTopSummary
                         routeSummary={data.routeSummary}
                         routeScopeKey={data.routeScopeKey}
@@ -161,7 +168,7 @@ export const RouteGroupStatsOverlayShell = ({
                       />
                     </div>
 
-                    <div className="min-w-0">
+                    <div className="min-w-max">
                       <RouteGroupGaussianMetricsGrid
                         cards={data.gaussianCards}
                         routeScopeKey={data.routeScopeKey}

@@ -1,23 +1,30 @@
-import { useMemo } from 'react'
+import { useMemo } from "react";
 
-import { PopupFooter } from '@/shared/popups/MainPopup/PopupFooter'
+import { PopupFooter } from "@/shared/popups/MainPopup/PopupFooter";
 
-import { useVehicleForm } from '../../popups/VehicleForm/VehicleForm.context'
-import { useVehicleFormConfig } from '../../popups/VehicleForm/useVehicleFormConfig'
+import { useVehicleForm } from "../../popups/VehicleForm/VehicleForm.context";
+import { useVehicleFormConfig } from "../../popups/VehicleForm/useVehicleFormConfig";
 
-import { VehicleFormFields } from './components/VehicleFormFields'
+import { VehicleFormFields } from "./components/VehicleFormFields";
 
 export const VehicleFormFeature = () => {
-  const { payload, formState, handleSave, initialFormRef } = useVehicleForm()
+  const { payload, formState, handleSave, handleDelete, initialFormRef } =
+    useVehicleForm();
 
-  useVehicleFormConfig({ formState, initialFormRef, payload })
+  useVehicleFormConfig({ formState, initialFormRef, payload });
 
   const footerConfig = useMemo(
     () => ({
-      saveButton: { label: payload.mode === 'create' ? 'Create vehicle' : 'Save vehicle', action: handleSave },
+      saveButton: {
+        label: payload.mode === "create" ? "Create vehicle" : "Save vehicle",
+        action: handleSave,
+      },
+      ...(payload.mode === "edit"
+        ? { deleteButton: { label: "Delete vehicle", action: handleDelete } }
+        : {}),
     }),
-    [handleSave, payload.mode],
-  )
+    [handleDelete, handleSave, payload.mode],
+  );
 
   return (
     <>
@@ -26,5 +33,5 @@ export const VehicleFormFeature = () => {
       </form>
       <PopupFooter footerConfig={footerConfig} />
     </>
-  )
-}
+  );
+};

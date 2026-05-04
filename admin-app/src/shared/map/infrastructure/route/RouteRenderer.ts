@@ -59,7 +59,7 @@ export class RouteRenderer {
       allPoints.push(...path)
     })
 
-    if (allPoints.length) {
+    if (allPoints.length && route.fitBounds !== false) {
       this.onRouteRendered(allPoints)
     }
   }

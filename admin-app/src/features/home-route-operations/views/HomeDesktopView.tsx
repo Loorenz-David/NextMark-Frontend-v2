@@ -3,7 +3,6 @@ import { BasicButton } from "@/shared/buttons/BasicButton";
 import {
   useSectionManager,
   useMapManager,
-  usePopupManager,
 } from "@/shared/resource-manager/useResourceManager";
 
 import { ChevronDownIcon } from "@/assets/icons";
@@ -15,7 +14,6 @@ import { ZoneMapOverlay } from "@/features/zone/components/ZoneMapOverlay";
 import { RouteGroupWorkspaceRuntime } from "@/features/plan/routeGroup/providers/RouteGroupWorkspaceRuntime";
 import { useBaseControlls } from "@/shared/resource-manager/useResourceManager";
 import { useMapSelectionModeGuardFlow } from "@/features/home-route-operations/flows/mapSelectionModeGuard.flow";
-import { useHomeDesktopKeyboardFlow } from "@/features/home-route-operations/flows/homeDesktopKeyboard.flow";
 import { useHomeDesktopRailSettleFlow } from "@/features/home-route-operations/flows/homeDesktopRailSettle.flow";
 import { useHomeDesktopDerivedStateFlow } from "@/features/home-route-operations/flows/homeDesktopDerivedState.flow";
 import { RouteGroupsPage } from "@/features/plan/routeGroup/pages/RouteGroups.page";
@@ -74,7 +72,6 @@ export function HomeDesktopView() {
     useMapManager();
   const { routeOperationsActiveDrag, planDropFeedback } = useResourceManager();
   const sectionManager = useSectionManager();
-  const popupManager = usePopupManager();
   const baseControlls = useBaseControlls<PayloadBase>();
   const isOrderSelectionMode = useOrderSelectionMode();
   const isOrderOverlayOpen =
@@ -136,6 +133,39 @@ export function HomeDesktopView() {
   useMapSelectionModeGuardFlow();
 
   useEffect(() => {
+    const handlePlanShortcutSuppression = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== "p") {
+        return;
+      }
+
+      const target = event.target as HTMLElement | null;
+      const tagName = target?.tagName;
+      const isTypingTarget =
+        tagName === "INPUT" ||
+        tagName === "TEXTAREA" ||
+        tagName === "SELECT" ||
+        Boolean(target?.isContentEditable);
+
+      if (isTypingTarget) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    window.addEventListener("keydown", handlePlanShortcutSuppression, true);
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handlePlanShortcutSuppression,
+        true,
+      );
+    };
+  }, []);
+
+  useEffect(() => {
     setViewportInsets(DEFAULT_VIEWPORT_INSETS);
   }, [setViewportInsets]);
 
@@ -154,13 +184,6 @@ export function HomeDesktopView() {
       reframeToVisibleArea,
       shouldReframeToVisibleArea,
     });
-
-  useHomeDesktopKeyboardFlow({
-    isEnabled: true,
-    isPopupOpen: popupManager.getOpenCount() > 0,
-    onTogglePlan: layout.togglePlan,
-    closeAllSections: () => sectionManager.closeAll(),
-  });
 
   const splitMode = layout.viewMode === "split";
   const activeRoutePlanId =

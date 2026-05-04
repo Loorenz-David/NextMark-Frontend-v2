@@ -686,10 +686,6 @@ export const useRouteGroupStatsOverlayController = () => {
   )
 
   useEffect(() => {
-    setHidden(false)
-  }, [selectedRouteSolution?.client_id])
-
-  useEffect(() => {
     const element = overlayRef.current
     if (!element || typeof ResizeObserver === 'undefined') {
       return

@@ -88,23 +88,33 @@ const resolveRoutePlanIdForLabel = async (
 export const startItemLabelDownload = ({
   downloadByEvent,
   event,
-  items,
+  items: initialItems,
   normalizeOrderPayload,
   order,
   orderId,
   onProgress,
+  loadItems,
+  targetDeliveryPlanId,
 }: {
   downloadByEvent: DownloadByEvent;
-  event: Extract<availableEvents, "item_created" | "item_edited">;
+  event: Extract<availableEvents, "item_created" | "item_edited" | "item_rescheduled">;
   items: Item[];
   normalizeOrderPayload: NormalizeOrderPayload;
   order?: Order | null;
   orderId: number;
   onProgress?: (progress: number) => void;
+  loadItems?: (orderId: number) => Promise<Item[]>;
+  targetDeliveryPlanId?: number | null;
 }) => {
-  if (items.length === 0) return Promise.resolve();
+  if (initialItems.length === 0 && !loadItems) return Promise.resolve();
 
   return (async () => {
+    let items = initialItems;
+    if (items.length === 0 && loadItems) {
+      items = await loadItems(orderId);
+    }
+    if (items.length === 0) return;
+
     const resolvedOrder = await resolveOrderForLabel(
       orderId,
       order,
@@ -113,7 +123,7 @@ export const startItemLabelDownload = ({
     onProgress?.(0.03);
     const routePlanId = await resolveRoutePlanIdForLabel(
       orderId,
-      resolvedOrder?.delivery_plan_id,
+      targetDeliveryPlanId ?? resolvedOrder?.delivery_plan_id,
     );
     onProgress?.(0.05);
     try {

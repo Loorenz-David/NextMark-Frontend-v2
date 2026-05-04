@@ -1,5 +1,5 @@
 name: Deploy External Operations Frontend to S3 + CloudFront
- 
+
 on:
   push:
     branches:

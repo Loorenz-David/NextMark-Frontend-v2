@@ -4,7 +4,6 @@ import { CloseIcon, ItemIcon, TimeIcon } from '@/assets/icons'
 import { useOrderActions } from '@/features/order'
 import { useOrderStore } from '@/features/order/store/order.store'
 import { MarkerAnchorPopover } from '@/shared/map/components/MarkerAnchorPopover'
-import { useMapManager } from '@/shared/resource-manager/useResourceManager'
 import { useRouteSolutionStopStore } from '@/features/plan/routeGroup/store/routeSolutionStop.store'
 import { formatRouteTime } from '@/features/plan/routeGroup/utils/formatRouteTime'
 import {
@@ -19,7 +18,6 @@ export const RouteGroupMarkerGroupOverlay = () => {
   const routeStopByClientId = useRouteSolutionStopStore((state) => state.byClientId)
   const { closeGroupOverlay } = useRouteGroupMapInteractionActions()
   const { openOrderDetail } = useOrderActions()
-  const mapManager = useMapManager()
 
   const routeStops = useMemo(
     () => routeStopAllIds.map((clientId) => routeStopByClientId[clientId]).filter(Boolean),
@@ -87,7 +85,6 @@ export const RouteGroupMarkerGroupOverlay = () => {
                   key={order.client_id}
                   type="button"
                   onClick={() => {
-                    mapManager.selectOrder(order.client_id)
                     openOrderDetail(
                       {
                         mode: 'edit',

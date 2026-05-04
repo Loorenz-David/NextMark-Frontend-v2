@@ -4,6 +4,7 @@ import type { AssignedRouteStopRowDisplay } from "../domain/assignedRouteDisplay
 type AssignedRouteStopRowProps = {
   stop: AssignedRouteStopRowDisplay;
   onOpenStopDetail: (stopClientId: string) => void;
+  isFocused?: boolean;
 };
 
 function DurationChip({ label }: { label: string }) {
@@ -31,12 +32,17 @@ function DurationChip({ label }: { label: string }) {
 export function AssignedRouteStopRow({
   stop,
   onOpenStopDetail,
+  isFocused = false,
 }: AssignedRouteStopRowProps) {
+  const focusedClassName = isFocused
+    ? "ring-1 ring-inset ring-sky-300/50 bg-sky-300/5 shadow-[inset_0_0_0_1px_rgba(125,211,252,0.12)]"
+    : "";
+
   return (
     <button
       className={`grid w-full grid-cols-[4rem_minmax(0,1fr)_5.5rem] gap-2 text-left transition active:scale-[0.995] ${
         stop.isActive ? "bg-black/20" : ""
-      } ${stop.isCompleted ? "opacity-85" : ""}`}
+      } ${focusedClassName} ${stop.isCompleted ? "opacity-85" : ""}`}
       onClick={() => onOpenStopDetail(stop.stopClientId)}
       type="button"
     >

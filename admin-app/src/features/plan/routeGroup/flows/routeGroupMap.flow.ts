@@ -101,6 +101,8 @@ export const useRouteGroupMapFlow = ({
   const mapManager = useMapManager()
   const sectionManager = useSectionManager()
   const lookupSignatureRef = useRef<string>('')
+  const routeSignatureRef = useRef<string>('')
+  const routeScopeRef = useRef<string>('')
   const previousIsActiveRef = useRef(isActive)
   const { setMarkerLookup, clearMarkerLookup, openGroupOverlay, closeGroupOverlay } = useRouteGroupMapInteractionActions()
   const liveDriverPositions = useDriverLiveStore(useShallow(selectDriverLivePositions))
@@ -111,6 +113,7 @@ export const useRouteGroupMapFlow = ({
     const payload = {
       mode: "edit",
       clientId: order.client_id,
+      openSource: "marker",
       headerBehavior: "order-main-context",
     }
     const parentParams = { borderLeft: 'rgb(var(--color-light-blue-r),0.7)' }
@@ -287,9 +290,25 @@ export const useRouteGroupMapFlow = ({
     mapManager.setMarkerLayerVisibility(MAP_MARKER_LAYERS.routeGroupBoundary, isActive)
 
     const routeSegments = buildRouteSegments(orders, stopByOrderId, selectedRouteSolution)
-    if (isActive && routeSegments.length) {
-      mapManager.showRoute({ path: routeSegments })
-    } else {
+    const nextRouteScope = selectedRouteSolution?.id != null
+      ? String(selectedRouteSolution.id)
+      : selectedRouteSolution?.client_id ?? ''
+    if (routeScopeRef.current !== nextRouteScope) {
+      routeScopeRef.current = nextRouteScope
+      routeSignatureRef.current = ''
+    }
+
+    const nextRouteSignature = isActive && routeSegments.length
+      ? routeSegments.join('::')
+      : ''
+    if (nextRouteSignature) {
+      if (routeSignatureRef.current !== nextRouteSignature) {
+        const shouldFitBounds = routeSignatureRef.current === ''
+        routeSignatureRef.current = nextRouteSignature
+        mapManager.showRoute({ path: routeSegments, fitBounds: shouldFitBounds })
+      }
+    } else if (routeSignatureRef.current) {
+      routeSignatureRef.current = ''
       mapManager.showRoute(null)
     }
 
@@ -364,6 +383,8 @@ export const useRouteGroupMapFlow = ({
     mapManager.clearMarkerLayer(MAP_MARKER_LAYERS.routeGroupBoundary)
     mapManager.clearMarkerLayer(MAP_MARKER_LAYERS.driverLiveRouteGroup)
     mapManager.showRoute(null)
+    routeSignatureRef.current = ''
+    routeScopeRef.current = ''
     if (wasActive) {
       mapManager.reframeToVisibleArea()
     }
@@ -379,6 +400,8 @@ export const useRouteGroupMapFlow = ({
       mapManager.clearMarkerLayer(MAP_MARKER_LAYERS.routeGroupBoundary)
       mapManager.clearMarkerLayer(MAP_MARKER_LAYERS.driverLiveRouteGroup)
       mapManager.showRoute(null)
+      routeSignatureRef.current = ''
+      routeScopeRef.current = ''
       closeGroupOverlay()
       useDriverLiveMarkerOverlayStore.getState().closeOverlay()
       lookupSignatureRef.current = ''

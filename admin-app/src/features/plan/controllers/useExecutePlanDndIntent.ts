@@ -1,5 +1,20 @@
 import { useOrderMutations } from "@/features/order";
 import { useOrderBatchDeliveryPlanController } from "@/features/order/controllers/orderBatchDeliveryPlan.controller";
+import { useOrderModel } from "@/features/order/domain/useOrderModel";
+import { getOrderItems } from "@/features/order/item/api/item.api";
+import { startItemLabelDownload } from "@/features/order/item/flows/startItemLabelDownload.flow";
+import { useItemModel } from "@/features/order/item/domain/useItemModel";
+import {
+  replaceItemsForOrder,
+  selectItemsByOrderId,
+  setItemOrderSyncMeta,
+  useItemStore,
+} from "@/features/order/item/store/item.store";
+import {
+  selectOrderByClientId,
+  selectOrderByServerId,
+  useOrderStore,
+} from "@/features/order/store/order.store";
 import { useMoveOrderToRouteGroupMutation } from "@/features/plan/routeGroup/controllers/useMoveOrderToRouteGroup.controller";
 import { useRouteSolutionStopMutations } from "@/features/plan/routeGroup/controllers/routeSolutionStop.controller";
 import {
@@ -7,6 +22,7 @@ import {
   useRoutePlanStore,
 } from "@/features/plan/store/routePlan.slice";
 import type { PlanDndIntent } from "@/features/plan/domain/planDndIntent";
+import { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
 
 export const useExecutePlanDndIntent = () => {
   const { updateOrderDeliveryPlan } = useOrderMutations();
@@ -17,6 +33,26 @@ export const useExecutePlanDndIntent = () => {
     updateRouteStopPositionOptimistic,
     updateRouteStopGroupPositionOptimistic,
   } = useRouteSolutionStopMutations();
+  const { downloadByEvent } = useDownloadTemplateByEventFlow();
+  const { normalizeOrderPayload } = useOrderModel();
+  const { normalizeItemsForOrder } = useItemModel();
+
+  const loadOrderItemsForLabel = async (orderId: number) => {
+    const stored = selectItemsByOrderId(orderId)(useItemStore.getState());
+    if (stored.length > 0) return stored;
+
+    try {
+      const response = await getOrderItems(orderId);
+      const payload = response.data;
+      if (!payload?.items) return [];
+      const normalized = normalizeItemsForOrder(payload.items, orderId);
+      replaceItemsForOrder(orderId, normalized);
+      setItemOrderSyncMeta(orderId, { itemsUpdatedAt: null, lastFetchedAt: Date.now() });
+      return selectItemsByOrderId(orderId)(useItemStore.getState());
+    } catch {
+      return [];
+    }
+  };
 
   const execute = async (intent: PlanDndIntent) => {
     if (!intent) {
@@ -45,6 +81,25 @@ export const useExecutePlanDndIntent = () => {
         return { droppedPlanClientId: null as string | null, success: false };
       }
 
+      const order = selectOrderByClientId(intent.orderClientId)(
+        useOrderStore.getState(),
+      );
+
+      if (order?.id) {
+        const orderId = order.id;
+        loadOrderItemsForLabel(orderId).then((items) => {
+          startItemLabelDownload({
+            downloadByEvent,
+            event: "item_rescheduled",
+            items,
+            normalizeOrderPayload,
+            order,
+            orderId,
+            targetDeliveryPlanId: deliveryPlan.id,
+          });
+        });
+      }
+
       const success = await updateOrderDeliveryPlan(
         intent.orderClientId,
         deliveryPlan.id,
@@ -56,6 +111,26 @@ export const useExecutePlanDndIntent = () => {
       );
       if (!deliveryPlan?.id) {
         return { droppedPlanClientId: null as string | null, success: false };
+      }
+
+      if (intent.origin === "route_group") {
+        intent.selection.manual_order_ids.forEach((orderId) => {
+          const order = selectOrderByServerId(orderId)(useOrderStore.getState());
+          if (order?.id) {
+            const orderId = order.id;
+            loadOrderItemsForLabel(orderId).then((items) => {
+              startItemLabelDownload({
+                downloadByEvent,
+                event: "item_rescheduled",
+                items,
+                normalizeOrderPayload,
+                order,
+                orderId,
+                targetDeliveryPlanId: deliveryPlan.id,
+              });
+            });
+          }
+        });
       }
 
       const success = await updateOrdersDeliveryPlanBatch({
