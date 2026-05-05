@@ -1,4 +1,7 @@
-import { formatIsoDateFriendly } from "@/shared/utils/formatIsoDate";
+import {
+  formatDateOnlyInTimeZone,
+  formatIsoDateFriendly,
+} from "@/shared/utils/formatIsoDate";
 
 const MONTH_INDEX_BY_NAME: Record<string, number> = {
   jan: 0,
@@ -41,9 +44,20 @@ const DAY_MONTH_RE = new RegExp(
 
 function resolveBaseYear(referenceIso?: string | null) {
   if (referenceIso) {
-    const parsed = new Date(referenceIso);
-    if (!Number.isNaN(parsed.getTime())) {
-      return parsed.getFullYear();
+    const dateOnly = formatDateOnlyInTimeZone(referenceIso);
+    if (dateOnly) {
+      const year = Number.parseInt(dateOnly.slice(0, 4), 10);
+      if (Number.isInteger(year)) {
+        return year;
+      }
+    }
+  }
+
+  const today = formatDateOnlyInTimeZone(new Date());
+  if (today) {
+    const year = Number.parseInt(today.slice(0, 4), 10);
+    if (Number.isInteger(year)) {
+      return year;
     }
   }
 
@@ -67,7 +81,10 @@ function buildIsoFromMonthDay(monthToken: string, dayToken: string, baseYear: nu
     return null;
   }
 
-  return parsed.toISOString();
+  const month = String(monthIndex + 1).padStart(2, "0");
+  const normalizedDay = String(day).padStart(2, "0");
+
+  return `${baseYear}-${month}-${normalizedDay}`;
 }
 
 function detectLabelDateToken(label: string) {

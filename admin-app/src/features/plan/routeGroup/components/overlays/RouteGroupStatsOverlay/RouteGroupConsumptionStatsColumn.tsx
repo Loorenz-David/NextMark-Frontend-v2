@@ -52,7 +52,7 @@ const ConsumptionMetricCard = ({
             }
           : undefined
       }
-      className={`admin-backdrop-blur-md relative flex min-h-[78px] flex-col justify-between rounded-2xl border bg-black/28 px-4 py-3 text-sm text-white transition-colors ${
+      className={`admin-backdrop-blur-md relative flex min-h-[78px] min-w-0 flex-col justify-between rounded-2xl border bg-black/28 px-4 py-3 text-sm text-white transition-colors ${
         isInteractive ? "cursor-pointer hover:bg-black/34" : ""
       } ${isEstimated ? "border-white/30" : "border-white/45"}`}
     >
@@ -71,7 +71,7 @@ const ConsumptionMetricCard = ({
         {resolvedValue}
       </motion.div>
       <div className="flex items-center gap-2">
-        <div className="text-xs font-medium text-white/76">{metric.label}</div>
+        <div className="min-w-0 truncate text-xs font-medium text-white/76">{metric.label}</div>
         {isEstimated ? (
           <span className="rounded-full border border-white/25 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.08em] text-white/62">
             Est.
@@ -120,7 +120,7 @@ export const RouteGroupConsumptionStatsColumn = ({
   metrics,
   routeScopeKey,
 }: RouteGroupConsumptionStatsColumnProps) => (
-  <div className="flex min-w-[160px]  gap-3">
+  <div className="flex min-w-0 gap-3">
     {metrics.map((metric) => (
       <ConsumptionMetricCard
         key={metric.id}

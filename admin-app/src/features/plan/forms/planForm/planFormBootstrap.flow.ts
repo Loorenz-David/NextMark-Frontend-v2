@@ -5,12 +5,15 @@ import { buildClientId } from "@/lib/utils/clientId";
 import type { DeliveryPlan } from "../../types/plan";
 
 import { usePlanStateRegistryFlow } from "../../flows/planStateRegistry.flow";
-import { formatIsoDateFriendly } from "@/shared/utils/formatIsoDate";
+import {
+  formatDateOnlyInTimeZone,
+  formatIsoDateFriendly,
+} from "@/shared/utils/formatIsoDate";
 
 const createInitialPlanForm = (
   planStateId: number | null | undefined,
 ): DeliveryPlan => {
-  const nowIso = new Date().toISOString();
+  const nowIso = formatDateOnlyInTimeZone(new Date()) ?? new Date().toISOString();
 
   const planLabel = `Plan for ${formatIsoDateFriendly(nowIso)}`;
   return {

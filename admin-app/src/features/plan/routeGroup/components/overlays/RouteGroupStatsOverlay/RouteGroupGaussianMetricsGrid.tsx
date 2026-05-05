@@ -10,7 +10,7 @@ export const RouteGroupGaussianMetricsGrid = ({
   cards,
   routeScopeKey,
 }: RouteGroupGaussianMetricsGridProps) => (
-  <div className="grid w-max grid-flow-col auto-cols-[190px] gap-3">
+  <div className="grid w-full min-w-0 grid-cols-2 gap-3">
     {cards.map((card) => (
       <GaussianMetricCard key={card.id} card={card} routeScopeKey={routeScopeKey} />
     ))}

@@ -149,7 +149,7 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
             }
           : undefined
       }
-      className="admin-backdrop-blur-md pointer-events-auto relative flex min-h-[150px] w-full flex-col rounded-2xl border border-white/45 bg-black/28 p-4 pt-3 text-left text-sm text-white transition-colors hover:bg-black/34"
+      className="admin-backdrop-blur-md pointer-events-auto relative flex min-h-[150px] min-w-0 w-full flex-col rounded-2xl border border-white/45 bg-black/28 p-4 pt-3 text-left text-sm text-white transition-colors hover:bg-black/34"
     >
       <ChevronDownIcon className="-rotate-90 absolute right-3 top-[10px] h-4 w-4 text-white/70" />
 
@@ -181,7 +181,7 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
           className="flex h-full flex-col gap-2"
         >
           <div className="relative flex items-start justify-center pt-4">
-            <div className="relative h-[60px] w-[150px]">
+            <div className="relative h-[60px] w-full max-w-[150px]">
               <svg
                 viewBox="0 50 160 60"
                 className="h-full w-full overflow-visible"

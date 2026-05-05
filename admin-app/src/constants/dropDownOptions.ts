@@ -1,4 +1,4 @@
-export const DEFAULT_PREFIX = '+93'
+export const DEFAULT_PREFIX = '+46'
 export const PHONE_PREFIX_STORAGE_KEY = 'defaultPhonePrefix'
 export const PHONE_PREFIX_INDEX_STORAGE_KEY = 'defaultPhonePrefixIndex'
 

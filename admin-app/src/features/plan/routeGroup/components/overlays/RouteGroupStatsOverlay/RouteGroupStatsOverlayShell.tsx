@@ -23,9 +23,9 @@ type RouteGroupStatsOverlayShellProps = {
 };
 
 const bodyClassByMode: Record<RouteGroupStatsLayoutMode, string> = {
-  wide: "grid min-w-max grid-cols-[minmax(300px,1.25fr)_max-content] items-start gap-4",
-  medium: "grid min-w-max grid-cols-[minmax(300px,1.25fr)_max-content] items-start gap-4",
-  narrow: "grid min-w-max grid-cols-[minmax(300px,1.25fr)_max-content] items-start gap-4",
+  wide: "grid w-full grid-cols-[minmax(0,1fr)_minmax(300px,38%)] items-start gap-4",
+  medium: "grid w-full grid-cols-[minmax(0,1fr)_minmax(300px,38%)] items-start gap-4",
+  narrow: "grid w-full grid-cols-[minmax(0,1fr)_minmax(300px,38%)] items-start gap-4",
 };
 
 const useShellMapInsets = (shellRef: React.RefObject<HTMLDivElement | null>, hidden: boolean) => {
@@ -154,7 +154,7 @@ export const RouteGroupStatsOverlayShell = ({
                 <RouteGroupDriverCard driver={data.driver} />
               </div>
 
-              <div className="pointer-events-auto max-h-[40vh] overflow-x-auto overflow-y-auto scroll-thin">
+              <div className="pointer-events-auto max-h-[40vh] overflow-hidden overflow-y-auto scroll-thin">
                 <div className="px-4">
                   <div className={bodyClassByMode[layoutMode]}>
                     <div className="flex min-w-0 flex-col flex-nowrap gap-4">
@@ -168,7 +168,7 @@ export const RouteGroupStatsOverlayShell = ({
                       />
                     </div>
 
-                    <div className="min-w-max">
+                    <div className="min-w-0 overflow-hidden">
                       <RouteGroupGaussianMetricsGrid
                         cards={data.gaussianCards}
                         routeScopeKey={data.routeScopeKey}
