@@ -14,6 +14,7 @@ type DownloadByEventParams = {
   data: unknown;
   fileName: string;
   onProgress?: (progress: number) => void;
+  notifyWhenTemplateMissing?: boolean;
 };
 
 export const useDownloadTemplateByEventFlow = () => {
@@ -26,6 +27,7 @@ export const useDownloadTemplateByEventFlow = () => {
     data,
     fileName,
     onProgress,
+    notifyWhenTemplateMissing = false,
   }: DownloadByEventParams): Promise<void> => {
     try {
       let activeTemplate = resolveActiveTemplateByChannelAndEvent(
@@ -39,6 +41,9 @@ export const useDownloadTemplateByEventFlow = () => {
       }
 
       if (!activeTemplate) {
+        if (!notifyWhenTemplateMissing) {
+          return;
+        }
         showMessage({
           status: 404,
           message: "No active print template found for this event.",
