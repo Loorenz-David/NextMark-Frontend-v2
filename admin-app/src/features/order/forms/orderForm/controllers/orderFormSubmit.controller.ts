@@ -254,6 +254,7 @@ export type OrderFormSubmitResult =
       createdOrderId: number | null;
       createdOrderClientId: string | null;
       createdOrderScalarId: number | null;
+      createdOrder: Order | null;
     }
   | { status: "success_edit" }
   | { status: "no_changes" }
@@ -403,6 +404,7 @@ export const executeOrderFormSubmit = async (
       let createdOrderId: number | null = null;
       let createdOrderClientId: string | null = null;
       let createdOrderScalarId: number | null = null;
+      let createdOrder: Order | null = null;
 
       const createItemsPayload = createdItems.map((item) => {
         const payloadItem = { ...item };
@@ -436,6 +438,7 @@ export const executeOrderFormSubmit = async (
           null;
 
         const resolvedOrder = resolved?.order ?? null;
+        createdOrder = resolvedOrder;
         createdOrderId =
           typeof resolvedOrder?.id === "number" ? resolvedOrder.id : null;
         createdOrderClientId = resolvedOrder?.client_id ?? null;
@@ -462,6 +465,7 @@ export const executeOrderFormSubmit = async (
           createdOrderId,
           createdOrderClientId,
           createdOrderScalarId,
+          createdOrder,
         };
       }
 
@@ -483,6 +487,7 @@ export const executeOrderFormSubmit = async (
         createdOrderId,
         createdOrderClientId,
         createdOrderScalarId,
+        createdOrder,
       };
     }
 

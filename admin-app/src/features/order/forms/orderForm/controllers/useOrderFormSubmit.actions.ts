@@ -141,7 +141,13 @@ export const useOrderFormActions = ({
             event: "item_created",
             data: itemsForDownloading(
               createdItems,
-              resolvedOrder.order_scalar_id,
+              {
+                order_scalar_id: resolvedOrder.order_scalar_id,
+                reference_number: resolvedOrder.reference_number,
+                external_source: resolvedOrder.external_source,
+                help_to_carry: resolvedOrder.help_to_carry,
+                order_plan_objective: resolvedOrder.order_plan_objective,
+              },
               normalizedCurrent?.delivery_plan_id,
               normalizedCurrent?.order_notes,
             ),

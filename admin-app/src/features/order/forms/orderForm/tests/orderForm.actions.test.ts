@@ -12,6 +12,7 @@ export const runOrderFormActionsTests = () => {
     createdOrderId: 100,
     createdOrderClientId: "order-100",
     createdOrderScalarId: 5001,
+    createdOrder: null,
   });
   assert(
     createFeedback.status === 200,

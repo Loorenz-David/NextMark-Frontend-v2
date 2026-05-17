@@ -4,31 +4,32 @@ import type { BaseEditor, Descendant } from "slate";
 import type { ReactEditor, RenderElementProps } from "slate-react";
 
 import { EmailEditableRegion } from "./EmailEditableRegion";
+import { EmailSubjectEditor } from "./EmailSubjectEditor";
 
 type EmailTemplatePreviewCanvasProps = {
-  headerEditor: BaseEditor & ReactEditor;
-  headerValue: Descendant[];
-  onHeaderChange: (value: Descendant[]) => void;
+  subjectEditor: BaseEditor & ReactEditor;
+  subject: Descendant[];
+  onSubjectChange: (value: Descendant[]) => void;
   bodyEditor: BaseEditor & ReactEditor;
   bodyValue: Descendant[];
   onBodyChange: (value: Descendant[]) => void;
   renderElement: (props: RenderElementProps) => JSX.Element;
-  activeRegion?: "header" | "body" | null;
-  onHeaderFocus: (event: FocusEvent<HTMLDivElement>) => void;
+  activeRegion?: "subject" | "body" | null;
+  onSubjectFocus: () => void;
   onBodyFocus: (event: FocusEvent<HTMLDivElement>) => void;
   primaryButtonLabel: string;
 };
 
 export const EmailTemplatePreviewCanvas = ({
-  headerEditor,
-  headerValue,
-  onHeaderChange,
+  subjectEditor,
+  subject,
+  onSubjectChange,
   bodyEditor,
   bodyValue,
   onBodyChange,
   renderElement,
   activeRegion,
-  onHeaderFocus,
+  onSubjectFocus,
   onBodyFocus,
   primaryButtonLabel,
 }: EmailTemplatePreviewCanvasProps) => {
@@ -36,9 +37,6 @@ export const EmailTemplatePreviewCanvas = ({
     <section className="admin-glass-panel-strong rounded-[26px] p-5 shadow-none">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex flex-col gap-1">
-          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
-            Live preview
-          </p>
           <h3 className="text-lg font-semibold text-[var(--color-text)]">
             Email canvas
           </h3>
@@ -47,28 +45,26 @@ export const EmailTemplatePreviewCanvas = ({
 
       <div className="mx-auto ">
         <div className=" ">
-          <EmailEditableRegion
-            sectionLabel="Header"
-            editor={headerEditor}
-            value={headerValue}
-            onChange={onHeaderChange}
-            renderElement={renderElement}
-            placeholder="Write a short, clear email headline..."
-            onFocus={onHeaderFocus}
-            isActive={activeRegion === "header"}
-            singleLine
-          />
+          <div className="border-b border-black/[0.08] px-4 py-4 md:px-5">
+            <EmailSubjectEditor
+              editor={subjectEditor}
+              value={subject}
+              onChange={onSubjectChange}
+              renderElement={renderElement}
+              onFocus={onSubjectFocus}
+            />
+          </div>
 
           <EmailEditableRegion
-            sectionLabel="Body"
+            sectionLabel="Message"
             editor={bodyEditor}
             value={bodyValue}
             onChange={onBodyChange}
             renderElement={renderElement}
-            placeholder="Write the email body here. Use labels to personalize delivery details, tracking information, and client data..."
+            placeholder="Start with the email headline, then press Enter to continue with body text..."
             onFocus={onBodyFocus}
             isActive={activeRegion === "body"}
-            helperText="Keep paragraphs short so the email stays readable on both desktop and mobile."
+            helperText="The first paragraph is styled as the email headline. New paragraphs use normal body text."
           />
         </div>
 

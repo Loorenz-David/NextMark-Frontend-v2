@@ -81,6 +81,7 @@ export const buildInitialOrderForm = ({
     general_note: noteDraft.generalNote,
     customer_note: noteDraft.customerNote,
     order_notes_source: noteDraft.sourceNotes,
+    help_to_carry: order?.help_to_carry ?? false,
   };
 };
 

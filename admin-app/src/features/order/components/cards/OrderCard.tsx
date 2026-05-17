@@ -35,7 +35,7 @@ export const OrderCard = ({
   const external_source = order.external_source;
   return (
     <div
-      className={`admin-glass-panel admin-surface-compact group relative flex flex-col gap-2.5 overflow-vissible rounded-lg p-4 transition-all duration-200 ${
+      className={`admin-glass-panel admin-surface-compact group relative flex flex-col gap-2.5 overflow-visible rounded-lg p-4 transition-all duration-200 ${
         isHovered
           ? "border-[rgb(var(--color-light-blue-r),0.7)] shadow-[0_18px_42px_rgba(45,95,170,0.22)]"
           : "border-white/10 hover:border-white/18 hover:bg-white/[0.08]"
@@ -43,6 +43,11 @@ export const OrderCard = ({
       onClick={() => onOpen?.(order)}
     >
       <OrderMissingInfoNotifier order={order} />
+      {order.archive_at && (
+        <div className="absolute right-1 -top-3 z-20 flex items-center rounded-full border border-amber-300/20 bg-amber-500/50 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-amber-100 backdrop-blur-md">
+          Archived
+        </div>
+      )}
 
       <div className="pointer-events-none absolute rounded-lg inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
 
@@ -64,25 +69,20 @@ export const OrderCard = ({
         </div>
         <div className="flex shrink-0 items-center gap-3">
           {order.archive_at ? (
-            <>
-              <div className="absolute left-4 top-3 flex items-center rounded-full border border-amber-300/20 bg-amber-500/18 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-100 backdrop-blur-md">
-                Archived
-              </div>
-              <div className="flex items-center content-center pr-1">
-                <ConfirmActionButton
-                  onConfirm={() => onUnarchive?.(order)}
-                  confirmOverLay={"bg-green-700"}
-                  deleteContent={
-                    <div className="rounded-lg border border-white/10 bg-white/[0.05] px-1.5 py-1.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)]">
-                      <SendBackIcon className="h-4 w-4 text-[var(--color-muted)]/90" />
-                    </div>
-                  }
-                  confirmContent={"Confirm unarchive"}
-                  confirmClassName="text-white text-[10px] px-2 py-1 rounded-md bg-green-600"
-                  duration={4000}
-                />
-              </div>
-            </>
+            <div className="flex items-center content-center pr-1">
+              <ConfirmActionButton
+                onConfirm={() => onUnarchive?.(order)}
+                confirmOverLay={"bg-green-700"}
+                deleteContent={
+                  <div className="rounded-lg border border-white/10 bg-white/[0.05] px-1.5 py-1.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)]">
+                    <SendBackIcon className="h-4 w-4 text-[var(--color-muted)]/90" />
+                  </div>
+                }
+                confirmContent={"Confirm unarchive"}
+                confirmClassName="text-white text-[10px] px-2 py-1 rounded-md bg-green-600"
+                duration={4000}
+              />
+            </div>
           ) : (
             onArchive && (
               <div className="flex items-center content-center pr-1">

@@ -47,6 +47,7 @@ const buildBaseFormState = (): OrderFormState => ({
   general_note: "",
   customer_note: "",
   order_notes_source: [],
+  help_to_carry: false,
 });
 
 const buildItem = (overrides?: Partial<Item>): Item => ({

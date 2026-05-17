@@ -23,7 +23,24 @@ import { useItemStore, selectItemsByOrderId } from '@/features/order/item/store/
 
 import { useTeamMemberStore, selectTeamMemberByServerId } from '@/features/team/members/store/teamMemberStore'
 
+type RouteTemplateOrderIdentitySource = {
+  order_scalar_id?: number | null
+  reference_number?: string | null
+  external_source?: string | null
+}
 
+export const formatRouteTemplateOrderIdentity = (
+  order: RouteTemplateOrderIdentitySource | null | undefined,
+) => {
+  const referenceNumber = order?.reference_number?.trim()
+  const externalSource = order?.external_source?.trim()
+
+  if (externalSource && referenceNumber) {
+    return referenceNumber.startsWith('#') ? referenceNumber : `#${referenceNumber}`
+  }
+
+  return order?.order_scalar_id != null ? `#${order.order_scalar_id}` : '#—'
+}
 
 export const serializeRouteSolutionForTemplate = (
   planId: number | null | undefined,
@@ -101,6 +118,9 @@ export const serializeRouteSolutionForTemplate = (
       return {
         stop_order: stop.stop_order ?? null,
         order_scalar_id: order?.order_scalar_id ?? null,
+        order_identity: formatRouteTemplateOrderIdentity(order),
+        reference_number: order?.reference_number ?? null,
+        external_source: order?.external_source ?? null,
         client_address: formatAddress(order?.client_address),
         expected_arrival_time: formatRouteTime(stop.expected_arrival_time, spansMultipleDays),
         items: items.map((it) => ({

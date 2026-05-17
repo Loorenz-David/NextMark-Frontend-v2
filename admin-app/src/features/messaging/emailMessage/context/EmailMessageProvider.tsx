@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from 'react'
 import { useEffect, useMemo, useState } from 'react'
+import type { Descendant } from 'slate'
 
 import { usePopupManager, useSectionManager } from '@/shared/resource-manager/useResourceManager'
 import {
@@ -17,6 +18,7 @@ import {
   useEmailMessages,
 } from '../hooks'
 import { DEFAULT_EMAIL_TEMPLATE } from '../domain'
+import { normalizeEmailSubjectTemplateValue } from '../domain'
 
 import type { EmailMessageContextValue } from './EmailMessageContext'
 import { EmailMessageContext } from './EmailMessageContext'
@@ -31,6 +33,7 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
   const [activeTrigger, setActiveTrigger] = useState<EventDefinition | null>(null)
   const [enabled, setEnabled] = useState(false) 
   const [permission, setPermission ] = useState(false)
+  const [subject, setSubject] = useState<Descendant[]>(() => normalizeEmailSubjectTemplateValue())
   const [schedule, setSchedule] = useState<MessageScheduleDraft>(createImmediateMessageScheduleDraft)
   const { existingTemplate, filteredTriggers } = useEmailMessageModel({
     templates,
@@ -53,6 +56,14 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
   }, [existingTemplate])
 
   useEffect(() => {
+    setPermission(existingTemplate?.ask_permission ?? false)
+  }, [existingTemplate])
+
+  useEffect(() => {
+    setSubject(normalizeEmailSubjectTemplateValue(existingTemplate?.subject))
+  }, [existingTemplate])
+
+  useEffect(() => {
     setSchedule(mapMessageScheduleFieldsToDraft(existingTemplate, activeTrigger?.key))
   }, [activeTrigger?.key, existingTemplate])
 
@@ -63,13 +74,14 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
             event: activeTrigger.key,
             template: editorValue,
             enable: enabled,
+            subject,
             existing: existingTemplate ?? null,
             ask_permission: permission,
             name: activeTrigger.label,
             schedule,
           })
         : Promise.resolve(false),
-    [activeTrigger, editorValue, enabled, existingTemplate, permission, persistTemplate, schedule],
+    [activeTrigger, editorValue, enabled, existingTemplate, permission, persistTemplate, schedule, subject],
   )
 
   const contextValue: EmailMessageContextValue = useMemo(
@@ -86,6 +98,8 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
       setEnabled,
       setPermission,
       permission,
+      subject,
+      setSubject,
       schedule,
       setSchedule,
       value: editorValue,
@@ -103,6 +117,7 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
       schedule,
       searchQuery,
       sectionManager,
+      subject,
       setValue,
       templates,
     ],

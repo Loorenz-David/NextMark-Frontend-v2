@@ -103,7 +103,7 @@ export function RouteExecutionShellProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     setAssignedRouteScrollTop(0);
     setLastOpenedStopClientId(null);
-  }, [selectedRoute?.routeClientId]);
+  }, [selectedRoute?.client_id]);
 
   const resetRouteSearchQuery = useCallback(() => {
     setRouteSearchQuery("");

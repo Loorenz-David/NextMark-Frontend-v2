@@ -139,6 +139,10 @@ export const useOrderFormSetters = ({
     updateFormState((prev) => ({ ...prev, customer_note: value }));
   };
 
+  const handleHelpToCarry = (value: boolean) => {
+    updateFormState((prev) => ({ ...prev, help_to_carry: value }));
+  };
+
   return {
     handleOrderPlanObjective,
     handleOperationType,
@@ -157,6 +161,7 @@ export const useOrderFormSetters = ({
     handleDeliveryWindows,
     handleGeneralNote,
     handleCustomerNote,
+    handleHelpToCarry,
     mergeExternalClientData,
   };
 };

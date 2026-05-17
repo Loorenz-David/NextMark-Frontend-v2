@@ -24,6 +24,7 @@ export type Order = {
   id?: number;
   client_id: string;
   order_plan_objective?: string | null;
+  help_to_carry?: boolean | null;
   operation_type?: OrderOperationTypes | null;
   order_scalar_id?: number | null;
   reference_number?: string | null;

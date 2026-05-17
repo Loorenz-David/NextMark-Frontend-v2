@@ -138,7 +138,13 @@ export const startItemLabelDownload = ({
       event,
       data: itemsForDownloading(
         items,
-        resolvedOrder?.order_scalar_id,
+        {
+          order_scalar_id: resolvedOrder?.order_scalar_id,
+          reference_number: resolvedOrder?.reference_number,
+          external_source: resolvedOrder?.external_source,
+          help_to_carry: resolvedOrder?.help_to_carry,
+          order_plan_objective: resolvedOrder?.order_plan_objective,
+        },
         routePlanId,
         resolvedOrder?.order_notes,
       ),

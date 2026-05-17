@@ -15,6 +15,7 @@ import {
   ORDER_PLAN_OBJECTIVE_OPTIONS,
   type OrderFormLayoutModel,
 } from "../OrderForm.layout.model";
+import { Switch } from "@/shared/inputs/Switch";
 import { OrderFormDeliveryWindowCalendar } from "./DeliveryWindowCalendar";
 import { Cell, SplitRow } from "@/shared/layout/cells";
 import { ORDER_PLAN_OBJECTIVE_INFO } from "../info/orderPlanObjective.info";
@@ -149,22 +150,37 @@ export const OrderFormFields = ({
 
         {showMore ? (
           <>
-            <div
-              className={`border-t border-[var(--color-border-accent)] cell-default`}
+            <SplitRow
+              splitRowClass={
+                "grid grid-cols-2 divide-x divide-[var(--color-border-accent)]"
+              }
             >
-              <Field
-                warningPlacement="besidesLabel"
-                label="General Note:"
-                info="Internal note visible to the driver."
-              >
-                <InputField
-                  value={formState.general_note}
-                  onChange={formSetters.handleGeneralNote}
-                  fieldClassName={PLAIN_INPUT_CONTAINER_CLASS}
-                  inputClassName={PLAIN_INPUT_CLASS}
-                />
-              </Field>
-            </div>
+              <Cell>
+                <Field
+                  warningPlacement="besidesLabel"
+                  label="General Note:"
+                  info="Internal note visible to the driver."
+                >
+                  <InputField
+                    value={formState.general_note}
+                    onChange={formSetters.handleGeneralNote}
+                    fieldClassName={PLAIN_INPUT_CONTAINER_CLASS}
+                    inputClassName={PLAIN_INPUT_CLASS}
+                  />
+                </Field>
+              </Cell>
+              <Cell>
+                <Field warningPlacement="besidesLabel" label="Help to carry:">
+                  <div className="">
+                    <Switch
+                      value={formState.help_to_carry}
+                      onChange={formSetters.handleHelpToCarry}
+                      ariaLabel="Help to carry"
+                    />
+                  </div>
+                </Field>
+              </Cell>
+            </SplitRow>
 
             <div
               className={`border-t border-[var(--color-border-accent)] cell-default`}

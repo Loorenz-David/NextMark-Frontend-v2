@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { HelpToCarryIcon } from "@/assets/icons";
 import { formatPhone } from "@/shared/data-validation/phoneValidation";
 import { toDateOnly } from "@/shared/data-validation/timeValidation";
 
@@ -38,9 +39,17 @@ export const OrderDetailSummary = ({
     >
       <div className="admin-glass-divider flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
-            Customer Details
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
+              Customer Details
+            </p>
+            {order?.help_to_carry ? (
+              <HelpToCarryIcon
+                className="h-5 w-5 text-[var(--color-muted)]"
+                aria-label="Help to carry required"
+              />
+            ) : null}
+          </div>
         </div>
         {stateName ? (
           <span
@@ -129,7 +138,8 @@ export const OrderDetailSummary = ({
 
       <div className="admin-glass-divider border-t px-5 py-3">
         <p className="text-[0.72rem] text-[var(--color-muted)]">
-          Created at: {toDateOnly(order?.creation_date ?? null) || "missing creation date"}
+          Created at:{" "}
+          {toDateOnly(order?.creation_date ?? null) || "missing creation date"}
         </p>
       </div>
     </div>

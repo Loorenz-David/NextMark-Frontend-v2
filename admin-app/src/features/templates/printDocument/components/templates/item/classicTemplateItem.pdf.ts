@@ -2,7 +2,7 @@ import type { jsPDF } from 'jspdf'
 
 type ClassicItemData = {
   delivery_date?: string | null
-  order_scalar_id?: number | null
+  order_scalar_id?: string | null
   article_number?: string | null
   reference_number?: string | null
   item_type?: string | null
@@ -152,7 +152,7 @@ export const drawClassicTemplateItem = (
   drawHLine(pdf, 0, r2y, W, 0.025, 17, 17, 17)
 
   // ─── Row 2: Order / Item ──────────────────────────────────────────────────
-  const orderLabel = data.order_scalar_id != null ? `# ${data.order_scalar_id}` : '--'
+  const orderLabel = safe(data.order_scalar_id)
   const itemLabel = safe(data.article_number || data.reference_number)
 
   const r2CenterY = r2y + ROW2_H / 2

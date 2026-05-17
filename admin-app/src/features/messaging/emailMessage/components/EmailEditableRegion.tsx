@@ -31,7 +31,7 @@ export const EmailEditableRegion = ({
   helperText,
 }: EmailEditableRegionProps) => {
   const sharedEditorClass =
-    "border-0 bg-transparent px-0 py-0 shadow-none placeholder:text-black/24";
+    "w-full !rounded-[18px] !border !border-black/[0.10] !bg-white/[0.05] !px-4 !py-3 !shadow-none transition placeholder:text-[var(--color-muted)]/70 focus:!border-[#67cfc9]/55 focus:!bg-white/[0.05] focus:!shadow-[0_0_0_3px_rgba(103,207,201,0.12)]";
   const regionViewportClass = singleLine
     ? "h-[56px] min-h-[56px] overflow-x-auto overflow-y-hidden"
     : "min-h-[220px]";
@@ -49,7 +49,7 @@ export const EmailEditableRegion = ({
     <section
       className={`border-b px-4 py-4 transition last:border-b-0 md:px-5 ${
         isActive
-          ? "border-[#67cfc9]/28 bg-[linear-gradient(135deg,rgba(131,204,185,0.08),rgba(92,195,201,0.03))]"
+          ? "border-[#67cfc9]/28"
           : "border-black/[0.08]"
       }`}
     >

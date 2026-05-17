@@ -18,6 +18,8 @@ export const EmailTemplateEditorPage = () => {
     permission,
     setPermission,
     setEnabled,
+    subject,
+    setSubject,
     schedule,
     setSchedule,
     value,
@@ -91,7 +93,12 @@ export const EmailTemplateEditorPage = () => {
         </div>
 
       
-        <EmailTemplateEditor value={value} onChange={setValue} />
+        <EmailTemplateEditor
+          subject={subject}
+          onSubjectChange={setSubject}
+          value={value}
+          onChange={setValue}
+        />
       </div>
     </div>
   )

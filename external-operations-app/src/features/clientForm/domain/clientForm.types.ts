@@ -27,6 +27,8 @@ export type ClientFormStep =
 
 export type ClientFormMeta = {
   order_scalar_id: number;
+  reference_number?: string | null;
+  external_source?: string | null;
   team_timezone?: string | null;
   items: ClientFormItem[];
   expires_at: string;

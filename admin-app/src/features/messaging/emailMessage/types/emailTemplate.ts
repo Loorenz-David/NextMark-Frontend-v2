@@ -7,11 +7,11 @@ export type EmailFooterButton = {
 }
 
 export type EmailTemplateValue = {
-  header: Descendant[]
   body: Descendant[]
   footerButtons: EmailFooterButton[]
 }
 
 export type EmailTemplatePreviewPayload = EmailTemplateValue & {
+  subject?: Descendant[]
   mockData?: Record<string, unknown>
 }

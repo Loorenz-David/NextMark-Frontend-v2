@@ -10,6 +10,8 @@ type OrderFormHeaderProps = {
   operationType: OrderOperationTypes;
   isMobile: boolean;
   orderScalarId?: number | null;
+  referenceNumber?: string | null;
+  externalSource?: string | null;
   onSelectOperationType: (value: string | number) => void;
   onClose?: () => void;
 };
@@ -44,10 +46,22 @@ export const OrderFormHeader = ({
   label,
   operationType,
   orderScalarId,
+  referenceNumber,
+  externalSource,
   isMobile,
   onSelectOperationType,
   onClose,
-}: OrderFormHeaderProps) => (
+}: OrderFormHeaderProps) => {
+  const normalizedReferenceNumber = referenceNumber?.trim();
+  const normalizedExternalSource = externalSource?.trim();
+  const orderIdentity =
+    normalizedExternalSource && normalizedReferenceNumber
+      ? normalizedReferenceNumber
+      : typeof orderScalarId === "number"
+        ? `#${orderScalarId}`
+        : null;
+
+  return (
   <header
     className={`flex items-center justify-between gap-4 border-b border-[var(--color-border)] ${
       isMobile ? "px-3 pb-4 pt-4" : "px-6 py-3"
@@ -65,8 +79,8 @@ export const OrderFormHeader = ({
           </h3>
           <InfoHover content={ORDER_FORM_HEADER_INFO} />
         </div>
-        {typeof orderScalarId === "number" && (
-          <span className="text-[10px]">#{orderScalarId}</span>
+        {orderIdentity && (
+          <span className="text-[10px]">{orderIdentity}</span>
         )}
       </div>
       <div>
@@ -113,4 +127,5 @@ export const OrderFormHeader = ({
       </BasicButton>
     </div>
   </header>
-);
+  );
+};

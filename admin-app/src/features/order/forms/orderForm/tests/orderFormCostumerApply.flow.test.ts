@@ -28,6 +28,7 @@ const buildState = (): OrderFormState => ({
   general_note: "",
   customer_note: "",
   order_notes_source: [],
+  help_to_carry: false,
 });
 
 export const runOrderFormCostumerApplyFlowTests = () => {

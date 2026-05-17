@@ -75,3 +75,7 @@ export { default as QuestionIcon } from "./QuestionIcon.svg?react";
 export { default as DriverIcon } from "./DriverIcon.svg?react";
 export { default as DriverIconSrc } from "./DriverIcon.svg";
 export { default as PrintIcon } from "./PrintIcon.svg?react";
+export { default as HelpToCarryIcon } from "./HelpToCarryIcon.svg?react";
+export { default as HelpToCarryIconSrc } from "./HelpToCarryIcon.svg?raw";
+export { default as AirplaneIcon } from "./AirplaneIcon.svg?react";
+export { default as AirplaneIconSrc } from "./AirplaneIcon.svg?raw";

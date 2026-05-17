@@ -61,6 +61,7 @@ export const normalizeFormStateForSave = (
     delivery_windows: sortDeliveryWindowsUtc(state.delivery_windows),
     delivery_plan_id: state.delivery_plan_id ?? null,
     route_group_id: state.route_group_id ?? null,
+    help_to_carry: state.help_to_carry,
     order_notes: normalizeOrderFormNotesForSave({
       generalNote: state.general_note,
       customerNote: state.customer_note,

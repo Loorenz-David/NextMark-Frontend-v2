@@ -1,4 +1,5 @@
 import type { OrderTrackingData } from "../../../api/orderTracking.api";
+import { getTrackingOrderIdDisplay } from "../domain/orderTrackingDisplay";
 import { TrackingStatusChip } from "./TrackingStatusChip";
 
 interface Props {
@@ -51,8 +52,9 @@ function formatLastUpdated(isoString: string, timezone: string | null): string {
 export function TrackingSummaryCard({ data }: Props) {
   const {
     tracking_number,
+    order_scalar_id,
     reference_number,
-    team_name,
+    external_source,
     team_timezone,
     current_status,
     current_status_label,
@@ -60,8 +62,11 @@ export function TrackingSummaryCard({ data }: Props) {
     timeline,
   } = data;
 
-  const showReference =
-    reference_number && reference_number !== tracking_number;
+  const orderIdDisplay = getTrackingOrderIdDisplay({
+    external_source,
+    reference_number,
+    order_scalar_id,
+  });
 
   const latestEntry =
     timeline.length > 0 ? timeline[timeline.length - 1] : null;
@@ -78,13 +83,9 @@ export function TrackingSummaryCard({ data }: Props) {
         <p className="font-mono text-2xl font-semibold tracking-wide text-[#83ccb9]">
           {tracking_number ?? "—"}
         </p>
-
-        {/* Reference number (if different) */}
-        {showReference && (
-          <p className="text-xs text-white/40">
-            Ref: <span className="font-mono">{reference_number}</span>
-          </p>
-        )}
+        <p className="text-xs text-white/40">
+          Order ID: <span className="font-mono">{orderIdDisplay}</span>
+        </p>
       </div>
 
       {/* Status chip */}

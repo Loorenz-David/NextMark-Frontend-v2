@@ -1,4 +1,5 @@
 import { useCallback, type Dispatch, type SetStateAction } from 'react'
+import type { Descendant } from 'slate'
 
 import { useMessageHandler } from '@shared-message-handler'
 import { buildClientId } from '@/lib/utils/clientId'
@@ -8,6 +9,7 @@ import { useCreateEmailMessage, useUpdateEmailMessage } from '../api/emailMessag
 import { upsertEmailMessage } from '../store/emailMessageStore'
 import type { EmailMessageTemplate, EmailMessageTemplatePayload, TemplateValue } from '../types/emailMessage'
 import type { EventDefinition } from '../domain/emailEvents'
+import { hasEmailSubjectTemplateContent } from '../domain'
 
 
 type UseEmailMessageControllerParams = {
@@ -23,6 +25,7 @@ export const useEmailMessageController = ({ setActiveTrigger }: UseEmailMessageC
     event,
     template,
     enable,
+    subject,
     ask_permission,
     existing,
     name,
@@ -31,6 +34,7 @@ export const useEmailMessageController = ({ setActiveTrigger }: UseEmailMessageC
     event: string
     template: TemplateValue
     enable: boolean
+    subject: Descendant[]
     ask_permission:boolean
     existing?: EmailMessageTemplate | null
     name: string
@@ -42,6 +46,7 @@ export const useEmailMessageController = ({ setActiveTrigger }: UseEmailMessageC
       name,
       event,
       enable,
+      subject: hasEmailSubjectTemplateContent(subject) ? subject : null,
       ask_permission,
       template,
       channel: 'email',

@@ -40,6 +40,7 @@ export type OrderFormState = {
   general_note: string;
   customer_note: string;
   order_notes_source?: unknown[] | null;
+  help_to_carry: boolean;
 };
 
 export type OrderFormPayload = {

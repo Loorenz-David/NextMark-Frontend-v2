@@ -9,6 +9,7 @@ export type EmailMessageTemplate = {
   id?: number 
   client_id: string
   name: string
+  subject?: TemplateValue
   event: string
   enable?: boolean | null
   ask_permission?: boolean | null
@@ -28,6 +29,7 @@ export type EmailMessageTemplateMap = {
 export type EmailMessageTemplatePayload = {
   client_id: string
   name: string
+  subject?: TemplateValue
   event: string
   ask_permission?: boolean | null
   enable?: boolean | null

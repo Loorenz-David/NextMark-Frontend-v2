@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import type { Descendant } from 'slate'
 
 import { usePreviewEmailMessage } from '../api'
 import type { EmailTemplateValue } from '../types'
@@ -14,11 +15,12 @@ export const useEmailTemplatePreview = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const refreshPreview = useCallback(
-    async (value: EmailTemplateValue) => {
+    async (value: EmailTemplateValue, subject?: Descendant[]) => {
       setIsLoading(true)
       try {
         const response = await previewRequest({
           ...value,
+          subject,
           mockData: DEFAULT_MOCK_DATA,
         })
         setHtml(response.data?.html ?? '')

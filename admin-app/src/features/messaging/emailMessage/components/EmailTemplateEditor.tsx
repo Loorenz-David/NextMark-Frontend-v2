@@ -19,9 +19,12 @@ import type {
 } from "../types/emailTemplate";
 import { EmailLabelsPanel } from "./EmailLabelsPanel";
 import { EmailPrimaryCtaEditor } from "./EmailPrimaryCtaEditor";
+import { EmailSubjectEditor } from "./EmailSubjectEditor";
 import { EmailTemplatePreviewCanvas } from "./EmailTemplatePreviewCanvas";
 
 type EmailTemplateEditorProps = {
+  subject: Descendant[];
+  onSubjectChange: (value: Descendant[]) => void;
   value: EmailTemplateValue;
   onChange: (value: EmailTemplateValue) => void;
 };
@@ -60,7 +63,10 @@ const isLabelElement = (
   "type" in element && element.type === "label";
 
 const createEmailRenderElement =
-  (labelLookup: Record<string, string>) =>
+  (
+    labelLookup: Record<string, string>,
+    isHeadlineElement: (element: RenderElementProps["element"]) => boolean,
+  ) =>
   ({ attributes, children, element }: RenderElementProps) => {
     if (isLabelElement(element)) {
       const labelText = labelLookup[element.labelKey] ?? element.labelKey;
@@ -76,6 +82,17 @@ const createEmailRenderElement =
       );
     }
 
+    if (isHeadlineElement(element)) {
+      return (
+        <p
+          {...attributes}
+          className="mb-3 min-h-[2.25rem] text-[1.65rem] font-semibold leading-9 text-[var(--color-text)]"
+        >
+          {children}
+        </p>
+      );
+    }
+
     return (
       <p {...attributes} className="min-h-[1.2rem]">
         {children}
@@ -84,14 +101,16 @@ const createEmailRenderElement =
   };
 
 export const EmailTemplateEditor = ({
+  subject,
+  onSubjectChange,
   value,
   onChange,
 }: EmailTemplateEditorProps) => {
-  const [activeRegion, setActiveRegion] = useState<"header" | "body" | null>(
+  const [activeRegion, setActiveRegion] = useState<"subject" | "body" | null>(
     null,
   );
 
-  const headerEditor = useMemo(() => withLabels(withReact(createEditor())), []);
+  const subjectEditor = useMemo(() => withLabels(withReact(createEditor())), []);
   const bodyEditor = useMemo(() => withLabels(withReact(createEditor())), []);
   const labelLookup = useMemo(
     () =>
@@ -101,14 +120,21 @@ export const EmailTemplateEditor = ({
     [],
   );
   const renderElement = useMemo(
-    () => createEmailRenderElement(labelLookup),
-    [labelLookup],
+    () =>
+      createEmailRenderElement(labelLookup, (element) => {
+        try {
+          return ReactEditor.findPath(bodyEditor, element)[0] === 0;
+        } catch {
+          return false;
+        }
+      }),
+    [bodyEditor, labelLookup],
   );
 
   const primaryButton = getPrimaryFooterButton(value.footerButtons);
 
   const handleLabelSelect = (label: LabelDefinition) => {
-    const targetEditor = activeRegion === "header" ? headerEditor : bodyEditor;
+    const targetEditor = activeRegion === "subject" ? subjectEditor : bodyEditor;
 
     ReactEditor.focus(targetEditor);
     insertLabel(targetEditor, label.id);
@@ -132,25 +158,22 @@ export const EmailTemplateEditor = ({
           Email content
         </p>
         <p className="text-sm text-[var(--color-muted)]">
-          Compose directly inside the live preview. Focus the header or body,
-          then use labels and the CTA panel to build a responsive email that
-          reads well on both mobile and desktop.
+          Compose directly inside the live preview. The first paragraph is the
+          email headline; following paragraphs use normal body text.
         </p>
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.1fr)_minmax(340px,0.9fr)]">
         <EmailTemplatePreviewCanvas
-          headerEditor={headerEditor}
-          headerValue={value.header}
-          onHeaderChange={(header: Descendant[]) =>
-            onChange({ ...value, header })
-          }
+          subjectEditor={subjectEditor}
+          subject={subject}
+          onSubjectChange={onSubjectChange}
           bodyEditor={bodyEditor}
           bodyValue={value.body}
           onBodyChange={(body: Descendant[]) => onChange({ ...value, body })}
           renderElement={renderElement}
           activeRegion={activeRegion}
-          onHeaderFocus={() => setActiveRegion("header")}
+          onSubjectFocus={() => setActiveRegion("subject")}
           onBodyFocus={() => setActiveRegion("body")}
           primaryButtonLabel={primaryButton?.label ?? ""}
         />
@@ -158,7 +181,6 @@ export const EmailTemplateEditor = ({
         <div className="flex flex-col gap-5">
           <EmailLabelsPanel
             labels={allowedLabels}
-            activeRegion={activeRegion}
             onSelect={handleLabelSelect}
           />
 

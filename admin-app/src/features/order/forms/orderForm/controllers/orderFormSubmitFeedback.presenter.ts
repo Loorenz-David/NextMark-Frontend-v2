@@ -77,7 +77,15 @@ export const presentOrderFormSubmitOutcome = ({
       event: "item_created",
       data: itemsForDownloading(
         createdItems,
-        result.createdOrderScalarId,
+        {
+          order_scalar_id: result.createdOrderScalarId,
+          reference_number: normalizedCurrent?.reference_number,
+          external_source: normalizedCurrent?.external_source,
+          help_to_carry: result.createdOrder?.help_to_carry,
+          order_plan_objective:
+            result.createdOrder?.order_plan_objective ??
+            normalizedCurrent?.order_plan_objective,
+        },
         normalizedCurrent?.delivery_plan_id,
         normalizedCurrent?.order_notes,
       ),

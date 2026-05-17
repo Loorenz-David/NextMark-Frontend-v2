@@ -10,7 +10,9 @@ export interface TrackingTimelineEntry {
 
 export interface OrderTrackingData {
   tracking_number: string | null;
+  order_scalar_id: number | null;
   reference_number: string | null;
+  external_source: string | null;
   team_name: string;
   team_timezone: string | null;
   current_status: string | null;

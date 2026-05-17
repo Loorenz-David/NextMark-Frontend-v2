@@ -14,6 +14,9 @@ type RouteItem = {
 type RouteOrder = {
   stop_order?: number | null
   order_scalar_id?: number | null
+  order_identity?: string | null
+  reference_number?: string | null
+  external_source?: string | null
   client_address?: string | null
   expected_arrival_time?: string | null
   items?: RouteItem[] | null
@@ -70,6 +73,7 @@ const _sampleOrders: RouteOrder[] = [
   {
     stop_order: 1,
     order_scalar_id: 10234,
+    order_identity: '#10234',
     client_address: '14 North Bridge Ave',
     expected_arrival_time: '08:45',
     items: [
@@ -80,6 +84,7 @@ const _sampleOrders: RouteOrder[] = [
   {
     stop_order: 2,
     order_scalar_id: 10235,
+    order_identity: '#10235',
     client_address: '8B Lake Park Road',
     expected_arrival_time: '09:20',
     items: [
@@ -130,6 +135,19 @@ const safe = (v: unknown): string => {
 const fmtNum = (v: number | null | undefined): string => {
   if (typeof v !== 'number' || Number.isNaN(v)) return '--'
   return Number.isInteger(v) ? String(v) : v.toFixed(2)
+}
+
+const formatRouteOrderIdentity = (order: RouteOrder): string => {
+  const preparedIdentity = order.order_identity?.trim()
+  if (preparedIdentity) return preparedIdentity
+
+  const referenceNumber = order.reference_number?.trim()
+  const externalSource = order.external_source?.trim()
+  if (externalSource && referenceNumber) {
+    return referenceNumber.startsWith('#') ? referenceNumber : `#${referenceNumber}`
+  }
+
+  return order.order_scalar_id != null ? `#${order.order_scalar_id}` : '#—'
 }
 
 // formatMetric normalises volume to '㎥' (U+33A5) which is outside Latin-1.
@@ -438,7 +456,7 @@ export const drawClassicTemplateRoute = (
     const hdrY = y + HDR_H / 2 + capH(FS.stopHdr) / 2
     setFont(pdf, FS.stopHdr, true, DARK)
     pdf.text(safe(order.stop_order), M + CARD_PAD_H, hdrY)
-    pdf.text(`#${order.order_scalar_id ?? '—'}`, M + CARD_PAD_H + 1.2, hdrY)
+    pdf.text(formatRouteOrderIdentity(order), M + CARD_PAD_H + 1.2, hdrY)
 
     // Address — clip to available space
     const etaText = `ETA ${safe(order.expected_arrival_time)}`

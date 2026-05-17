@@ -3,17 +3,13 @@ import type { LabelDefinition } from "@/shared/inputs/LabelPicker/labelTypes";
 
 type EmailLabelsPanelProps = {
   labels: LabelDefinition[];
-  activeRegion: "header" | "body" | null;
   onSelect: (label: LabelDefinition) => void;
 };
 
 export const EmailLabelsPanel = ({
   labels,
-  activeRegion,
   onSelect,
 }: EmailLabelsPanelProps) => {
-  const resolvedRegion = activeRegion ?? "body";
-
   return (
     <aside className="admin-glass-panel-strong rounded-[26px] p-5 shadow-none">
       <div className="mt-4 flex flex-col gap-2">
@@ -24,8 +20,8 @@ export const EmailLabelsPanel = ({
           Insert dynamic values
         </h3>
         <p className="text-sm leading-6 text-[var(--color-muted)]">
-          Focus the email header or body on the left, then use these
-          placeholders to personalize the template.
+          Focus the subject or message on the left, then use these placeholders
+          to personalize the template.
         </p>
       </div>
 

@@ -5,3 +5,8 @@ declare module '*.svg?react' {
   const Component: ComponentType<SVGProps<SVGSVGElement>>
   export default Component
 }
+
+declare module '*.svg?raw' {
+  const content: string
+  export default content
+}
