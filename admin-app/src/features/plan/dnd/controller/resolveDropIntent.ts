@@ -273,6 +273,25 @@ export const resolveDropIntent = ({
       };
     }
 
+    if (overType === "unschedule" && selectionModeEnabled) {
+      if (!isActiveOrderSelected) {
+        return {
+          type: "warning",
+          status: 400,
+          message: "Drag a selected order when selection mode is active.",
+        };
+      }
+
+      return {
+        type: "intent",
+        intent: {
+          kind: "UNSCHEDULE_ORDERS_BATCH",
+          selection: buildSelectionBatchPayload(selectionState),
+          origin: "order_list",
+        },
+      };
+    }
+
     return {
       type: "intent",
       intent: derivePlanDndIntent({
@@ -286,6 +305,17 @@ export const resolveDropIntent = ({
   }
 
   if (activeType === "order_batch") {
+    if (overType === "unschedule" && selectionModeEnabled) {
+      return {
+        type: "intent",
+        intent: {
+          kind: "UNSCHEDULE_ORDERS_BATCH",
+          selection: buildSelectionBatchPayload(selectionState),
+          origin: "order_list",
+        },
+      };
+    }
+
     if (overType !== "plan" || !overId || !selectionModeEnabled) {
       return { type: "noop" };
     }
@@ -302,6 +332,29 @@ export const resolveDropIntent = ({
   }
 
   if (activeType === "order_group") {
+    if (overType === "unschedule") {
+      const manualIds = toPositiveIntArray(activeData.orderIds);
+      if (!manualIds.length) {
+        return { type: "noop" };
+      }
+
+      if (
+        manualIds.length > maxBatchIds &&
+        !confirmLargeBatch(manualIds.length)
+      ) {
+        return { type: "noop" };
+      }
+
+      return {
+        type: "intent",
+        intent: {
+          kind: "UNSCHEDULE_ORDERS_BATCH",
+          selection: buildManualBatchSelection(manualIds),
+          origin: "order_list",
+        },
+      };
+    }
+
     if (overType !== "plan" || !overId) {
       return { type: "noop" };
     }
@@ -384,6 +437,29 @@ export const resolveDropIntent = ({
         intent: {
           kind: "ASSIGN_ORDERS_TO_PLAN_BATCH",
           planClientId: overId,
+          selection: buildManualBatchSelection(manualIds),
+          origin: "route_group",
+        },
+      };
+    }
+
+    if (overType === "unschedule") {
+      const manualIds = resolveManualIdsForActive(activeType, activeData);
+      if (!manualIds.length) {
+        return { type: "noop" };
+      }
+
+      if (
+        manualIds.length > maxBatchIds &&
+        !confirmLargeBatch(manualIds.length)
+      ) {
+        return { type: "noop" };
+      }
+
+      return {
+        type: "intent",
+        intent: {
+          kind: "UNSCHEDULE_ORDERS_BATCH",
           selection: buildManualBatchSelection(manualIds),
           origin: "route_group",
         },

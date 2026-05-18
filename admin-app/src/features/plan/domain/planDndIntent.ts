@@ -26,9 +26,18 @@ export type PlanDndIntent =
       planClientId: string;
     }
   | {
+      kind: "UNSCHEDULE_ORDER";
+      orderClientId: string;
+    }
+  | {
       kind: "ASSIGN_ORDERS_TO_PLAN_BATCH";
       selection: OrderBatchSelectionPayload;
       planClientId: string;
+      origin?: "order_list" | "route_group";
+    }
+  | {
+      kind: "UNSCHEDULE_ORDERS_BATCH";
+      selection: OrderBatchSelectionPayload;
       origin?: "order_list" | "route_group";
     }
   | null;
@@ -66,6 +75,17 @@ export function derivePlanDndIntent(params: {
       kind: "ASSIGN_ORDER_TO_PLAN",
       orderClientId: activeOrderClientId,
       planClientId: overId,
+    };
+  }
+
+  if (
+    (activeType === "order" || activeType === "route_stop") &&
+    overType === "unschedule" &&
+    activeOrderClientId
+  ) {
+    return {
+      kind: "UNSCHEDULE_ORDER",
+      orderClientId: activeOrderClientId,
     };
   }
 

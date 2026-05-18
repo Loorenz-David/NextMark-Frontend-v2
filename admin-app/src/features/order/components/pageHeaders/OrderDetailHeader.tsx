@@ -1,8 +1,19 @@
+import { useEffect, useRef, useState } from "react";
+
 import { ArchiveIcon, DocumentIcon, EditIcon } from "@/assets/icons";
+import { DraggableOrderDetailIcon } from "./DraggableOrderDetailIcon";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { DropdownButton } from "@/shared/buttons/DropdownButton";
 import { CounterBadge } from "@/shared/layout/CounterBadge";
 import { useOrderDetailHeaderPlanMeta } from "@/features/plan";
+import {
+  ORDER_DETAIL_SUBHEADER_SWEEP_EVENT,
+  type OrderDetailSubheaderSweepPayload,
+} from "../../domain/orderDetailHeaderAnimation.events";
+
+import "./orderDetailHeader.animations.css";
+
+const SUBHEADER_SWEEP_DURATION_MS = 1806;
 
 import type { OrderDetailHeaderBehavior } from "../../domain/orderDetailPayload.types";
 import { useOrderStateRegistry } from "../../domain/useOrderStateRegistry";
@@ -52,9 +63,13 @@ export const OrderDetailHeader = ({
         <div className="relative flex items-start justify-between gap-4 px-5 py-4">
           <div className="flex flex-col">
             <div className="flex min-w-0 items-center gap-3.5">
-              <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.1rem] border border-white/12 bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[0_12px_28px_rgba(131,204,185,0.1)]">
-                <DocumentIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
-              </div>
+              {order ? (
+                <DraggableOrderDetailIcon order={order} />
+              ) : (
+                <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.1rem] border border-white/12 bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[0_12px_28px_rgba(131,204,185,0.1)]">
+                  <DocumentIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
+                </div>
+              )}
               <HeaderTitle
                 order={order}
                 headerBehavior={headerBehavior}
@@ -160,6 +175,43 @@ const HeaderTitle = ({
   headerBehavior?: OrderDetailHeaderBehavior | null;
   contextRouteGroupId?: number | null;
 }) => {
+  const [isSubheaderSweepActive, setIsSubheaderSweepActive] = useState(false);
+  const sweepTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const handleSweep = (event: Event) => {
+      const detail = (event as CustomEvent<OrderDetailSubheaderSweepPayload>)
+        .detail;
+      if (!detail?.orderClientId || !order?.client_id) {
+        return;
+      }
+      if (detail.orderClientId !== order.client_id) {
+        return;
+      }
+
+      if (sweepTimeoutRef.current) {
+        clearTimeout(sweepTimeoutRef.current);
+      }
+
+      setIsSubheaderSweepActive(true);
+      sweepTimeoutRef.current = setTimeout(() => {
+        setIsSubheaderSweepActive(false);
+        sweepTimeoutRef.current = null;
+      }, SUBHEADER_SWEEP_DURATION_MS);
+    };
+
+    window.addEventListener(ORDER_DETAIL_SUBHEADER_SWEEP_EVENT, handleSweep);
+    return () => {
+      if (sweepTimeoutRef.current) {
+        clearTimeout(sweepTimeoutRef.current);
+      }
+      window.removeEventListener(
+        ORDER_DETAIL_SUBHEADER_SWEEP_EVENT,
+        handleSweep,
+      );
+    };
+  }, [order?.client_id]);
+
   const title =
     order?.external_source && order.reference_number
       ? order.reference_number
@@ -190,15 +242,35 @@ const HeaderTitle = ({
         ) : null}
       </div>
       {shouldRenderPlanMeta ? (
-        <div className="mt-0.5 flex flex-wrap items-center gap-x-3  text-[0.72rem] text-[var(--color-muted)]">
-          <span className="truncate max-w-[150px]">
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-[0.72rem] text-[var(--color-muted)]">
+          <span
+            className={`truncate max-w-[150px] ${
+              isSubheaderSweepActive ? "order-detail-subheader-sweep-text" : ""
+            }`}
+          >
             Plan: {planMeta.isUnscheduled ? "Unscheduled" : planMeta.planLabel}
           </span>
           {planMeta.planDateLabel ? (
-            <span>Date: {planMeta.planDateLabel}</span>
+            <span
+              className={
+                isSubheaderSweepActive
+                  ? "order-detail-subheader-sweep-text"
+                  : ""
+              }
+            >
+              Date: {planMeta.planDateLabel}
+            </span>
           ) : null}
           {planMeta.arrivalTimeLabel ? (
-            <span>Arrival: {planMeta.arrivalTimeLabel}</span>
+            <span
+              className={
+                isSubheaderSweepActive
+                  ? "order-detail-subheader-sweep-text"
+                  : ""
+              }
+            >
+              Arrival: {planMeta.arrivalTimeLabel}
+            </span>
           ) : null}
         </div>
       ) : null}

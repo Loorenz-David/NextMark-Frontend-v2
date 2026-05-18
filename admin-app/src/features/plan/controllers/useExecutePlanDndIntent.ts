@@ -47,7 +47,10 @@ export const useExecutePlanDndIntent = () => {
       if (!payload?.items) return [];
       const normalized = normalizeItemsForOrder(payload.items, orderId);
       replaceItemsForOrder(orderId, normalized);
-      setItemOrderSyncMeta(orderId, { itemsUpdatedAt: null, lastFetchedAt: Date.now() });
+      setItemOrderSyncMeta(orderId, {
+        itemsUpdatedAt: null,
+        lastFetchedAt: Date.now(),
+      });
       return selectItemsByOrderId(orderId)(useItemStore.getState());
     } catch {
       return [];
@@ -115,7 +118,9 @@ export const useExecutePlanDndIntent = () => {
 
       if (intent.origin === "route_group") {
         intent.selection.manual_order_ids.forEach((orderId) => {
-          const order = selectOrderByServerId(orderId)(useOrderStore.getState());
+          const order = selectOrderByServerId(orderId)(
+            useOrderStore.getState(),
+          );
           if (order?.id) {
             const orderId = order.id;
             loadOrderItemsForLabel(orderId).then((items) => {
@@ -140,6 +145,17 @@ export const useExecutePlanDndIntent = () => {
         showIncomingRouteGroupPlaceholders: intent.origin === "route_group",
       });
       return { droppedPlanClientId: intent.planClientId, success };
+    } else if (intent.kind === "UNSCHEDULE_ORDER") {
+      const success = await updateOrderDeliveryPlan(intent.orderClientId, null);
+      return { droppedPlanClientId: null as string | null, success };
+    } else if (intent.kind === "UNSCHEDULE_ORDERS_BATCH") {
+      const success = await updateOrdersDeliveryPlanBatch({
+        planId: null,
+        planType: null,
+        selection: intent.selection,
+        showIncomingRouteGroupPlaceholders: false,
+      });
+      return { droppedPlanClientId: null as string | null, success };
     } else if (intent.kind === "MOVE_ORDER_TO_ROUTE_GROUP") {
       const result = await moveOrderToRouteGroup({
         planId: intent.planId,

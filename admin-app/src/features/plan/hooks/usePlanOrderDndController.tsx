@@ -8,10 +8,15 @@ import type {
 import { useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
 import type { Order } from "@/features/order/types/order";
 import { useOrderSelectionStore } from "@/features/order/store/orderSelection.store";
+import {
+  selectOrderByClientId,
+  useOrderStore,
+} from "@/features/order/store/order.store";
 import { buildBatchSelectionPayload } from "@/features/order/store/orderSelectionHooks.store";
 import { resolveSelectionAuthorityBatchCount } from "@/features/order/domain/orderBatchTargetIds";
 import type { RouteSolutionStop } from "@/features/plan/routeGroup/types/routeSolutionStop";
 import { useMessageHandler } from "@shared-message-handler";
+import { ORDER_DETAIL_SUBHEADER_SWEEP_EVENT } from "@/features/order/domain/orderDetailHeaderAnimation.events";
 
 import { useExecutePlanDndIntent } from "@/features/plan/controllers/useExecutePlanDndIntent";
 import type { PlanDndIntent } from "@/features/plan/domain/planDndIntent";
@@ -22,7 +27,10 @@ import {
 import { resolvePlanIdByRouteGroupId } from "@/features/plan/dnd/domain/resolveRouteGroupPlanId";
 import { resolveRouteGroupIdByRouteSolutionId } from "@/features/plan/dnd/domain/resolveRouteSolutionRouteGroupId";
 import { resolveRouteSolutionPlanClientId } from "@/features/plan/dnd/domain/resolveRouteSolutionPlanClientId";
-import type { PlanDropFeedback } from "@/shared/resource-manager/ResourceManagerContext";
+import type {
+  PlanDropFeedback,
+  UnscheduleDropFeedback,
+} from "@/shared/resource-manager/ResourceManagerContext";
 import {
   selectRouteSolutionStopsBySolutionId,
   useRouteSolutionStopStore,
@@ -61,6 +69,8 @@ export const usePlanOrderDndController = () => {
   const [activeDrag, setActiveDrag] = useState<ActiveDrag>(null);
   const [planDropFeedback, setPlanDropFeedback] =
     useState<PlanDropFeedback | null>(null);
+  const [unscheduleDropFeedback, setUnscheduleDropFeedback] =
+    useState<UnscheduleDropFeedback | null>(null);
   const [routeReorderPreview, setRouteReorderPreview] =
     useState<RouteReorderPreview | null>(null);
   const pendingIntentRef = useRef<PlanDndIntent>(null);
@@ -71,6 +81,9 @@ export const usePlanOrderDndController = () => {
   const dropFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
+  const unscheduleDropFeedbackTimeoutRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const { isMobile } = useMobile();
   const { showMessage } = useMessageHandler();
   const { execute } = useExecutePlanDndIntent();
@@ -95,10 +108,27 @@ export const usePlanOrderDndController = () => {
     }, timeoutMs);
   };
 
+  const setUnscheduleDropFeedbackWithTimeout = (
+    feedback: UnscheduleDropFeedback,
+    timeoutMs = 900,
+  ) => {
+    if (unscheduleDropFeedbackTimeoutRef.current) {
+      clearTimeout(unscheduleDropFeedbackTimeoutRef.current);
+    }
+    setUnscheduleDropFeedback(feedback);
+    unscheduleDropFeedbackTimeoutRef.current = setTimeout(() => {
+      setUnscheduleDropFeedback(null);
+      unscheduleDropFeedbackTimeoutRef.current = null;
+    }, timeoutMs);
+  };
+
   useEffect(() => {
     return () => {
       if (dropFeedbackTimeoutRef.current) {
         clearTimeout(dropFeedbackTimeoutRef.current);
+      }
+      if (unscheduleDropFeedbackTimeoutRef.current) {
+        clearTimeout(unscheduleDropFeedbackTimeoutRef.current);
       }
       document.body.style.cursor = "";
     };
@@ -177,10 +207,16 @@ export const usePlanOrderDndController = () => {
     intent: Exclude<PlanDndIntent, null>,
     selectionState: ReturnType<typeof useOrderSelectionStore.getState>,
   ): number => {
-    if (intent.kind === "ASSIGN_ORDER_TO_PLAN") {
+    if (
+      intent.kind === "ASSIGN_ORDER_TO_PLAN" ||
+      intent.kind === "UNSCHEDULE_ORDER"
+    ) {
       return 1;
     }
-    if (intent.kind !== "ASSIGN_ORDERS_TO_PLAN_BATCH") {
+    if (
+      intent.kind !== "ASSIGN_ORDERS_TO_PLAN_BATCH" &&
+      intent.kind !== "UNSCHEDULE_ORDERS_BATCH"
+    ) {
       return 0;
     }
 
@@ -203,6 +239,17 @@ export const usePlanOrderDndController = () => {
       return intent.planClientId;
     }
     return null;
+  };
+
+  const emitOrderDetailHeaderSweep = (orderClientId: string) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    window.dispatchEvent(
+      new CustomEvent(ORDER_DETAIL_SUBHEADER_SWEEP_EVENT, {
+        detail: { orderClientId },
+      }),
+    );
   };
 
   const onDragStart = (event: DragStartEvent) => {
@@ -252,6 +299,35 @@ export const usePlanOrderDndController = () => {
         });
       } else {
         setActiveDrag({ type: "order", order: draggedOrder });
+      }
+      return;
+    }
+    if (active.data.current?.type === "order") {
+      const draggedOrderClientId =
+        typeof active.data.current?.id === "string"
+          ? active.data.current.id
+          : String(active.id ?? "");
+      const draggedOrder =
+        draggedOrderClientId.length > 0
+          ? selectOrderByClientId(draggedOrderClientId)(
+              useOrderStore.getState(),
+            )
+          : null;
+      if (draggedOrder) {
+        const selectionState = useOrderSelectionStore.getState();
+        if (
+          selectionState.isSelectionMode &&
+          hasSelectionIntent(selectionState) &&
+          isOrderSelectedForBatch(draggedOrder, selectionState)
+        ) {
+          setActiveDrag({
+            type: "order_batch",
+            selectedCount: resolveSelectionAuthorityBatchCount(selectionState),
+            isLoading: selectionState.resolvedSelection.isLoading,
+          });
+        } else {
+          setActiveDrag({ type: "order", order: draggedOrder });
+        }
       }
       return;
     }
@@ -445,6 +521,9 @@ export const usePlanOrderDndController = () => {
     const isAssignIntent =
       intent.kind === "ASSIGN_ORDER_TO_PLAN" ||
       intent.kind === "ASSIGN_ORDERS_TO_PLAN_BATCH";
+    const isUnscheduleIntent =
+      intent.kind === "UNSCHEDULE_ORDER" ||
+      intent.kind === "UNSCHEDULE_ORDERS_BATCH";
     let optimisticToken = "";
 
     if (isAssignIntent) {
@@ -463,7 +542,25 @@ export const usePlanOrderDndController = () => {
       });
     }
 
+    if (isUnscheduleIntent) {
+      optimisticToken = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      setUnscheduleDropFeedbackWithTimeout({
+        movedCount: resolveOptimisticMovedCount(intent, selectionState),
+        status: "success",
+        token: optimisticToken,
+      });
+    }
+
     const result = await execute(intent);
+    if (
+      result?.success &&
+      intent.kind === "ASSIGN_ORDER_TO_PLAN" &&
+      activeData?.type === "order" &&
+      activeData?.dragSource === "order_detail_header"
+    ) {
+      emitOrderDetailHeaderSweep(intent.orderClientId);
+    }
+
     if (isAssignIntent && !result?.success) {
       const planClientId = getAssignIntentPlanClientId(intent);
       if (!planClientId) {
@@ -473,6 +570,19 @@ export const usePlanOrderDndController = () => {
       setPlanDropFeedbackWithTimeout(
         {
           planClientId,
+          movedCount: resolveOptimisticMovedCount(intent, selectionState),
+          status: "error",
+          token:
+            optimisticToken ||
+            `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        },
+        1200,
+      );
+    }
+
+    if (isUnscheduleIntent && !result?.success) {
+      setUnscheduleDropFeedbackWithTimeout(
+        {
           movedCount: resolveOptimisticMovedCount(intent, selectionState),
           status: "error",
           token:
@@ -493,6 +603,7 @@ export const usePlanOrderDndController = () => {
     onDragCancel,
     sensors,
     planDropFeedback,
+    unscheduleDropFeedback,
     activeDrag,
     routeReorderPreview,
   };

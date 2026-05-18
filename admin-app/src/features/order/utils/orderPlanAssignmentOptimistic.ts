@@ -41,8 +41,8 @@ export const collectOptimisticOrderPlanAssignmentEntries = (
 export const applyOptimisticOrderPlanAssignment = (
   entries: OptimisticOrderPlanAssignmentEntry[],
   params: {
-    targetPlanId: number;
-    planType: string;
+    targetPlanId: number | null;
+    planType: string | null;
     clearRouteGroup?: boolean;
   },
 ) => {

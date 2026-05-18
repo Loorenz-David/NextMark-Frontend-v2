@@ -1,48 +1,63 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import { BackArrowIcon2, FilteredIcon } from '@/assets/icons'
-import { FloatingPopover } from '@/shared/popups/FloatingPopover/FloatingPopover'
-import { CustomDatePickerCalendarPanel } from '@/shared/inputs/CustomDatePicker/components/CustomDatePickerCalendarPanel'
-import type { PlanQueryFilters } from '@/features/plan/types/planMeta'
+import { BackArrowIcon2, FilteredIcon } from "@/assets/icons";
+import { FloatingPopover } from "@/shared/popups/FloatingPopover/FloatingPopover";
+import { CustomDatePickerCalendarPanel } from "@/shared/inputs/CustomDatePicker/components/CustomDatePickerCalendarPanel";
+import type { PlanQueryFilters } from "@/features/plan/types/planMeta";
 
-import { PlanDateFilterOverlay } from './PlanDateFilterOverlay'
-import type { PlanDateFilterMode, PlanDateFilterPayload } from './domain/planDateFilter.types'
-import { usePlanDateFilterController } from './usePlanDateFilterController'
+import { PlanDateFilterOverlay } from "./PlanDateFilterOverlay";
+import type {
+  PlanDateFilterMode,
+  PlanDateFilterPayload,
+} from "./domain/planDateFilter.types";
+import { usePlanDateFilterController } from "./usePlanDateFilterController";
 
 type PlanDateFilterBarProps = {
-  onFiltersChange?: (filters: PlanQueryFilters) => void
-  onSelectionChange?: (payload: PlanDateFilterPayload) => void
-}
+  onFiltersChange?: (filters: PlanQueryFilters) => void;
+  onSelectionChange?: (payload: PlanDateFilterPayload) => void;
+};
 
-type PickerTarget = 'single' | 'start' | 'end' | null
+type PickerTarget = "single" | "start" | "end" | null;
 
-export const PlanDateFilterBar = ({ onFiltersChange, onSelectionChange }: PlanDateFilterBarProps) => {
-  const controller = usePlanDateFilterController({ onFiltersChange, onSelectionChange })
-  const [overlayOpen, setOverlayOpen] = useState(false)
-  const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null)
-  const [singleVisibleMonth, setSingleVisibleMonth] = useState<Date>(controller.singleDate)
-  const [rangeStartVisibleMonth, setRangeStartVisibleMonth] = useState<Date>(controller.rangeStart)
-  const [rangeEndVisibleMonth, setRangeEndVisibleMonth] = useState<Date>(controller.rangeEnd)
+export const PlanDateFilterBar = ({
+  onFiltersChange,
+  onSelectionChange,
+}: PlanDateFilterBarProps) => {
+  const controller = usePlanDateFilterController({
+    onFiltersChange,
+    onSelectionChange,
+  });
+  const [overlayOpen, setOverlayOpen] = useState(false);
+  const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
+  const [singleVisibleMonth, setSingleVisibleMonth] = useState<Date>(
+    controller.singleDate,
+  );
+  const [rangeStartVisibleMonth, setRangeStartVisibleMonth] = useState<Date>(
+    controller.rangeStart,
+  );
+  const [rangeEndVisibleMonth, setRangeEndVisibleMonth] = useState<Date>(
+    controller.rangeEnd,
+  );
 
   const openSinglePicker = () => {
-    setSingleVisibleMonth(controller.singleDate)
-    setPickerTarget('single')
-  }
+    setSingleVisibleMonth(controller.singleDate);
+    setPickerTarget("single");
+  };
 
   const openRangeStartPicker = () => {
-    setRangeStartVisibleMonth(controller.rangeStart)
-    setPickerTarget('start')
-  }
+    setRangeStartVisibleMonth(controller.rangeStart);
+    setPickerTarget("start");
+  };
 
   const openRangeEndPicker = () => {
-    setRangeEndVisibleMonth(controller.rangeEnd)
-    setPickerTarget('end')
-  }
+    setRangeEndVisibleMonth(controller.rangeEnd);
+    setPickerTarget("end");
+  };
 
-  const hideArrows = controller.mode === 'range'
+  const hideArrows = controller.mode === "range";
 
   return (
-    <div className="flex min-w-[260px] flex-1 items-center">
+    <div className="flex min-w-[200px] flex-1 items-center">
       <div className="flex w-[200px] items-center rounded-full border border-[rgba(112,222,208,0.32)]  px-1.5  shadow-[0_12px_26px_rgba(0,0,0,0.18)]">
         {!hideArrows ? (
           <button
@@ -56,10 +71,12 @@ export const PlanDateFilterBar = ({ onFiltersChange, onSelectionChange }: PlanDa
         ) : null}
 
         <div className="flex min-w-0 flex-1 items-center text-center">
-          {controller.mode !== 'range' ? (
+          {controller.mode !== "range" ? (
             <FloatingPopover
-              open={pickerTarget === 'single'}
-              onOpenChange={(isOpen) => setPickerTarget(isOpen ? 'single' : null)}
+              open={pickerTarget === "single"}
+              onOpenChange={(isOpen) =>
+                setPickerTarget(isOpen ? "single" : null)
+              }
               renderInPortal={true}
               floatingClassName="z-[220]"
               reference={
@@ -73,15 +90,15 @@ export const PlanDateFilterBar = ({ onFiltersChange, onSelectionChange }: PlanDa
               }
             >
               <CustomDatePickerCalendarPanel
-                isOpen={pickerTarget === 'single'}
+                isOpen={pickerTarget === "single"}
                 value={controller.singleDate}
                 visibleMonth={singleVisibleMonth}
                 onVisibleMonthChange={setSingleVisibleMonth}
                 onSelect={(date) => {
                   if (date instanceof Date) {
-                    controller.setSingleDate(date)
+                    controller.setSingleDate(date);
                   }
-                  setPickerTarget(null)
+                  setPickerTarget(null);
                 }}
                 onRequestClose={() => setPickerTarget(null)}
               />
@@ -89,8 +106,10 @@ export const PlanDateFilterBar = ({ onFiltersChange, onSelectionChange }: PlanDa
           ) : (
             <div className="flex w-full items-center gap-2 px-1">
               <FloatingPopover
-                open={pickerTarget === 'start'}
-                onOpenChange={(isOpen) => setPickerTarget(isOpen ? 'start' : null)}
+                open={pickerTarget === "start"}
+                onOpenChange={(isOpen) =>
+                  setPickerTarget(isOpen ? "start" : null)
+                }
                 renderInPortal={true}
                 floatingClassName="z-[220]"
                 reference={
@@ -104,23 +123,25 @@ export const PlanDateFilterBar = ({ onFiltersChange, onSelectionChange }: PlanDa
                 }
               >
                 <CustomDatePickerCalendarPanel
-                  isOpen={pickerTarget === 'start'}
+                  isOpen={pickerTarget === "start"}
                   value={controller.rangeStart}
                   visibleMonth={rangeStartVisibleMonth}
                   onVisibleMonthChange={setRangeStartVisibleMonth}
                   onSelect={(date) => {
                     if (date instanceof Date) {
-                      controller.setRangeStart(date)
+                      controller.setRangeStart(date);
                     }
-                    setPickerTarget(null)
+                    setPickerTarget(null);
                   }}
                   onRequestClose={() => setPickerTarget(null)}
                 />
               </FloatingPopover>
               <span className="text-[var(--color-muted)]/75">|</span>
               <FloatingPopover
-                open={pickerTarget === 'end'}
-                onOpenChange={(isOpen) => setPickerTarget(isOpen ? 'end' : null)}
+                open={pickerTarget === "end"}
+                onOpenChange={(isOpen) =>
+                  setPickerTarget(isOpen ? "end" : null)
+                }
                 renderInPortal={true}
                 floatingClassName="z-[220]"
                 reference={
@@ -134,15 +155,15 @@ export const PlanDateFilterBar = ({ onFiltersChange, onSelectionChange }: PlanDa
                 }
               >
                 <CustomDatePickerCalendarPanel
-                  isOpen={pickerTarget === 'end'}
+                  isOpen={pickerTarget === "end"}
                   value={controller.rangeEnd}
                   visibleMonth={rangeEndVisibleMonth}
                   onVisibleMonthChange={setRangeEndVisibleMonth}
                   onSelect={(date) => {
                     if (date instanceof Date) {
-                      controller.setRangeEnd(date)
+                      controller.setRangeEnd(date);
                     }
-                    setPickerTarget(null)
+                    setPickerTarget(null);
                   }}
                   onRequestClose={() => setPickerTarget(null)}
                 />
@@ -183,12 +204,12 @@ export const PlanDateFilterBar = ({ onFiltersChange, onSelectionChange }: PlanDa
           <PlanDateFilterOverlay
             mode={controller.mode}
             onModeChange={(nextMode: PlanDateFilterMode) => {
-              controller.setMode(nextMode)
-              setOverlayOpen(false)
+              controller.setMode(nextMode);
+              setOverlayOpen(false);
             }}
           />
         </FloatingPopover>
       </div>
     </div>
-  )
-}
+  );
+};

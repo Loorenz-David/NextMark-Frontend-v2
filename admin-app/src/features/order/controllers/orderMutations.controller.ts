@@ -42,11 +42,6 @@ export const useOrderMutations = () => {
 
   const updateOrderDeliveryPlan = useCallback(
     async (orderId: number | string, planId: number | string | null) => {
-      if (planId == null) {
-        showMessage({ status: 400, message: "Missing delivery plan id." });
-        return null;
-      }
-
       const order =
         typeof orderId === "string"
           ? selectOrderByClientId(orderId)(useOrderStore.getState())
@@ -69,11 +64,18 @@ export const useOrderMutations = () => {
       }
       const orderServerId = order.id;
 
-      const parsedPlanId = typeof planId === "number" ? planId : Number(planId);
-      if (Number.isNaN(parsedPlanId)) {
+      const targetPlanId =
+        planId == null
+          ? null
+          : typeof planId === "number"
+            ? planId
+            : Number(planId);
+      if (targetPlanId != null && Number.isNaN(targetPlanId)) {
         showMessage({ status: 400, message: "Invalid delivery plan id." });
         return false;
       }
+      const targetPlanObjective =
+        targetPlanId == null ? null : "local_delivery";
 
       // Capture plan total snapshots before the optimistic transaction so both
       // snapshot() and mutate() share the same pre-mutation baseline.
@@ -121,7 +123,10 @@ export const useOrderMutations = () => {
         oldPlanId != null
           ? selectRoutePlanByServerId(oldPlanId)(planStoreState)
           : null;
-      const newPlan = selectRoutePlanByServerId(parsedPlanId)(planStoreState);
+      const newPlan =
+        targetPlanId != null
+          ? selectRoutePlanByServerId(targetPlanId)(planStoreState)
+          : null;
 
       const oldPlanTotalSnapshot: PlanTotalsSnapshot | null =
         oldPlan?.id != null
@@ -157,13 +162,13 @@ export const useOrderMutations = () => {
           ),
           oldPlanId: oldPlan?.id ?? null,
           oldPlanTotals: oldPlanTotalSnapshot,
-          newPlanId: parsedPlanId,
+          newPlanId: targetPlanId,
           newPlanTotals: newPlanTotalSnapshot,
         }),
         mutate: () => {
           applyOptimisticOrderPlanAssignment(assignmentEntries, {
-            targetPlanId: parsedPlanId,
-            planType: "local_delivery",
+            targetPlanId,
+            planType: targetPlanObjective,
             clearRouteGroup: true,
           });
           removeRouteSolutionStopsByOrderIds([orderServerId]);
@@ -217,7 +222,7 @@ export const useOrderMutations = () => {
             });
           }
         },
-        request: () => updateOrderDeliveryPlanApi(orderServerId, parsedPlanId),
+        request: () => updateOrderDeliveryPlanApi(orderServerId, targetPlanId),
         commit: (response) => {
           const updatedBundles = Array.isArray(response.data?.updated)
             ? response.data.updated
@@ -255,7 +260,7 @@ export const useOrderMutations = () => {
           });
 
           syncRouteGroupSummaries(Array.from(affectedRouteGroupIds));
-          markRouteGroupOverviewFreshAfter([oldPlanId, parsedPlanId]);
+          markRouteGroupOverviewFreshAfter([oldPlanId, targetPlanId]);
 
           // Server-authoritative plan totals override the optimistic deltas
           const planTotals = Array.isArray(response.data?.plan_totals)
@@ -286,7 +291,7 @@ export const useOrderMutations = () => {
             previousStops: RouteSolutionStop[];
             oldPlanId: number | null;
             oldPlanTotals: PlanTotalsSnapshot | null;
-            newPlanId: number;
+            newPlanId: number | null;
             newPlanTotals: PlanTotalsSnapshot | null;
           };
           restoreOptimisticOrderPlanAssignment(snapshotAssignmentEntries ?? []);
@@ -298,7 +303,7 @@ export const useOrderMutations = () => {
           if (snapOldPlanId != null && snapOldTotals != null) {
             patchRoutePlanTotals(snapOldPlanId, snapOldTotals);
           }
-          if (snapNewTotals != null) {
+          if (snapNewPlanId != null && snapNewTotals != null) {
             patchRoutePlanTotals(snapNewPlanId, snapNewTotals);
           }
         },

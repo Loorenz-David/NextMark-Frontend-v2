@@ -1,20 +1,22 @@
-import type { ActiveDrag } from '@/features/plan/hooks/usePlanOrderDndController'
-import { OrderCard } from '@/features/order/components/cards/OrderCard'
-import { OrderBatchDragOverlayCard } from '@/features/order/components/cards/OrderBatchDragOverlayCard'
-import { OrderGroupDragOverlayCard } from '@/features/order/components/cards/OrderGroupDragOverlayCard'
-import { RouteStopDragOverlay } from '@/features/plan/routeGroup/components/overlays/RouteStopDragOverlay'
-import { RouteStopGroupDragOverlay } from '@/features/plan/routeGroup/components/overlays/RouteStopGroupDragOverlay'
+import type { ActiveDrag } from "@/features/plan/hooks/usePlanOrderDndController";
+import { OrderCard } from "@/features/order/components/cards/OrderCard";
+import { OrderBatchDragOverlayCard } from "@/features/order/components/cards/OrderBatchDragOverlayCard";
+import { OrderGroupDragOverlayCard } from "@/features/order/components/cards/OrderGroupDragOverlayCard";
+import { RouteStopDragOverlay } from "@/features/plan/routeGroup/components/overlays/RouteStopDragOverlay";
+import { RouteStopGroupDragOverlay } from "@/features/plan/routeGroup/components/overlays/RouteStopGroupDragOverlay";
 
 type RouteOperationsDragOverlayProps = {
-  activeDrag: ActiveDrag
-}
+  activeDrag: ActiveDrag;
+};
 
-export const RouteOperationsDragOverlay = ({ activeDrag }: RouteOperationsDragOverlayProps) => {
+export const RouteOperationsDragOverlay = ({
+  activeDrag,
+}: RouteOperationsDragOverlayProps) => {
   if (!activeDrag) {
-    return null
+    return null;
   }
 
-  if (activeDrag.type === 'route_stop') {
+  if (activeDrag.type === "route_stop") {
     return (
       <div className="pointer-events-none cursor-grabbing">
         <RouteStopDragOverlay
@@ -24,10 +26,10 @@ export const RouteOperationsDragOverlay = ({ activeDrag }: RouteOperationsDragOv
           planStartDate={activeDrag.planStartDate}
         />
       </div>
-    )
+    );
   }
 
-  if (activeDrag.type === 'route_stop_group') {
+  if (activeDrag.type === "route_stop_group") {
     return (
       <div className="pointer-events-none cursor-grabbing">
         <RouteStopGroupDragOverlay
@@ -37,18 +39,18 @@ export const RouteOperationsDragOverlay = ({ activeDrag }: RouteOperationsDragOv
           lastStopOrder={activeDrag.lastStopOrder}
         />
       </div>
-    )
+    );
   }
 
-  if (activeDrag.type === 'order') {
+  if (activeDrag.type === "order") {
     return (
-      <div className="pointer-events-none cursor-grabbing">
+      <div className="pointer-events-none cursor-grabbing min-w-[260px]">
         <OrderCard order={activeDrag.order} />
       </div>
-    )
+    );
   }
 
-  if (activeDrag.type === 'order_batch') {
+  if (activeDrag.type === "order_batch") {
     return (
       <div className="pointer-events-none cursor-grabbing">
         <OrderBatchDragOverlayCard
@@ -56,10 +58,10 @@ export const RouteOperationsDragOverlay = ({ activeDrag }: RouteOperationsDragOv
           isLoading={activeDrag.isLoading}
         />
       </div>
-    )
+    );
   }
 
-  if (activeDrag.type === 'order_group') {
+  if (activeDrag.type === "order_group") {
     return (
       <div className="pointer-events-none cursor-grabbing">
         <OrderGroupDragOverlayCard
@@ -67,8 +69,8 @@ export const RouteOperationsDragOverlay = ({ activeDrag }: RouteOperationsDragOv
           label={activeDrag.label}
         />
       </div>
-    )
+    );
   }
 
-  return null
-}
+  return null;
+};

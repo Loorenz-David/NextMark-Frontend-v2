@@ -52,8 +52,8 @@ import {
 const DEV = import.meta.env.DEV;
 
 type UpdateOrdersDeliveryPlanBatchParams = {
-  planId: number;
-  planType: string;
+  planId: number | null;
+  planType: string | null;
   selection: OrderBatchSelectionPayload;
   showIncomingRouteGroupPlaceholders?: boolean;
 };
@@ -118,9 +118,11 @@ const resolveBundleDestinationRouteGroupId = (bundle: {
             return changedSolution.route_group_id;
           }
 
-          return selectRouteSolutionByServerId(routeSolutionId)(
-            useRouteSolutionStore.getState(),
-          )?.route_group_id ?? null;
+          return (
+            selectRouteSolutionByServerId(routeSolutionId)(
+              useRouteSolutionStore.getState(),
+            )?.route_group_id ?? null
+          );
         })
         .filter(
           (routeGroupId): routeGroupId is number =>
@@ -148,36 +150,41 @@ export const useOrderBatchDeliveryPlanController = () => {
       selection,
       showIncomingRouteGroupPlaceholders = false,
     }: UpdateOrdersDeliveryPlanBatchParams) => {
+      const normalizedPlanId =
+        typeof planId === "number" && Number.isFinite(planId) ? planId : null;
+      const normalizedPlanType =
+        normalizedPlanId == null ? null : (planType ?? "local_delivery");
       const state = useOrderSelectionStore.getState();
       const optimisticTargetIds = resolveBatchTargetOrderIds(selection, state);
       if (DEV) {
         console.debug("[plan-order-move] request:start", {
-          planId,
-          planType,
+          planId: normalizedPlanId,
+          planType: normalizedPlanType,
           optimisticTargetIds,
           showIncomingRouteGroupPlaceholders,
           routeSolutionStopCountBefore:
             useRouteSolutionStopStore.getState().allIds.length,
         });
       }
-      const placeholderToken = showIncomingRouteGroupPlaceholders
-        ? registerIncomingRouteGroupOrderPlaceholders(
-            planId,
-            optimisticTargetIds.length,
-          )
-        : null;
-      const assignmentEntries = collectOptimisticOrderPlanAssignmentEntries(
-        optimisticTargetIds,
-      );
+      const placeholderToken =
+        showIncomingRouteGroupPlaceholders && normalizedPlanId != null
+          ? registerIncomingRouteGroupOrderPlaceholders(
+              normalizedPlanId,
+              optimisticTargetIds.length,
+            )
+          : null;
+      const assignmentEntries =
+        collectOptimisticOrderPlanAssignmentEntries(optimisticTargetIds);
       return optimisticTransaction({
         snapshot: () => ({
           assignmentEntries,
-          removedStops: collectRouteSolutionStopsByOrderIds(optimisticTargetIds),
+          removedStops:
+            collectRouteSolutionStopsByOrderIds(optimisticTargetIds),
         }),
         mutate: () => {
           if (DEV) {
             console.debug("[plan-order-move] optimistic:start", {
-              planId,
+              planId: normalizedPlanId,
               optimisticTargetIds,
               assignmentEntryCount: assignmentEntries.length,
               routeSolutionStopCountBefore:
@@ -185,8 +192,8 @@ export const useOrderBatchDeliveryPlanController = () => {
             });
           }
           applyOptimisticOrderPlanAssignment(assignmentEntries, {
-            targetPlanId: planId,
-            planType,
+            targetPlanId: normalizedPlanId,
+            planType: normalizedPlanType,
             clearRouteGroup: true,
           });
           useOrderSelectionStore.getState().disableSelectionMode();
@@ -196,7 +203,7 @@ export const useOrderBatchDeliveryPlanController = () => {
           );
           if (DEV) {
             console.debug("[plan-order-move] optimistic:end", {
-              planId,
+              planId: normalizedPlanId,
               optimisticTargetIds,
               routeSolutionStopCountAfter:
                 useRouteSolutionStopStore.getState().allIds.length,
@@ -205,7 +212,7 @@ export const useOrderBatchDeliveryPlanController = () => {
         },
         request: async () => {
           const response = await updateOrdersDeliveryPlanBatchApi(
-            planId,
+            normalizedPlanId,
             selection,
           );
           return response.data;
@@ -248,11 +255,12 @@ export const useOrderBatchDeliveryPlanController = () => {
               }
             });
 
-            const destinationRouteGroupId = resolveBundleDestinationRouteGroupId({
-              order: updatedOrder,
-              route_solution: bundle.route_solution,
-              order_stops: bundle.order_stops,
-            });
+            const destinationRouteGroupId =
+              resolveBundleDestinationRouteGroupId({
+                order: updatedOrder,
+                route_solution: bundle.route_solution,
+                order_stops: bundle.order_stops,
+              });
 
             if (typeof destinationRouteGroupId === "number") {
               destinationRouteGroupIdsToPulse.add(destinationRouteGroupId);
@@ -261,7 +269,7 @@ export const useOrderBatchDeliveryPlanController = () => {
 
           if (DEV) {
             console.debug("[plan-order-move] commit:before-sync", {
-              planId,
+              planId: normalizedPlanId,
               placeholderToken,
               bundleCount: bundles.length,
               resolvedCount,
@@ -276,7 +284,9 @@ export const useOrderBatchDeliveryPlanController = () => {
           if (!syncResult.hasRouteGroupStateChanges) {
             syncRouteGroupSummaries(Array.from(affectedRouteGroupIds));
           }
-          markRouteGroupOverviewFreshAfter([planId]);
+          markRouteGroupOverviewFreshAfter(
+            normalizedPlanId == null ? [] : [normalizedPlanId],
+          );
 
           if (resolvedCount > 0 && updatedCount < resolvedCount) {
             showMessage({
@@ -299,13 +309,18 @@ export const useOrderBatchDeliveryPlanController = () => {
           }
 
           useOrderSelectionStore.getState().disableSelectionMode();
-          clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
+          if (normalizedPlanId != null) {
+            clearIncomingRouteGroupOrderPlaceholders(
+              normalizedPlanId,
+              placeholderToken,
+            );
+          }
           destinationRouteGroupIdsToPulse.forEach((routeGroupId) => {
             triggerIncomingRouteGroupPulse(routeGroupId);
           });
           if (DEV) {
             console.debug("[plan-order-move] commit:end", {
-              planId,
+              planId: normalizedPlanId,
               placeholderToken,
               hasPotentialDrift,
               hasRouteGroupStateChanges: syncResult.hasRouteGroupStateChanges,
@@ -317,18 +332,27 @@ export const useOrderBatchDeliveryPlanController = () => {
         },
         rollback: (snapshot) => {
           unstable_batchedUpdates(() => {
-            clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
+            if (normalizedPlanId != null) {
+              clearIncomingRouteGroupOrderPlaceholders(
+                normalizedPlanId,
+                placeholderToken,
+              );
+            }
             const typedSnapshot = snapshot as {
               assignmentEntries: ReturnType<
                 typeof collectOptimisticOrderPlanAssignmentEntries
               >;
-              removedStops: ReturnType<typeof collectRouteSolutionStopsByOrderIds>;
+              removedStops: ReturnType<
+                typeof collectRouteSolutionStopsByOrderIds
+              >;
             };
 
             restoreOptimisticOrderPlanAssignment(
               typedSnapshot.assignmentEntries ?? [],
             );
-            restoreCollectedRouteSolutionStops(typedSnapshot.removedStops ?? []);
+            restoreCollectedRouteSolutionStops(
+              typedSnapshot.removedStops ?? [],
+            );
             syncRouteGroupSummaries(
               collectAffectedRouteGroupIdsFromAssignments(
                 typedSnapshot.assignmentEntries ?? [],
@@ -337,7 +361,7 @@ export const useOrderBatchDeliveryPlanController = () => {
           });
           if (DEV) {
             console.warn("[plan-order-move] rollback", {
-              planId,
+              planId: normalizedPlanId,
               placeholderToken,
               routeSolutionStopCount:
                 useRouteSolutionStopStore.getState().allIds.length,
@@ -346,11 +370,16 @@ export const useOrderBatchDeliveryPlanController = () => {
         },
         onError: (error) => {
           unstable_batchedUpdates(() => {
-            clearIncomingRouteGroupOrderPlaceholders(planId, placeholderToken);
+            if (normalizedPlanId != null) {
+              clearIncomingRouteGroupOrderPlaceholders(
+                normalizedPlanId,
+                placeholderToken,
+              );
+            }
           });
           if (DEV) {
             console.error("[plan-order-move] error", {
-              planId,
+              planId: normalizedPlanId,
               placeholderToken,
               error,
             });
@@ -364,11 +393,7 @@ export const useOrderBatchDeliveryPlanController = () => {
         },
       });
     },
-    [
-      loadOrders,
-      showMessage,
-      updateOrdersDeliveryPlanBatchApi,
-    ],
+    [loadOrders, showMessage, updateOrdersDeliveryPlanBatchApi],
   );
 
   return {

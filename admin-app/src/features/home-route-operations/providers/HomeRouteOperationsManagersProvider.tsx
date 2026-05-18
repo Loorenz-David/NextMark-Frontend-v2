@@ -1,18 +1,18 @@
-import type { ReactNode } from 'react'
-import { useCallback, useEffect } from 'react'
+import type { ReactNode } from "react";
+import { useCallback, useEffect } from "react";
 
-import { DndContext, DragOverlay } from '@dnd-kit/core'
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 
-import { ResourcesManagerProvider } from '@/shared/resource-manager/ResourceManagerContext'
-import { preloadMapExtras, useMap } from '@/shared/map'
-import { useMobile } from '@/app/contexts/MobileContext'
+import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext";
+import { preloadMapExtras, useMap } from "@/shared/map";
+import { useMobile } from "@/app/contexts/MobileContext";
 
-import { homeCollisionDetection } from '../dnd/collisionStrategies'
-import type { PayloadBase } from '../types/types'
-import { useBaseControlls } from '../hooks/useBaseControlls'
-import { useRouteOperationsDndController } from '../hooks/useRouteOperationsDndController'
-import { RouteOperationsDragOverlay } from '../components/RouteOperationsDragOverlay'
-import { useRouteOperationsFixtureBootstrap } from '../dev/useRouteOperationsFixtureBootstrap'
+import { homeCollisionDetection } from "../dnd/collisionStrategies";
+import type { PayloadBase } from "../types/types";
+import { useBaseControlls } from "../hooks/useBaseControlls";
+import { useRouteOperationsDndController } from "../hooks/useRouteOperationsDndController";
+import { RouteOperationsDragOverlay } from "../components/RouteOperationsDragOverlay";
+import { useRouteOperationsFixtureBootstrap } from "../dev/useRouteOperationsFixtureBootstrap";
 
 /**
  * Workspace-specific managers provider for route-operations.
@@ -20,58 +20,59 @@ import { useRouteOperationsFixtureBootstrap } from '../dev/useRouteOperationsFix
  * Global managers (popup, section) are provided by HomeAppManagersProvider at the home-app level.
  * Global notifications bridge is also at home-app level to support all workspace types.
  */
-export function HomeRouteOperationsManagersProvider({ children }: { children: ReactNode }) {
-  const { isMobile } = useMobile()
-  useRouteOperationsFixtureBootstrap()
-  const baseControlls = useBaseControlls<PayloadBase>()
+export function HomeRouteOperationsManagersProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const { isMobile } = useMobile();
+  useRouteOperationsFixtureBootstrap();
+  const baseControlls = useBaseControlls<PayloadBase>();
 
-  const mapManager = useMap()
+  const mapManager = useMap();
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      // Popups are now owned by global manager, so no check for popupManager here.
-      // Only handle section close for workspace-local interactions.
-      if (event.key === 'Escape') {
-        event.preventDefault()
-      }
-    },
-    [],
-  )
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    // Popups are now owned by global manager, so no check for popupManager here.
+    // Only handle section close for workspace-local interactions.
+    if (event.key === "Escape") {
+      event.preventDefault();
+    }
+  }, []);
 
   useEffect(() => {
     if (!isMobile) {
-      window.addEventListener('keydown', handleKeyDown)
+      window.addEventListener("keydown", handleKeyDown);
     }
     return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [handleKeyDown, isMobile])
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown, isMobile]);
 
   useEffect(() => {
     if (isMobile) {
-      return
+      return;
     }
 
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
       const handle = window.requestIdleCallback(() => {
-        void preloadMapExtras()
-      })
+        void preloadMapExtras();
+      });
 
       return () => {
-        window.cancelIdleCallback(handle)
-      }
+        window.cancelIdleCallback(handle);
+      };
     }
 
     const timeoutId = globalThis.setTimeout(() => {
-      void preloadMapExtras()
-    }, 300)
+      void preloadMapExtras();
+    }, 300);
 
     return () => {
-      globalThis.clearTimeout(timeoutId)
-    }
-  }, [isMobile])
+      globalThis.clearTimeout(timeoutId);
+    };
+  }, [isMobile]);
 
-  const dndController = useRouteOperationsDndController()
+  const dndController = useRouteOperationsDndController();
 
   const {
     onDragStart,
@@ -80,6 +81,7 @@ export function HomeRouteOperationsManagersProvider({ children }: { children: Re
     onDragCancel,
     activeDrag,
     planDropFeedback,
+    unscheduleDropFeedback,
     routeReorderPreview,
     sensors,
   } = dndController || {
@@ -89,9 +91,10 @@ export function HomeRouteOperationsManagersProvider({ children }: { children: Re
     onDragCancel: () => {},
     activeDrag: null,
     planDropFeedback: null,
+    unscheduleDropFeedback: null,
     routeReorderPreview: null,
     sensors: [],
-  }
+  };
 
   return (
     <ResourcesManagerProvider
@@ -99,6 +102,7 @@ export function HomeRouteOperationsManagersProvider({ children }: { children: Re
         mapManager,
         baseControlls,
         planDropFeedback,
+        unscheduleDropFeedback,
         routeReorderPreview,
         routeOperationsActiveDrag: activeDrag,
       }}
@@ -124,5 +128,5 @@ export function HomeRouteOperationsManagersProvider({ children }: { children: Re
         </DragOverlay>
       </DndContext>
     </ResourcesManagerProvider>
-  )
+  );
 }
