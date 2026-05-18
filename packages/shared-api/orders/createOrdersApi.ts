@@ -212,11 +212,13 @@ export const createOrdersApi = (client: Pick<HttpApiClient, "request">) => ({
 
   updateOrderDeliveryPlan: (
     orderId: number | string,
-    planId: number | string,
+    planId: number | string | null,
     payload?: UpdateOrderDeliveryPlanPayload,
   ): Promise<ApiResult<OrderPlanUpdateResponse>> =>
     client.request<OrderPlanUpdateResponse>({
-      path: `/order_assignments/orders/${orderId}/plan/${planId}`,
+      path: `/order_assignments/orders/${orderId}/plan/${
+        planId == null ? "null" : String(planId)
+      }`,
       method: "PATCH",
       data: payload,
     }),
@@ -231,11 +233,13 @@ export const createOrdersApi = (client: Pick<HttpApiClient, "request">) => ({
     }),
 
   updateOrdersDeliveryPlanBatch: (
-    planId: number | string,
+    planId: number | string | null,
     selection: OrderBatchSelectionPayload,
   ): Promise<ApiResult<OrderBatchMoveResponse>> =>
     client.request<OrderBatchMoveResponse>({
-      path: `/order_assignments/plans/${planId}/batch`,
+      path: `/order_assignments/plans/${
+        planId == null ? "null" : String(planId)
+      }/batch`,
       method: "PATCH",
       data: { selection },
     }),
