@@ -20,7 +20,7 @@ export const resolveOrderDetailInitialTab = ({
   hasTimeWindowWarning,
 }: ResolveOrderDetailInitialTabParams): OrderDetailInitialTabSelection => {
   if (hasMissingRequiredInfo) {
-    return { tabId: "tracking", reason: "missing_required_info" };
+    return { tabId: "summary", reason: "missing_required_info" };
   }
 
   if (hasTimeWindowWarning) {

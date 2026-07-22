@@ -4,58 +4,83 @@ import { ApiError } from '@/lib/api/ApiClient'
 import { useMessageHandler } from '@shared-message-handler'
 
 import { authLoginApi } from '@/features/auth/login/api/authLoginApi'
-import type { LoginPayload } from '@/features/auth/login/types/authLogin'
+import type {
+  LoginPayload,
+  TrustedDeviceLoginResponse,
+} from '@/features/auth/login/types/authLogin'
+import {
+  normalizeSingleUserResponse,
+  normalizeTrustedDeviceResponse,
+} from '@/features/auth/login/domain/normalizeLoginResponse'
 import { useAuthSessionStore } from '@/features/auth/login/store/authSessionStore'
+import { authStateStorage } from '@/features/auth/login/store/authStateStorage'
 
 const resolveError = (error: unknown, fallback: string) => ({
   message: error instanceof ApiError ? error.message : fallback,
   status: error instanceof ApiError ? error.status : 500,
 })
 
+const TRUSTED_DEVICE_USERS_EXCLUDED =
+  'Some users assigned to this device are unavailable in the admin application.'
+
+/**
+ * Non-blocking, identity-safe message for backend warnings. Excluded-user
+ * identities are intentionally not in the response, so nothing is exposed.
+ */
+const resolveWarningMessage = (warnings: string[]): string | null => {
+  if (!warnings.length) {
+    return null
+  }
+  if (warnings.some((warning) => warning.includes('trusted_device_users_excluded'))) {
+    return TRUSTED_DEVICE_USERS_EXCLUDED
+  }
+  return null
+}
+
 export function useLoginMutations() {
   const { showMessage } = useMessageHandler()
 
   const login = useCallback(
     async (payload: LoginPayload) => {
-      const { setLoading, setError, setSession } = useAuthSessionStore.getState()
+      const { setLoading, setError, setSingleUserSession, setTrustedDeviceSessions } =
+        useAuthSessionStore.getState()
       setLoading(true)
       setError(undefined)
 
       try {
         const response = await authLoginApi.login(payload)
         const data = response.data
+        const now = Date.now()
 
-        if (!data?.access_token || !data?.refresh_token) {
-          console.warn('Login response missing tokens', data)
-          setError('Login response missing tokens.')
+        if (!data) {
+          setError('Login response was empty.')
           return null
         }
 
-        setSession({
-          accessToken: data.access_token,
-          refreshToken: data.refresh_token,
-          socketToken: data.socket_token,
-          user: data.user
-            ? {
-                ...data.user,
-                default_country_code:
-                  data.default_country_code ?? data.user.default_country_code ?? null,
-                default_city_key:
-                  data.default_city_key ?? data.user.default_city_key ?? null,
-                country_code:
-                  data.country_code ?? data.user.country_code ?? null,
-                city: data.city ?? data.user.city ?? null,
-              }
-            : null,
-          identity: {
-            default_country_code:
-              data.default_country_code ?? data.user?.default_country_code ?? null,
-            default_city_key:
-              data.default_city_key ?? data.user?.default_city_key ?? null,
-            country_code: data.country_code ?? data.user?.country_code ?? null,
-            city: data.city ?? data.user?.city ?? null,
-          },
-        })
+        if (data.authentication_mode === 'trusted_device') {
+          const normalized = normalizeTrustedDeviceResponse(
+            data as TrustedDeviceLoginResponse,
+            now,
+          )
+          if (!normalized.ok) {
+            setError(normalized.error)
+            return null
+          }
+          setTrustedDeviceSessions(normalized.state)
+        } else {
+          // single_user (and legacy responses without the discriminant).
+          const normalized = normalizeSingleUserResponse(data, now)
+          if (!normalized.ok) {
+            setError(normalized.error)
+            return null
+          }
+          setSingleUserSession(normalized.state)
+        }
+
+        const warningMessage = resolveWarningMessage(response.warnings ?? [])
+        if (warningMessage) {
+          showMessage({ status: 200, message: warningMessage })
+        }
 
         return data
       } catch (error) {
@@ -71,11 +96,33 @@ export function useLoginMutations() {
     [showMessage],
   )
 
-  const logout = useCallback(() => {
-    const { clearSession, setError } = useAuthSessionStore.getState()
+  /** Full device logout — clears every stored user session and auth state. */
+  const logOutDevice = useCallback(() => {
+    const { clearAuthenticationState, setError } = useAuthSessionStore.getState()
     setError(undefined)
-    clearSession()
+    clearAuthenticationState()
   }, [])
 
-  return { login, logout }
+  /**
+   * Logs out only the currently-acting user. On a trusted device with other
+   * sessions present, a deterministic fallback becomes active and the app
+   * reloads as that user; otherwise this is a full device logout.
+   */
+  const logOutCurrentUser = useCallback(() => {
+    const state = authStateStorage.getState()
+    if (
+      state?.authenticationMode === 'trusted_device' &&
+      Object.keys(state.sessionsByUserClientId).length > 1
+    ) {
+      const { removeUserSession } = useAuthSessionStore.getState()
+      removeUserSession(state.activeUserClientId)
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
+      return
+    }
+    logOutDevice()
+  }, [logOutDevice])
+
+  return { login, logout: logOutDevice, logOutDevice, logOutCurrentUser }
 }

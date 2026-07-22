@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 
 import { sessionStorage } from '@/features/auth/login/store/sessionStorage'
 import {
@@ -8,10 +8,27 @@ import {
 import { useExternalFormRealtime } from '@/realtime/externalForm/useExternalFormRealtime'
 
 import { useOrderFormFormSlice } from '../context/OrderFormForm.context'
+import {
+  clearPendingLinkedDeviceForm,
+  getPendingLinkedDeviceForm,
+  registerPendingLinkedDeviceForm,
+} from '../../../store/orderLinkedDeviceForm.store'
+import { resolveLinkedDeviceSendDecision } from '../../../domain/orderLinkedDeviceForm.domain'
+
+export type OrderFormLinkedDeviceSendTarget = {
+  orderId: number
+}
+
+export type OrderFormLinkedDeviceSendResult =
+  | { status: 'sent'; closeAfterSend: boolean }
+  | { status: 'blocked'; message: string }
+  | { status: 'error'; message: string }
 
 export type OrderFormExternalFlow = {
   employeeUserId: number
-  handleSendForm: () => void
+  handleSendForm: (
+    target?: OrderFormLinkedDeviceSendTarget | null,
+  ) => OrderFormLinkedDeviceSendResult
 }
 
 export const useOrderFormExternalRealtimeFlow = ({
@@ -23,29 +40,68 @@ export const useOrderFormExternalRealtimeFlow = ({
   referenceNumber: string
   employeeUserId: number
 }) => {
+  const awaitingDraftResponseRef = useRef(false)
+
   const handleExternalFormReceived = useCallback(
     (payload: ExternalFormReceivedPayload) => {
+      if (!awaitingDraftResponseRef.current) {
+        return
+      }
+
+      awaitingDraftResponseRef.current = false
       mergeExternalClientData(payload.form_data)
     },
     [mergeExternalClientData],
   )
 
   useExternalFormRealtime({
-    userId: employeeUserId,
     onReceived: handleExternalFormReceived,
   })
 
-  const handleSendForm = useCallback(() => {
+  const handleSendForm = useCallback((
+    target?: OrderFormLinkedDeviceSendTarget | null,
+  ): OrderFormLinkedDeviceSendResult => {
     if (employeeUserId <= 0) {
-      return
+      return { status: 'error', message: 'Linked device unavailable.' }
     }
 
-    emitExternalFormRequest({
-      user_id: employeeUserId,
-      request_data: {
-        reference_number: referenceNumber,
-      },
+    const pending = getPendingLinkedDeviceForm(employeeUserId)
+    const decision = resolveLinkedDeviceSendDecision({
+      pendingOrderId: pending?.orderId ?? null,
+      targetOrderId: target?.orderId ?? null,
     })
+    if (decision.status === 'blocked') {
+      return {
+        status: 'blocked',
+        message: 'Another order is awaiting this linked device.',
+      }
+    }
+
+    if (target) {
+      registerPendingLinkedDeviceForm({
+        employeeUserId,
+        orderId: target.orderId,
+      })
+    } else {
+      awaitingDraftResponseRef.current = true
+    }
+
+    try {
+      emitExternalFormRequest({
+        request_data: {
+          reference_number: referenceNumber,
+          order_id: target?.orderId,
+        },
+      })
+    } catch {
+      awaitingDraftResponseRef.current = false
+      if (target) {
+        clearPendingLinkedDeviceForm(employeeUserId)
+      }
+      return { status: 'error', message: 'Unable to contact linked device.' }
+    }
+
+    return { status: 'sent', closeAfterSend: decision.closeAfterSend }
   }, [employeeUserId, referenceNumber])
 
   return {

@@ -17,6 +17,7 @@ export const orderCollision: CollisionDetection = (args) => {
 
   return pointerCollisions.filter((collision) => {
     const container = containerById.get(String(collision.id))
-    return container?.data.current?.type === 'plan'
+    const targetType = container?.data.current?.type
+    return targetType === 'plan' || targetType === 'create-plan'
   })
 }

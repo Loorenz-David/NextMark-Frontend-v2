@@ -3,12 +3,10 @@ import { createExternalFormChannel } from '@shared-realtime'
 import { adminRealtimeClient } from '../client'
 
 export type ExternalFormSubmitPayload = {
-  user_id: number
   form_data: ExternalFormData
 }
 
 export type ExternalFormRequestPayload = {
-  user_id: number
   request_data?: Record<string, unknown>
 }
 
@@ -32,20 +30,38 @@ const requestedSubscriptions = new Map<
   () => void
 >()
 
-export const joinExternalFormUserRoom = (userId: number) => {
-  externalFormChannel.joinUser(userId)
+// The external-form room is team-scoped, so there is a single room per device.
+// A simple reference count keeps one join alive across all mounted consumers.
+let externalFormRoomReferenceCount = 0
+
+export const joinExternalFormRoom = () => {
+  externalFormRoomReferenceCount += 1
+  if (externalFormRoomReferenceCount > 1) {
+    return
+  }
+
+  externalFormChannel.join()
 }
 
-export const leaveExternalFormUserRoom = (userId: number) => {
-  externalFormChannel.leaveUser(userId)
+export const leaveExternalFormRoom = () => {
+  if (externalFormRoomReferenceCount === 0) {
+    return
+  }
+
+  externalFormRoomReferenceCount -= 1
+  if (externalFormRoomReferenceCount > 0) {
+    return
+  }
+
+  externalFormChannel.leave()
 }
 
 export const emitExternalFormSubmit = (payload: ExternalFormSubmitPayload) => {
-  externalFormChannel.submitUser(payload)
+  externalFormChannel.submit(payload)
 }
 
-export const emitExternalFormRequest = (payload: ExternalFormRequestPayload) => {
-  externalFormChannel.requestUser(payload)
+export const emitExternalFormRequest = (payload: ExternalFormRequestPayload = {}) => {
+  externalFormChannel.request(payload)
 }
 
 export const subscribeToExternalFormReceived = (

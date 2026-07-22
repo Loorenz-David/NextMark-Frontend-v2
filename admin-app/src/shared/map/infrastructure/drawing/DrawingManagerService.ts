@@ -14,13 +14,64 @@ import { ZoneGeometryExtractor } from "./ZoneGeometryExtractor";
 const DEFAULT_ZONE_STROKE_COLOR = "#111111";
 const DEFAULT_ZONE_FILL_COLOR = "#111111";
 
+type LatLngLiteral = { lat: number; lng: number };
+
+type LatLngValue =
+  | LatLngLiteral
+  | { lat: () => number; lng: () => number };
+
+type DrawingMap = google.maps.Map & {
+  get?: (property: string) => unknown;
+  setOptions: (options: Record<string, unknown>) => void;
+};
+
+type DrawingBounds = {
+  extend?: (point: LatLngLiteral) => void;
+  getNorthEast?: () => LatLngValue;
+  getSouthWest?: () => LatLngValue;
+};
+
+type DrawingOverlay = {
+  getBounds?: () => DrawingBounds | null;
+  getPath?: () => unknown;
+  getRadius?: () => number;
+  setBounds?: (bounds: unknown) => void;
+  setDraggable?: (draggable: boolean) => void;
+  setEditable?: (editable: boolean) => void;
+  setMap: (map: google.maps.Map | null) => void;
+  setOptions?: (options: Record<string, unknown>) => void;
+  setPath?: (path: LatLngLiteral[]) => void;
+  setRadius?: (radius: number) => void;
+};
+
+type DrawingConstructors = {
+  Circle?: new (options: Record<string, unknown>) => DrawingOverlay;
+  LatLngBounds?: new () => DrawingBounds;
+  Polygon?: new (options: Record<string, unknown>) => DrawingOverlay;
+  Rectangle?: new (options: Record<string, unknown>) => DrawingOverlay;
+};
+
+type DrawingMapMouseEvent = {
+  domEvent?: Event;
+  latLng?: LatLngValue;
+};
+
+type MapInteractionState = {
+  disableDoubleClickZoom: unknown;
+  draggable: unknown;
+  draggableCursor: unknown;
+};
+
 export class DrawingManagerService {
-  private drawingManager: any = null;
-  private activeShape: any = null;
+  private activeShape: DrawingOverlay | null = null;
+  private draftShape: DrawingOverlay | null = null;
+  private drawingStart: LatLngLiteral | null = null;
+  private polygonPoints: LatLngLiteral[] = [];
+  private drawingListeners: google.maps.MapsEventListener[] = [];
+  private mapInteractionState: MapInteractionState | null = null;
   private circleSelectionCallback: ((ids: string[]) => void) | null = null;
   private circleSelectionLayerId: string | null = null;
-  private shapeListeners: any[] = [];
-  private drawingCompleteListener: any = null;
+  private shapeListeners: google.maps.MapsEventListener[] = [];
   private hasDrawingModeListener = false;
   private hasDrawingClearListener = false;
   private zoneCaptureCallback: ((geometry: GeoJSONPolygon) => void) | null =
@@ -56,25 +107,14 @@ export class DrawingManagerService {
     this.circleSelectionLayerId = params.layerId;
     this.markerMultiSelectionManager.setActiveLayer(params.layerId);
 
-    this.ensureDrawingManager();
-
-    if (!this.drawingManager) return;
-
-    this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.CIRCLE);
+    this.ensureDrawingRuntime();
+    this.setDrawingMode("circle");
   }
 
   disableCircleSelection() {
     this.circleSelectionCallback = null;
-
-    this.clearShapeListeners();
-    if (this.activeShape) {
-      this.activeShape.setMap(null);
-      this.activeShape = null;
-    }
-
-    if (this.drawingManager) {
-      this.drawingManager.setDrawingMode(null);
-    }
+    this.setDrawingMode(null);
+    this.clearActiveShape();
 
     this.markerMultiSelectionManager.clearMultiSelectionStyles(
       this.circleSelectionLayerId ?? undefined,
@@ -94,33 +134,22 @@ export class DrawingManagerService {
     this.zoneCaptureCallback = callback;
     this.isZoneCaptureMode = true;
 
-    this.ensureDrawingManager();
-
-    if (!this.drawingManager) return;
-
-    this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+    this.ensureDrawingRuntime();
+    this.setDrawingMode("polygon");
   }
 
   disableZoneCapture() {
     this.zoneCaptureCallback = null;
     this.isZoneCaptureMode = false;
-
-    this.clearShapeListeners();
-    if (this.activeShape) {
-      this.activeShape.setMap(null);
-      this.activeShape = null;
-    }
-
-    if (this.drawingManager) {
-      this.drawingManager.setDrawingMode(null);
-    }
+    this.setDrawingMode(null);
+    this.clearActiveShape();
   }
 
   enableZonePathEdit(
     geometry: GeoJSONPolygon,
     options: ZonePathEditOptions,
   ) {
-    const map = this.mapInstanceManager.getMap();
+    const map = this.getDrawingMap();
     if (!map) return;
 
     if (this.circleSelectionLayerId) {
@@ -131,7 +160,8 @@ export class DrawingManagerService {
     this.zonePathEditOptions = options;
     this.isZonePathEditMode = true;
 
-    this.ensureDrawingManager();
+    this.ensureDrawingRuntime();
+    this.setDrawingMode(null);
     this.clearActiveShape();
 
     const polygon = this.createEditablePolygonOverlay(geometry);
@@ -143,20 +173,13 @@ export class DrawingManagerService {
 
     this.activeShape = polygon;
     this.bindPathEditListeners(polygon, geometry.type);
-
-    if (this.drawingManager) {
-      this.drawingManager.setDrawingMode(null);
-    }
   }
 
   disableZonePathEdit() {
     this.zonePathEditOptions = null;
     this.isZonePathEditMode = false;
+    this.setDrawingMode(null);
     this.clearActiveShape();
-
-    if (this.drawingManager) {
-      this.drawingManager.setDrawingMode(null);
-    }
   }
 
   handleLayerCleared(layerId: string) {
@@ -172,17 +195,6 @@ export class DrawingManagerService {
     this.disableCircleSelection();
     this.disableZoneCapture();
     this.disableZonePathEdit();
-
-    if (this.drawingCompleteListener) {
-      this.drawingCompleteListener.remove?.();
-      google.maps.event.removeListener(this.drawingCompleteListener);
-      this.drawingCompleteListener = null;
-    }
-
-    if (this.drawingManager) {
-      this.drawingManager.setMap(null);
-      this.drawingManager = null;
-    }
 
     if (this.hasDrawingModeListener && typeof window !== "undefined") {
       window.removeEventListener(
@@ -205,47 +217,8 @@ export class DrawingManagerService {
     return this.circleSelectionLayerId;
   }
 
-  private ensureDrawingManager() {
-    const map = this.mapInstanceManager.getMap();
-    if (!map) return;
-
-    if (!google.maps.drawing?.DrawingManager) {
-      console.error("Google Maps drawing library is not loaded");
-      return;
-    }
-
-    if (!this.drawingManager) {
-      const sharedOverlayStyle = {
-        editable: true,
-        fillColor: DEFAULT_ZONE_FILL_COLOR,
-        fillOpacity: 0.12,
-        strokeColor: DEFAULT_ZONE_STROKE_COLOR,
-        strokeOpacity: 0.9,
-        strokeWeight: 2,
-      };
-
-      this.drawingManager = new google.maps.drawing.DrawingManager({
-        drawingMode: null,
-        drawingControl: false,
-        circleOptions: {
-          ...sharedOverlayStyle,
-          draggable: true,
-        },
-        rectangleOptions: sharedOverlayStyle,
-        polygonOptions: sharedOverlayStyle,
-      });
-      this.drawingManager.setMap(map);
-    }
-
-    if (!this.drawingCompleteListener) {
-      this.drawingCompleteListener = google.maps.event.addListener(
-        this.drawingManager,
-        "overlaycomplete",
-        (event: any) => {
-          this.handleOverlayComplete(event);
-        },
-      );
-    }
+  private ensureDrawingRuntime() {
+    if (!this.mapInstanceManager.getMap()) return;
 
     if (!this.hasDrawingModeListener && typeof window !== "undefined") {
       window.addEventListener(
@@ -264,89 +237,265 @@ export class DrawingManagerService {
     }
   }
 
-  private handleOverlayComplete(event: any) {
-    const overlay = event?.overlay;
-    const overlayType = event?.type;
+  private setDrawingMode(mode: DrawingSelectionMode | null) {
+    this.clearDrawingInteraction();
 
+    if (!mode) {
+      return;
+    }
+
+    const map = this.getDrawingMap();
+    if (!map) {
+      return;
+    }
+
+    this.captureMapInteractionState(map);
+    const drawingOptions: Record<string, unknown> = {
+      disableDoubleClickZoom: mode === "polygon",
+      draggableCursor: "crosshair",
+    };
+    if (mode !== "polygon") {
+      drawingOptions.draggable = false;
+    }
+    map.setOptions(drawingOptions);
+
+    if (mode === "polygon") {
+      this.bindPolygonDrawing(map);
+      return;
+    }
+
+    this.bindDragDrawing(map, mode);
+  }
+
+  private bindDragDrawing(
+    map: DrawingMap,
+    mode: Extract<DrawingSelectionMode, "circle" | "rectangle">,
+  ) {
+    this.drawingListeners.push(
+      google.maps.event.addListener(map, "mousedown", (event: DrawingMapMouseEvent) => {
+        const start = this.toLatLngLiteral(event?.latLng);
+        if (!start) return;
+
+        this.removeDraftShape();
+        this.drawingStart = start;
+        this.draftShape = this.createDraftShape(mode, start);
+      }),
+    );
+    this.drawingListeners.push(
+      google.maps.event.addListener(map, "mousemove", (event: DrawingMapMouseEvent) => {
+        const current = this.toLatLngLiteral(event?.latLng);
+        if (!current || !this.drawingStart || !this.draftShape) return;
+
+        this.updateDraftShape(mode, this.drawingStart, current);
+      }),
+    );
+    this.drawingListeners.push(
+      google.maps.event.addListener(map, "mouseup", (event: DrawingMapMouseEvent) => {
+        const current = this.toLatLngLiteral(event?.latLng);
+        if (!current || !this.drawingStart || !this.draftShape) return;
+
+        this.updateDraftShape(mode, this.drawingStart, current);
+        const overlay = this.draftShape;
+        this.draftShape = null;
+        this.drawingStart = null;
+
+        if (!this.isValidCompletedShape(mode, overlay)) {
+          overlay.setMap?.(null);
+          return;
+        }
+
+        this.handleOverlayComplete(overlay, mode);
+      }),
+    );
+  }
+
+  private bindPolygonDrawing(map: DrawingMap) {
+    this.polygonPoints = [];
+    this.drawingListeners.push(
+      google.maps.event.addListener(map, "click", (event: DrawingMapMouseEvent) => {
+        const point = this.toLatLngLiteral(event?.latLng);
+        if (!point) return;
+
+        const previousPoint = this.polygonPoints.at(-1);
+        if (previousPoint && this.areSamePoint(previousPoint, point)) {
+          return;
+        }
+
+        this.polygonPoints.push(point);
+        if (!this.draftShape) {
+          this.draftShape = this.createPolygon(this.polygonPoints, false);
+          return;
+        }
+
+        this.draftShape.setPath?.(this.polygonPoints);
+      }),
+    );
+    this.drawingListeners.push(
+      google.maps.event.addListener(map, "dblclick", (event: DrawingMapMouseEvent) => {
+        event?.domEvent?.preventDefault?.();
+        const point = this.toLatLngLiteral(event?.latLng);
+        if (point) {
+          const previousPoint = this.polygonPoints.at(-1);
+          if (!previousPoint || !this.areSamePoint(previousPoint, point)) {
+            this.polygonPoints.push(point);
+          }
+        }
+
+        if (this.polygonPoints.length < 3) {
+          return;
+        }
+
+        const overlay = this.draftShape;
+        this.draftShape = null;
+        if (!overlay) return;
+
+        overlay.setPath?.(this.polygonPoints);
+        this.polygonPoints = [];
+        this.handleOverlayComplete(overlay, "polygon");
+      }),
+    );
+  }
+
+  private createDraftShape(
+    mode: Extract<DrawingSelectionMode, "circle" | "rectangle">,
+    start: LatLngLiteral,
+  ) {
+    const map = this.getDrawingMap();
+    const maps = google.maps as unknown as DrawingConstructors;
+    if (!map || !maps) return null;
+
+    if (mode === "circle" && maps.Circle) {
+      return new maps.Circle({
+        ...this.getSharedOverlayStyle(),
+        center: start,
+        clickable: false,
+        draggable: false,
+        editable: false,
+        map,
+        radius: 0,
+      });
+    }
+
+    if (mode === "rectangle" && maps.Rectangle) {
+      return new maps.Rectangle({
+        ...this.getSharedOverlayStyle(),
+        bounds: this.createBounds(start, start),
+        clickable: false,
+        editable: false,
+        map,
+      });
+    }
+
+    return null;
+  }
+
+  private createPolygon(paths: LatLngLiteral[], editable: boolean) {
+    const map = this.getDrawingMap();
+    const PolygonCtor = (google.maps as unknown as DrawingConstructors).Polygon;
+    if (!map || !PolygonCtor) return null;
+
+    return new PolygonCtor({
+      ...this.getSharedOverlayStyle(),
+      clickable: false,
+      editable,
+      map,
+      paths,
+    });
+  }
+
+  private updateDraftShape(
+    mode: Extract<DrawingSelectionMode, "circle" | "rectangle">,
+    start: LatLngLiteral,
+    current: LatLngLiteral,
+  ) {
+    if (mode === "circle") {
+      this.draftShape?.setRadius?.(this.computeDistanceMeters(start, current));
+      return;
+    }
+
+    this.draftShape?.setBounds?.(this.createBounds(start, current));
+  }
+
+  private handleOverlayComplete(
+    overlay: DrawingOverlay,
+    overlayType: DrawingSelectionMode,
+  ) {
     this.clearShapeListeners();
 
-    if (this.activeShape) {
+    if (this.activeShape && this.activeShape !== overlay) {
       this.activeShape.setMap(null);
     }
 
     this.activeShape = overlay;
+    overlay.setOptions?.({ clickable: true });
+    overlay.setEditable?.(true);
+    if (overlayType === "circle") {
+      overlay.setDraggable?.(true);
+    }
 
     if (this.isZoneCaptureMode) {
       this.handleZoneCaptureComplete(overlay, overlayType);
+    } else if (overlayType === "circle") {
+      this.shapeListeners.push(
+        google.maps.event.addListener(overlay, "center_changed", () =>
+          this.computeCircleSelection(overlay),
+        ),
+      );
+      this.shapeListeners.push(
+        google.maps.event.addListener(overlay, "radius_changed", () =>
+          this.computeCircleSelection(overlay),
+        ),
+      );
+      this.computeCircleSelection(overlay);
+    } else if (overlayType === "rectangle") {
+      this.shapeListeners.push(
+        google.maps.event.addListener(overlay, "bounds_changed", () =>
+          this.computeRectangleSelection(overlay),
+        ),
+      );
+      this.computeRectangleSelection(overlay);
     } else {
-      if (overlayType === google.maps.drawing.OverlayType.CIRCLE) {
-        overlay?.setEditable?.(true);
-        overlay?.setDraggable?.(true);
-        this.shapeListeners.push(
-          google.maps.event.addListener(overlay, "center_changed", () =>
-            this.computeCircleSelection(overlay),
-          ),
-        );
-        this.shapeListeners.push(
-          google.maps.event.addListener(overlay, "radius_changed", () =>
-            this.computeCircleSelection(overlay),
-          ),
-        );
-        this.computeCircleSelection(overlay);
-      } else if (overlayType === google.maps.drawing.OverlayType.RECTANGLE) {
-        overlay?.setEditable?.(true);
-        this.shapeListeners.push(
-          google.maps.event.addListener(overlay, "bounds_changed", () =>
-            this.computeRectangleSelection(overlay),
-          ),
-        );
-        this.computeRectangleSelection(overlay);
-      } else if (overlayType === google.maps.drawing.OverlayType.POLYGON) {
-        overlay?.setEditable?.(true);
-        const path = overlay?.getPath?.();
+      const path = overlay?.getPath?.();
 
-        if (path) {
-          this.shapeListeners.push(
-            google.maps.event.addListener(path, "set_at", () =>
-              this.computePolygonSelection(overlay),
-            ),
-          );
-          this.shapeListeners.push(
-            google.maps.event.addListener(path, "insert_at", () =>
-              this.computePolygonSelection(overlay),
-            ),
-          );
-          this.shapeListeners.push(
-            google.maps.event.addListener(path, "remove_at", () =>
-              this.computePolygonSelection(overlay),
-            ),
-          );
-        }
-
-        this.computePolygonSelection(overlay);
+      if (path) {
+        this.shapeListeners.push(
+          google.maps.event.addListener(path, "set_at", () =>
+            this.computePolygonSelection(overlay),
+          ),
+        );
+        this.shapeListeners.push(
+          google.maps.event.addListener(path, "insert_at", () =>
+            this.computePolygonSelection(overlay),
+          ),
+        );
+        this.shapeListeners.push(
+          google.maps.event.addListener(path, "remove_at", () =>
+            this.computePolygonSelection(overlay),
+          ),
+        );
       }
+
+      this.computePolygonSelection(overlay);
     }
 
-    if (this.drawingManager) {
-      this.drawingManager.setDrawingMode(null);
-    }
+    this.setDrawingMode(null);
   }
 
-  private computeCircleSelection(circle: any) {
+  private computeCircleSelection(circle: DrawingOverlay) {
     this.shapeSelectionService.computeCircleSelection(circle, {
       activeLayerId: this.circleSelectionLayerId,
       callback: this.circleSelectionCallback,
     });
   }
 
-  private computeRectangleSelection(rectangle: any) {
+  private computeRectangleSelection(rectangle: DrawingOverlay) {
     this.shapeSelectionService.computeRectangleSelection(rectangle, {
       activeLayerId: this.circleSelectionLayerId,
       callback: this.circleSelectionCallback,
     });
   }
 
-  private computePolygonSelection(polygon: any) {
+  private computePolygonSelection(polygon: DrawingOverlay) {
     this.shapeSelectionService.computePolygonSelection(polygon, {
       activeLayerId: this.circleSelectionLayerId,
       callback: this.circleSelectionCallback,
@@ -354,78 +503,44 @@ export class DrawingManagerService {
   }
 
   private handleDrawingModeSelection = (event: Event) => {
-    if (!this.drawingManager) {
-      return;
-    }
-
-    if (this.isZoneCaptureMode || this.isZonePathEditMode) {
-      const detail = (event as CustomEvent<DrawingSelectionModeEventDetail>)
-        .detail;
-      const overlayType = this.resolveOverlayType(detail?.mode);
-
-      if (!overlayType) {
-        return;
-      }
-
-      this.clearActiveShape();
-      this.drawingManager.setDrawingMode(overlayType);
-      return;
-    }
-
-    if (!this.circleSelectionLayerId || !this.circleSelectionCallback) {
-      return;
-    }
-
     const detail = (event as CustomEvent<DrawingSelectionModeEventDetail>)
       .detail;
     const mode = detail?.mode;
-    const overlayType = this.resolveOverlayType(mode);
+    if (!mode) return;
 
-    if (!overlayType) {
-      return;
-    }
-
-    this.clearActiveShapeSelection();
-    this.drawingManager.setDrawingMode(overlayType);
-  };
-
-  private handleDrawingSelectionClear = () => {
-    if (!this.drawingManager) {
+    if (this.isZoneCaptureMode) {
+      this.clearActiveShape();
+      this.setDrawingMode(mode);
       return;
     }
 
     if (
-      !this.isZoneCaptureMode &&
-      (!this.circleSelectionLayerId || !this.circleSelectionCallback)
+      this.isZonePathEditMode ||
+      !this.circleSelectionLayerId ||
+      !this.circleSelectionCallback
     ) {
+      return;
+    }
+
+    this.clearActiveShapeSelection();
+    this.setDrawingMode(mode);
+  };
+
+  private handleDrawingSelectionClear = () => {
+    if (this.isZonePathEditMode) {
       return;
     }
 
     if (this.isZoneCaptureMode) {
       this.clearActiveShape();
-    } else if (this.isZonePathEditMode) {
-      return;
-    } else {
+    } else if (this.circleSelectionLayerId && this.circleSelectionCallback) {
       this.clearActiveShapeSelection();
+    } else {
+      return;
     }
 
-    if (this.drawingManager) {
-      this.drawingManager.setDrawingMode(null);
-    }
+    this.setDrawingMode(null);
   };
-
-  private resolveOverlayType(mode: DrawingSelectionMode | undefined) {
-    if (mode === "rectangle") {
-      return google.maps.drawing.OverlayType.RECTANGLE;
-    }
-    if (mode === "polygon") {
-      return google.maps.drawing.OverlayType.POLYGON;
-    }
-    if (mode === "circle") {
-      return google.maps.drawing.OverlayType.CIRCLE;
-    }
-    return null;
-  }
 
   private clearActiveShapeSelection() {
     this.clearActiveShape();
@@ -445,21 +560,43 @@ export class DrawingManagerService {
     }
   }
 
-  private handleZoneCaptureComplete(overlay: any, overlayType: any) {
+  private handleZoneCaptureComplete(
+    overlay: DrawingOverlay,
+    overlayType: DrawingSelectionMode,
+  ) {
     if (!this.zoneCaptureCallback || !overlay) return;
 
     let geometry: GeoJSONPolygon | null = null;
 
-    if (overlayType === google.maps.drawing.OverlayType.CIRCLE) {
+    if (overlayType === "circle") {
       geometry = ZoneGeometryExtractor.fromCircle(overlay);
-    } else if (overlayType === google.maps.drawing.OverlayType.RECTANGLE) {
+    } else if (overlayType === "rectangle") {
       geometry = ZoneGeometryExtractor.fromRectangle(overlay);
-    } else if (overlayType === google.maps.drawing.OverlayType.POLYGON) {
+    } else {
       geometry = ZoneGeometryExtractor.fromPolygon(overlay);
     }
 
     if (geometry) {
       this.zoneCaptureCallback(geometry);
+    }
+  }
+
+  private clearDrawingInteraction() {
+    this.drawingListeners.forEach((listener) => {
+      listener?.remove?.();
+      google.maps.event.removeListener(listener);
+    });
+    this.drawingListeners = [];
+    this.drawingStart = null;
+    this.polygonPoints = [];
+    this.removeDraftShape();
+    this.restoreMapInteractionState();
+  }
+
+  private removeDraftShape() {
+    if (this.draftShape) {
+      this.draftShape.setMap?.(null);
+      this.draftShape = null;
     }
   }
 
@@ -471,9 +608,123 @@ export class DrawingManagerService {
     this.shapeListeners = [];
   }
 
+  private captureMapInteractionState(map: DrawingMap) {
+    this.mapInteractionState = {
+      disableDoubleClickZoom: map.get?.("disableDoubleClickZoom"),
+      draggable: map.get?.("draggable"),
+      draggableCursor: map.get?.("draggableCursor"),
+    };
+  }
+
+  private restoreMapInteractionState() {
+    const map = this.getDrawingMap();
+    if (!map || !this.mapInteractionState) return;
+
+    map.setOptions(this.mapInteractionState);
+    this.mapInteractionState = null;
+  }
+
+  private getSharedOverlayStyle() {
+    return {
+      fillColor: DEFAULT_ZONE_FILL_COLOR,
+      fillOpacity: 0.12,
+      strokeColor: DEFAULT_ZONE_STROKE_COLOR,
+      strokeOpacity: 0.9,
+      strokeWeight: 2,
+    };
+  }
+
+  private getDrawingMap() {
+    return this.mapInstanceManager.getMap() as DrawingMap | null;
+  }
+
+  private createBounds(first: LatLngLiteral, second: LatLngLiteral) {
+    const LatLngBoundsCtor = (google.maps as unknown as DrawingConstructors)
+      .LatLngBounds;
+    if (LatLngBoundsCtor) {
+      const bounds = new LatLngBoundsCtor();
+      bounds.extend?.(first);
+      bounds.extend?.(second);
+      return bounds;
+    }
+
+    return {
+      east: Math.max(first.lng, second.lng),
+      north: Math.max(first.lat, second.lat),
+      south: Math.min(first.lat, second.lat),
+      west: Math.min(first.lng, second.lng),
+    };
+  }
+
+  private computeDistanceMeters(
+    first: LatLngLiteral,
+    second: LatLngLiteral,
+  ) {
+    const spherical = google.maps.geometry?.spherical;
+    if (spherical?.computeDistanceBetween) {
+      return spherical.computeDistanceBetween(first, second);
+    }
+
+    const earthRadiusMeters = 6_371_000;
+    const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
+    const latitudeDelta = toRadians(second.lat - first.lat);
+    const longitudeDelta = toRadians(second.lng - first.lng);
+    const firstLatitude = toRadians(first.lat);
+    const secondLatitude = toRadians(second.lat);
+    const haversine =
+      Math.sin(latitudeDelta / 2) ** 2 +
+      Math.cos(firstLatitude) *
+        Math.cos(secondLatitude) *
+        Math.sin(longitudeDelta / 2) ** 2;
+
+    return (
+      earthRadiusMeters *
+      2 *
+      Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine))
+    );
+  }
+
+  private isValidCompletedShape(
+    mode: Extract<DrawingSelectionMode, "circle" | "rectangle">,
+    overlay: DrawingOverlay,
+  ) {
+    if (mode === "circle") {
+      return Number(overlay?.getRadius?.()) > 0;
+    }
+
+    const bounds = overlay?.getBounds?.();
+    const northEast = this.toLatLngLiteral(bounds?.getNorthEast?.());
+    const southWest = this.toLatLngLiteral(bounds?.getSouthWest?.());
+    return (
+      northEast &&
+      southWest &&
+      (northEast.lat !== southWest.lat || northEast.lng !== southWest.lng)
+    );
+  }
+
+  private toLatLngLiteral(value: unknown): LatLngLiteral | null {
+    if (!value || typeof value !== "object") return null;
+
+    const candidate = value as {
+      lat?: number | (() => number);
+      lng?: number | (() => number);
+    };
+    const lat =
+      typeof candidate.lat === "function" ? candidate.lat() : candidate.lat;
+    const lng =
+      typeof candidate.lng === "function" ? candidate.lng() : candidate.lng;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+    return { lat: Number(lat), lng: Number(lng) };
+  }
+
+  private areSamePoint(first: LatLngLiteral, second: LatLngLiteral) {
+    return first.lat === second.lat && first.lng === second.lng;
+  }
+
   private createEditablePolygonOverlay(geometry: GeoJSONPolygon) {
-    const map = this.mapInstanceManager.getMap();
-    const PolygonCtor = (globalThis as any)?.google?.maps?.Polygon;
+    const map = this.getDrawingMap();
+    const PolygonCtor = (google.maps as unknown as DrawingConstructors).Polygon;
     if (!map || !PolygonCtor) {
       return null;
     }
@@ -495,7 +746,7 @@ export class DrawingManagerService {
         return { lat: Number(point[1]), lng: Number(point[0]) };
       })
       .filter(
-        (point): point is { lat: number; lng: number } =>
+        (point): point is LatLngLiteral =>
           point != null &&
           Number.isFinite(point.lat) &&
           Number.isFinite(point.lng),
@@ -519,7 +770,10 @@ export class DrawingManagerService {
     });
   }
 
-  private bindPathEditListeners(polygon: any, geometryType: GeoJSONPolygon["type"]) {
+  private bindPathEditListeners(
+    polygon: DrawingOverlay,
+    geometryType: GeoJSONPolygon["type"],
+  ) {
     const path = polygon?.getPath?.();
     if (!path || !this.zonePathEditOptions) {
       return;
@@ -547,14 +801,16 @@ export class DrawingManagerService {
   }
 
   private extractPathEditGeometry(
-    polygon: any,
+    polygon: DrawingOverlay,
     geometryType: GeoJSONPolygon["type"],
   ): GeoJSONPolygon {
     const polygonGeometry = ZoneGeometryExtractor.fromPolygon(polygon);
     if (geometryType === "MultiPolygon") {
       return {
         type: "MultiPolygon",
-        coordinates: [polygonGeometry.coordinates] as GeoJSONPolygon["coordinates"],
+        coordinates: [
+          polygonGeometry.coordinates,
+        ] as GeoJSONPolygon["coordinates"],
       };
     }
 

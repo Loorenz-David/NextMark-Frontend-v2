@@ -148,40 +148,39 @@ export const OrderFormFields = ({
           </Field>
         </div>
 
+        <SplitRow
+          splitRowClass={
+            "grid grid-cols-2 divide-x divide-[var(--color-border-accent)]"
+          }
+        >
+          <Cell>
+            <Field
+              warningPlacement="besidesLabel"
+              label="General Note:"
+              info="Internal note visible to the driver."
+            >
+              <InputField
+                value={formState.general_note}
+                onChange={formSetters.handleGeneralNote}
+                fieldClassName={PLAIN_INPUT_CONTAINER_CLASS}
+                inputClassName={PLAIN_INPUT_CLASS}
+              />
+            </Field>
+          </Cell>
+          <Cell>
+            <Field warningPlacement="besidesLabel" label="Help to carry:">
+              <div className="">
+                <Switch
+                  value={formState.help_to_carry}
+                  onChange={formSetters.handleHelpToCarry}
+                  ariaLabel="Help to carry"
+                />
+              </div>
+            </Field>
+          </Cell>
+        </SplitRow>
         {showMore ? (
           <>
-            <SplitRow
-              splitRowClass={
-                "grid grid-cols-2 divide-x divide-[var(--color-border-accent)]"
-              }
-            >
-              <Cell>
-                <Field
-                  warningPlacement="besidesLabel"
-                  label="General Note:"
-                  info="Internal note visible to the driver."
-                >
-                  <InputField
-                    value={formState.general_note}
-                    onChange={formSetters.handleGeneralNote}
-                    fieldClassName={PLAIN_INPUT_CONTAINER_CLASS}
-                    inputClassName={PLAIN_INPUT_CLASS}
-                  />
-                </Field>
-              </Cell>
-              <Cell>
-                <Field warningPlacement="besidesLabel" label="Help to carry:">
-                  <div className="">
-                    <Switch
-                      value={formState.help_to_carry}
-                      onChange={formSetters.handleHelpToCarry}
-                      ariaLabel="Help to carry"
-                    />
-                  </div>
-                </Field>
-              </Cell>
-            </SplitRow>
-
             <div
               className={`border-t border-[var(--color-border-accent)] cell-default`}
             >

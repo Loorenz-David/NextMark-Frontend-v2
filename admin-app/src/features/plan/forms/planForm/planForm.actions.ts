@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useMessageHandler } from "@shared-message-handler";
 import type { DeliveryPlan } from "../../types/plan";
 import { usePlanController } from "../../controllers/plan.controller";
-import { useBaseControlls } from "@/shared/resource-manager/useResourceManager";
+import { useOptionalBaseControlls } from "@/shared/resource-manager/useResourceManager";
 import { useOrderSelectionStore } from "@/features/order/store/orderSelection.store";
 
 type Props = {
@@ -22,7 +22,7 @@ export const usePlanFormActions = ({
 }: Props) => {
   const { showMessage } = useMessageHandler();
   const { createPlan, deletePlan } = usePlanController();
-  const baseControlls = useBaseControlls();
+  const baseControlls = useOptionalBaseControlls();
 
   const handleCreatePlan = useCallback(async (): Promise<boolean> => {
     const isValidPlanForm = planValidateForm();
@@ -66,7 +66,7 @@ export const usePlanFormActions = ({
 
     const result = await deletePlan(planId);
     if (result) {
-      baseControlls.closeBase();
+      baseControlls?.closeBase();
       return true;
     }
     return false;

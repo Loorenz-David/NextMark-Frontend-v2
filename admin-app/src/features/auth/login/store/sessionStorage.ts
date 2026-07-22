@@ -1,87 +1,44 @@
 import type { SessionSnapshot } from '@shared-api'
 
+import { deriveActiveSession } from '@/features/auth/login/domain/authState'
+import { authStateStorage } from '@/features/auth/login/store/authStateStorage'
+
 export type { SessionIdentity, SessionSnapshot, SessionUser } from '@shared-api'
 
 type SessionListener = (session: SessionSnapshot | null) => void
 
-const STORAGE_KEY = 'beyo.admin.session'
-const isBrowser = typeof window !== 'undefined'
-
-export class SessionStorage {
-  private listeners = new Set<SessionListener>()
-  private cached: SessionSnapshot | null = null
-  private key: string
-
-  constructor(key: string = STORAGE_KEY) {
-    this.key = key
-    this.cached = this.read()
-  }
-
+/**
+ * Active-session adapter that implements the shared-api `SessionAccessor`
+ * contract over the normalized multi-session `AuthStateStorage`.
+ *
+ * `getSession()` returns the currently-acting session, and `setSession()`
+ * (called by the API client on token refresh) rewrites ONLY the active user's
+ * entry — so refreshing user A never disturbs stored sessions B, C, D.
+ *
+ * The exported singleton keeps the historical name (`sessionStorage`) and its
+ * `subscribe(session)` semantics so realtime and `useTeamMemberMeta` are
+ * unaffected by the multi-session migration.
+ */
+export class ActiveSessionAccessor {
   getSession(): SessionSnapshot | null {
-    if (this.cached) {
-      return this.cached
-    }
-
-    this.cached = this.read()
-    return this.cached
+    return authStateStorage.getActiveSession()
   }
 
   setSession(session: Omit<SessionSnapshot, 'updatedAt'>): void {
-    const next: SessionSnapshot = {
-      ...session,
-      updatedAt: Date.now(),
-    }
-
-    this.cached = next
-
-    if (isBrowser) {
-      window.localStorage.setItem(this.key, JSON.stringify(next))
-    }
-
-    this.emit(next)
+    authStateStorage.updateActiveSession(session)
   }
 
   clear(): void {
-    this.cached = null
-
-    if (isBrowser) {
-      window.localStorage.removeItem(this.key)
-    }
-
-    this.emit(null)
+    // Full clear = logout / device logout. Terminal refresh failure is handled
+    // separately (mode-aware eviction) via the store, not through clear().
+    authStateStorage.clear()
   }
 
   subscribe(listener: SessionListener): () => void {
-    this.listeners.add(listener)
-    listener(this.getSession())
-
-    return () => {
-      this.listeners.delete(listener)
-    }
-  }
-
-  private read(): SessionSnapshot | null {
-    if (!isBrowser) {
-      return null
-    }
-
-    try {
-      const raw = window.localStorage.getItem(this.key)
-      if (!raw) {
-        return null
-      }
-
-      return JSON.parse(raw) as SessionSnapshot
-    } catch (error) {
-      console.warn('Failed to parse stored session, clearing it.', error)
-      window.localStorage.removeItem(this.key)
-      return null
-    }
-  }
-
-  private emit(value: SessionSnapshot | null): void {
-    this.listeners.forEach((listener) => listener(value))
+    return authStateStorage.subscribe((state) =>
+      listener(deriveActiveSession(state)),
+    )
   }
 }
 
-export const sessionStorage = new SessionStorage()
+export const sessionStorage = new ActiveSessionAccessor()

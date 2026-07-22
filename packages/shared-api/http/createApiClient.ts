@@ -121,7 +121,11 @@ export class HttpApiClient {
 
     const url = this.composeUrl(path, query)
     const session = this.options.sessionAccessor.getSession()
-    const finalHeaders: Record<string, string> = { ...headers }
+    // Static extra headers (e.g. trusted-device credentials) are attached on EVERY
+    // request — including unauthenticated ones like login — but never override
+    // explicit per-call headers.
+    const extraHeaders = this.options.getExtraHeaders?.() ?? {}
+    const finalHeaders: Record<string, string> = { ...extraHeaders, ...headers }
 
     if (requiresAuth && session?.accessToken) {
       finalHeaders.Authorization = `Bearer ${session.accessToken}`

@@ -17,6 +17,7 @@ export const ItemsOrderPreviewScrollLayout = ({
   expandedItemClientId,
   onToggleExpand,
   onEditItem,
+  onDeleteItem,
   orderId,
   onOpenEditItem,
   onAddItem,
@@ -79,9 +80,10 @@ export const ItemsOrderPreviewScrollLayout = ({
           <ItemCard
             key={item.client_id}
             item={item}
-            showDelete={!controlled}
+            showDelete={!controlled || Boolean(onDeleteItem)}
             isExpanded={expandedItemClientId === item.client_id}
             onToggleExpand={() => onToggleExpand(item.client_id)}
+            onDelete={onDeleteItem ? () => onDeleteItem(item) : undefined}
             onEdit={
               onEditItem
                 ? () => onEditItem(item)

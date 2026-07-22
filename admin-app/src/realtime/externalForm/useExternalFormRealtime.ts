@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 
 import {
-  joinExternalFormUserRoom,
-  leaveExternalFormUserRoom,
+  joinExternalFormRoom,
+  leaveExternalFormRoom,
   subscribeToExternalFormReceived,
   subscribeToExternalFormRequested,
   unsubscribeFromExternalFormReceived,
@@ -12,11 +12,9 @@ import {
 } from './externalForm.realtime'
 
 export const useExternalFormRealtime = ({
-  userId,
   onReceived,
   onRequested,
 }: {
-  userId: number
   onReceived?: (payload: ExternalFormReceivedPayload) => void
   onRequested?: (payload: ExternalFormRequestedPayload) => void
 }) => {
@@ -32,10 +30,6 @@ export const useExternalFormRealtime = ({
   }, [onRequested])
 
   useEffect(() => {
-    if (!Number.isFinite(userId) || userId <= 0) {
-      return
-    }
-
     const handleReceived = (payload: ExternalFormReceivedPayload) => {
       onReceivedRef.current?.(payload)
     }
@@ -44,14 +38,16 @@ export const useExternalFormRealtime = ({
       onRequestedRef.current?.(payload)
     }
 
-    joinExternalFormUserRoom(userId)
+    // Team-scoped room — join once while mounted; the backend derives the team
+    // from the authenticated socket, so no user id is needed.
+    joinExternalFormRoom()
     subscribeToExternalFormReceived(handleReceived)
     subscribeToExternalFormRequested(handleRequested)
 
     return () => {
-      leaveExternalFormUserRoom(userId)
+      leaveExternalFormRoom()
       unsubscribeFromExternalFormReceived(handleReceived)
       unsubscribeFromExternalFormRequested(handleRequested)
     }
-  }, [userId])
+  }, [])
 }

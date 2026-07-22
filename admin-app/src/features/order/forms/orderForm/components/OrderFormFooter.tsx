@@ -36,6 +36,8 @@ export const OrderFormFooter = ({
   const statusToneClass =
     sendStatus?.state === "error"
       ? "border-rose-300/25 bg-rose-300/[0.12] text-rose-100"
+      : sendStatus?.state === "warning"
+        ? "border-amber-300/25 bg-amber-300/[0.12] text-amber-100"
       : sendStatus?.state === "success"
         ? "border-emerald-300/25 bg-emerald-300/[0.12] text-emerald-100"
         : "border-sky-300/25 bg-sky-300/[0.12] text-sky-100";

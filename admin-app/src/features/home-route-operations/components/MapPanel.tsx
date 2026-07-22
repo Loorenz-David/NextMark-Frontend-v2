@@ -1,25 +1,34 @@
 import { useEffect, useRef } from 'react'
 
-import type { MapConfig } from '@/shared/map'
 import { useMapManager } from '@/shared/resource-manager/useResourceManager'
 
-const DEFAULT_MAP_CONFIG: MapConfig = {
-  center: { lat: 0, lng: 0 },
-  zoom: 2,
-  disableDefaultUI: true,
+type MapPanelProps = {
+  isRouteLoading?: boolean
 }
 
-export const MapPanel = () => {
+export const MapPanel = ({ isRouteLoading = false }: MapPanelProps) => {
   const mapManager = useMapManager()
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    void mapManager.initialize(containerRef.current, DEFAULT_MAP_CONFIG)
+    void mapManager.initialize(containerRef.current)
   }, [mapManager])
 
   return (
-    <section className="w-full h-full">
+    <section className="absolute inset-0 h-full w-full">
       <div ref={containerRef} className="h-full w-full" />
+      {isRouteLoading ? (
+        <div
+          aria-label="Loading route"
+          aria-live="polite"
+          className="absolute inset-0 z-[60] flex items-center justify-center bg-[#07100f]/78 backdrop-blur-[2px]"
+          role="status"
+        >
+          <p className="animate-pulse text-sm font-semibold tracking-[0.16em] text-white uppercase">
+            Loading route
+          </p>
+        </div>
+      ) : null}
     </section>
   )
 }

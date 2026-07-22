@@ -15,6 +15,7 @@ export type ItemsOrderPreviewLayoutProps = {
   expandedItemClientId: string | null;
   onToggleExpand: (clientId: string) => void;
   onEditItem?: (item: Item) => void;
+  onDeleteItem?: (item: Item) => void;
   orderId?: number;
   onOpenEditItem: (orderId: number, clientId: string) => void;
   onAddItem: () => void;

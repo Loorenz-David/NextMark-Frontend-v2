@@ -95,6 +95,12 @@ export interface ApiClientConfig {
   refreshPath: string
   sessionAccessor: SessionAccessor
   onUnauthenticated?: () => void
+  /**
+   * Optional static headers attached to every request (including unauthenticated
+   * ones such as login). Read live on each call so credentials can change at
+   * runtime. Explicit per-call `RequestOptions.headers` take precedence.
+   */
+  getExtraHeaders?: () => Record<string, string>
   fetchImpl?: typeof fetch
   serializePayload?: (payload: unknown) => SerializePayloadResult
   gzipPayload?: (bytes: Uint8Array) => Uint8Array

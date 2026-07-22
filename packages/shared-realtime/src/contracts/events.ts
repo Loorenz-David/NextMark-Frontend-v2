@@ -142,13 +142,13 @@ export type DriverLocationSnapshotPayload = {
   positions: DriverLocationUpdatedPayload[]
 }
 
+// Team-scoped: the room is derived from the authenticated socket's team, so no
+// user_id is sent. The backend stamps submitted_by/requested_by from claims.
 export type ExternalFormSubmitPayload<TFormData> = {
-  user_id: number
   form_data: TFormData
 }
 
 export type ExternalFormRequestPayload = {
-  user_id: number
   request_data?: Record<string, unknown>
 }
 

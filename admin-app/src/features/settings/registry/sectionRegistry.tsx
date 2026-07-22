@@ -87,4 +87,9 @@ export const sectionRegistry = {
       default: module.ExternalFormAccessPage,
     })),
   ),
+  'trustedDevice.main': lazy(() =>
+    import('@/features/auth/trusted-device/pages/TrustedDeviceMainPage').then((module) => ({
+      default: module.TrustedDeviceMainPage,
+    })),
+  ),
 } satisfies Record<string, RegistryComponent>

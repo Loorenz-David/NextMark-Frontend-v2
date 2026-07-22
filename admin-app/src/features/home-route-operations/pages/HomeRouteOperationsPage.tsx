@@ -7,7 +7,6 @@ import { useOrderCaseActions } from '@/features/orderCase/actions/orderCase.acti
 import { useHomeApp } from '@/features/home-app/providers/HomeAppProvider'
 import { AdminNotificationWorkspaceBridge } from '@/realtime/notifications'
 
-import { HomeOverlays } from '../components/HomeOverlays'
 import { HomeDesktopView } from '../views/HomeDesktopView'
 import { HomeMobileView } from '../views/HomeMobileView'
 import type { PayloadBase } from '../types/types'
@@ -43,7 +42,6 @@ const HomeRouteOperationsContent = () => {
         className="admin-shell-aurora admin-shell-aurora--three transition-opacity duration-200"
         style={{ opacity: disableAuroraBackground ? 0 : 1 }}
       />
-      <HomeOverlays />
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden">
         {isMobile ? <HomeMobileView /> : <HomeDesktopView />}
       </div>

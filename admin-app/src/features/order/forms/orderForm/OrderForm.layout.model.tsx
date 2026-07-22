@@ -50,6 +50,7 @@ export const useOrderFormLayoutModel = () => {
     itemEditorPayload,
     openItemCreateForm,
     openItemEditForm,
+    deleteItem,
     closeItemEditor,
   } = itemEditor;
   const labelMode = mode === "create" ? "Creating Order" : "Editing Order";
@@ -70,6 +71,7 @@ export const useOrderFormLayoutModel = () => {
     itemEditorPayload,
     openItemCreateForm,
     openItemEditForm,
+    deleteItem,
     closeItemEditor,
     visibleItemDrafts,
     isLoadingInitialItems,

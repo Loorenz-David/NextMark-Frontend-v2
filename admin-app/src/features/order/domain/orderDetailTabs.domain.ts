@@ -1,14 +1,12 @@
 export type OrderDetailTabId =
   | "summary"
   | "notes"
-  | "tracking"
   | "time_windows"
   | "event_history";
 
 export const ORDER_DETAIL_TABS: ReadonlyArray<OrderDetailTabId> = [
   "summary",
   "notes",
-  "tracking",
   "time_windows",
   "event_history",
 ];

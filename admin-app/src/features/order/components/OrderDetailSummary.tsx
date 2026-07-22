@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { HelpToCarryIcon } from "@/assets/icons";
+import { ExclamationIcon, HelpToCarryIcon } from "@/assets/icons";
 import { formatPhone } from "@/shared/data-validation/phoneValidation";
 import { toDateOnly } from "@/shared/data-validation/timeValidation";
 
@@ -10,6 +10,9 @@ import type { OrderState } from "../types/orderState";
 type OrderDetailSummaryProps = {
   order: Order | null;
   orderState: OrderState | null;
+  missingRequiredFields?: string[];
+  onMissingOrderInfoClick?: () => void;
+  onTrackingLinkCopy?: () => void;
 };
 
 type DetailCardProps = {
@@ -26,11 +29,19 @@ const detailLinkClassName =
 export const OrderDetailSummary = ({
   order,
   orderState,
+  missingRequiredFields = [],
+  onMissingOrderInfoClick,
+  onTrackingLinkCopy,
 }: OrderDetailSummaryProps) => {
   const fullName =
     `${asText(order?.client_first_name)} ${asText(order?.client_last_name)}`.trim();
   const stateColor = orderState?.color ?? "var(--color-primary)";
   const stateName = orderState?.name ?? null;
+  const hasMissingRequiredInfo =
+    missingRequiredFields.length > 0 && typeof order?.id === "number";
+  const hasTrackingInfo = Boolean(
+    order?.tracking_number || order?.tracking_link,
+  );
 
   return (
     <div
@@ -51,18 +62,32 @@ export const OrderDetailSummary = ({
             ) : null}
           </div>
         </div>
-        {stateName ? (
-          <span
-            className="inline-flex items-center rounded-full border px-2.5 py-1 text-[0.64rem] font-medium uppercase tracking-[0.16em]"
-            style={{
-              color: stateColor,
-              borderColor: `${stateColor}55`,
-              backgroundColor: `${stateColor}18`,
-            }}
-          >
-            {stateName}
-          </span>
-        ) : null}
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {hasMissingRequiredInfo && onMissingOrderInfoClick ? (
+            <button
+              type="button"
+              onClick={onMissingOrderInfoClick}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-amber-400/45 bg-amber-300/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100 transition-colors hover:bg-amber-300/25"
+              aria-label="Open client form for missing order information"
+            >
+              <ExclamationIcon className="h-3 w-3 text-amber-200" />
+              Missing order info
+            </button>
+          ) : null}
+
+          {stateName ? (
+            <span
+              className="inline-flex items-center rounded-full border px-2.5 py-1 text-[0.64rem] font-medium uppercase tracking-[0.16em]"
+              style={{
+                color: stateColor,
+                borderColor: `${stateColor}55`,
+                backgroundColor: `${stateColor}18`,
+              }}
+            >
+              {stateName}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-5 py-4.5 scroll-thin">
@@ -133,6 +158,30 @@ export const OrderDetailSummary = ({
               )
             }
           />
+
+          {hasTrackingInfo ? (
+            <DetailCard
+              className="sm:col-span-2"
+              label="Tracking number"
+              value={
+                <div className="flex min-w-0 items-center justify-between gap-3">
+                  <span className="min-w-0 break-all font-mono">
+                    {asText(order?.tracking_number)}
+                  </span>
+                  {order?.tracking_link && onTrackingLinkCopy ? (
+                    <button
+                      type="button"
+                      onClick={onTrackingLinkCopy}
+                      className="inline-flex shrink-0 items-center rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs font-medium text-[var(--color-muted)] transition-colors hover:bg-white/[0.08] hover:text-[var(--color-text)]"
+                      aria-label="Copy tracking link"
+                    >
+                      Copy
+                    </button>
+                  ) : null}
+                </div>
+              }
+            />
+          ) : null}
         </div>
       </div>
 

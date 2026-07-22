@@ -6,6 +6,7 @@ import { WorkspaceSkeleton } from '../components/WorkspaceSkeleton'
 import { HomeAppProvider, useHomeApp } from '../providers/HomeAppProvider'
 import { HomeAppManagersProvider } from '../providers/HomeAppManagersProvider'
 import { HomeDesktopHeader } from '../components/HomeDesktopHeader'
+import { HomeOverlays } from '@/features/home-route-operations/components/HomeOverlays'
 
 const HomeStorePickupPage = lazy(() =>
   import('@/features/home-store-pickup/pages/HomeStorePickupPage').then((module) => ({
@@ -35,7 +36,12 @@ function HomeAppShell() {
   const { activeWorkspace } = useHomeApp()
 
   if (isMobile) {
-    return <ActiveWorkspaceView workspace={activeWorkspace} />
+    return (
+      <>
+        <ActiveWorkspaceView workspace={activeWorkspace} />
+        <HomeOverlays />
+      </>
+    )
   }
 
   return (
@@ -44,6 +50,10 @@ function HomeAppShell() {
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         <ActiveWorkspaceView workspace={activeWorkspace} />
       </div>
+      {/* Global popup render host — available across all home workspaces so the
+          account switcher (and every home popup) renders regardless of the
+          active workspace. */}
+      <HomeOverlays />
     </div>
   )
 }

@@ -8,35 +8,27 @@ import {
 } from '../contracts'
 import type { SharedRealtimeClient } from '../core/client'
 
+// The external-form channel is team-scoped: the backend joins the socket to
+// `external_form:{team_id}` using the authenticated claims, ignoring any payload
+// user_id. So join/leave/submit/request carry no user id — the same team device
+// pairing survives trusted-device user switching. (Event names are unchanged.)
 export const createExternalFormChannel = <TFormData>(client: SharedRealtimeClient) => ({
-  joinUser: (userId: number) => {
-    if (!Number.isFinite(userId) || userId <= 0) {
-      return
-    }
-
+  join: () => {
     client.connect()
-    client.publish(REALTIME_CLIENT_EVENTS.externalFormJoinUser, { user_id: userId })
+    client.publish(REALTIME_CLIENT_EVENTS.externalFormJoinUser, {})
   },
-  leaveUser: (userId: number) => {
-    if (!Number.isFinite(userId) || userId <= 0) {
-      return
-    }
-
-    client.publish(REALTIME_CLIENT_EVENTS.externalFormLeaveUser, { user_id: userId })
+  leave: () => {
+    client.publish(REALTIME_CLIENT_EVENTS.externalFormLeaveUser, {})
   },
-  submitUser: (payload: ExternalFormSubmitPayload<TFormData>) => {
-    if (!Number.isFinite(payload.user_id) || payload.user_id <= 0) {
+  submit: (payload: ExternalFormSubmitPayload<TFormData>) => {
+    if (!payload.form_data) {
       return
     }
 
     client.connect()
     client.publish(REALTIME_CLIENT_EVENTS.externalFormSubmitUser, payload)
   },
-  requestUser: (payload: ExternalFormRequestPayload) => {
-    if (!Number.isFinite(payload.user_id) || payload.user_id <= 0) {
-      return
-    }
-
+  request: (payload: ExternalFormRequestPayload = {}) => {
     client.connect()
     client.publish(REALTIME_CLIENT_EVENTS.externalFormRequestUser, payload)
   },

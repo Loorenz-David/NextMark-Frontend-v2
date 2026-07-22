@@ -1,5 +1,4 @@
 import type { ExternalFormData, ExternalFormStep } from '../domain/externalForm.types'
-import type { SessionSnapshot } from '@/features/auth/login/store/sessionStorage'
 
 export const EXTERNAL_FORM_STEPS: ExternalFormStep[] = [
   'client_info',
@@ -36,41 +35,4 @@ export const canNavigateToStep = (
   }
 
   return EXTERNAL_FORM_STEPS.slice(0, targetIndex).every((step) => canProceed(step, form))
-}
-
-export const resolveExternalFormTargetUserId = ({
-  pathname,
-  searchParams,
-  session,
-}: {
-  pathname: string
-  searchParams: URLSearchParams
-  session: SessionSnapshot | null
-}) => {
-  const searchUserId = searchParams.get('user_id') ?? searchParams.get('userId')
-  const parsedSearch = Number(searchUserId)
-
-  if (Number.isFinite(parsedSearch) && parsedSearch > 0) {
-    return parsedSearch
-  }
-
-  const pathSegments = pathname.split('/').filter(Boolean)
-  const lastSegment = pathSegments[pathSegments.length - 1] ?? ''
-  const parsedPathUserId = Number(lastSegment)
-
-  if (Number.isFinite(parsedPathUserId) && parsedPathUserId > 0) {
-    return parsedPathUserId
-  }
-
-  const sessionUserId = Number(
-    session?.user?.id ??
-      (session as { userId?: string | number | null } | null)?.userId ??
-      -1,
-  )
-
-  if (Number.isFinite(sessionUserId) && sessionUserId > 0) {
-    return sessionUserId
-  }
-
-  return -1
 }

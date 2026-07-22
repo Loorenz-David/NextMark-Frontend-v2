@@ -17,6 +17,8 @@ import { resolveSelectionAuthorityBatchCount } from "@/features/order/domain/ord
 import type { RouteSolutionStop } from "@/features/plan/routeGroup/types/routeSolutionStop";
 import { useMessageHandler } from "@shared-message-handler";
 import { ORDER_DETAIL_SUBHEADER_SWEEP_EVENT } from "@/features/order/domain/orderDetailHeaderAnimation.events";
+import { useOpenCreatePlanFormAction } from "@/features/plan/actions/usePlanActions";
+import { resolveCreatePlanOrderIds } from "@/features/plan/dnd/domain/resolveCreatePlanOrderIds";
 
 import { useExecutePlanDndIntent } from "@/features/plan/controllers/useExecutePlanDndIntent";
 import type { PlanDndIntent } from "@/features/plan/domain/planDndIntent";
@@ -32,9 +34,11 @@ import type {
   UnscheduleDropFeedback,
 } from "@/shared/resource-manager/ResourceManagerContext";
 import {
+  selectRouteSolutionStopByClientId,
   selectRouteSolutionStopsBySolutionId,
   useRouteSolutionStopStore,
 } from "@/features/plan/routeGroup/store/routeSolutionStop.store";
+import { runWithRouteMapRefresh } from "@/features/plan/routeGroup/flows/runWithRouteMapRefresh.flow";
 
 const MAX_BATCH_IDS = 200;
 
@@ -87,6 +91,7 @@ export const usePlanOrderDndController = () => {
   const { isMobile } = useMobile();
   const { showMessage } = useMessageHandler();
   const { execute } = useExecutePlanDndIntent();
+  const openCreatePlanForm = useOpenCreatePlanFormAction();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -249,6 +254,43 @@ export const usePlanOrderDndController = () => {
       new CustomEvent(ORDER_DETAIL_SUBHEADER_SWEEP_EVENT, {
         detail: { orderClientId },
       }),
+    );
+  };
+
+  const resolveRouteMapRefreshPlanId = (
+    intent: Exclude<PlanDndIntent, null>,
+    activeData: Record<string, unknown>,
+  ): number | null => {
+    if (intent.kind === "MOVE_ORDER_TO_ROUTE_GROUP") {
+      return intent.planId;
+    }
+
+    let routeSolutionId: number | null = null;
+    if (intent.kind === "MOVE_ROUTE_STOP_GROUP") {
+      routeSolutionId = intent.routeSolutionId;
+    } else if (intent.kind === "MOVE_ROUTE_STOP") {
+      routeSolutionId =
+        selectRouteSolutionStopByClientId(intent.fromStopClientId)(
+          useRouteSolutionStopStore.getState(),
+        )?.route_solution_id ?? null;
+    } else if (
+      activeData.type === "route_stop" ||
+      activeData.type === "route_stop_group"
+    ) {
+      const stop =
+        activeData.stop && typeof activeData.stop === "object"
+          ? (activeData.stop as { route_solution_id?: unknown })
+          : null;
+      const candidate = Number(
+        activeData.routeSolutionId ?? stop?.route_solution_id ?? NaN,
+      );
+      routeSolutionId =
+        Number.isFinite(candidate) && candidate > 0 ? candidate : null;
+    }
+
+    if (routeSolutionId == null) return null;
+    return resolvePlanIdByRouteGroupId(
+      resolveRouteGroupIdByRouteSolutionId(routeSolutionId),
     );
   };
 
@@ -458,6 +500,56 @@ export const usePlanOrderDndController = () => {
       return;
     }
 
+    if (String(overData?.type ?? "") === "create-plan") {
+      const selectionState = useOrderSelectionStore.getState();
+      const activeOrder = (activeData.order as Order | undefined) ?? null;
+      const selectionModeEnabled =
+        (selectionState.isSelectionMode && hasSelectionIntent(selectionState)) ||
+        activeData.type === "order_batch";
+      const isActiveOrderSelected = isOrderSelectedForBatch(
+        activeOrder,
+        selectionState,
+      );
+
+      if (
+        activeData.type === "order" &&
+        selectionModeEnabled &&
+        !isActiveOrderSelected
+      ) {
+        showMessage({
+          status: 400,
+          message: "Drag a selected order when selection mode is active.",
+        });
+        resetDragUi();
+        return;
+      }
+
+      const selectedOrderServerIds = resolveCreatePlanOrderIds({
+        activeData,
+        selectedServerIds: selectionState.selectedServerIds,
+        selectionModeEnabled,
+        isActiveOrderSelected,
+      });
+
+      if (selectedOrderServerIds.length === 0) {
+        showMessage({
+          status: 400,
+          message: "The dropped order does not have a valid server ID.",
+        });
+        resetDragUi();
+        return;
+      }
+
+      openCreatePlanForm({
+        selectedOrderServerIds,
+        ...(activeData.type === "order_batch"
+          ? { source: "order_multi_select" as const }
+          : {}),
+      });
+      resetDragUi();
+      return;
+    }
+
     const activeId = active.id ? String(active.id) : undefined;
     const overId = overData?.id ? String(overData.id) : undefined;
     const activeOrderClientId =
@@ -551,7 +643,13 @@ export const usePlanOrderDndController = () => {
       });
     }
 
-    const result = await execute(intent);
+    const routeMapRefreshPlanId = resolveRouteMapRefreshPlanId(
+      intent,
+      activeData as Record<string, unknown>,
+    );
+    const result = await runWithRouteMapRefresh(routeMapRefreshPlanId, () =>
+      execute(intent),
+    );
     if (
       result?.success &&
       intent.kind === "ASSIGN_ORDER_TO_PLAN" &&

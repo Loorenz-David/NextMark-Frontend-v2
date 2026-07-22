@@ -1,15 +1,15 @@
-import type { ComponentType } from 'react'
-import { motion } from 'framer-motion'
+import type { ComponentType } from "react";
+import { motion } from "framer-motion";
 
-import { useMobile } from '@/app/contexts/MobileContext'
-import { DarkOverlay } from '@/shared/layout/DarkOverlay'
+import { useMobile } from "@/app/contexts/MobileContext";
+import { DarkOverlay } from "@/shared/layout/DarkOverlay";
 
 type OrderFormShellProps<TViewProps extends object> = {
-  onRequestClose?: () => void
-  desktopView: ComponentType<TViewProps>
-  mobileView: ComponentType<TViewProps>
-  viewProps: TViewProps
-}
+  onRequestClose?: () => void;
+  desktopView: ComponentType<TViewProps>;
+  mobileView: ComponentType<TViewProps>;
+  viewProps: TViewProps;
+};
 
 export const OrderFormShell = <TViewProps extends object>({
   onRequestClose,
@@ -17,7 +17,7 @@ export const OrderFormShell = <TViewProps extends object>({
   mobileView: MobileView,
   viewProps,
 }: OrderFormShellProps<TViewProps>) => {
-  const { isMobile } = useMobile()
+  const { isMobile } = useMobile();
 
   if (isMobile) {
     return (
@@ -27,26 +27,26 @@ export const OrderFormShell = <TViewProps extends object>({
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 40 }}
-          transition={{ duration: 0.22, ease: 'easeOut' }}
+          transition={{ duration: 0.22, ease: "easeOut" }}
         >
           <MobileView {...viewProps} />
         </motion.div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <DarkOverlay onTapAction={onRequestClose}/>
+      <DarkOverlay onTapAction={onRequestClose} />
       <motion.div
-        className="relative z-10 flex h-[min(92vh,900px)] w-[min(1120px,96vw)] min-h-0 min-w-0 "
+        className="relative z-10 flex h-[min(92vh,900px)] w-[950px] min-h-0 min-w-0 "
         initial={{ opacity: 0, x: 90 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 90 }}
-        transition={{ duration: 0.24, ease: 'easeOut' }}
+        transition={{ duration: 0.24, ease: "easeOut" }}
       >
         <DesktopView {...viewProps} />
       </motion.div>
     </div>
-  )
-}
+  );
+};

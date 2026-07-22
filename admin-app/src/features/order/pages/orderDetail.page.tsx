@@ -5,13 +5,12 @@ import { ItemsOrderPreview } from "../item";
 
 import { OrderDetailSummary } from "../components/OrderDetailSummary";
 import { OrderDetailNotesTab } from "../components/OrderDetailNotesTab";
-import { OrderDetailTracking } from "../components/OrderDetailTracking";
 import { OrderDetailEventHistory } from "../components/OrderDetailEventHistory";
 import { OrderDetailHeader } from "../components/pageHeaders/OrderDetailHeader";
 import { OrderDetailProvider } from "../context/OrderDetailProvider";
 import { useOrderDetailContext } from "../context/OrderDetailContext";
 import { OrderDetailTimeWindows } from "../components/OrderDetailTimeWindows";
-import { useOrderDetailStopWarningController } from "../controllers/useOrderDetailStopWarning.controller";
+import { useOrderDetailPageController } from "../controllers/useOrderDetailPage.controller";
 import type { OrderDetailPayload } from "../domain/orderDetailPayload.types";
 
 const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
@@ -28,8 +27,10 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
   const {
     initialCarouselIndex,
     timeWindowHeaderAddon,
-    trackingMissingRequiredFields,
-  } = useOrderDetailStopWarningController({
+    missingRequiredFields,
+    handleMissingOrderInfoClick,
+    handleTrackingLinkCopy,
+  } = useOrderDetailPageController({
     order,
     routeGroupId: payload?.routeGroupId ?? null,
     planStartDate: payload?.planStartDate ?? null,
@@ -60,7 +61,13 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
                   Loading order details...
                 </div>
               ) : order ? (
-                <OrderDetailSummary order={order} orderState={orderState} />
+                <OrderDetailSummary
+                  order={order}
+                  orderState={orderState}
+                  missingRequiredFields={missingRequiredFields}
+                  onMissingOrderInfoClick={handleMissingOrderInfoClick}
+                  onTrackingLinkCopy={handleTrackingLinkCopy}
+                />
               ) : (
                 <div className="admin-glass-panel rounded-[22px] p-4 text-sm text-[var(--color-muted)]">
                   Order not found.
@@ -69,21 +76,13 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
 
               {order ? <OrderDetailNotesTab order={order} /> : null}
 
-              {order ? (
-                <OrderDetailTracking
-                  order={order}
-                  missingRequiredFields={trackingMissingRequiredFields}
-                />
-              ) : null}
-
+              <OrderDetailEventHistory orderId={orderServerId} />
               {order ? (
                 <OrderDetailTimeWindows
                   order={order}
                   headerRight={timeWindowHeaderAddon}
                 />
               ) : null}
-
-              <OrderDetailEventHistory orderId={orderServerId} />
             </SlideCarousel>
           </div>
 

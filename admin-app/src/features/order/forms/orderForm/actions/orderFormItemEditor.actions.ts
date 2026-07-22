@@ -75,6 +75,7 @@ export const useOrderFormItemEditorActions = ({
     itemEditorPayload,
     openItemCreateForm,
     openItemEditForm,
+    deleteItem,
     closeItemEditor,
   }
 }

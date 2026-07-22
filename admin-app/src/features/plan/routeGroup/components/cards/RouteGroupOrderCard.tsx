@@ -5,7 +5,10 @@ import { useOrderStateByServerId } from "@/features/order/store/orderStateHooks.
 import type { RouteSolutionStop } from "@/features/plan/routeGroup/types/routeSolutionStop";
 import { RouteStopWarnings } from "../warnings/RouteStopWarnings";
 import { formatRouteTime } from "@/features/plan/routeGroup/utils/formatRouteTime";
-import { useOrderActions } from "@/features/order";
+import {
+  OrderMissingInfoNotifier,
+  useOrderActions,
+} from "@/features/order";
 import { StopOrderAvatar } from "./StopOrderAvatar";
 import { OrderOperationTypeBadges } from "@/features/order/components/cards/OrderOperationTypeBadges";
 import { ItemTypeCountsPill } from "@/features/order/components/cards/ItemTypeCountsPill";
@@ -62,10 +65,11 @@ export const RouteGroupOrderCard = ({
 
   return (
     <div
-      className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-hidden rounded-lg border border-white/10 p-4 pl-2 transition-all duration-200 hover:border-white/18 hover:bg-white/[0.08] hover:shadow-[0_16px_38px_rgba(0,0,0,0.16)]"
+      className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-visible rounded-lg border border-white/10 p-4 pl-2 transition-all duration-200 hover:border-white/18 hover:bg-white/[0.08] hover:shadow-[0_16px_38px_rgba(0,0,0,0.16)]"
       onClick={openOrder}
     >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_26%,transparent_72%,rgba(0,0,0,0.04))]" />
+      <OrderMissingInfoNotifier order={order} />
+      <div className="pointer-events-none absolute inset-0 rounded-lg bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_26%,transparent_72%,rgba(0,0,0,0.04))]" />
 
       <div className="relative z-10 flex w-full gap-3">
         <StopOrderAvatar stopOrder={stopOrder} />

@@ -32,6 +32,7 @@ export const SettingsPage = () => {
   const ItemsMain = sectionRegistry['item.main']
   const VehiclesMain = sectionRegistry['vehicle.main']
   const FacilitiesMain = sectionRegistry['facility.main']
+  const TrustedDevicesMain = sectionRegistry['trustedDevice.main']
   const PrintDocumentMain = sectionRegistry['printDocument.main']
   const ExternalFormAccess = sectionRegistry['externalForm.access']
 
@@ -49,6 +50,7 @@ export const SettingsPage = () => {
           <Route path="items" element={<ItemsMain />} />
           <Route path="vehicles" element={<VehiclesMain />} />
           <Route path="facilities" element={<FacilitiesMain />} />
+          <Route path="trusted-devices" element={<TrustedDevicesMain />} />
           <Route path="external-form" element={<ExternalFormAccess />} />
           <Route path="print-templates" element={<PrintDocumentMain />}>
             <Route path=":channel" element={<PrintTemplateChannelPage />} />

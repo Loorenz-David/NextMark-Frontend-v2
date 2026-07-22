@@ -53,6 +53,11 @@ export const ORDER_EVENTS: OrderEventDefinition[] = [
     description: "Triggered when a client form link is sent.",
   },
   {
+    key: "client_form_submitted",
+    label: "Client form submitted",
+    description: "Triggered when a client submits the customer information form.",
+  },
+  {
     key: "order_rescheduled",
     label: "Order rescheduled",
     description:
@@ -76,6 +81,7 @@ export type ORDER_EVENT_KEYS =
   | "order_cancelled"
   | "order_delivery_plan_changed"
   | "client_form_link_sent"
+  | "client_form_submitted"
   | "order_rescheduled";
 
 // DELIVERY_WINDOW_RESCHEDULED_BY_USER = "order_delivery_window_changed_by_user"

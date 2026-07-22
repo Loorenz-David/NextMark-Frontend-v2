@@ -2,12 +2,16 @@ import type { PropsWithChildren } from "react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import { apiClient } from "@/lib/api/ApiClient";
-import { MessageHandlerProvider } from "@shared-message-handler";
+import { MessageHandlerProvider, useMessageHandler } from "@shared-message-handler";
 import { MobileProvider } from "@/app/providers/MobileProvider";
 import { useBootstrap } from "@/features/bootstrap/bootstrap.hook";
+import { useAuthSessionStore } from "@/features/auth/login/store/authSessionStore";
+import { consumeAuthNotice } from "@/features/auth/login/store/authNotice";
 import { AdminBusinessRealtimeProvider } from "@/realtime/business/AdminBusinessRealtimeProvider";
 import { DriverLiveRealtimeProvider } from "@/realtime/driverLive/DriverLiveRealtimeProvider";
 import { AdminNotificationsProvider } from "@/realtime/notifications/AdminNotificationsProvider";
+import { ensureRealtimeConnected } from "@/realtime/client";
+import { OrderLinkedDeviceFormProvider } from "@/features/order";
 
 const DeferredAdminNotificationsPushProvider = lazy(() =>
   import("@/realtime/notifications/AdminNotificationsPushProvider").then(
@@ -19,17 +23,34 @@ const DeferredAdminNotificationsPushProvider = lazy(() =>
 
 function ApiAuthBridge() {
   const navigate = useNavigate();
+  const { showMessage } = useMessageHandler();
   const { fetchBootstrap } = useBootstrap();
 
   useEffect(() => {
     apiClient.setUnauthenticatedHandler(() => {
-      navigate("/auth/login", { replace: true });
+      // For trusted devices with sessions remaining, evict only the failed
+      // active user and reload as a fallback user. Otherwise redirect to login.
+      const evicted = useAuthSessionStore.getState().handleTerminalAuthFailure();
+      if (!evicted) {
+        navigate("/auth/login", { replace: true });
+      }
     });
   }, [navigate]);
 
   useEffect(() => {
+    // Surface a one-shot notice that survived an involuntary user eviction.
+    const notice = consumeAuthNotice();
+    if (notice) {
+      showMessage({ status: 200, message: notice });
+    }
+  }, [showMessage]);
+
+  useEffect(() => {
     if (apiClient.getAccessToken()) {
       void fetchBootstrap();
+      // Guarantee the socket has a token for the active session — mints one when
+      // a switched-in trusted-device user has no socket token yet.
+      void ensureRealtimeConnected();
     }
   }, [fetchBootstrap]);
 
@@ -72,6 +93,13 @@ function DeferredAppEnhancers() {
 }
 
 export function AppProviders({ children }: PropsWithChildren) {
+  const session = useAuthSessionStore((state) => state.session);
+  const employeeUserId = Number(
+    session?.user?.id ??
+      (session as { userId?: string | number | null } | null)?.userId ??
+      -1,
+  );
+
   return (
     <BrowserRouter>
       <MobileProvider>
@@ -79,9 +107,13 @@ export function AppProviders({ children }: PropsWithChildren) {
           <AdminNotificationsProvider>
             <AdminBusinessRealtimeProvider>
               <DriverLiveRealtimeProvider>
-                <ApiAuthBridge />
-                {children}
-                <DeferredAppEnhancers />
+                <OrderLinkedDeviceFormProvider
+                  employeeUserId={employeeUserId}
+                >
+                  <ApiAuthBridge />
+                  {children}
+                  <DeferredAppEnhancers />
+                </OrderLinkedDeviceFormProvider>
               </DriverLiveRealtimeProvider>
             </AdminBusinessRealtimeProvider>
           </AdminNotificationsProvider>

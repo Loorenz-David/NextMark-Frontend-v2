@@ -21,22 +21,16 @@ export const createExternalFormController = () => {
     }
   }
 
-  const submit = (form: ExternalFormData, targetUserId: number) => {
-    if (!Number.isFinite(targetUserId) || targetUserId <= 0) {
-      return
-    }
-
+  const submit = (form: ExternalFormData) => {
     const sanitizedForm: ExternalFormData = {
       ...form,
       client_primary_phone: sanitizeExternalFormPhone(form.client_primary_phone),
       client_secondary_phone: sanitizeExternalFormPhone(form.client_secondary_phone),
     }
 
-    console.log('External Form Submitted:', sanitizedForm)
-    emitExternalFormSubmit({
-      user_id: targetUserId,
-      form_data: sanitizedForm,
-    })
+    // Team-scoped: the backend routes to the team's external-form room and stamps
+    // submitted_by from the authenticated socket, so no target user id is sent.
+    emitExternalFormSubmit({ form_data: sanitizedForm })
   }
 
   return {

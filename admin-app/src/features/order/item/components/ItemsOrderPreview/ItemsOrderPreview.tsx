@@ -28,6 +28,7 @@ export type ItemsOrderPreviewProps = {
   header?: ReactNode;
   onAddItem?: () => void;
   onEditItem?: (item: Item) => void;
+  onDeleteItem?: (item: Item) => void;
   stickyHeader?: boolean;
   scrollBody?: boolean;
 };
@@ -41,6 +42,7 @@ export const ItemsOrderPreview = ({
   header,
   onAddItem,
   onEditItem,
+  onDeleteItem,
   scrollBody = false,
   stickyHeader = false,
 }: ItemsOrderPreviewProps) => {
@@ -226,6 +228,7 @@ export const ItemsOrderPreview = ({
       );
     },
     onEditItem,
+    onDeleteItem,
     orderId,
     onOpenEditItem: openEditItem,
     onAddItem: handleAddItem,

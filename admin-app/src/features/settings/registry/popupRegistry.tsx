@@ -9,6 +9,9 @@ import { ItemPositionForm } from '@/features/itemConfigurations/popups/ItemPosit
 import { ItemStateForm } from '@/features/itemConfigurations/popups/ItemStateForm/ItemStateForm'
 import { VehicleForm } from '@/features/infrastructure/vehicle/popups/VehicleForm/VehicleForm'
 import { FacilityForm } from '@/features/infrastructure/facility/popups/FacilityForm/FacilityForm'
+import { TrustedDeviceEnrollPopup } from '@/features/auth/trusted-device/popups/TrustedDeviceEnroll/TrustedDeviceEnrollPopup'
+import { TrustedDeviceReprovisionPopup } from '@/features/auth/trusted-device/popups/TrustedDeviceReprovision/TrustedDeviceReprovisionPopup'
+import { TrustedDeviceSecretRevealPopup } from '@/features/auth/trusted-device/popups/TrustedDeviceSecretReveal/TrustedDeviceSecretRevealPopup'
 
 export type SectionKey = keyof typeof popupRegistry
 
@@ -33,5 +36,8 @@ export const popupRegistry = {
   'item.state.form': ItemStateForm,
   'vehicle.form': VehicleForm,
   'facility.form': FacilityForm,
+  'trustedDevice.enroll': TrustedDeviceEnrollPopup,
+  'trustedDevice.reprovision': TrustedDeviceReprovisionPopup,
+  'trustedDevice.secretReveal': TrustedDeviceSecretRevealPopup,
   'settings.placeholder': placeholderPopup,
 }

@@ -41,6 +41,11 @@ export function useBaseControlls<TPayload = unknown>() {
   return baseControlls as BaseControls<TPayload>
 }
 
+export function useOptionalBaseControlls<TPayload = unknown>() {
+  const context = useContext(ResourcesManagerContext)
+  return context?.baseControlls as BaseControls<TPayload> | undefined
+}
+
 export function useMapManager() {
   const { mapManager } = useResourceManager<KnownResourceRegistry>()
   if (!mapManager) {
@@ -48,4 +53,3 @@ export function useMapManager() {
   }
   return mapManager
 }
-

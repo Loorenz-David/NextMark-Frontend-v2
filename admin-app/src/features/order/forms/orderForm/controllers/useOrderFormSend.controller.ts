@@ -9,7 +9,7 @@ export type OrderFormSendAction = "linked-device" | "customer";
 
 export type OrderFormSendStatus = {
   action: OrderFormSendAction;
-  state: "loading" | "success" | "error";
+  state: "loading" | "success" | "warning" | "error";
   message: string;
 };
 
@@ -130,14 +130,37 @@ export const useOrderFormSendController = ({
       message: "Sending request to linked device...",
     });
 
-    externalFlow.handleSendForm();
+    const result = externalFlow.handleSendForm(
+      typeof model.orderServerId === "number"
+        ? { orderId: model.orderServerId }
+        : null,
+    );
+
+    if (result.status !== "sent") {
+      setStatusForRequest(requestId, {
+        action: "linked-device",
+        state: result.status === "blocked" ? "warning" : "error",
+        message: result.message,
+      });
+      return;
+    }
+
+    if (!result.closeAfterSend) {
+      setStatusForRequest(requestId, {
+        action: "linked-device",
+        state: "warning",
+        message: "Request sent. Save the order before this form can close.",
+      });
+      return;
+    }
 
     setStatusForRequest(requestId, {
       action: "linked-device",
       state: "success",
       message: "Request sent to linked device.",
     });
-  }, [externalFlow, sendInProgress, setStatusForRequest]);
+    model.closeController.confirmClose();
+  }, [externalFlow, model, sendInProgress, setStatusForRequest]);
 
   const handleSendToCustomer = useCallback(async () => {
     if (sendInProgress) {
@@ -227,8 +250,9 @@ export const useOrderFormSendController = ({
       setStatusForRequest(requestId, {
         action: "customer",
         state: "success",
-        message: "form sent to custumer!",
+        message: "Form sent to customer.",
       });
+      model.closeController.confirmClose();
     } catch (error) {
       setStatusForRequest(requestId, {
         action: "customer",

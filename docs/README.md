@@ -30,6 +30,7 @@ Each application and the shared packages directory maintains its own `docs/` sub
 | [AGENTS.md](../AGENTS.md) | Frontend architecture rules governing all apps and packages in this workspace |
 | [APP_SCOPED_SESSIONS.md](../APP_SCOPED_SESSIONS.md) | App-scoped session model and conventions |
 | [GPT_AI_PANEL_RESPONSE_CONTRACT.md](GPT_AI_PANEL_RESPONSE_CONTRACT.md) | AI panel backend response contract specification |
+| [TRUSTED_DEVICE_MULTI_USER_SESSIONS.md](TRUSTED_DEVICE_MULTI_USER_SESSIONS.md) | Admin-app trusted-device multi-user sessions & instant user switching — how it works, deferred items, and gaps |
 
 ---
 

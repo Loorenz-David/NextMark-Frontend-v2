@@ -30,6 +30,7 @@ import type { RouteGroup } from "@/features/plan/routeGroup/types/routeGroup";
 import { createRouteWarningActionRegistry } from "./routeWarningActionRegistry";
 import { useMessageHandler } from "@shared-message-handler";
 import type { useLoadingController } from "../controllers/useLoadingController";
+import { runWithRouteMapRefresh } from "../flows/runWithRouteMapRefresh.flow";
 
 type Props = {
   routeGroupId?: number | null;
@@ -72,24 +73,25 @@ export const useRouteGroupPageActions = ({
 
   const withOptimizationLoader = async (
     task: () => Promise<boolean>,
-  ): Promise<boolean> => {
-    optimizationInFlightRef.current += 1;
-    if (optimizationInFlightRef.current === 1) {
-      loadingController.handleOptimizationLoader(true);
-    }
-
-    try {
-      return await task();
-    } finally {
-      optimizationInFlightRef.current = Math.max(
-        optimizationInFlightRef.current - 1,
-        0,
-      );
-      if (optimizationInFlightRef.current === 0) {
-        loadingController.handleOptimizationLoader(false);
+  ): Promise<boolean> =>
+    runWithRouteMapRefresh(planId ?? null, async () => {
+      optimizationInFlightRef.current += 1;
+      if (optimizationInFlightRef.current === 1) {
+        loadingController.handleOptimizationLoader(true);
       }
-    }
-  };
+
+      try {
+        return await task();
+      } finally {
+        optimizationInFlightRef.current = Math.max(
+          optimizationInFlightRef.current - 1,
+          0,
+        );
+        if (optimizationInFlightRef.current === 0) {
+          loadingController.handleOptimizationLoader(false);
+        }
+      }
+    });
 
   const handleCreateOrder = () => {
     openOrderForm({
@@ -204,20 +206,27 @@ export const useRouteGroupPageActions = ({
 
   const selectRouteSolution = (solutionId: number) => {
     if (!routeGroupId) return;
-    void selectRouteSolutionMutation(solutionId, routeGroupId);
+    void runWithRouteMapRefresh(planId ?? null, () =>
+      selectRouteSolutionMutation(solutionId, routeGroupId),
+    );
   };
 
   const previewRouteSolution = (solutionId: number) => {
     if (!routeGroupId || !planId) return;
-    void previewRouteSolutionMutation(solutionId, planId, routeGroupId);
+    void runWithRouteMapRefresh(planId, () =>
+      previewRouteSolutionMutation(solutionId, planId, routeGroupId),
+    );
   };
 
   const confirmSelectRouteSolution = () => {
-    if (!routeGroupId || !planId || !selectedRouteSolution?.id) return;
-    void confirmSelectRouteSolutionMutation(
-      selectedRouteSolution.id,
-      planId,
-      routeGroupId,
+    const solutionId = selectedRouteSolution?.id;
+    if (!routeGroupId || !planId || !solutionId) return;
+    void runWithRouteMapRefresh(planId, () =>
+      confirmSelectRouteSolutionMutation(
+        solutionId,
+        planId,
+        routeGroupId,
+      ),
     );
   };
 

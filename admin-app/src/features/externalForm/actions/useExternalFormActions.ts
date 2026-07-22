@@ -11,7 +11,6 @@ export const useExternalFormActions = (
   currentStep: ExternalFormStep,
   setCurrentStep: (step: ExternalFormStep) => void,
   warnings: ReturnType<typeof useExternalFormWarnings>,
-  targetUserId: number,
   onSubmitted?: () => void,
 ) => {
   const controller = createExternalFormController()
@@ -63,7 +62,7 @@ export const useExternalFormActions = (
       return
     }
 
-    controller.submit(form, targetUserId)
+    controller.submit(form)
     onSubmitted?.()
   }
 

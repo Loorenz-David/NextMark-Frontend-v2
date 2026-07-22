@@ -24,6 +24,7 @@ export const OrderFormItemsPanel = ({
     visibleItemDrafts,
     openItemCreateForm,
     openItemEditForm,
+    deleteItem,
   } = model
 
   return (
@@ -105,7 +106,7 @@ export const OrderFormItemsPanel = ({
                   items={visibleItemDrafts}
                   onAddItem={openItemCreateForm}
                   onEditItem={openItemEditForm}
-
+                  onDeleteItem={(item) => deleteItem(item.client_id)}
                   scrollBody
                 />
               )}

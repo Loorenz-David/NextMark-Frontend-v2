@@ -26,7 +26,9 @@ import { SectionManagerHost } from "../components/SectionManagerHost";
 import type { PayloadBase } from "../types/types";
 
 import { SectionPanel } from "../../../shared/section-panel/SectionPanel";
+import { useIsRouteMapRefreshing } from "@/features/plan";
 import { PlanDesktopShell } from "@/features/plan/views/PlanDesktopShell";
+import { MapPanel } from "../components/MapPanel";
 
 const SAFE_GUTTER = 24;
 const DEFAULT_VIEWPORT_INSETS = {
@@ -34,15 +36,6 @@ const DEFAULT_VIEWPORT_INSETS = {
   right: SAFE_GUTTER,
   bottom: SAFE_GUTTER,
   left: SAFE_GUTTER,
-};
-
-const MAP_CONTAINER_STYLE: CSSProperties = {
-  height: "100%",
-  width: "100%",
-  position: "absolute",
-  zIndex: 0,
-  top: "0",
-  left: "0",
 };
 
 const PLAN_TOGGLE_BUTTON_STYLE: CSSProperties = {
@@ -66,10 +59,7 @@ const PLAN_TOGGLE_BUTTON_SPLIT_STYLE: CSSProperties = {
 };
 
 export function HomeDesktopView() {
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-
-  const { initialize, resize, setViewportInsets, reframeToVisibleArea } =
-    useMapManager();
+  const { resize, setViewportInsets, reframeToVisibleArea } = useMapManager();
   const { routeOperationsActiveDrag, planDropFeedback } = useResourceManager();
   const sectionManager = useSectionManager();
   const baseControlls = useBaseControlls<PayloadBase>();
@@ -77,6 +67,11 @@ export function HomeDesktopView() {
   const isOrderOverlayOpen =
     baseControlls.isBaseOpen &&
     typeof baseControlls.payload?.planId === "number";
+  const activeRoutePlanId =
+    typeof baseControlls.payload?.planId === "number"
+      ? baseControlls.payload.planId
+      : null;
+  const isRouteMapRefreshing = useIsRouteMapRefreshing(activeRoutePlanId);
   const previousOrderOverlayOpenRef = useRef(isOrderOverlayOpen);
   const isOrderOverlayClosing =
     previousOrderOverlayOpenRef.current && !isOrderOverlayOpen;
@@ -125,10 +120,6 @@ export function HomeDesktopView() {
     }
     return !blockers.hasOverlay && !blockers.isOrderOverlayOpen;
   }, []);
-
-  useEffect(() => {
-    void initialize(mapContainerRef.current);
-  }, [initialize]);
 
   useMapSelectionModeGuardFlow();
 
@@ -186,11 +177,6 @@ export function HomeDesktopView() {
     });
 
   const splitMode = layout.viewMode === "split";
-  const activeRoutePlanId =
-    typeof baseControlls.payload?.planId === "number"
-      ? baseControlls.payload.planId
-      : null;
-
   return (
     <>
       {derivedState.isRouteOperationsOverlayActive ? (
@@ -212,7 +198,11 @@ export function HomeDesktopView() {
         isOrderOverlayOpen={isOrderOverlayOpen}
         onPlanLayoutChange={handleRailLayoutChange}
         onRailTransitionEnd={handleRailTransitionEnd}
-        map={<div ref={mapContainerRef} style={MAP_CONTAINER_STYLE} />}
+        map={
+          <MapPanel
+            isRouteLoading={isOrderOverlayOpen && isRouteMapRefreshing}
+          />
+        }
         mapOverlay={
           derivedState.isRouteOperationsOverlayActive ? (
             <RouteGroupMapOverlay />

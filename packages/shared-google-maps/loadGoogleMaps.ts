@@ -33,7 +33,7 @@ export function loadGoogleMaps(): Promise<GoogleMapsClient> {
       const script = existingScript ?? document.createElement('script')
       const params = new URLSearchParams({
         key: apiKey,
-        libraries: 'places,marker,geometry,drawing',
+        libraries: 'places,marker,geometry',
         v: 'weekly',
         loading: 'async',
       })

@@ -27,6 +27,8 @@ const isOrderDragActive = (activeDrag: unknown) => {
   );
 };
 
+const CREATE_PLAN_DROP_TARGET_ID = "create-plan-drop-target";
+
 const UnscheduleDropTarget = ({
   dropFeedback,
 }: {
@@ -107,6 +109,14 @@ export const PlanMainHeader = ({
   planStats,
 }: PlanMainHeaderProps) => {
   const { active } = useDndContext();
+  const { setNodeRef: setCreatePlanNodeRef, isOver: isCreatePlanOver } =
+    useDroppable({
+      id: CREATE_PLAN_DROP_TARGET_ID,
+      data: {
+        type: "create-plan",
+        id: CREATE_PLAN_DROP_TARGET_ID,
+      },
+    });
   const { unscheduleDropFeedback } =
     useResourceManager<KnownResourceRegistry>();
   const shouldShowUnscheduleDropTarget =
@@ -130,11 +140,17 @@ export const PlanMainHeader = ({
       <div className="flex items-center gap-1 p-4">
         <div className="flex items-center gap-4">
           <BasicButton
+            ref={setCreatePlanNodeRef}
             key="order-main-create"
             params={{
               variant: "primary",
               onClick: onCreate,
-              ariaLabel: "Create order",
+              ariaLabel: isCreatePlanOver
+                ? "Drop orders to create a plan"
+                : "Create delivery plan",
+              className: isCreatePlanOver
+                ? "shadow-[0_0_0_4px_rgba(131,204,185,0.24),0_0_24px_rgba(131,204,185,0.32)]"
+                : undefined,
             }}
           >
             <PlusIcon className="mr-2 h-4 w-4 stroke-[var(--color-secondary)]" />
