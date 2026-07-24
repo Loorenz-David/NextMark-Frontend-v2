@@ -47,6 +47,8 @@
   --danger-solid-strong: #b91c1c;
   --danger-solid-deep: #be123c;
   --danger-on-solid: #ffffff;
+  --danger-notice-border: #ff8f8f;
+  --danger-notice-ink: #ffd1d1;
 
   --warning: #fcd34d;
   --warning-soft: #fde68a;
@@ -61,6 +63,7 @@
   --success-solid: #16a34a;
   --success-solid-strong: #15803d;
   --success-on-solid: #ffffff;
+  --success-action-r: 22, 192, 96;
 
   --info: #7dd3fc;
   --info-r: 125, 211, 252;
@@ -78,6 +81,8 @@
 
   /* Exact-parity channels for functional-color literals outside Tailwind class maps. */
   --theme-surface-slate-r: 15, 23, 42;
+  --theme-surface-auth-r: 19, 26, 27;
+  --theme-surface-map-panel-r: 7, 16, 15;
   --theme-surface-workspace-r: 15, 23, 25;
   --theme-surface-popover-r: 9, 16, 26;
   --theme-surface-control-top-r: 33, 45, 46;
@@ -107,6 +112,7 @@
   --warning-copy-r: 255, 236, 173;
   --danger-highlight-r: 255, 120, 120;
   --danger-rose-r: 251, 113, 133;
+  --danger-state-r: 180, 35, 24;
   --success-vivid-r: 0, 197, 49;
   --success-deep-r: 11, 138, 61;
   --neutral-slate-r: 148, 163, 184;
@@ -236,6 +242,8 @@
   --danger-solid-strong: #6f2c26;
   --danger-solid-deep: #742735;
   --danger-on-solid: #f6f1e6;
+  --danger-notice-border: var(--danger-soft);
+  --danger-notice-ink: var(--danger);
 
   --warning: #8a6a1f;
   --warning-soft: #a98a42;
@@ -250,6 +258,7 @@
   --success-solid: #4a6b3f;
   --success-solid-strong: #3f5f38;
   --success-on-solid: #f6f1e6;
+  --success-action-r: 74, 107, 63;
 
   --info: #3d5a6c;
   --info-r: 61, 90, 108;
@@ -266,6 +275,8 @@
   --selection-control-fill: var(--paper-raised);
 
   --theme-surface-slate-r: 231, 220, 199;
+  --theme-surface-auth-r: 246, 241, 230;
+  --theme-surface-map-panel-r: 239, 231, 215;
   --theme-surface-workspace-r: 246, 241, 230;
   --theme-surface-popover-r: 246, 241, 230;
   --theme-surface-control-top-r: 246, 241, 230;
@@ -295,6 +306,7 @@
   --warning-copy-r: 169, 138, 66;
   --danger-highlight-r: 168, 90, 74;
   --danger-rose-r: 168, 90, 74;
+  --danger-state-r: 143, 49, 40;
   --success-vivid-r: 74, 107, 63;
   --success-deep-r: 63, 95, 56;
   --neutral-slate-r: 154, 142, 123;

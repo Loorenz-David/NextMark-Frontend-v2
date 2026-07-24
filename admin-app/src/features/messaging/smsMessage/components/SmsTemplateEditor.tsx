@@ -37,12 +37,12 @@ export const SmsTemplateEditor = ({ value, onChange }: SmsTemplateEditorProps) =
       <div className="mb-5 rounded-3xl border border-border bg-[linear-gradient(180deg,rgba(var(--theme-surface-editor-top-r),0.8),var(--glass-overlay))] px-4 py-3">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text)]">
-            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[#83ccb9]/28 bg-[#83ccb9]/14 px-1.5 text-[0.7rem] font-semibold text-[#a7f0de]">
+            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[var(--accent)]/28 bg-[var(--accent)]/14 px-1.5 text-[0.7rem] font-semibold text-[var(--accent-ink)]">
               1
             </span>
             <span>Write inside the live message bubble</span>
             <span className="px-1 text-faint">→</span>
-            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[#83ccb9]/28 bg-[#83ccb9]/14 px-1.5 text-[0.7rem] font-semibold text-[#a7f0de]">
+            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[var(--accent)]/28 bg-[var(--accent)]/14 px-1.5 text-[0.7rem] font-semibold text-[var(--accent-ink)]">
               2
             </span>
             <span>Tap a label to insert it at the current cursor</span>

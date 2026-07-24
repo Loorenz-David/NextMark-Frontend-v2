@@ -82,7 +82,7 @@ function AnalyticsTooltip({
 
   const datum = payload[0].payload
   return (
-    <div className="rounded-md border border-border bg-[#0f172a]/95 px-2 py-1.5 text-xs text-text shadow-xl">
+    <div className="rounded-md border border-border bg-[rgb(var(--theme-surface-slate-r))]/95 px-2 py-1.5 text-xs text-text shadow-xl">
       <div className="font-medium">{datum.label}</div>
       <div className="text-muted">{formatValue(datum.value, datum.displayValue)}</div>
       {datum.hint ? <div className="mt-1 text-muted">{datum.hint}</div> : null}

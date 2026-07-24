@@ -29,7 +29,7 @@ export const SmsPhonePreview = ({
 
         <div className="rounded-3xl border border-border-subtle bg-[radial-gradient(circle_at_bottom_right,color-mix(in_srgb,var(--color-primary)_4%,transparent),transparent_44%),linear-gradient(180deg,rgba(var(--theme-surface-message-r),0.98),rgba(var(--theme-surface-shell-solid-r),0.98))] p-4">
           <div className="flex items-center gap-3 border-b border-border-subtle pb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-raised text-sm font-semibold text-[#9be9d7]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-raised text-sm font-semibold text-[var(--accent-ink)]">
               CL
             </div>
             <div className="min-w-0">
@@ -43,7 +43,7 @@ export const SmsPhonePreview = ({
               We will send this message when the selected trigger runs.
             </div>
 
-            <div className="ml-auto w-[82%] rounded-3xl rounded-br-md border border-[#83ccb9]/20 bg-[linear-gradient(145deg,var(--sms-preview-bubble-start),rgba(67,118,123,0.8))] p-3 text-text shadow-[var(--shadow-panel-subtle-color)]">
+            <div className="ml-auto w-[82%] rounded-3xl rounded-br-md border border-[var(--accent)]/20 bg-[linear-gradient(145deg,var(--sms-preview-bubble-start),rgba(67,118,123,0.8))] p-3 text-text shadow-[var(--shadow-panel-subtle-color)]">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-muted">
                   Live message

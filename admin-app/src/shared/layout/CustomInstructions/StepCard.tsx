@@ -3,12 +3,12 @@ import type { StepCardProps } from './CustomInstructions.types'
 
 export const StepCard = ({ step, index, className, maxWidth }: StepCardProps) => {
   const containerClassName =
-    `flex min-w-[280px] flex-1 flex-col gap-4 rounded-3xl border border-[#83ccb9]/24 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_16%,transparent),rgba(var(--accent-r),0.07))] p-4 text-text shadow-[var(--shadow-panel-soft)] backdrop-blur-xl ${className ?? ''}`.trim()
+    `flex min-w-[280px] flex-1 flex-col gap-4 rounded-3xl border border-[var(--accent)]/24 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_16%,transparent),rgba(var(--accent-r),0.07))] p-4 text-text shadow-[var(--shadow-panel-soft)] backdrop-blur-xl ${className ?? ''}`.trim()
 
   return (
     <article className={containerClassName} style={{ maxWidth: maxWidth }}>
       <header className="flex items-start gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#83ccb9]/24 bg-[#83ccb9]/14 text-sm font-semibold text-[#b9f7e8]">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--accent)]/24 bg-[var(--accent)]/14 text-sm font-semibold text-[var(--accent-ink)]">
           {index + 1}
         </div>
         <div className="flex min-w-0 flex-col gap-1">
@@ -16,7 +16,7 @@ export const StepCard = ({ step, index, className, maxWidth }: StepCardProps) =>
         </div>
       </header>
 
-      <section className="flex flex-col gap-2 border-t border-[#83ccb9]/16 pt-3">
+      <section className="flex flex-col gap-2 border-t border-[var(--accent)]/16 pt-3">
         {renderSlateBlocks(step.body, `step-${index}-body`)}
       </section>
     </article>

@@ -20,7 +20,7 @@ const renderTextNode = (node: SlateTextNode, key: string): ReactNode => {
         href={node.link}
         target="_blank"
         rel="noreferrer"
-        className="text-[#94f0e7] underline transition-colors hover:text-[#b8fff5]"
+        className="text-[var(--accent-ink)] underline transition-colors hover:text-[var(--accent-ink)]"
       >
         {content}
       </a>

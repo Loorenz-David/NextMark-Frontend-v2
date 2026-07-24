@@ -51,9 +51,9 @@ const UnscheduleDropTarget = ({
       ref={setNodeRef}
       className={`min-w-[132px] rounded-xl border px-3 py-2 text-center transition-all duration-200 ${
         isOver || isSuccessFeedback
-          ? "border-[#0B8A3D]/50 bg-[#0B8A3D]/12 shadow-[0_0_0_1px_rgba(var(--success-deep-r),0.2),0_0_16px_rgba(var(--success-deep-r),0.15)]"
+          ? "border-[rgb(var(--success-deep-r))]/50 bg-[rgb(var(--success-deep-r))]/12 shadow-[0_0_0_1px_rgba(var(--success-deep-r),0.2),0_0_16px_rgba(var(--success-deep-r),0.15)]"
           : isErrorFeedback
-            ? "border-[#B42318]/35 bg-[#B42318]/10"
+            ? "border-[rgb(var(--danger-state-r))]/35 bg-[rgb(var(--danger-state-r))]/10"
             : "border-[var(--color-border)] bg-[var(--color-muted)]/8"
       }`}
     >
@@ -66,7 +66,7 @@ const UnscheduleDropTarget = ({
             exit={{ y: -7, opacity: 0 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
             className={`inline-flex text-xs font-semibold uppercase tracking-[0.18em] ${
-              isErrorFeedback ? "text-[#B42318]" : "text-[#0B8A3D]"
+              isErrorFeedback ? "text-[rgb(var(--danger-state-r))]" : "text-[rgb(var(--success-deep-r))]"
             }`}
           >
             {isErrorFeedback

@@ -180,8 +180,8 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
                     transition={{ duration: 0.2, ease: "easeOut" }}
                     className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium  ${
                       dropFeedback.status === "error"
-                        ? "border-[#B42318]/35 bg-[#B42318]/10 text-[#B42318]"
-                        : "border-[#0B8A3D]/35 bg-[#0B8A3D]/10 text-[#0B8A3D]"
+                        ? "border-[rgb(var(--danger-state-r))]/35 bg-[rgb(var(--danger-state-r))]/10 text-[rgb(var(--danger-state-r))]"
+                        : "border-[rgb(var(--success-deep-r))]/35 bg-[rgb(var(--success-deep-r))]/10 text-[rgb(var(--success-deep-r))]"
                     }`}
                   >
                     <span className="text-nowrap">

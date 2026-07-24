@@ -15,7 +15,7 @@ export function AuthPage() {
   const isRegister = location.pathname.includes('/auth/register')
 
   return (
-    <section className="admin-auth-shell relative flex min-h-dvh items-center justify-center overflow-hidden bg-[#131a1b] px-4 py-8 text-text sm:px-6">
+    <section className="admin-auth-shell relative flex min-h-dvh items-center justify-center overflow-hidden bg-[rgb(var(--theme-surface-auth-r))] px-4 py-8 text-text sm:px-6">
       <div className="admin-auth-aurora admin-auth-aurora--one" aria-hidden="true" />
       <div className="admin-auth-aurora admin-auth-aurora--two" aria-hidden="true" />
       <div className="admin-auth-grid" aria-hidden="true">

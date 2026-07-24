@@ -157,7 +157,7 @@ export const RouteGroupRailAvatar = ({
             ease: isIncomingPulseActive ? "easeInOut" : "easeOut",
           }}
           className={`flex h-12 w-12 items-center justify-center rounded-full border p-[3px] ${
-            isDropTarget ? "border-[#00c531]" : ""
+            isDropTarget ? "border-[rgb(var(--success-vivid-r))]" : ""
           }`}
           style={
             isDropTarget

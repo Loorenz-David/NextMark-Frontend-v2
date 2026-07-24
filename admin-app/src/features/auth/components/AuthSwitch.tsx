@@ -33,7 +33,7 @@ export function AuthSwitch() {
               onClick: () => navigate(tab.path),
               className: `w-full rounded-2xl py-2.5 text-sm ${
                 isActive
-                  ? 'border-[#83ccb9]/32 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_18%,transparent),rgba(var(--accent-r),0.10))] text-[#d8fff3] shadow-[inset_0_1px_0_var(--rule-subtle)]'
+                  ? 'border-[var(--accent)]/32 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_18%,transparent),rgba(var(--accent-r),0.10))] text-[var(--accent-ink)] shadow-[inset_0_1px_0_var(--rule-subtle)]'
                   : 'text-muted hover:bg-surface-raised'
               }`,
             }}

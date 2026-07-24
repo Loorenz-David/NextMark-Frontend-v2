@@ -18,7 +18,7 @@ export const PhonePrefixCard = ({
         type="button"
         className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition ${
           isSelected
-            ? 'bg-[#83ccb9]/12 text-text'
+            ? 'bg-[var(--accent)]/12 text-text'
             : 'text-text hover:bg-surface-hover'
         }`}
         onMouseDown={(event) => event.preventDefault()}
@@ -31,7 +31,7 @@ export const PhonePrefixCard = ({
           {prefixOption.display}
         </span>
         {isSelected && (
-          <div className="ml-auto h-2.5 w-2.5 rounded-full bg-[#16c060]" />
+          <div className="ml-auto h-2.5 w-2.5 rounded-full bg-[rgb(var(--success-action-r))]" />
         )}
       </button>
     </li>
