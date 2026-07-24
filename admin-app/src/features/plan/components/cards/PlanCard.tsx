@@ -132,7 +132,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
     <motion.div
       className={`flex flex-col gap-6 rounded-2xl border p-4 shadow-sm cursor-pointer transition-all duration-200 ${
         isActive
-          ? "border-[var(--color-light-blue)] shadow-[0_0_0_2px_rgba(113,205,233,0.35),0_0_18px_rgba(72,180,194,0.18)] bg-[rgba(113,205,233,0.04)]"
+          ? "border-[var(--color-light-blue)] shadow-[0_0_0_2px_rgba(var(--info-r),0.35),0_0_18px_rgba(var(--accent-r),0.18)] bg-[rgba(var(--info-r),0.04)]"
           : "border-[var(--color-border)]"
       }`}
       onClick={(e) => {
@@ -237,7 +237,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
                 <div
                   className={`flex items-center gap-2 rounded-full  px-2 py-1 ${
                     hasItemTypeCounts
-                      ? "cursor-pointer transition-all duration-200 hover:border-[rgb(var(--color-light-blue-r),0.45)] hover:shadow-[0_0_0_1px_rgba(113,205,233,0.2),0_0_16px_rgba(72,180,194,0.18)]"
+                      ? "cursor-pointer transition-all duration-200 hover:border-[rgb(var(--color-light-blue-r),0.45)] hover:shadow-[0_0_0_1px_rgba(var(--info-r),0.2),0_0_16px_rgba(var(--accent-r),0.18)]"
                       : ""
                   }`}
                 >

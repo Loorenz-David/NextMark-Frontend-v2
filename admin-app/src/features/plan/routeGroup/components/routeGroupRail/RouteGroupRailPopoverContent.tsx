@@ -14,8 +14,8 @@ const SummaryRow = ({
   value: string;
 }) => (
   <div className="flex items-center justify-between gap-4 text-xs">
-    <span className="text-[rgb(220,248,243)]/72">{label}</span>
-    <span className="text-right font-medium text-[rgb(232,255,251)]">
+    <span className="text-[var(--accent-ink)]/72">{label}</span>
+    <span className="text-right font-medium text-[var(--accent-ink)]">
       {value}
     </span>
   </div>
@@ -25,12 +25,12 @@ export const RouteGroupRailPopoverContent = ({
   item,
 }: RouteGroupRailPopoverContentProps) => {
   return (
-    <div className="admin-backdrop-blur-xl w-56 rounded-3xl border border-[rgba(112,222,208,0.24)] bg-[linear-gradient(135deg,rgba(72,180,194,0.18),rgba(111,224,207,0.07))] p-3 text-sm text-[rgb(232,255,251)] shadow-[0_18px_40px_rgba(0,0,0,0.26)]">
+    <div className="admin-backdrop-blur-xl w-56 rounded-3xl border border-[rgba(var(--accent-r),0.24)] bg-[linear-gradient(135deg,rgba(var(--accent-r),0.18),rgba(var(--accent-r),0.07))] p-3 text-sm text-[var(--accent-ink)] shadow-[0_18px_40px_rgba(0,0,0,0.26)]">
       <div className="mb-3 flex flex-col gap-1">
-        <div className="text-sm font-semibold text-[rgb(232,255,251)]">
+        <div className="text-sm font-semibold text-[var(--accent-ink)]">
           {item.label}
         </div>
-        <div className="text-[11px] text-[rgb(220,248,243)]/78">
+        <div className="text-[11px] text-[var(--accent-ink)]/78">
           {item.zoneLabel ?? "Route group"}
         </div>
       </div>

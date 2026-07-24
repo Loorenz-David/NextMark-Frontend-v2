@@ -58,7 +58,7 @@ export const PlanDateFilterBar = ({
 
   return (
     <div className="flex min-w-[200px] flex-1 items-center">
-      <div className="flex w-[200px] items-center rounded-full border border-[rgba(112,222,208,0.32)]  px-1.5  shadow-[0_12px_26px_rgba(0,0,0,0.18)]">
+      <div className="flex w-[200px] items-center rounded-full border border-[rgba(var(--accent-r),0.32)]  px-1.5  shadow-[0_12px_26px_rgba(0,0,0,0.18)]">
         {!hideArrows ? (
           <button
             type="button"

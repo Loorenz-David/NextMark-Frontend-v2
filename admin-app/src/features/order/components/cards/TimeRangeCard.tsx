@@ -27,5 +27,5 @@ export const TimeRangeCard = ({
 
 const defaultIconClass = 'max-h-4 max-w-4 text-[var(--color-green-turquess)]'
 const defaultTimeContainerClass =
-  'items-center rounded-2xl border border-[rgba(112,222,208,0.24)] bg-[linear-gradient(135deg,rgba(72,180,194,0.18),rgba(111,224,207,0.09))] px-3 py-2.5 shadow-[0_6px_14px_color-mix(in_srgb,var(--color-green-turquess)_6%,transparent)]'
-const defaultTextClass = 'text-sm font-medium text-[rgb(221,255,249)]'
+  'items-center rounded-2xl border border-[rgba(var(--accent-r),0.24)] bg-[linear-gradient(135deg,rgba(var(--accent-r),0.18),rgba(var(--accent-r),0.09))] px-3 py-2.5 shadow-[0_6px_14px_color-mix(in_srgb,var(--color-green-turquess)_6%,transparent)]'
+const defaultTextClass = 'text-sm font-medium text-[var(--accent-ink)]'

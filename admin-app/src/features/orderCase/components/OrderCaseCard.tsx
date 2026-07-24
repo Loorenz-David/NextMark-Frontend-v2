@@ -51,7 +51,7 @@ export const OrderCaseCard = ({
             <div className="flex shrink-0 flex-col items-end gap-2">
               <StateCard label={orderCase.state} color={stateColor} style={{ maxWidth: '120px', borderRadius: '999px', paddingInline: '12px', paddingBlock: '6px' }} />
               {orderCase.unseen_chats > 0 ? (
-                <span className="rounded-full border border-[rgba(var(--color-turques-r),0.18)] bg-[rgba(var(--color-turques-r),0.08)] px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-[rgb(184,255,242)] uppercase">
+                <span className="rounded-full border border-[rgba(var(--color-turques-r),0.18)] bg-[rgba(var(--color-turques-r),0.08)] px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-[var(--accent-ink)] uppercase">
                   {orderCase.unseen_chats} unseen
                 </span>
               ) : null}

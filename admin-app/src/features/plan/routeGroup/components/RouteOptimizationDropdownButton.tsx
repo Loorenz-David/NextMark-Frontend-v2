@@ -52,18 +52,18 @@ export const RouteOptimizationDropdownButton = ({
       renderInPortal={true}
       label={
         <div className="flex w-full items-center justify-center gap-3 py-1.5">
-          <ThunderIcon className="h-5 w-5 text-[rgb(208,255,248)]" />
-          <span className="text-sm font-medium text-[rgb(226,255,251)]">{primaryLabel}</span>
+          <ThunderIcon className="h-5 w-5 text-[var(--accent-ink)]" />
+          <span className="text-sm font-medium text-[var(--accent-ink)]">{primaryLabel}</span>
         </div>
       }
 
       variant="secondary"
       style={{
         background:
-          'linear-gradient(135deg, rgba(72, 180, 194, 0.18), rgba(111, 224, 207, 0.08))',
-        borderColor: 'rgba(112, 222, 208, 0.24)',
+          'linear-gradient(135deg, rgba(var(--accent-r),0.18), rgba(var(--accent-r),0.08))',
+        borderColor: 'rgba(var(--accent-r),0.24)',
         boxShadow: '0 16px 34px rgba(0, 0, 0, 0.18)',
-        color: 'rgb(226,255,251)',
+        color: 'var(--accent-ink)',
       }}
       onClick={routeGroupPageActions.optimizeRoute}
     >
@@ -93,7 +93,7 @@ export const RouteOptimizationDropdownButton = ({
                   <div className="flex items-center gap-2">
                     <span className="text-left text-sm text-[var(--color-text)]">{label}</span>
                     {isBest ? (
-                      <span className="rounded-full border border-[rgba(112,222,208,0.24)] bg-[rgba(72,180,194,0.14)] px-2 py-0.5 text-[10px] text-[rgb(214,255,248)]">
+                      <span className="rounded-full border border-[rgba(var(--accent-r),0.24)] bg-[rgba(var(--accent-r),0.14)] px-2 py-0.5 text-[10px] text-[var(--accent-ink)]">
                         Best
                       </span>
                     ) : null}
@@ -105,7 +105,7 @@ export const RouteOptimizationDropdownButton = ({
                       </span>
                     ) : null}
                     {isPreviewing ? (
-                      <span className="rounded-full border border-[rgba(112,222,208,0.24)] bg-[rgba(72,180,194,0.14)] px-2 py-0.5 text-[10px] text-[rgb(214,255,248)]">
+                      <span className="rounded-full border border-[rgba(var(--accent-r),0.24)] bg-[rgba(var(--accent-r),0.14)] px-2 py-0.5 text-[10px] text-[var(--accent-ink)]">
                         Preview
                       </span>
                     ) : null}

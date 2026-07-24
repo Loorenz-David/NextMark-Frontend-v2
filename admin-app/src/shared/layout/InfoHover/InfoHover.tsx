@@ -10,16 +10,16 @@ const DEFAULT_TEXT_TRIGGER_CLASSES = 'cursor-help underline underline-offset-2 t
 const DEFAULT_ICON_TRIGGER_CLASSES = 'rounded-full bg-[var(--color-border)]/50 p-1 text-[var(--color-text)]'
 const DEFAULT_ICON_CLASSES = 'h-3 w-3'
 const DEFAULT_OVERLAY_CLASSES =
-  'max-w-[280px] rounded-3xl border border-[rgba(112,222,208,0.24)] bg-[linear-gradient(135deg,rgba(72,180,194,0.18),rgba(111,224,207,0.07))] p-3 text-sm text-[rgb(232,255,251)] shadow-[0_18px_40px_rgba(0,0,0,0.26)] backdrop-blur-xl'
+  'max-w-[280px] rounded-3xl border border-[rgba(var(--accent-r),0.24)] bg-[linear-gradient(135deg,rgba(var(--accent-r),0.18),rgba(var(--accent-r),0.07))] p-3 text-sm text-[var(--accent-ink)] shadow-[0_18px_40px_rgba(0,0,0,0.26)] backdrop-blur-xl'
 
 const renderMessageCard = (message: InfoHoverMessage) => (
   <div className="flex h-full w-full flex-col gap-2 p-1">
     {message.title ? (
-      <div className="text-xs font-semibold text-[rgb(232,255,251)]">
+      <div className="text-xs font-semibold text-[var(--accent-ink)]">
         {message.title}
       </div>
     ) : null}
-    <div className="text-xs leading-relaxed text-[rgb(220,248,243)]">
+    <div className="text-xs leading-relaxed text-[var(--accent-ink)]">
       {message.content}
     </div>
   </div>

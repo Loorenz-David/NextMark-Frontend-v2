@@ -72,7 +72,7 @@ export const OrderCaseChatList = ({ chats, currentUserId }: OrderCaseChatListPro
 
                 <div className={`max-w-[82%] rounded-3xl border px-3.5 py-2.5 backdrop-blur-xl ${
                   isMine
-                    ? 'border-[rgba(var(--color-turques-r),0.22)] bg-[linear-gradient(135deg,rgba(72,180,194,0.16),rgba(111,224,207,0.08))]'
+                    ? 'border-[rgba(var(--color-turques-r),0.22)] bg-[linear-gradient(135deg,rgba(var(--accent-r),0.16),rgba(var(--accent-r),0.08))]'
                     : 'border-border bg-surface-raised'
                 }`}>
                   {!isMine ? (

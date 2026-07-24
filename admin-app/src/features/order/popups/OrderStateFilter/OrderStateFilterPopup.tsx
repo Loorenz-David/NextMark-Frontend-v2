@@ -88,7 +88,7 @@ export const OrderStateFilterPopup = ({
                   onClick={() => toggleState(state.name)}
                   className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors ${
                     isSelected
-                      ? "border-info-border bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))] text-[var(--color-text)]"
+                      ? "border-info-border bg-[linear-gradient(135deg,rgba(var(--info-r),0.15),rgba(var(--info-r),0.05))] text-[var(--color-text)]"
                       : "border-border bg-[var(--color-page)] text-muted hover:border-border-accent"
                   }`}
                 >
@@ -97,7 +97,7 @@ export const OrderStateFilterPopup = ({
                       <CheckMarkIcon className="h-3 w-3" />
                     </div>
                   ) : (
-                    <span className="mt-[1px] flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-[rgba(147,197,253,0.72)] bg-[rgba(239,246,255,0.96)]" />
+                    <span className="mt-[1px] flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-[rgba(var(--info-r),0.72)] bg-[var(--selection-control-fill)]" />
                   )}
 
                   <span className="leading-6">{state.name}</span>

@@ -23,10 +23,39 @@ const FULL_VALUE_TOKENS = new Map([
   ['255,255,255,0.22', '--rule-strong'],
   ['14,22,23,0.72', '--glass-overlay'],
   ['239,68,68,1', '--danger-solid'],
+  ['31,175,193,0.96', '--ready-action-gradient-start'],
+  ['59,211,205,0.88', '--ready-action-gradient-end'],
+  ['92,168,163,0.74', '--sms-preview-bubble-start'],
+  ['201,245,255,0.9', '--stop-order-avatar-ink'],
+  ['239,246,255,0.96', '--selection-control-fill'],
 ])
 
 const EXISTING_CHANNEL_TOKENS = new Map([
   ['104,214,195', '--color-turques-r'],
+])
+
+const SEMANTIC_CHANNEL_TOKENS = new Map([
+  ['72,180,194', '--accent-r'],
+  ['112,222,208', '--accent-r'],
+  ['111,224,207', '--accent-r'],
+  ['94,209,215', '--accent-r'],
+  ['113,205,233', '--info-r'],
+  ['56,189,248', '--info-r'],
+  ['147,197,253', '--info-r'],
+  ['84,146,209', '--info-r'],
+])
+
+const SEMANTIC_FOREGROUND_TOKENS = new Map([
+  ['184,255,242', '--accent-ink'],
+  ['208,255,248', '--accent-ink'],
+  ['212,255,247', '--accent-ink'],
+  ['214,255,248', '--accent-ink'],
+  ['220,248,243', '--accent-ink'],
+  ['221,255,249', '--accent-ink'],
+  ['226,255,251', '--accent-ink'],
+  ['232,255,251', '--accent-ink'],
+  ['208,223,255', '--info-ink'],
+  ['213,247,255', '--info-ink'],
 ])
 
 const EXISTING_COLOR_TOKENS = new Map([
@@ -161,6 +190,30 @@ const replaceFunctionalColors = (source) => {
           token: existingColorToken,
           alpha,
         })
+      }
+
+      const semanticChannelToken = SEMANTIC_CHANNEL_TOKENS.get(rgbKey)
+      if (semanticChannelToken) {
+        replacements += 1
+        byToken.set(
+          semanticChannelToken,
+          (byToken.get(semanticChannelToken) ?? 0) + 1,
+        )
+        return channelColor({
+          functionName,
+          token: semanticChannelToken,
+          alpha,
+        })
+      }
+
+      const semanticForegroundToken = SEMANTIC_FOREGROUND_TOKENS.get(rgbKey)
+      if (semanticForegroundToken) {
+        replacements += 1
+        byToken.set(
+          semanticForegroundToken,
+          (byToken.get(semanticForegroundToken) ?? 0) + 1,
+        )
+        return `var(${semanticForegroundToken})`
       }
 
       const exactParityToken = EXACT_PARITY_CHANNEL_TOKENS.get(rgbKey)

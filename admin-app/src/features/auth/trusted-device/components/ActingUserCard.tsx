@@ -46,7 +46,7 @@ export const ActingUserCard = ({ user, isActive, onSelect }: ActingUserCardProps
       aria-pressed={isActive}
       className={`flex w-full cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors ${
         isActive
-          ? 'border-info-border bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))] text-[var(--color-text)]'
+          ? 'border-info-border bg-[linear-gradient(135deg,rgba(var(--info-r),0.15),rgba(var(--info-r),0.05))] text-[var(--color-text)]'
           : 'border-border bg-[var(--color-page)] text-muted hover:border-border-accent'
       }`}
     >
@@ -67,7 +67,7 @@ export const ActingUserCard = ({ user, isActive, onSelect }: ActingUserCardProps
         ) : null}
       </div>
       {isActive ? (
-        <span className="flex h-5 items-center rounded-full bg-[color-mix(in_srgb,var(--color-blue-500)_18%,transparent)] px-2 text-[11px] font-semibold text-[rgba(147,197,253,0.95)]">
+        <span className="flex h-5 items-center rounded-full bg-[color-mix(in_srgb,var(--color-blue-500)_18%,transparent)] px-2 text-[11px] font-semibold text-[rgba(var(--info-r),0.95)]">
           Active
         </span>
       ) : (

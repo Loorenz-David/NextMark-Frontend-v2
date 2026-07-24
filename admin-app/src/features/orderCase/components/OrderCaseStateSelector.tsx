@@ -14,10 +14,10 @@ export const OrderCaseStateSelector = ({ value, onSelect }: OrderCaseStateSelect
         const isActive = state === value
         const activeClasses =
           state === 'Open'
-            ? 'border-[color-mix(in_srgb,var(--color-dark-blue)_38%,transparent)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-dark-blue)_22%,transparent),color-mix(in_srgb,var(--color-dark-blue)_8%,transparent))] text-[rgb(208,223,255)]'
+            ? 'border-[color-mix(in_srgb,var(--color-dark-blue)_38%,transparent)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-dark-blue)_22%,transparent),color-mix(in_srgb,var(--color-dark-blue)_8%,transparent))] text-[var(--info-ink)]'
             : state === 'Resolving'
               ? 'border-[rgba(var(--warning-state-r),0.34)] bg-[linear-gradient(135deg,rgba(var(--warning-state-r),0.18),rgba(var(--warning-state-r),0.06))] text-[rgb(var(--warning-copy-r))]'
-              : 'border-[rgba(var(--color-turques-r),0.34)] bg-[linear-gradient(135deg,rgba(var(--color-turques-r),0.18),rgba(var(--color-turques-r),0.06))] text-[rgb(212,255,247)]'
+              : 'border-[rgba(var(--color-turques-r),0.34)] bg-[linear-gradient(135deg,rgba(var(--color-turques-r),0.18),rgba(var(--color-turques-r),0.06))] text-[var(--accent-ink)]'
 
         return (
           <button

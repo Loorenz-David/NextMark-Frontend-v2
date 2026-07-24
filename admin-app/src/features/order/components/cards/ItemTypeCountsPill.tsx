@@ -105,7 +105,7 @@ export const ItemTypeCountsPill = ({
           <div
             className={`flex items-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1 ${
               hasItemTypeCounts
-                ? "cursor-pointer transition-all duration-200 hover:border-[rgb(var(--color-light-blue-r),0.45)] hover:shadow-[0_0_0_1px_rgba(113,205,233,0.2),0_0_16px_rgba(72,180,194,0.18)]"
+                ? "cursor-pointer transition-all duration-200 hover:border-[rgb(var(--color-light-blue-r),0.45)] hover:shadow-[0_0_0_1px_rgba(var(--info-r),0.2),0_0_16px_rgba(var(--accent-r),0.18)]"
                 : ""
             }`}
           >

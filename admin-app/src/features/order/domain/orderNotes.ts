@@ -44,7 +44,7 @@ export const NOTE_TYPE_STYLE: Record<
   },
   GENERAL: {
     container:
-      "border-info-border bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))]",
+      "border-info-border bg-[linear-gradient(135deg,rgba(var(--info-r),0.15),rgba(var(--info-r),0.05))]",
     label: "text-info",
     content: "text-info",
   },

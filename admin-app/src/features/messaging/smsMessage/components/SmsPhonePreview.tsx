@@ -43,7 +43,7 @@ export const SmsPhonePreview = ({
               We will send this message when the selected trigger runs.
             </div>
 
-            <div className="ml-auto w-[82%] rounded-3xl rounded-br-md border border-[#83ccb9]/20 bg-[linear-gradient(145deg,rgba(92,168,163,0.74),rgba(67,118,123,0.8))] p-3 text-text shadow-[0_8px_18px_rgba(56,103,108,0.08)]">
+            <div className="ml-auto w-[82%] rounded-3xl rounded-br-md border border-[#83ccb9]/20 bg-[linear-gradient(145deg,var(--sms-preview-bubble-start),rgba(67,118,123,0.8))] p-3 text-text shadow-[0_8px_18px_rgba(56,103,108,0.08)]">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-muted">
                   Live message

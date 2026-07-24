@@ -86,7 +86,7 @@ export const AssignUsersField = ({
               aria-pressed={isSelected}
               className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
                 isSelected
-                  ? 'border-info-border bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))] text-[var(--color-text)]'
+                  ? 'border-info-border bg-[linear-gradient(135deg,rgba(var(--info-r),0.15),rgba(var(--info-r),0.05))] text-[var(--color-text)]'
                   : 'border-border bg-[var(--color-page)] text-muted hover:border-border-accent'
               }`}
             >
@@ -104,7 +104,7 @@ export const AssignUsersField = ({
                   <CheckMarkIcon className="h-3 w-3" />
                 </span>
               ) : (
-                <span className="h-5 w-5 shrink-0 rounded-full border border-[rgba(147,197,253,0.72)]" />
+                <span className="h-5 w-5 shrink-0 rounded-full border border-[rgba(var(--info-r),0.72)]" />
               )}
             </button>
           )

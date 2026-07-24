@@ -32,8 +32,11 @@
   --rule-emphasis: rgba(255, 255, 255, 0.75);
 
   --accent: #83ccb9;
+  --accent-r: 131, 204, 185;
   --accent-soft: rgb(86, 201, 181);
   --accent-ink: #f8fbfc;
+  --accent-on-solid: #0f191a;
+  --primary-foreground: #f8fbfc;
 
   --danger: #ef4444;
   --danger-soft: #fca5a5;
@@ -60,11 +63,18 @@
   --success-on-solid: #ffffff;
 
   --info: #7dd3fc;
+  --info-r: 125, 211, 252;
+  --info-ink: #d5f7ff;
   --info-soft: #bae6fd;
   --info-bg: rgba(125, 211, 252, 0.12);
   --info-border: rgba(125, 211, 252, 0.25);
 
   --foreground-mark: #ffffff;
+  --ready-action-gradient-start: rgba(31, 175, 193, 0.96);
+  --ready-action-gradient-end: rgba(59, 211, 205, 0.88);
+  --sms-preview-bubble-start: rgba(92, 168, 163, 0.74);
+  --stop-order-avatar-ink: rgba(201, 245, 255, 0.90);
+  --selection-control-fill: rgba(239, 246, 255, 0.96);
 
   /* Exact-parity channels for functional-color literals outside Tailwind class maps. */
   --theme-surface-slate-r: 15, 23, 42;
@@ -122,7 +132,7 @@
   --color-muted-r: 206, 220, 224;
   --color-turques-r: 104, 214, 195;
   --color-turques: rgb(86, 201, 181);
-  --color-secondary: #0f191a;
+  --color-secondary: var(--accent-on-solid);
   --color-light-blue: rgba(122, 167, 255, 0.48);
   --color-blue-500: #60a5fa;
   --color-light-blue-r: 122, 167, 255;
@@ -163,8 +173,11 @@
   --rule-emphasis: #8a7c5e;
 
   --accent: #8a4b2f;
+  --accent-r: 138, 75, 47;
   --accent-soft: #a9714f;
-  --accent-ink: #f6f1e6;
+  --accent-ink: #8a4b2f;
+  --accent-on-solid: #f6f1e6;
+  --primary-foreground: #f6f1e6;
 
   --danger: #8f3128;
   --danger-soft: #a85a4a;
@@ -191,11 +204,18 @@
   --success-on-solid: #f6f1e6;
 
   --info: #3d5a6c;
+  --info-r: 61, 90, 108;
+  --info-ink: #3d5a6c;
   --info-soft: #5d7b8d;
   --info-bg: rgba(61, 90, 108, 0.10);
   --info-border: rgba(61, 90, 108, 0.28);
 
   --foreground-mark: #2e2a24;
+  --ready-action-gradient-start: var(--accent);
+  --ready-action-gradient-end: var(--accent-soft);
+  --sms-preview-bubble-start: var(--paper-sunken);
+  --stop-order-avatar-ink: var(--info);
+  --selection-control-fill: var(--paper-raised);
 
   --theme-surface-slate-r: 231, 220, 199;
   --theme-surface-workspace-r: 246, 241, 230;
@@ -252,7 +272,7 @@
   --color-muted-r: 108, 98, 82;
   --color-turques-r: 169, 113, 79;
   --color-turques: var(--accent-soft);
-  --color-secondary: var(--accent-ink);
+  --color-secondary: var(--accent-on-solid);
   --color-light-blue: var(--accent-soft);
   --color-blue-500: var(--info-soft);
   --color-light-blue-r: 169, 113, 79;
@@ -291,7 +311,8 @@
   --color-border-emphasis: var(--rule-emphasis);
 
   --color-primary: var(--accent);
-  --color-primary-foreground: var(--accent-ink);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent-ink: var(--accent-ink);
 
   --color-danger: var(--danger);
   --color-danger-bg: var(--danger-bg);
@@ -313,6 +334,7 @@
   --color-success-solid-strong: var(--success-solid-strong);
   --color-success-on-solid: var(--success-on-solid);
   --color-info: var(--info);
+  --color-info-ink: var(--info-ink);
   --color-info-bg: var(--info-bg);
   --color-info-border: var(--info-border);
   --color-foreground-mark: var(--foreground-mark);
