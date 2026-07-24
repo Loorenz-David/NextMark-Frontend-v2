@@ -1,6 +1,7 @@
 {
   "excludePathPrefixes": [
-    "features/templates/printDocument/"
+    "features/templates/printDocument/",
+    "shared/map/"
   ],
   "excludeFiles": [
     "features/costumer/components/detail/CostumerDetailInfoSummary.tsx",

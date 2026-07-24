@@ -474,7 +474,7 @@ export class GoogleMapAdapter implements MapAdapter {
 
     const labelContent = document.createElement("div");
     labelContent.className =
-      "rounded-md border border-border-accent bg-overlay px-2 py-1 text-xs font-semibold text-text";
+      "rounded-md border border-white/25 bg-black/50 px-2 py-1 text-xs font-semibold text-white";
     labelContent.textContent = label;
 
     const marker = new MarkerCtor({
@@ -592,7 +592,7 @@ export class GoogleMapAdapter implements MapAdapter {
           (existingMarker?.content as HTMLDivElement | null) ??
           document.createElement("div");
         label.className =
-          "rounded-md border px-2 py-1 text-xs font-semibold text-text shadow-[0_8px_22px_rgba(0,0,0,0.24)] backdrop-blur-sm";
+          "rounded-md border px-2 py-1 text-xs font-semibold text-white shadow-[0_8px_22px_rgba(0,0,0,0.24)] backdrop-blur-sm";
         label.textContent = zone.name || `Zone ${zoneId}`;
         label.style.cursor = "pointer";
         label.style.backgroundColor = darkenHexColor(zoneColor, 0.8);
