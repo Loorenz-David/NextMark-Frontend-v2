@@ -17,7 +17,7 @@ export const OrderCaseOrderCasesHeader = ({
   return (
     <div className="px-5 pt-4">
       <div className="admin-glass-panel-strong relative overflow-hidden rounded-3xl">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_top_left,color-mix(in_srgb,var(--color-primary)_18%,transparent),transparent_70%)]" />
+        <div className="admin-header-wash pointer-events-none absolute inset-x-0 top-0 h-44" />
 
         <div className="relative flex items-start justify-between gap-4 px-5 py-4">
           <div className="flex min-w-0 items-center gap-3.5">

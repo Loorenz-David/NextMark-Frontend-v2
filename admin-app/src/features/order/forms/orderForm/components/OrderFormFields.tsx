@@ -41,7 +41,7 @@ export const OrderFormFields = ({
         compact ? "pb-5" : "h-full pb-[100px]"
       }`}
     >
-      <div className=" rounded-2xl border border-[var(--color-border-accent)] bg-[var(--color-page)] shadow-sm">
+      <div className=" rounded-2xl border border-[var(--color-border-accent)] bg-[var(--surface-popup-chrome)] shadow-sm">
         <Cell>
           <Field
             warningPlacement="besidesLabel"
@@ -199,6 +199,24 @@ export const OrderFormFields = ({
                 />
               </Field>
             </div>
+            <div
+              className={`border-t border-[var(--color-border-accent)] cell-default`}
+            >
+              <Field
+                warningPlacement="besidesLabel"
+                label="Marketing messages:"
+                info="The customer's opt-in, as given on the client form. Editing it here records a change of mind, not a new consent."
+              >
+                <div className="">
+                  <Switch
+                    value={formState.marketing_messages}
+                    onChange={formSetters.handleMarketingMessages}
+                    ariaLabel="Marketing messages"
+                  />
+                </div>
+              </Field>
+            </div>
+
             <div
               className={`border-t border-[var(--color-border-accent)] cell-default`}
             >

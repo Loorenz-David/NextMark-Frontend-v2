@@ -251,7 +251,7 @@ export const MessageScheduleControl = ({
                   onChange={handleValueChange}
                   min={valueBounds.min}
                   max={valueBounds.max}
-                  className="custom-field-container h-12 items-center rounded-xl border border-[var(--color-border)] bg-[var(--color-page)] px-4"
+                  className="custom-field-container h-12 items-center rounded-xl border border-[var(--color-border)] bg-[var(--control-bg)] px-4"
                 />
               </div>
 
@@ -267,7 +267,7 @@ export const MessageScheduleControl = ({
                       <span className="text-xs text-[var(--color-muted)]">Choose minutes, hours, or days</span>
                     </div>
                   }
-                  sectionClassName="rounded-xl border border-[var(--color-border)] bg-[var(--color-page)]"
+                  sectionClassName="rounded-xl border border-[var(--color-border)] bg-[var(--control-bg)]"
                   buttonClassName="flex w-full items-center justify-between px-4 py-3 text-left"
                 >
                   <div className="flex flex-col gap-1">

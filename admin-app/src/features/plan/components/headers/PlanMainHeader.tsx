@@ -124,7 +124,7 @@ export const PlanMainHeader = ({
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 py-3 relative shadow-sm">
+      <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--surface-page-header)] px-4 py-3 relative shadow-sm">
         <div className="flex items-center gap-3">
           <div className="inline-flex items-center justify-center rounded-xl bg-[var(--color-muted)]/10 px-2 py-2">
             <PlanIcon className="h-8 w-8 fill-[var(--color-muted)]" />

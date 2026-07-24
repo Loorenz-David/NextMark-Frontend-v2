@@ -52,18 +52,18 @@ export const RouteOptimizationDropdownButton = ({
       renderInPortal={true}
       label={
         <div className="flex w-full items-center justify-center gap-3 py-1.5">
-          <ThunderIcon className="h-5 w-5 text-[var(--accent-ink)]" />
-          <span className="text-sm font-medium text-[var(--accent-ink)]">{primaryLabel}</span>
+          <ThunderIcon className="h-5 w-5 text-[var(--optimize-ink)]" />
+          <span className="text-sm font-medium text-[var(--optimize-ink)]">{primaryLabel}</span>
         </div>
       }
 
       variant="secondary"
       style={{
         background:
-          'linear-gradient(135deg, rgba(var(--accent-r),0.18), rgba(var(--accent-r),0.08))',
-        borderColor: 'rgba(var(--accent-r),0.24)',
+          'linear-gradient(135deg, rgba(var(--optimize-r),0.18), rgba(var(--optimize-r),0.08))',
+        borderColor: 'rgba(var(--optimize-r),0.24)',
         boxShadow: 'var(--shadow-button-route)',
-        color: 'var(--accent-ink)',
+        color: 'var(--optimize-ink)',
       }}
       onClick={routeGroupPageActions.optimizeRoute}
     >
@@ -93,7 +93,7 @@ export const RouteOptimizationDropdownButton = ({
                   <div className="flex items-center gap-2">
                     <span className="text-left text-sm text-[var(--color-text)]">{label}</span>
                     {isBest ? (
-                      <span className="rounded-full border border-[rgba(var(--accent-r),0.24)] bg-[rgba(var(--accent-r),0.14)] px-2 py-0.5 text-[10px] text-[var(--accent-ink)]">
+                      <span className="rounded-full border border-[rgba(var(--optimize-r),0.24)] bg-[rgba(var(--optimize-r),0.14)] px-2 py-0.5 text-[10px] text-[var(--optimize-ink)]">
                         Best
                       </span>
                     ) : null}
@@ -105,7 +105,7 @@ export const RouteOptimizationDropdownButton = ({
                       </span>
                     ) : null}
                     {isPreviewing ? (
-                      <span className="rounded-full border border-[rgba(var(--accent-r),0.24)] bg-[rgba(var(--accent-r),0.14)] px-2 py-0.5 text-[10px] text-[var(--accent-ink)]">
+                      <span className="rounded-full border border-[rgba(var(--optimize-r),0.24)] bg-[rgba(var(--optimize-r),0.14)] px-2 py-0.5 text-[10px] text-[var(--optimize-ink)]">
                         Preview
                       </span>
                     ) : null}

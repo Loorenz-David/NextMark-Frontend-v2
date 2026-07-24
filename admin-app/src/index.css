@@ -98,6 +98,38 @@
      it must recede behind the filled stroke in both themes. */
   --gauge-track: rgba(255, 255, 255, 0.88);
 
+  /* Page-header bars carry no fill in dark — they read against the app shell and
+     its aurora. On a flat light page that leaves them grey, so light gives them
+     the card surface. */
+  --surface-page-header: transparent;
+
+  /* Fill for form controls and form section panels that were page-toned in dark
+     — number pickers, colour inputs, switch tracks, address fields, and the
+     section cards wrapping them. Dark keeps the page tone these have always
+     used (exact); light gives them the card surface so they read as chrome
+     rather than as the page. */
+  --control-bg: var(--paper);
+
+  /* Secondary card fill — plan cards and similar list cards that sit below the
+     primary content cards in emphasis. Unfilled in dark (they read against the
+     shell); in light they lift off the page without going fully white like an
+     order card. */
+  --surface-card-muted: transparent;
+
+  /* Popup chrome and the panels inside a popup body — header/footer bars, the
+     order field grid, the manual-message block, the items panel and the
+     customer panel. Must stay opaque in both themes: the footer is absolutely
+     positioned over scrolling content. Dark keeps the page tone these have
+     always used (exact); light lifts them off the popup body, matching
+     --surface-card-muted. */
+  --surface-popup-chrome: var(--paper);
+
+  /* Route-optimization action. Accent-derived in dark (verbatim); light gives it
+     its own blue so it reads as the primary action on a page whose accent is
+     near-black. */
+  --optimize-r: var(--accent-r);
+  --optimize-ink: var(--accent-ink);
+
   --ready-action-gradient-start: rgba(31, 175, 193, 0.96);
   --ready-action-gradient-end: rgba(59, 211, 205, 0.88);
   --sms-preview-bubble-start: rgba(92, 168, 163, 0.74);
@@ -107,7 +139,10 @@
   /* Exact-parity channels for functional-color literals outside Tailwind class maps. */
   --theme-surface-slate-r: 15, 23, 42;
   --theme-surface-auth-r: 19, 26, 27;
-  --theme-surface-map-panel-r: 7, 16, 15;
+  /* Busy scrim over the map while a route refreshes/optimises. Always dark in
+     BOTH themes — it must dim the map tiles underneath, and map tiles are light
+     regardless of app theme. */
+  --map-busy-scrim-r: 7, 16, 15;
   --theme-surface-workspace-r: 15, 23, 25;
   --theme-surface-popover-r: 9, 16, 26;
   --theme-surface-control-top-r: 33, 45, 46;
@@ -159,7 +194,7 @@
   --shadow-popover: 0 26px 60px rgba(0, 0, 0, 0.36);
 
   /* Button / pill elevation. Dark keeps each variant's original arbitrary value
-     verbatim; vintage collapses them all onto --shadow-button (see the vintage
+     verbatim; light collapses them all onto --shadow-button (see the light
      block) so the whole button set is dialled from one line. */
   --shadow-button: 0 12px 28px rgba(0, 0, 0, 0.18);
   --shadow-button-primary: 0 12px 30px color-mix(in srgb, var(--color-primary) 22%, transparent);
@@ -231,89 +266,103 @@
   --vh: 100%;
 }
 
-[data-theme="vintage"] {
-  --paper: #efe7d7;
-  --paper-raised: #f6f1e6;
-  --paper-hover: #f0e8d9;
-  --paper-sunken: #e7dcc7;
-  --paper-subtle: #f3ece0;
-  --surface: #f6f1e6;
-  --overlay: rgba(46, 42, 36, 0.42);
-  /* Opaque paper — no dark wash behind stat cards floating over the map.
+[data-theme="light"] {
+  /* Neutral light UI: white cards on a light-grey page, hairline grey rules,
+     near-black primary actions. Status colour is the only saturation. */
+  --paper: #f2f2f2;
+  --paper-raised: #ffffff;
+  --paper-hover: #fafafa;
+  --paper-sunken: #ebebeb;
+  --paper-subtle: #f7f7f7;
+  --surface: #ffffff;
+  --overlay: rgba(23, 23, 23, 0.45);
+  /* Opaque surface — no wash behind stat cards floating over the map.
      Deliberately the page tone, not --paper-raised: these cards nest
      `surface-raised` pills inside them, which would vanish against an identical
      fill. Card sits at page tone, pills lift above it. */
   --panel-floating: var(--paper);
   --page-external: var(--paper);
-  --shade: rgba(46, 42, 36, 0.05);
+  --shade: rgba(23, 23, 23, 0.04);
 
-  --ink: #2e2a24;
-  --ink-soft: #6c6252;
-  --ink-faint: #9a8e7b;
-  --ink-inverse: #f6f1e6;
+  --ink: #171717;
+  --ink-soft: #6b7280;
+  --ink-faint: #9ca3af;
+  --ink-inverse: #ffffff;
 
-  --rule-subtle: #e0d5bd;
-  --rule: #d3c6ac;
-  --rule-strong: #b5a684;
-  --rule-emphasis: #8a7c5e;
+  --rule-subtle: #f0f0f0;
+  --rule: #e5e5e5;
+  --rule-strong: #d4d4d4;
+  --rule-emphasis: #a3a3a3;
 
-  --accent: #8a4b2f;
-  --accent-r: 138, 75, 47;
-  --accent-soft: #a9714f;
-  --accent-ink: #8a4b2f;
-  --accent-on-solid: #f6f1e6;
-  --primary-foreground: #f6f1e6;
+  /* Primary action is near-black, not a hue. --accent-ink is accent-coloured
+     text on a surface; --accent-on-solid is copy sitting ON the dark fill. */
+  --accent: #262626;
+  --accent-r: 38, 38, 38;
+  --accent-soft: #404040;
+  --accent-ink: #262626;
+  --accent-on-solid: #ffffff;
+  --primary-foreground: #ffffff;
 
-  --danger: #8f3128;
-  --danger-soft: #a85a4a;
-  --danger-bg: rgba(143, 49, 40, 0.10);
-  --danger-border: rgba(143, 49, 40, 0.28);
-  --danger-solid: #8f3128;
-  --danger-solid-medium: #7f2f27;
-  --danger-solid-strong: #6f2c26;
-  --danger-solid-deep: #742735;
-  --danger-on-solid: #f6f1e6;
+  --danger: #dc2626;
+  --danger-soft: #f87171;
+  --danger-bg: rgba(220, 38, 38, 0.08);
+  --danger-border: rgba(220, 38, 38, 0.22);
+  --danger-solid: #dc2626;
+  --danger-solid-medium: #b91c1c;
+  --danger-solid-strong: #991b1b;
+  --danger-solid-deep: #9f1239;
+  --danger-on-solid: #ffffff;
   --danger-notice-border: var(--danger-soft);
   --danger-notice-ink: var(--danger);
 
-  --warning: #8a6a1f;
-  --warning-soft: #a98a42;
-  --warning-strong: #73571f;
-  --warning-bg: rgba(138, 106, 31, 0.10);
-  --warning-border: rgba(138, 106, 31, 0.28);
+  --warning: #d97706;
+  --warning-soft: #f59e0b;
+  --warning-strong: #b45309;
+  --warning-bg: rgba(217, 119, 6, 0.08);
+  --warning-border: rgba(217, 119, 6, 0.22);
 
-  --success: #4a6b3f;
-  --success-soft: #6d8a5e;
-  --success-bg: rgba(74, 107, 63, 0.10);
-  --success-border: rgba(74, 107, 63, 0.28);
-  --success-solid: #4a6b3f;
-  --success-solid-strong: #3f5f38;
-  --success-on-solid: #f6f1e6;
-  --success-action-r: 74, 107, 63;
+  --success: #16a34a;
+  --success-soft: #4ade80;
+  --success-bg: rgba(22, 163, 74, 0.08);
+  --success-border: rgba(22, 163, 74, 0.22);
+  --success-solid: #16a34a;
+  --success-solid-strong: #15803d;
+  --success-on-solid: #ffffff;
+  --success-action-r: 22, 163, 74;
 
-  --info: #3d5a6c;
-  --info-r: 61, 90, 108;
-  --info-ink: #3d5a6c;
-  --info-soft: #5d7b8d;
-  --info-bg: rgba(61, 90, 108, 0.10);
-  --info-border: rgba(61, 90, 108, 0.28);
+  --info: #2563eb;
+  --info-r: 37, 99, 235;
+  --info-ink: #2563eb;
+  --info-soft: #60a5fa;
+  --info-bg: rgba(37, 99, 235, 0.08);
+  --info-border: rgba(37, 99, 235, 0.22);
 
-  --foreground-mark: #2e2a24;
-  --foreground-mark-r: 46, 42, 36;
+  --foreground-mark: #171717;
+  --foreground-mark-r: 23, 23, 23;
 
-  /* Fields read as ruled boxes on paper: raised stock, a firm rule, and the
-     accent only on focus. No dark fill, no glow. */
+  /* White fields with a hairline rule; the accent only on focus. */
   --field-bg: var(--paper-raised);
-  --field-border: var(--rule-strong);
+  --field-border: var(--rule);
   --field-bg-focus: var(--paper-raised);
   --field-border-focus: var(--accent);
-  --field-ring-focus: rgba(var(--accent-r), 0.24);
-  --field-bg-invalid: rgba(143, 49, 40, 0.06);
+  --field-ring-focus: rgba(var(--accent-r), 0.14);
+  --field-bg-invalid: rgba(220, 38, 38, 0.05);
   --field-border-invalid: var(--danger);
-  --field-ring-invalid: rgba(143, 49, 40, 0.30);
+  --field-ring-invalid: rgba(220, 38, 38, 0.22);
   --field-radius: var(--radius-2xl);
 
   --gauge-track: var(--rule);
+
+  --surface-page-header: var(--paper-raised);
+
+  --control-bg: var(--paper-raised);
+
+  --surface-card-muted: var(--paper-hover);
+
+  --surface-popup-chrome: var(--paper-hover);
+
+  --optimize-r: var(--info-r);
+  --optimize-ink: var(--info);
 
   --ready-action-gradient-start: var(--accent);
   --ready-action-gradient-end: var(--accent-soft);
@@ -321,69 +370,70 @@
   --stop-order-avatar-ink: var(--info);
   --selection-control-fill: var(--paper-raised);
 
-  --theme-surface-slate-r: 231, 220, 199;
-  --theme-surface-auth-r: 246, 241, 230;
-  --theme-surface-map-panel-r: 239, 231, 215;
-  --theme-surface-workspace-r: 246, 241, 230;
-  --theme-surface-popover-r: 246, 241, 230;
-  --theme-surface-control-top-r: 246, 241, 230;
-  --theme-surface-control-bottom-r: 231, 220, 199;
-  --theme-surface-shell-top-r: 246, 241, 230;
-  --theme-surface-shell-mid-r: 239, 231, 215;
-  --theme-surface-shell-deep-r: 231, 220, 199;
-  --theme-surface-shell-solid-r: 246, 241, 230;
-  --theme-surface-editor-top-r: 246, 241, 230;
-  --theme-surface-message-r: 246, 241, 230;
-  --theme-surface-external-r: 246, 241, 230;
-  --theme-surface-time-top-r: 246, 241, 230;
-  --theme-surface-time-bottom-r: 231, 220, 199;
-  --theme-surface-button-hover-r: 231, 220, 199;
-  --theme-surface-avatar-r: 231, 220, 199;
-  --theme-surface-avatar-top-r: 246, 241, 230;
-  --theme-surface-avatar-mid-r: 239, 231, 215;
-  --theme-surface-avatar-bottom-r: 231, 220, 199;
-  --theme-overlay-shadow-r: 46, 42, 36;
-  --theme-accent-on-solid-r: 246, 241, 230;
+  --theme-surface-slate-r: 235, 235, 235;
+  --theme-surface-auth-r: 255, 255, 255;
+  --map-busy-scrim-r: 23, 23, 23;
+  --theme-surface-workspace-r: 255, 255, 255;
+  --theme-surface-popover-r: 255, 255, 255;
+  --theme-surface-control-top-r: 255, 255, 255;
+  --theme-surface-control-bottom-r: 235, 235, 235;
+  --theme-surface-shell-top-r: 255, 255, 255;
+  --theme-surface-shell-mid-r: 242, 242, 242;
+  --theme-surface-shell-deep-r: 235, 235, 235;
+  --theme-surface-shell-solid-r: 255, 255, 255;
+  --theme-surface-editor-top-r: 255, 255, 255;
+  --theme-surface-message-r: 255, 255, 255;
+  --theme-surface-external-r: 255, 255, 255;
+  --theme-surface-time-top-r: 255, 255, 255;
+  --theme-surface-time-bottom-r: 235, 235, 235;
+  --theme-surface-button-hover-r: 235, 235, 235;
+  --theme-surface-avatar-r: 235, 235, 235;
+  --theme-surface-avatar-top-r: 255, 255, 255;
+  --theme-surface-avatar-mid-r: 242, 242, 242;
+  --theme-surface-avatar-bottom-r: 235, 235, 235;
+  --theme-overlay-shadow-r: 23, 23, 23;
+  --theme-accent-on-solid-r: 255, 255, 255;
 
-  --warning-highlight-r: 138, 106, 31;
-  --warning-state-r: 138, 106, 31;
-  --warning-muted-r: 169, 138, 66;
-  --warning-vivid-r: 138, 106, 31;
-  --warning-marker-r: 169, 138, 66;
-  --warning-copy-r: 169, 138, 66;
-  --danger-highlight-r: 168, 90, 74;
-  --danger-rose-r: 168, 90, 74;
-  --danger-state-r: 143, 49, 40;
-  --success-vivid-r: 74, 107, 63;
-  --success-deep-r: 63, 95, 56;
-  --neutral-slate-r: 154, 142, 123;
-  --neutral-mid-r: 108, 98, 82;
-  --neutral-cool-r: 154, 142, 123;
-  --neutral-pale-r: 211, 198, 172;
-  --neutral-dark-r: 108, 98, 82;
+  --warning-highlight-r: 217, 119, 6;
+  --warning-state-r: 217, 119, 6;
+  --warning-muted-r: 245, 158, 11;
+  --warning-vivid-r: 217, 119, 6;
+  --warning-marker-r: 245, 158, 11;
+  --warning-copy-r: 245, 158, 11;
+  --danger-highlight-r: 248, 113, 113;
+  --danger-rose-r: 248, 113, 113;
+  --danger-state-r: 220, 38, 38;
+  --success-vivid-r: 22, 163, 74;
+  --success-deep-r: 21, 128, 61;
+  --neutral-slate-r: 156, 163, 175;
+  --neutral-mid-r: 107, 114, 128;
+  --neutral-cool-r: 156, 163, 175;
+  --neutral-pale-r: 229, 231, 235;
+  --neutral-dark-r: 107, 114, 128;
 
-  --radius-xs: 2px;
-  --radius-sm: 3px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
-  --radius-xl: 6px;
-  --radius-2xl: 10px;
-  --radius-3xl: 10px;
-  --radius-4xl: 10px;
+  /* Generous, app-like corners — the reference UI is rounded, not square. */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-4xl: 24px;
 
-  --shadow-panel: 0 1px 0 0 var(--rule);
-  --shadow-popover: 0 6px 18px rgba(46, 42, 36, 0.14);
+  --shadow-panel: 0 1px 3px rgba(23, 23, 23, 0.06), 0 1px 2px rgba(23, 23, 23, 0.04);
+  --shadow-popover: 0 8px 24px rgba(23, 23, 23, 0.10);
 
   /* ── THE BUTTON / PILL SHADOW DIAL ──────────────────────────────────────
-     Paper does not cast a 28px shadow. Every button and pill variant below
-     points at --shadow-button, so this ONE line controls the whole set.
+     Every button and pill variant below points at --shadow-button, so this ONE
+     line controls the whole set.
 
-       shadow-sm (current):  0 1px 2px 0 rgba(46, 42, 36, 0.10)
-       barely there:         0 1px 0 0 rgba(46, 42, 36, 0.08)
+       shadow-sm (current):  0 1px 2px 0 rgba(23, 23, 23, 0.05)
+       barely there:         0 1px 0 0 rgba(23, 23, 23, 0.04)
        flat, hairline only:  none        (borders still define the shape)
 
      Change --shadow-button and nothing else. */
-  --shadow-button: 0 1px 2px 0 rgba(46, 42, 36, 0.10);
+  --shadow-button: 0 1px 2px 0 rgba(23, 23, 23, 0.05);
 
   --shadow-button-primary: var(--shadow-button);
   --shadow-button-primary-sm: var(--shadow-button);
@@ -429,28 +479,25 @@
   --shadow-panel-external: var(--shadow-panel);
   --shadow-panel-auth: var(--shadow-panel);
 
-  --bg-app-color: 239, 231, 215;
+  --bg-app-color: 242, 242, 242;
   --color-accent: var(--paper-sunken);
-  --color-muted-r: 108, 98, 82;
-  --color-turques-r: 169, 113, 79;
+  --color-muted-r: 107, 114, 128;
+  --color-turques-r: 38, 38, 38;
   --color-turques: var(--accent-soft);
   --color-secondary: var(--accent-on-solid);
-  --color-light-blue: var(--accent-soft);
+  --color-light-blue: var(--info-soft);
   --color-blue-500: var(--info-soft);
-  --color-light-blue-r: 169, 113, 79;
-  --color-dark-blue: var(--accent);
+  --color-light-blue-r: 96, 165, 250;
+  --color-dark-blue: var(--info);
   --color-green-turquess: var(--success);
   --color-ligth-bg: var(--paper-sunken);
-  --color-danger-r: 143, 49, 40;
+  --color-danger-r: 220, 38, 38;
   --glass-surface-weak: var(--paper-raised);
   --glass-surface: var(--paper-raised);
   --glass-surface-strong: var(--paper-raised);
   --glass-overlay: var(--paper-raised);
-  --glass-highlight: var(--rule-strong);
+  --glass-highlight: var(--rule);
 
-  /* Modern minimalist, not stationery serif. The vintage character now comes
-     from the paper palette, hairline rules and square corners rather than from
-     the typeface. All system faces — nothing is fetched. */
   font-family: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont,
     'Segoe UI', system-ui, 'Helvetica Neue', Arial, sans-serif;
   letter-spacing: -0.006em;
@@ -859,6 +906,40 @@ textarea:focus {
   backdrop-filter: blur(28px) saturate(125%);
 }
 
+/* Accent wash bled across the top of a header card. Reads as depth over a dark
+   glass panel; over a white card the same wash is just a grey smudge, so light
+   drops it and the card stays flat white. */
+.admin-header-wash {
+  background-image: radial-gradient(
+    circle at top left,
+    color-mix(in srgb, var(--color-primary) 18%, transparent),
+    transparent 70%
+  );
+}
+
+[data-theme="light"] .admin-header-wash {
+  background-image: none;
+}
+
+/* Vertical sheen on a card: a highlight bleeding down from the top edge and a
+   faint shade at the bottom. On dark glass --glass-surface-weak is a 5% white
+   film; in light it resolves to opaque #ffffff, which paints a solid band across
+   the top of the card instead. Light drops it and the card stays flat.
+   --card-sheen-stop lets a call site keep its own first stop. */
+.admin-card-sheen {
+  background-image: linear-gradient(
+    180deg,
+    var(--glass-surface-weak),
+    transparent var(--card-sheen-stop, 30%),
+    transparent 72%,
+    rgba(0, 0, 0, 0.04)
+  );
+}
+
+[data-theme="light"] .admin-card-sheen {
+  background-image: none;
+}
+
 .admin-glass-popover {
   background: rgba(15, 25, 27, 0.9);
   border: 1px solid var(--color-border-accent);
@@ -905,100 +986,104 @@ textarea:focus {
   }
 }
 
-[data-theme="vintage"] body {
+[data-theme="light"] body {
   background-image:
     radial-gradient(120% 70% at 50% 0%, rgba(255, 252, 245, 0.55), transparent 62%),
     radial-gradient(90% 60% at 50% 100%, rgba(150, 130, 96, 0.10), transparent 58%);
 }
 
-[data-theme="vintage"] ::selection {
+[data-theme="light"] ::selection {
   background-color: color-mix(in srgb, var(--accent) 28%, transparent);
   color: var(--ink);
 }
 
-[data-theme="vintage"] .app-icon {
+[data-theme="light"] .app-icon {
   color: var(--ink-soft);
 }
 
-[data-theme="vintage"] .app-icon-white,
-[data-theme="vintage"] .app-icon-dark {
+[data-theme="light"] .app-icon-white,
+[data-theme="light"] .app-icon-dark {
   color: var(--ink);
 }
 
-[data-theme="vintage"] .app-icon-white path,
-[data-theme="vintage"] .app-icon-dark path {
+[data-theme="light"] .app-icon-white path,
+[data-theme="light"] .app-icon-dark path {
   color: var(--ink);
 }
 
-[data-theme="vintage"] .popup-overlay {
+[data-theme="light"] .popup-overlay {
   background-color: var(--overlay);
   backdrop-filter: none;
 }
 
-[data-theme="vintage"] .scroll-thin {
+[data-theme="light"] .scroll-thin {
   scrollbar-color: var(--rule-strong) transparent;
 }
 
-[data-theme="vintage"] .scroll-thin::-webkit-scrollbar-thumb {
+[data-theme="light"] .scroll-thin::-webkit-scrollbar-thumb {
   background-color: var(--rule-strong);
 }
 
-[data-theme="vintage"] .admin-shell-aurora,
-[data-theme="vintage"] .admin-auth-aurora,
-[data-theme="vintage"] .admin-auth-grid,
-[data-theme="vintage"] .admin-app-shell::before,
-[data-theme="vintage"] .admin-auth-panel-highlight {
+[data-theme="light"] .admin-shell-aurora,
+[data-theme="light"] .admin-auth-aurora,
+[data-theme="light"] .admin-auth-grid,
+[data-theme="light"] .admin-app-shell::before,
+[data-theme="light"] .admin-auth-panel-highlight {
   display: none;
 }
 
-[data-theme="vintage"] .admin-app-shell,
-[data-theme="vintage"] .admin-auth-shell {
+[data-theme="light"] .admin-app-shell,
+[data-theme="light"] .admin-auth-shell {
   background: var(--paper);
 }
 
-[data-theme="vintage"] .admin-auth-panel {
+[data-theme="light"] .admin-auth-panel {
   background: var(--paper-raised);
   border-color: var(--rule);
   box-shadow: var(--shadow-panel);
   backdrop-filter: none;
 }
 
-[data-theme="vintage"] .admin-glass-panel,
-[data-theme="vintage"] .admin-glass-panel-strong,
-[data-theme="vintage"] .admin-glass-popover {
+[data-theme="light"] .admin-glass-panel,
+[data-theme="light"] .admin-glass-panel-strong,
+[data-theme="light"] .admin-glass-popover {
   background: var(--paper-raised);
   border: 1px solid var(--rule);
   box-shadow: none;
   backdrop-filter: none;
 }
 
-[data-theme="vintage"] .admin-glass-popover {
+[data-theme="light"] .admin-glass-popover {
   box-shadow: var(--shadow-popover);
 }
 
-[data-theme="vintage"] .admin-glass-divider {
+[data-theme="light"] .admin-glass-divider {
   border-color: var(--rule);
 }
 
-[data-theme="vintage"] .admin-surface-compact {
+[data-theme="light"] .admin-surface-compact {
   border-radius: var(--radius-2xl);
 }
 
-[data-theme="vintage"] .admin-toolbar-strip {
+[data-theme="light"] .admin-toolbar-strip {
   background: var(--paper-raised);
   border-color: var(--rule);
   box-shadow: none;
   backdrop-filter: none;
 }
 
-[data-theme="vintage"] .admin-backdrop-blur-md,
-[data-theme="vintage"] .admin-backdrop-blur-xl,
-[data-theme="vintage"] .admin-glass-action-bar {
+[data-theme="light"] .admin-backdrop-blur-md,
+[data-theme="light"] .admin-backdrop-blur-xl {
   background: var(--paper-raised);
   backdrop-filter: none;
 }
 
-[data-theme="vintage"] .admin-glass-action-bar {
+/* The route-group action bar sits on the page rather than inside the header
+   card. In dark it needs its own glass fill to separate from the shell; on the
+   flat light page it reads fine unfilled, so only the divider rule remains. */
+[data-theme="light"] .admin-glass-action-bar {
+  background: transparent;
+  backdrop-filter: none;
   border-color: var(--rule);
 }
 

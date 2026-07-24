@@ -32,7 +32,7 @@ export const ItemsOrderPreviewStickyLayout = ({
   enableScrollBody = false,
 }: ItemsOrderPreviewStickyLayoutProps) => {
   const defaultHeader = (
-    <div className="sticky top-0  flex items-center justify-between gap-3 bg-[var(--color-page)] px-5 py-5 shadow-md">
+    <div className="sticky top-0  flex items-center justify-between gap-3 bg-[var(--surface-popup-chrome)] px-5 py-5 shadow-md">
       <div>
         <p className="text-sm font-semibold text-[var(--color-text)]">Items</p>
         <p className="text-xs text-[var(--color-muted)]">

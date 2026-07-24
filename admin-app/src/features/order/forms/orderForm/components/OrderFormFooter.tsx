@@ -44,7 +44,7 @@ export const OrderFormFooter = ({
 
   return (
     <footer
-      className={`flex w-full items-center  bottom-0 left-0  border-t border-[var(--color-border)] bg-[var(--color-page)] px-6 py-4 z-20 ${
+      className={`flex w-full items-center  bottom-0 left-0  border-t border-[var(--color-border)] bg-[var(--surface-popup-chrome)] px-6 py-4 z-20 ${
         isMobile ? "fixed rounded-none" : "absolute rounded-b-xl"
       }`}
     >

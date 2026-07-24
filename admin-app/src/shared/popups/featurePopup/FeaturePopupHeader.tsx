@@ -9,7 +9,7 @@ export const FeaturePopupHeader = ({
   onClose,
   actions,
 }: FeaturePopupHeaderProps) => (
-  <header className="flex items-start justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-page)] px-4 py-3 md:px-5">
+  <header className="flex items-start justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--surface-popup-chrome)] px-4 py-3 md:px-5">
     <div className="min-w-0 flex-1">
       <h2 className="text-base font-semibold text-[var(--color-text)]">{title}</h2>
       {subtitle ? (

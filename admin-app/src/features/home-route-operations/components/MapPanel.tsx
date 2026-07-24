@@ -21,10 +21,10 @@ export const MapPanel = ({ isRouteLoading = false }: MapPanelProps) => {
         <div
           aria-label="Loading route"
           aria-live="polite"
-          className="absolute inset-0 z-[60] flex items-center justify-center bg-[rgb(var(--theme-surface-map-panel-r))]/78 backdrop-blur-[2px]"
+          className="absolute inset-0 z-[60] flex items-center justify-center bg-[rgb(var(--map-busy-scrim-r))]/78 backdrop-blur-[2px]"
           role="status"
         >
-          <p className="animate-pulse text-sm font-semibold tracking-[0.16em] text-text uppercase">
+          <p className="animate-pulse text-sm font-semibold tracking-[0.16em] text-[var(--primary-foreground)] uppercase">
             Loading route
           </p>
         </div>

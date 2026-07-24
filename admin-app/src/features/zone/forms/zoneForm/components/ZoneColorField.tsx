@@ -91,7 +91,7 @@ export const ZoneColorField = ({
             value={value}
             onChange={(event) => onChange(event.target.value)}
             placeholder="#111111"
-            className="h-11 w-full rounded-xl border border-border bg-[var(--color-page)] px-3 text-sm text-[var(--color-text)] outline-none transition-colors placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)]/50"
+            className="h-11 w-full rounded-xl border border-border bg-[var(--control-bg)] px-3 text-sm text-[var(--color-text)] outline-none transition-colors placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)]/50"
           />
           <p className="text-xs text-[var(--color-muted)]">
             {hasValidHex

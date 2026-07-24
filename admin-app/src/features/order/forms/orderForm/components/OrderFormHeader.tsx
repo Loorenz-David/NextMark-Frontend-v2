@@ -63,7 +63,7 @@ export const OrderFormHeader = ({
 
   return (
   <header
-    className={`flex items-center justify-between gap-4 border-b border-[var(--color-border)] ${
+    className={`flex items-center justify-between gap-4 border-b border-[var(--color-border)] bg-[var(--surface-popup-chrome)] ${
       isMobile ? "px-3 pb-4 pt-4" : "px-6 py-3"
     }`}
   >

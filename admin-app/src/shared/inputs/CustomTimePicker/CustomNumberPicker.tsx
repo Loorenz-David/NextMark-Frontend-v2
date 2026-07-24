@@ -40,7 +40,7 @@ export const CustomNumberPicker = ({
   label,
   disabled = false,
   className,
-  containerClassName = "w-full h-10  rounded-xl border border-[var(--color-border)] bg-[var(--color-page)]  text-sm text-[var(--color-text)]",
+  containerClassName = "w-full h-10  rounded-xl border border-[var(--color-border)] bg-[var(--control-bg)]  text-sm text-[var(--color-text)]",
   popoverWidth = 220,
   popoverHeight = 260,
   renderInPortal = true,
@@ -150,7 +150,7 @@ export const CustomNumberPicker = ({
                 }
                 setDraft(clamp(Math.trunc(nextValue), range.min, range.max));
               }}
-              className="h-11 w-full rounded-xl border border-[var(--color-border-accent)] bg-[var(--color-page)] px-3 text-sm text-[var(--color-text)] outline-none"
+              className="h-11 w-full rounded-xl border border-[var(--color-border-accent)] bg-[var(--control-bg)] px-3 text-sm text-[var(--color-text)] outline-none"
             />
             <p className="text-xs text-[var(--color-muted)]">
               Enter a value between {range.min} and {range.max}.

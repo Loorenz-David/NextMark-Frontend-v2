@@ -1,5 +1,5 @@
 export const THEME_STORAGE_KEY = 'beyo.admin.theme'
-export const THEMES = ['dark', 'vintage'] as const
+export const THEMES = ['dark', 'light'] as const
 
 export type ThemeName = (typeof THEMES)[number]
 

@@ -133,7 +133,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
       className={`flex flex-col gap-6 rounded-2xl border p-4 shadow-sm cursor-pointer transition-all duration-200 ${
         isActive
           ? "border-[var(--color-light-blue)] shadow-[0_0_0_2px_rgba(var(--info-r),0.35),0_0_18px_rgba(var(--accent-r),0.18)] bg-[rgba(var(--info-r),0.04)]"
-          : "border-[var(--color-border)]"
+          : "border-[var(--color-border)] bg-[var(--surface-card-muted)]"
       }`}
       onClick={(e) => {
         if (e.defaultPrevented) return;

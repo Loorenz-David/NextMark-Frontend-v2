@@ -33,7 +33,7 @@ export function CollapsibleSection({
             closeOnInsideClick={ closeOnInsideClick }
             offSetNum={2}
             reference={
-                <section className={sectionClassName ?? 'rounded-xl border border-[var(--color-border-accent)] bg-[var(--color-page)]'}>
+                <section className={sectionClassName ?? 'rounded-xl border border-[var(--color-border-accent)] bg-[var(--control-bg)]'}>
                     <button
                         type="button"
                         onClick={() => setIsOpen((prev) => !prev)}

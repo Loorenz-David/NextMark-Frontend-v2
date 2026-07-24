@@ -9,7 +9,7 @@
         try {
           var t = localStorage.getItem('beyo.admin.theme');
           document.documentElement.setAttribute(
-            'data-theme', t === 'vintage' ? 'vintage' : 'dark'
+            'data-theme', t === 'light' ? 'light' : 'dark'
           );
         } catch (e) {
           document.documentElement.setAttribute('data-theme', 'dark');

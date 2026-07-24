@@ -29,7 +29,7 @@ export const OrderFormItemsPanel = ({
 
   return (
     <motion.div
-      className={`flex min-h-0 overflow-hidden bg-[var(--color-page)] ${
+      className={`flex min-h-0 overflow-hidden bg-[var(--surface-popup-chrome)] ${
         compact
           ? 'mt-2 h-[420px] w-full shrink-0 rounded-xl border border-[var(--color-border)]/60'
           : 'h-full min-w-0 flex-1 rounded-xl border border-[var(--color-border)]/60'
@@ -62,7 +62,7 @@ export const OrderFormItemsPanel = ({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 24, opacity: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="h-full w-full bg-[var(--color-page)] px-3 pt-4"
+              className="h-full w-full bg-[var(--surface-popup-chrome)] px-3 pt-4"
             >
               <div className="flex h-full w-full min-w-0 flex-col">
                 <div className="mb-3 flex items-center justify-between border-b border-[var(--color-border)] pb-3">

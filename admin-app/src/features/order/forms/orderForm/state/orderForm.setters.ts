@@ -148,6 +148,10 @@ export const useOrderFormSetters = ({
     updateFormState((prev) => ({ ...prev, help_to_carry: value }));
   };
 
+  const handleMarketingMessages = (value: boolean) => {
+    updateFormState((prev) => ({ ...prev, marketing_messages: value }));
+  };
+
   return {
     handleOrderPlanObjective,
     handleOperationType,
@@ -167,6 +171,7 @@ export const useOrderFormSetters = ({
     handleGeneralNote,
     handleCustomerNote,
     handleHelpToCarry,
+    handleMarketingMessages,
     mergeExternalClientData,
   };
 };

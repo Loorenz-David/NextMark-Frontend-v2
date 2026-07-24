@@ -6,14 +6,16 @@ import {
   AdminNotificationsTrigger,
 } from "@/realtime/notifications";
 import { ActingUserButton } from "@/features/auth/trusted-device";
+import { ThemeToggle } from "@/app/theme";
 
 export function HomeDesktopHeader() {
   const navigate = useNavigate();
 
   return (
     <div className="admin-toolbar-strip relative z-30 mx-auto flex min-h-[3.25rem] w-full items-center justify-between gap-3 px-6 py-3">
-      {/* Left — acting user */}
-      <div className="flex shrink-0 items-center">
+      {/* Left — theme switch, then acting user */}
+      <div className="flex shrink-0 items-center gap-3">
+        <ThemeToggle />
         <ActingUserButton />
       </div>
 

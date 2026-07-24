@@ -33,7 +33,7 @@ export const RouteGroupEditFormRouteSections = () => {
             onSelectedAddress={formSetters.handleRouteStartLocation}
             selectedAddress={formState.route_solution.start_location}
             fieldClassName={' flex w-full items-center'}
-            containerClassName={' px-4 py-2  gap-2 border border-[var(--color-border-accent)] rounded-lg'}
+            containerClassName={' px-4 py-2  gap-2 border border-[var(--color-border-accent)] rounded-lg bg-[var(--control-bg)]'}
             inputClassName={'text-sm w-full '}
             placeholder="search for start address..."
             intentKey={'route-group-start-address'}
@@ -103,7 +103,7 @@ export const RouteGroupEditFormRouteSections = () => {
                   onSelectedAddress={formSetters.handleRouteEndLocation}
                   selectedAddress={formState.route_solution.end_location}
                   fieldClassName={' flex w-full items-center'}
-                  containerClassName={' px-4 py-2  gap-2 border border-[var(--color-border-accent)] rounded-lg'}
+                  containerClassName={' px-4 py-2  gap-2 border border-[var(--color-border-accent)] rounded-lg bg-[var(--control-bg)]'}
                   inputClassName={'text-sm w-full '}
                   placeholder="search for end address..."
                   intentKey={'route-group-end-address'}

@@ -42,7 +42,7 @@ export const useThemeStore = create<ThemeState>((set) => ({
   },
   toggleTheme: () => {
     set((state) => {
-      const next = state.theme === 'dark' ? 'vintage' : 'dark'
+      const next = state.theme === 'dark' ? 'light' : 'dark'
       persistTheme(next)
       return { theme: next }
     })

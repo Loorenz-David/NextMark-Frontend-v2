@@ -1,4 +1,5 @@
 export { ThemeProvider } from './ThemeProvider'
+export { ThemeToggle } from './ThemeToggle'
 export { useThemeStore } from './theme.store'
 export {
   DEFAULT_THEME,

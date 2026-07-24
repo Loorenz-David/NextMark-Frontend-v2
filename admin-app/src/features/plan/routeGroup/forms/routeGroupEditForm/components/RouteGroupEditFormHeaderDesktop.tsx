@@ -13,7 +13,7 @@ export const RouteGroupFormDesktopHeader = ({
     header
 }: Props) => {
     return ( 
-        <div className="flex items-start justify-between border-b border-[var(--color-border)] px-4 py-4">
+        <div className="flex items-start justify-between border-b border-[var(--color-border)] bg-[var(--surface-popup-chrome)] px-4 py-4">
             <div className="flex items-center gap-3">
                 <div>
                     <div className="flex items-center justify-center rounded-full bg-[var(--color-border)] p-2">

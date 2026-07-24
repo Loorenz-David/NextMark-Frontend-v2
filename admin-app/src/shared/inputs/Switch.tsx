@@ -35,7 +35,7 @@ export const Switch = ({
         sizeClassName,
         value
           ? "justify-end bg-[rgba(var(--color-light-blue-r),0.30)]"
-          : "justify-start bg-[var(--color-page)]",
+          : "justify-start bg-[var(--control-bg)]",
         disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
         className,
       )}

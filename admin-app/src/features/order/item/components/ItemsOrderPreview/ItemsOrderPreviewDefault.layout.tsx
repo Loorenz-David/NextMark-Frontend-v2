@@ -28,7 +28,7 @@ export const ItemsOrderPreviewDefaultLayout = ({
 }: ItemsOrderPreviewLayoutProps) => (
   <section className="flex h-full min-h-0 w-full flex-col">
     {header ?? (
-      <div className="flex items-center justify-between gap-3 bg-[var(--color-page)] px-5 py-5 shadow-md">
+      <div className="flex items-center justify-between gap-3 bg-[var(--surface-popup-chrome)] px-5 py-5 shadow-md">
         <div>
           <p className="text-sm font-semibold text-[var(--color-text)]">
             Items

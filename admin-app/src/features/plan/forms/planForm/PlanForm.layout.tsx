@@ -30,7 +30,7 @@ export const PlanFormLayout = () => {
         className={`flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-4 pt-4 scroll-thin bg-[var(--color-ligth-bg)] h-full pb-[100px]`}
         action=""
       >
-        <div className=" flex flex-col gap-4 px-4 py-4 rounded-2xl border border-[var(--color-border-accent)] bg-[var(--color-page)] shadow-sm mb-4">
+        <div className=" flex flex-col gap-4 px-4 py-4 rounded-2xl border border-[var(--color-border-accent)] bg-[var(--surface-popup-chrome)] shadow-sm mb-4">
           <Field
             warningPlacement="besidesLabel"
             label="Plan name:"
