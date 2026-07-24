@@ -69,7 +69,7 @@ export const RouteGroupOrderCard = ({
       onClick={openOrder}
     >
       <OrderMissingInfoNotifier order={order} />
-      <div className="pointer-events-none absolute inset-0 rounded-lg bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_26%,transparent_72%,rgba(0,0,0,0.04))]" />
+      <div className="pointer-events-none absolute inset-0 rounded-lg bg-[linear-gradient(180deg,var(--glass-surface-weak),transparent_26%,transparent_72%,rgba(0,0,0,0.04))]" />
 
       <div className="relative z-10 flex w-full gap-3">
         <StopOrderAvatar stopOrder={stopOrder} />

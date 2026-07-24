@@ -9,14 +9,14 @@ export const ExternalFormAccessPage = () => {
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#111819] p-6">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-[-14%] top-[-12%] h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(circle,rgba(131,204,185,0.22),transparent_66%)] blur-3xl"
+        className="pointer-events-none absolute left-[-14%] top-[-12%] h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--color-primary)_22%,transparent),transparent_66%)] blur-3xl"
       />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute bottom-[-18%] right-[-10%] h-[24rem] w-[24rem] rounded-full bg-[radial-gradient(circle,rgba(102,168,255,0.16),transparent_68%)] blur-3xl"
       />
 
-      <section className="relative w-full max-w-2xl overflow-hidden rounded-4xl border border-border bg-[linear-gradient(180deg,rgba(20,31,32,0.96),rgba(13,21,22,0.94))] shadow-[0_28px_80px_rgba(0,0,0,0.42)]">
+      <section className="relative w-full max-w-2xl overflow-hidden rounded-4xl border border-border bg-[linear-gradient(180deg,rgba(var(--theme-surface-external-r),0.96),rgba(var(--theme-surface-shell-top-r),0.94))] shadow-[0_28px_80px_rgba(0,0,0,0.42)]">
         <div className="border-b border-border-subtle px-8 py-8">
           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.34em] text-[#83ccb9]/68">
             External Form

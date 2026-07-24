@@ -88,7 +88,7 @@ export const ItemImagePopover = ({
       }
     >
       <div
-        className="admin-glass-popover w-[min(92vw,440px)] rounded-lg border border-border bg-[rgba(9,16,26,0.94)] p-4 shadow-[0_20px_48px_rgba(0,0,0,0.38)] backdrop-blur-md"
+        className="admin-glass-popover w-[min(92vw,440px)] rounded-lg border border-border bg-[rgba(var(--theme-surface-popover-r),0.94)] p-4 shadow-[0_20px_48px_rgba(0,0,0,0.38)] backdrop-blur-md"
         onClick={(event) => event.stopPropagation()}
       >
         <button

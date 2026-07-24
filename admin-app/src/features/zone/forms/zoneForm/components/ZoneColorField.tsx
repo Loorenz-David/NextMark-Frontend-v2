@@ -38,7 +38,7 @@ export const ZoneColorField = ({
           className={`${inputContainerClassName} flex w-full items-center gap-3 px-3 py-2 text-left`}
         >
           <span
-            className="h-6 w-6 rounded-full border border-border shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]"
+            className="h-6 w-6 rounded-full border border-border shadow-[inset_0_1px_0_color-mix(in_srgb,var(--foreground-mark)_18%,transparent)]"
             style={{ backgroundColor: normalizedValue }}
           />
           <span className="text-sm font-medium uppercase tracking-[0.08em] text-[var(--color-text)]">
@@ -47,7 +47,7 @@ export const ZoneColorField = ({
         </button>
       )}
     >
-      <div className="admin-glass-panel-strong w-[260px] rounded-3xl border border-border p-4 shadow-[0_20px_44px_rgba(4,12,22,0.45)]">
+      <div className="admin-glass-panel-strong w-[260px] rounded-3xl border border-border p-4 shadow-[0_20px_44px_rgba(var(--theme-overlay-shadow-r),0.45)]">
         <div className="flex items-center gap-3">
           <span
             className="h-10 w-10 rounded-full border border-border"

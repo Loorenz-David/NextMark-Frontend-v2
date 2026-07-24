@@ -67,7 +67,7 @@ export const ActingUserCard = ({ user, isActive, onSelect }: ActingUserCardProps
         ) : null}
       </div>
       {isActive ? (
-        <span className="flex h-5 items-center rounded-full bg-[rgba(96,165,250,0.18)] px-2 text-[11px] font-semibold text-[rgba(147,197,253,0.95)]">
+        <span className="flex h-5 items-center rounded-full bg-[color-mix(in_srgb,var(--color-blue-500)_18%,transparent)] px-2 text-[11px] font-semibold text-[rgba(147,197,253,0.95)]">
           Active
         </span>
       ) : (

@@ -8,8 +8,8 @@ type SmsLabelsPanelProps = {
 
 export const SmsLabelsPanel = ({ labels, onSelect }: SmsLabelsPanelProps) => {
   return (
-    <aside className="admin-glass-panel-strong rounded-3xl bg-[linear-gradient(180deg,rgba(13,21,22,0.98),rgba(10,17,18,0.98))] p-5 shadow-none">
-      <div className="rounded-2xl border border-[#83ccb9]/12 bg-[linear-gradient(135deg,rgba(131,204,185,0.08),rgba(94,209,215,0.04))] px-4 py-3">
+    <aside className="admin-glass-panel-strong rounded-3xl bg-[linear-gradient(180deg,rgba(var(--theme-surface-shell-top-r),0.98),rgba(var(--theme-surface-shell-mid-r),0.98))] p-5 shadow-none">
+      <div className="rounded-2xl border border-[#83ccb9]/12 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_8%,transparent),rgba(94,209,215,0.04))] px-4 py-3">
         <div className="flex items-center gap-2 text-sm text-[var(--color-text)]">
           <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[#83ccb9]/28 bg-[#83ccb9]/16 px-1.5 text-[0.7rem] font-semibold text-[#a7f0de]">
             +

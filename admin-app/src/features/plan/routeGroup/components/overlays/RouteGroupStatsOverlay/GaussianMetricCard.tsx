@@ -33,7 +33,7 @@ const interpolateCapacityColor = (progress: number): string => {
       return `rgb(${r},${g},${b})`
     }
   }
-  return 'rgb(239,68,68)'
+  return 'var(--danger-solid)'
 }
 
 const hasMeaningfulChange = (previous: number, next: number, compareMode?: 'strict' | 'epsilon' | 'threshold', epsilon?: number, threshold?: number) => {

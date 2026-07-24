@@ -60,7 +60,7 @@ function AiOrderCardComponent({ order, onRowClick }: AiOrderCardProps) {
       role={isInteractive ? 'button' : undefined}
       tabIndex={isInteractive ? 0 : undefined}
     >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,var(--glass-surface-weak),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
 
       <div className="relative z-10 flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">

@@ -165,13 +165,13 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       controlsRowClassName:
         'flex items-start justify-between gap-3',
       pickerClassName:
-        'w-[85px] rounded-full border border-[var(--color-border-accent)] bg-[linear-gradient(180deg,rgba(33,45,46,0.96),rgba(24,34,35,0.94))] px-2 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]',
+        'w-[85px] rounded-full border border-[var(--color-border-accent)] bg-[linear-gradient(180deg,rgba(var(--theme-surface-control-top-r),0.96),rgba(var(--theme-surface-control-bottom-r),0.94))] px-2 py-1 shadow-[inset_0_1px_0_var(--paper-raised)]',
       betweenLabelClassName: 'text-xs text-[var(--color-muted)]',
       actionsClassName: 'flex  flex-col items-stretch gap-2 pr-2 ',
       cancelButtonClassName:
         'px-4 py-1 text-[12px] rounded-sm border-1 border-[var(--color-border-accent)]  text-base text-[var(--color-text)] cursor-pointer hover:bg-[var(--color-border)]',
       applyButtonClassName:
-        'rounded-full border border-[rgba(131,204,185,0.26)] bg-[rgba(131,204,185,0.12)] px-4 py-1.5 text-[12px] font-semibold  text-[var(--color-primary)] shadow-[0_10px_24px_rgba(22,49,46,0.18),inset_0_1px_0_rgba(255,255,255,0.04)] transition hover:bg-[rgba(131,204,185,0.18)]',
+        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-4 py-1.5 text-[12px] font-semibold  text-[var(--color-primary)] shadow-[0_10px_24px_rgba(22,49,46,0.18),inset_0_1px_0_var(--paper-raised)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
     },
   },
   desktopRegular: {
@@ -248,13 +248,13 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       controlsRowClassName:
         'flex items-start justify-between gap-4',
       pickerClassName:
-        'min-w-[140px] max-w-[170px] rounded-full border border-[var(--color-border-accent)] bg-[linear-gradient(180deg,rgba(33,45,46,0.96),rgba(24,34,35,0.94))] px-3 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]',
+        'min-w-[140px] max-w-[170px] rounded-full border border-[var(--color-border-accent)] bg-[linear-gradient(180deg,rgba(var(--theme-surface-control-top-r),0.96),rgba(var(--theme-surface-control-bottom-r),0.94))] px-3 py-1.5 shadow-[inset_0_1px_0_var(--paper-raised)]',
       betweenLabelClassName: 'text-2xl text-[var(--color-muted)]',
       actionsClassName: 'flex min-w-[150px] flex-col items-stretch gap-3',
       cancelButtonClassName:
         'border-[var(--color-border-accent)] px-4 py-2 text-xl text-[var(--color-text)]',
       applyButtonClassName:
-        'rounded-full border border-[rgba(131,204,185,0.26)] bg-[rgba(131,204,185,0.12)] px-5 py-2 text-base font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)] shadow-[0_12px_28px_rgba(22,49,46,0.18),inset_0_1px_0_rgba(255,255,255,0.04)] transition hover:bg-[rgba(131,204,185,0.18)]',
+        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-5 py-2 text-base font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)] shadow-[0_12px_28px_rgba(22,49,46,0.18),inset_0_1px_0_var(--paper-raised)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
     },
   },
   mobile: {
@@ -331,13 +331,13 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       controlsRowClassName:
         'flex items-start justify-between gap-3',
       pickerClassName:
-        'min-w-[104px] max-w-[130px] rounded-full border border-[var(--color-border-accent)] bg-[linear-gradient(180deg,rgba(33,45,46,0.96),rgba(24,34,35,0.94))] px-2.5 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]',
+        'min-w-[104px] max-w-[130px] rounded-full border border-[var(--color-border-accent)] bg-[linear-gradient(180deg,rgba(var(--theme-surface-control-top-r),0.96),rgba(var(--theme-surface-control-bottom-r),0.94))] px-2.5 py-1 shadow-[inset_0_1px_0_var(--paper-raised)]',
       betweenLabelClassName: 'text-lg text-[var(--color-muted)]',
       actionsClassName: 'flex min-w-[116px] flex-col items-stretch gap-2',
       cancelButtonClassName:
         'border-[var(--color-border-accent)] px-3 py-1.5 text-base text-[var(--color-text)]',
       applyButtonClassName:
-        'rounded-full border border-[rgba(131,204,185,0.26)] bg-[rgba(131,204,185,0.12)] px-3.5 py-1.5 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-primary)] shadow-[0_10px_22px_rgba(22,49,46,0.18),inset_0_1px_0_rgba(255,255,255,0.04)] transition hover:bg-[rgba(131,204,185,0.18)]',
+        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-3.5 py-1.5 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-primary)] shadow-[0_10px_22px_rgba(22,49,46,0.18),inset_0_1px_0_var(--paper-raised)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
     },
   },
 }

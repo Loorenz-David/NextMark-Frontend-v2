@@ -23,11 +23,11 @@ export const SmsPhonePreview = ({
   onKeyDown,
 }: SmsPhonePreviewProps) => {
   return (
-    <div className="admin-glass-panel-strong rounded-3xl bg-[linear-gradient(180deg,rgba(10,17,18,0.98),rgba(8,14,15,0.98))] p-5 shadow-none">
-      <div className="mx-auto flex max-w-[360px] flex-col rounded-4xl border border-border-subtle bg-[linear-gradient(180deg,rgba(11,18,19,1),rgba(8,14,15,1))] p-4 shadow-[0_18px_48px_rgba(0,0,0,0.28)]">
+    <div className="admin-glass-panel-strong rounded-3xl bg-[linear-gradient(180deg,rgba(var(--theme-surface-shell-mid-r),0.98),rgba(var(--theme-surface-shell-deep-r),0.98))] p-5 shadow-none">
+      <div className="mx-auto flex max-w-[360px] flex-col rounded-4xl border border-border-subtle bg-[linear-gradient(180deg,rgba(var(--theme-surface-shell-solid-r),1),rgba(var(--theme-surface-shell-deep-r),1))] p-4 shadow-[0_18px_48px_rgba(0,0,0,0.28)]">
         <div className="mx-auto mb-3 h-1.5 w-24 rounded-full bg-surface-hover" />
 
-        <div className="rounded-3xl border border-border-subtle bg-[radial-gradient(circle_at_bottom_right,rgba(131,204,185,0.04),transparent_44%),linear-gradient(180deg,rgba(16,26,27,0.98),rgba(11,18,19,0.98))] p-4">
+        <div className="rounded-3xl border border-border-subtle bg-[radial-gradient(circle_at_bottom_right,color-mix(in_srgb,var(--color-primary)_4%,transparent),transparent_44%),linear-gradient(180deg,rgba(var(--theme-surface-message-r),0.98),rgba(var(--theme-surface-shell-solid-r),0.98))] p-4">
           <div className="flex items-center gap-3 border-b border-border-subtle pb-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-raised text-sm font-semibold text-[#9be9d7]">
               CL

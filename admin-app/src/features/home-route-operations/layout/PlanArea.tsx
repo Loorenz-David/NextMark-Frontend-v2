@@ -39,7 +39,7 @@ export function PlanArea({
         }}
       >
         { buttonTogglePlan ? (
-          <div className="absolute left-0 -top-5 z-20 h-5 w-full border-t border-t-white/10 bg-[rgba(15,23,25,0.78)] backdrop-blur-xl">
+          <div className="absolute left-0 -top-5 z-20 h-5 w-full border-t border-t-white/10 bg-[rgba(var(--theme-surface-workspace-r),0.78)] backdrop-blur-xl">
             <motion.div
               className="absolute bottom-full  z-20 left-1 "
               initial={{ x: 64 }}

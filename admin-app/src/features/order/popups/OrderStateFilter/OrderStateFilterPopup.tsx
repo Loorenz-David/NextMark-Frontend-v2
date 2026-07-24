@@ -93,7 +93,7 @@ export const OrderStateFilterPopup = ({
                   }`}
                 >
                   {isSelected ? (
-                    <div className="mt-[1px] flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(96,165,250,0.92)] text-text">
+                    <div className="mt-[1px] flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--color-blue-500)_92%,transparent)] text-text">
                       <CheckMarkIcon className="h-3 w-3" />
                     </div>
                   ) : (

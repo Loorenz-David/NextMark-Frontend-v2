@@ -135,20 +135,20 @@ export const RouteGroupRailAvatar = ({
             isDropTarget
               ? {
                   scale: 1.12,
-                  boxShadow: "0px 0px 0px 6px rgba(0,197,49,0.20)",
+                  boxShadow: "0px 0px 0px 6px rgba(var(--success-vivid-r),0.20)",
                 }
               : isIncomingPulseActive
                 ? {
                     scale: [1, 1.08, 0.98, 1.04, 1],
                     rotate: [0, -8, 6, -4, 0],
                     boxShadow:
-                      "inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 22px rgba(29,74,102,0.14)",
+                      "inset 0 1px 0 color-mix(in srgb, var(--foreground-mark) 18%, transparent), 0 10px 22px rgba(29,74,102,0.14)",
                   }
               : {
                   scale: 1,
                   rotate: 0,
                   boxShadow:
-                    "inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 22px rgba(29,74,102,0.14)",
+                    "inset 0 1px 0 color-mix(in srgb, var(--foreground-mark) 18%, transparent), 0 10px 22px rgba(29,74,102,0.14)",
                 }
           }
           transition={{
@@ -170,7 +170,7 @@ export const RouteGroupRailAvatar = ({
                 }
           }
         >
-          <span className="relative block h-full w-full overflow-hidden rounded-full bg-[rgba(11,21,24,0.40)]">
+          <span className="relative block h-full w-full overflow-hidden rounded-full bg-[rgba(var(--theme-surface-avatar-r),0.40)]">
             <motion.span
               aria-hidden="true"
               className="absolute inset-x-0 bottom-0"
@@ -184,10 +184,10 @@ export const RouteGroupRailAvatar = ({
           </span>
         </motion.span>
         <span
-          className="pointer-events-none absolute flex h-[42px] w-[42px] items-center justify-center rounded-full text-[11px] font-semibold text-[var(--color-text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+          className="pointer-events-none absolute flex h-[42px] w-[42px] items-center justify-center rounded-full text-[11px] font-semibold text-[var(--color-text)] shadow-[inset_0_1px_0_var(--color-ligth-bg)]"
           style={{
             background:
-              "radial-gradient(circle at 35% 30%, rgba(19,30,34,0.68) 0%, rgba(12,21,24,0.52) 58%, rgba(7,14,16,0.42) 100%)",
+              "radial-gradient(circle at 35% 30%, rgba(var(--theme-surface-avatar-top-r),0.68) 0%, rgba(var(--theme-surface-avatar-mid-r),0.52) 58%, rgba(var(--theme-surface-avatar-bottom-r),0.42) 100%)",
           }}
         >
           <AnimatePresence mode="wait" initial={false}>

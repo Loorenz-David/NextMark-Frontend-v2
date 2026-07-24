@@ -140,7 +140,7 @@ export const SettingsDesktopView = () => {
                 onClick={() => handleToggleSection(option)}
                 className={`flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-colors ${
                   isRouteActive(option.key)
-                    ? "border-[var(--color-border)] bg-surface-hover text-[var(--color-text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+                    ? "border-[var(--color-border)] bg-surface-hover text-[var(--color-text)] shadow-[inset_0_1px_0_var(--paper-raised)]"
                     : "border-transparent text-[var(--color-text)] hover:border-border hover:bg-surface-raised"
                 }`}
               >

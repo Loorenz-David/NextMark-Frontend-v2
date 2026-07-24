@@ -58,7 +58,7 @@ export const OrderDetailHeader = ({
   return (
     <div className="px-5 pt-4">
       <div className="admin-glass-panel-strong relative overflow-hidden rounded-3xl">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_top_left,rgba(131,204,185,0.18),transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_top_left,color-mix(in_srgb,var(--color-primary)_18%,transparent),transparent_70%)]" />
 
         <div className="relative flex items-start justify-between gap-4 px-5 py-4">
           <div className="flex flex-col">
@@ -66,7 +66,7 @@ export const OrderDetailHeader = ({
               {order ? (
                 <DraggableOrderDetailIcon order={order} />
               ) : (
-                <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[0_12px_28px_rgba(131,204,185,0.1)]">
+                <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[0_12px_28px_color-mix(in_srgb,var(--color-primary)_10%,transparent)]">
                   <DocumentIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
                 </div>
               )}
@@ -154,8 +154,8 @@ export const OrderDetailHeader = ({
               {order?.open_order_cases != null && order.open_order_cases > 0 ? (
                 <CounterBadge
                   text={String(order?.open_order_cases)}
-                  bgColor="rgba(255, 213, 3, 0.16)"
-                  textColor="rgb(255, 223, 83)"
+                  bgColor="rgba(var(--warning-vivid-r),0.16)"
+                  textColor="rgb(var(--warning-marker-r))"
                 />
               ) : null}
             </div>

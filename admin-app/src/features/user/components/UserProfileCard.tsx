@@ -13,7 +13,7 @@ type UserProfileCardProps = {
 export const UserSubscriptionCard = () => (
   <div className="admin-glass-panel-strong relative overflow-hidden rounded-3xl p-6 shadow-none">
     <div className="absolute right-0 top-0 h-28 w-44 translate-x-10 -translate-y-8 rounded-full bg-[rgb(var(--color-light-blue-r),0.14)] blur-3xl" />
-    <div className="absolute bottom-0 left-0 h-24 w-32 -translate-x-6 translate-y-6 rounded-full bg-[rgba(226,197,94,0.08)] blur-3xl" />
+    <div className="absolute bottom-0 left-0 h-24 w-32 -translate-x-6 translate-y-6 rounded-full bg-[rgba(var(--warning-muted-r),0.08)] blur-3xl" />
     <div className="relative flex flex-col gap-5">
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -25,7 +25,7 @@ export const UserSubscriptionCard = () => (
             Active • Renews monthly
           </p>
         </div>
-        <span className="rounded-full border border-[#83ccb9]/34 bg-[#83ccb9]/16 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[#a6f1dc] shadow-[0_10px_24px_rgba(131,204,185,0.14)] backdrop-blur-md">
+        <span className="rounded-full border border-[#83ccb9]/34 bg-[#83ccb9]/16 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[#a6f1dc] shadow-[0_10px_24px_color-mix(in_srgb,var(--color-primary)_14%,transparent)] backdrop-blur-md">
           Current
         </span>
       </div>

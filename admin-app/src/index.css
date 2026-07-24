@@ -66,6 +66,45 @@
 
   --foreground-mark: #ffffff;
 
+  /* Exact-parity channels for functional-color literals outside Tailwind class maps. */
+  --theme-surface-slate-r: 15, 23, 42;
+  --theme-surface-workspace-r: 15, 23, 25;
+  --theme-surface-popover-r: 9, 16, 26;
+  --theme-surface-control-top-r: 33, 45, 46;
+  --theme-surface-control-bottom-r: 24, 34, 35;
+  --theme-surface-shell-top-r: 13, 21, 22;
+  --theme-surface-shell-mid-r: 10, 17, 18;
+  --theme-surface-shell-deep-r: 8, 14, 15;
+  --theme-surface-shell-solid-r: 11, 18, 19;
+  --theme-surface-editor-top-r: 19, 29, 30;
+  --theme-surface-message-r: 16, 26, 27;
+  --theme-surface-external-r: 20, 31, 32;
+  --theme-surface-time-top-r: 23, 35, 36;
+  --theme-surface-time-bottom-r: 18, 27, 28;
+  --theme-surface-button-hover-r: 9, 15, 16;
+  --theme-surface-avatar-r: 11, 21, 24;
+  --theme-surface-avatar-top-r: 19, 30, 34;
+  --theme-surface-avatar-mid-r: 12, 21, 24;
+  --theme-surface-avatar-bottom-r: 7, 14, 16;
+  --theme-overlay-shadow-r: 4, 12, 22;
+  --theme-accent-on-solid-r: 13, 31, 34;
+
+  --warning-highlight-r: 255, 201, 71;
+  --warning-state-r: 255, 205, 93;
+  --warning-muted-r: 226, 197, 94;
+  --warning-vivid-r: 255, 213, 3;
+  --warning-marker-r: 255, 223, 83;
+  --warning-copy-r: 255, 236, 173;
+  --danger-highlight-r: 255, 120, 120;
+  --danger-rose-r: 251, 113, 133;
+  --success-vivid-r: 0, 197, 49;
+  --success-deep-r: 11, 138, 61;
+  --neutral-slate-r: 148, 163, 184;
+  --neutral-mid-r: 116, 116, 116;
+  --neutral-cool-r: 120, 130, 150;
+  --neutral-pale-r: 201, 218, 224;
+  --neutral-dark-r: 94, 94, 94;
+
   --radius-xs: 0.125rem;
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
@@ -157,6 +196,44 @@
   --info-border: rgba(61, 90, 108, 0.28);
 
   --foreground-mark: #2e2a24;
+
+  --theme-surface-slate-r: 231, 220, 199;
+  --theme-surface-workspace-r: 246, 241, 230;
+  --theme-surface-popover-r: 246, 241, 230;
+  --theme-surface-control-top-r: 246, 241, 230;
+  --theme-surface-control-bottom-r: 231, 220, 199;
+  --theme-surface-shell-top-r: 246, 241, 230;
+  --theme-surface-shell-mid-r: 239, 231, 215;
+  --theme-surface-shell-deep-r: 231, 220, 199;
+  --theme-surface-shell-solid-r: 246, 241, 230;
+  --theme-surface-editor-top-r: 246, 241, 230;
+  --theme-surface-message-r: 246, 241, 230;
+  --theme-surface-external-r: 246, 241, 230;
+  --theme-surface-time-top-r: 246, 241, 230;
+  --theme-surface-time-bottom-r: 231, 220, 199;
+  --theme-surface-button-hover-r: 231, 220, 199;
+  --theme-surface-avatar-r: 231, 220, 199;
+  --theme-surface-avatar-top-r: 246, 241, 230;
+  --theme-surface-avatar-mid-r: 239, 231, 215;
+  --theme-surface-avatar-bottom-r: 231, 220, 199;
+  --theme-overlay-shadow-r: 46, 42, 36;
+  --theme-accent-on-solid-r: 246, 241, 230;
+
+  --warning-highlight-r: 138, 106, 31;
+  --warning-state-r: 138, 106, 31;
+  --warning-muted-r: 169, 138, 66;
+  --warning-vivid-r: 138, 106, 31;
+  --warning-marker-r: 169, 138, 66;
+  --warning-copy-r: 169, 138, 66;
+  --danger-highlight-r: 168, 90, 74;
+  --danger-rose-r: 168, 90, 74;
+  --success-vivid-r: 74, 107, 63;
+  --success-deep-r: 63, 95, 56;
+  --neutral-slate-r: 154, 142, 123;
+  --neutral-mid-r: 108, 98, 82;
+  --neutral-cool-r: 154, 142, 123;
+  --neutral-pale-r: 211, 198, 172;
+  --neutral-dark-r: 108, 98, 82;
 
   --radius-xs: 2px;
   --radius-sm: 3px;

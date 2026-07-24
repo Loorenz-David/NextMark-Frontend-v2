@@ -156,7 +156,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
                 Icon={
                   <PlanTypeIcon
                     className={`h-5 w-5 `}
-                    style={{ color: "rgb(94, 94, 94)" }}
+                    style={{ color: "rgb(var(--neutral-dark-r))" }}
                   />
                 }
                 bgColor={"#7a7a7a"}
@@ -246,7 +246,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
                 </div>
               }
             >
-              <div className="admin-glass-popover min-w-[11rem] rounded-lg border border-border bg-[rgba(9,16,26,0.92)] px-3 py-2 shadow-[0_10px_24px_rgba(0,0,0,0.36)] backdrop-blur-md">
+              <div className="admin-glass-popover min-w-[11rem] rounded-lg border border-border bg-[rgba(var(--theme-surface-popover-r),0.92)] px-3 py-2 shadow-[0_10px_24px_rgba(0,0,0,0.36)] backdrop-blur-md">
                 <div className="mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted)]/90">
                   Item Types
                 </div>
@@ -295,7 +295,7 @@ const avatarVariants = {
   },
   over: {
     scale: 1.12,
-    boxShadow: "0px 0px 0px 6px rgba(0,197,49,0.20)",
+    boxShadow: "0px 0px 0px 6px rgba(var(--success-vivid-r),0.20)",
   },
 };
 
@@ -319,7 +319,7 @@ export const RoundAvatar = ({ Icon, bgColor, isOver }: PropsRoundAvatar) => {
               borderColor: `${bgColor}E6`,
             }
           : {
-              backgroundColor: "rgba(116, 116, 116, 0.1)",
+              backgroundColor: "rgba(var(--neutral-mid-r),0.1)",
               borderColor: "#747474ff",
             }
       }

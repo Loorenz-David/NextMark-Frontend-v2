@@ -33,7 +33,7 @@ export const SlateEditor = ({
 }: SlateEditorProps) => (
   <Slate editor={editor} initialValue={value} onChange={onChange}>
     <Editable
-      className={`slate-editor min-h-[140px] rounded-3xl border border-border bg-surface-raised px-4 py-3 text-sm text-[var(--color-text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] focus:outline-none ${className ?? ''}`.trim()}
+      className={`slate-editor min-h-[140px] rounded-3xl border border-border bg-surface-raised px-4 py-3 text-sm text-[var(--color-text)] shadow-[inset_0_1px_0_var(--paper-raised)] focus:outline-none ${className ?? ''}`.trim()}
       renderElement={renderElement}
       renderLeaf={renderLeaf}
       placeholder={placeholder}

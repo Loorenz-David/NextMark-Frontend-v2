@@ -51,7 +51,7 @@ const UnscheduleDropTarget = ({
       ref={setNodeRef}
       className={`min-w-[132px] rounded-xl border px-3 py-2 text-center transition-all duration-200 ${
         isOver || isSuccessFeedback
-          ? "border-[#0B8A3D]/50 bg-[#0B8A3D]/12 shadow-[0_0_0_1px_rgba(11,138,61,0.2),0_0_16px_rgba(11,138,61,0.15)]"
+          ? "border-[#0B8A3D]/50 bg-[#0B8A3D]/12 shadow-[0_0_0_1px_rgba(var(--success-deep-r),0.2),0_0_16px_rgba(var(--success-deep-r),0.15)]"
           : isErrorFeedback
             ? "border-[#B42318]/35 bg-[#B42318]/10"
             : "border-[var(--color-border)] bg-[var(--color-muted)]/8"
@@ -149,7 +149,7 @@ export const PlanMainHeader = ({
                 ? "Drop orders to create a plan"
                 : "Create delivery plan",
               className: isCreatePlanOver
-                ? "shadow-[0_0_0_4px_rgba(131,204,185,0.24),0_0_24px_rgba(131,204,185,0.32)]"
+                ? "shadow-[0_0_0_4px_color-mix(in_srgb,var(--color-primary)_24%,transparent),0_0_24px_color-mix(in_srgb,var(--color-primary)_32%,transparent)]"
                 : undefined,
             }}
           >

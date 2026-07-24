@@ -10,7 +10,7 @@ const mergeStyles = (
   width,
   height,
   borderRadius: '9999px',
-  border: '3px solid rgba(120, 130, 150, 0.25)',
+  border: '3px solid rgba(var(--neutral-cool-r),0.25)',
   borderTopColor: 'var(--color-dark-blue)',
   ...style,
 })

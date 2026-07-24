@@ -18,13 +18,13 @@ export const RouteGroupReadyFooter = ({
           style: {
             background:
               "linear-gradient(135deg, rgba(31, 175, 193, 0.96), rgba(59, 211, 205, 0.88))",
-            color: "rgb(13, 31, 34)",
+            color: "rgb(var(--theme-accent-on-solid-r))",
           },
           onClick: onReadyForDelivery,
         }}
       >
         <div className="flex items-center justify-center gap-4">
-          <DeliveryReadyIcon className="h-5 w-5 text-[rgb(13,31,34)]" />
+          <DeliveryReadyIcon className="h-5 w-5 text-[rgb(var(--theme-accent-on-solid-r))]" />
           <span className="font-medium tracking-tight">Ready for Delivery</span>
         </div>
       </BasicButton>

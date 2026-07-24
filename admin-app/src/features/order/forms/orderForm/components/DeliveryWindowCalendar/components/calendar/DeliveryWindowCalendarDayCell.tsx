@@ -39,7 +39,7 @@ export const DeliveryWindowCalendarDayCell = ({
     : isSelected
       ? 'bg-[var(--color-dark-blue)] text-[var(--color-page)] '
       : isToday
-        ? 'border-[rgba(131,204,185,0.28)] bg-[rgba(131,204,185,0.08)] text-[var(--color-primary)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'
+        ? 'border-[color-mix(in_srgb,var(--color-primary)_28%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_8%,transparent)] text-[var(--color-primary)] shadow-[inset_0_1px_0_var(--paper-raised)]'
         : isInRange
           ? 'bg-[var(--color-primary)]/10 text-[var(--color-text)]'
           : isClosed

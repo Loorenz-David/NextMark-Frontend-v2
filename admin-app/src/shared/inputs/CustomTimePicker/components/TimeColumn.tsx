@@ -68,7 +68,7 @@ export const TimeColumn = ({
         {label}
       </div>
       <div
-        className="relative overflow-hidden rounded-lg border border-border bg-[linear-gradient(180deg,rgba(23,35,36,0.92),rgba(18,27,28,0.9))]"
+        className="relative overflow-hidden rounded-lg border border-border bg-[linear-gradient(180deg,rgba(var(--theme-surface-time-top-r),0.92),rgba(var(--theme-surface-time-bottom-r),0.9))]"
         style={{ height: itemHeight * visibleCount }}
       >
         <div

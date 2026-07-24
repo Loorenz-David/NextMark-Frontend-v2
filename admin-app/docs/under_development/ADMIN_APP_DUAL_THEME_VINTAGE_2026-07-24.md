@@ -634,16 +634,19 @@ reverted independently.
 
 ### 7.3 Guard against regression
 
-After `--write`, this must return zero (excluding the §6.5 review paths):
+After `--write`, run the executable regression guard:
 
 ```bash
-grep -rE '\b(bg|text|border|ring|divide|stroke)-(white|black|slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)(-[0-9]{2,3})?(/(\[[0-9.]+\]|[0-9]{1,3}))?' \
-  --include='*.tsx' --include='*.ts' src \
-  | grep -v 'features/templates/printDocument' \
-  | wc -l
+npm run theme:regression
 ```
 
-Consider adding this as an ESLint rule or a CI check so the app cannot regress.
+It checks both hardcoded palette utilities and numeric functional colours matching
+`rgba?\([0-9]{1,3},\s*[0-9]{1,3},\s*[0-9]{1,3}`. Approved black shadows,
+Phase 7b review values and mandatory exclusion paths are count-pinned in
+`scripts/theme-functional-color-allowlist.json`, so new literals fail the guard.
+
+Accepted debt: 39 inline black box-shadow literals retain their dark values. Vintage
+therefore does not receive the token layer's hairline `--shadow-panel` treatment.
 
 ---
 

@@ -139,7 +139,7 @@ function AiAnalyticsBarListComponent({ data, meta }: AiAnalyticsBarListProps) {
                 type="category"
                 width={132}
               />
-              <Tooltip content={<AnalyticsTooltip />} cursor={{ fill: 'rgba(255,255,255,0.06)' }} />
+              <Tooltip content={<AnalyticsTooltip />} cursor={{ fill: 'var(--rule-subtle)' }} />
               <Bar animationDuration={650} dataKey="value" isAnimationActive radius={[0, 6, 6, 0]}>
                 {chartData.map((item) => (
                   <Cell
@@ -157,7 +157,7 @@ function AiAnalyticsBarListComponent({ data, meta }: AiAnalyticsBarListProps) {
             <LineChart data={chartData} margin={{ top: 10, right: 14, bottom: 8, left: 0 }}>
               <XAxis axisLine={false} dataKey="label" tick={{ fill: 'var(--color-muted)', fontSize: 12 }} tickLine={false} />
               <YAxis axisLine={false} tick={{ fill: 'var(--color-muted)', fontSize: 12 }} tickLine={false} width={42} />
-              <Tooltip content={<AnalyticsTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.15)', strokeWidth: 1 }} />
+              <Tooltip content={<AnalyticsTooltip />} cursor={{ stroke: 'color-mix(in srgb, var(--foreground-mark) 15%, transparent)', strokeWidth: 1 }} />
               <Line
                 animationDuration={650}
                 dataKey="value"
@@ -182,7 +182,7 @@ function AiAnalyticsBarListComponent({ data, meta }: AiAnalyticsBarListProps) {
             <AreaChart data={chartData} margin={{ top: 10, right: 14, bottom: 8, left: 0 }}>
               <XAxis axisLine={false} dataKey="label" tick={{ fill: 'var(--color-muted)', fontSize: 12 }} tickLine={false} />
               <YAxis axisLine={false} tick={{ fill: 'var(--color-muted)', fontSize: 12 }} tickLine={false} width={42} />
-              <Tooltip content={<AnalyticsTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.15)', strokeWidth: 1 }} />
+              <Tooltip content={<AnalyticsTooltip />} cursor={{ stroke: 'color-mix(in srgb, var(--foreground-mark) 15%, transparent)', strokeWidth: 1 }} />
               <Area
                 animationDuration={650}
                 dataKey="value"

@@ -71,7 +71,7 @@ export const OrderAddressGroupCard = ({
         >
           <div className={`flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-sm font-semibold text-[var(--color-page)] transition-all duration-200 ${
             isGroupHovered
-              ? 'bg-[var(--color-light-blue)] shadow-[0_0_0_3px_rgba(255,255,255,0.08)]'
+              ? 'bg-[var(--color-light-blue)] shadow-[0_0_0_3px_var(--color-ligth-bg)]'
               : 'bg-[var(--color-primary)]/60'
           }`}>
             {group.orders.length}

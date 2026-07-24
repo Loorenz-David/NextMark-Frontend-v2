@@ -18,7 +18,7 @@ type TimeInputFieldProps = {
 export const TimeInputField = ({
   value,
   disabled,
-  className = "w-[85px] rounded-full border border-[var(--color-border-accent)] px-2 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+  className = "w-[85px] rounded-full border border-[var(--color-border-accent)] px-2 py-1 shadow-[inset_0_1px_0_var(--paper-raised)]",
   onOpen,
   onKeyDown,
   onFocus,

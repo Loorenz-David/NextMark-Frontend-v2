@@ -208,10 +208,10 @@ export const MessageScheduleControl = ({
               selectedValue={isImmediate ? 'immediate' : 'scheduled'}
               onSelect={handleScheduleStateChange}
               styleConfig={{
-                containerBg: 'rgba(15,23,42,0.06)',
-                containerBorder: 'rgba(148,163,184,0.24)',
+                containerBg: 'rgba(var(--theme-surface-slate-r),0.06)',
+                containerBorder: 'rgba(var(--neutral-slate-r),0.24)',
                 selectedBg: 'var(--color-page)',
-                selectedBorder: 'rgba(148,163,184,0.24)',
+                selectedBorder: 'rgba(var(--neutral-slate-r),0.24)',
                 textColor: 'var(--color-muted)',
                 selectedTextColor: 'var(--color-text)',
               }}
@@ -228,10 +228,10 @@ export const MessageScheduleControl = ({
                 selectedValue={activeScheduledMode}
                 onSelect={handleScheduledModeChange}
                 styleConfig={{
-                  containerBg: 'rgba(15,23,42,0.06)',
-                  containerBorder: 'rgba(148,163,184,0.24)',
+                  containerBg: 'rgba(var(--theme-surface-slate-r),0.06)',
+                  containerBorder: 'rgba(var(--neutral-slate-r),0.24)',
                   selectedBg: 'var(--color-page)',
-                  selectedBorder: 'rgba(148,163,184,0.24)',
+                  selectedBorder: 'rgba(var(--neutral-slate-r),0.24)',
                   textColor: 'var(--color-muted)',
                   selectedTextColor: 'var(--color-text)',
                   textSize: '14px',

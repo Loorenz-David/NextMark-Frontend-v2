@@ -34,7 +34,7 @@ export const SmsTemplateEditor = ({ value, onChange }: SmsTemplateEditorProps) =
         </p>
       </div>
 
-      <div className="mb-5 rounded-3xl border border-border bg-[linear-gradient(180deg,rgba(19,29,30,0.8),rgba(14,22,23,0.72))] px-4 py-3">
+      <div className="mb-5 rounded-3xl border border-border bg-[linear-gradient(180deg,rgba(var(--theme-surface-editor-top-r),0.8),var(--glass-overlay))] px-4 py-3">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text)]">
             <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[#83ccb9]/28 bg-[#83ccb9]/14 px-1.5 text-[0.7rem] font-semibold text-[#a7f0de]">

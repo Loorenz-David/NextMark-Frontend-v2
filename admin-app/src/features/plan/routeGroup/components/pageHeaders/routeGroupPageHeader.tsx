@@ -28,7 +28,7 @@ type RouteGroupsPageHeaderProps = {
 };
 
 const actionBarShellClassName =
-  "admin-glass-action-bar border-b border-[rgba(255,255,255,0.08)] px-5 pb-4 pt-3";
+  "admin-glass-action-bar border-b border-[var(--color-ligth-bg)] px-5 pb-4 pt-3";
 
 type RouteGroupHeaderActionBarProps = {
   showOptimizeRow: boolean;
@@ -122,7 +122,7 @@ export const RouteGroupsPageHeader = ({
     <header className="flex w-full min-w-0 flex-col shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
       <div className="admin-glass-divider flex min-w-0 items-center justify-between gap-3 border-b px-4 py-3 transition-colors duration-200">
         <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
-          <div className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-hover px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+          <div className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-hover px-3 py-3 shadow-[inset_0_1px_0_var(--color-ligth-bg)]">
             <PlanTypeIcon className="h-6 w-6 text-[var(--color-muted)]" />
           </div>
           <div className="min-w-0 flex-1 text-lg font-semibold text-[var(--color-text)]">

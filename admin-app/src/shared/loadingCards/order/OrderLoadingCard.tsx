@@ -10,7 +10,7 @@ type OrderLoadingCardProps = {
 const RouteGroupOrderLoadingCard = () => {
   return (
     <div className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-hidden rounded-lg border border-border p-4 pl-2">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_26%,transparent_72%,rgba(0,0,0,0.04))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,var(--glass-surface-weak),transparent_26%,transparent_72%,rgba(0,0,0,0.04))]" />
 
       <div className="relative z-10 flex w-full gap-3">
         <LoadingCardBase className="h-9 w-9 shrink-0 rounded-full" />
@@ -43,7 +43,7 @@ const RouteGroupOrderLoadingCard = () => {
 const OrderMainLoadingCard = () => {
   return (
     <div className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-hidden rounded-lg border border-border p-4">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,var(--glass-surface-weak),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
 
       <div className="relative z-10 flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">

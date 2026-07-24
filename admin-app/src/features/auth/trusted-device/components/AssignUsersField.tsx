@@ -100,7 +100,7 @@ export const AssignUsersField = ({
                 </span>
               </div>
               {isSelected ? (
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[rgba(96,165,250,0.92)] text-text">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--color-blue-500)_92%,transparent)] text-text">
                   <CheckMarkIcon className="h-3 w-3" />
                 </span>
               ) : (

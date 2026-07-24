@@ -32,13 +32,13 @@ export const NOTE_TYPE_STYLE: Record<
 > = {
   FAILURE: {
     container:
-      "border-danger-border bg-[linear-gradient(135deg,rgba(251,113,133,0.16),rgba(251,113,133,0.04))]",
+      "border-danger-border bg-[linear-gradient(135deg,rgba(var(--danger-rose-r),0.16),rgba(var(--danger-rose-r),0.04))]",
     label: "text-danger",
     content: "text-danger",
   },
   COSTUMER: {
     container:
-      "border-warning-border bg-[linear-gradient(135deg,rgba(255,201,71,0.14),rgba(255,201,71,0.04))]",
+      "border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.14),rgba(var(--warning-highlight-r),0.04))]",
     label: "text-warning",
     content: "text-warning",
   },

@@ -27,13 +27,13 @@ export const PlanDateFilterOverlay = ({
               selectedValue={mode}
               onSelect={(value) => onModeChange(value as PlanDateFilterMode)}
               styleConfig={{
-                containerBg: 'rgba(255, 255, 255, 0.04)',
+                containerBg: 'var(--paper-raised)',
                 containerBorder: 'rgba(112, 222, 208, 0.26)',
                 selectedBg:
                   'linear-gradient(180deg, rgba(113, 205, 233, 0.22), rgba(84, 146, 209, 0.16))',
                 selectedBorder: 'rgba(113, 205, 233, 0.42)',
                 selectedTextColor: 'rgb(213, 247, 255)',
-                textColor: 'rgba(201, 218, 224, 0.9)',
+                textColor: 'rgba(var(--neutral-pale-r),0.9)',
                 textSize: '12px',
                 buttonPadding: '7px 10px',
               }}

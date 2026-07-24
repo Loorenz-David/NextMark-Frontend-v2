@@ -46,14 +46,17 @@ const parseMode = () => {
   const argumentsList = process.argv.slice(2)
   if (argumentsList.length === 0 || argumentsList[0] === '--dry-run') {
     if (argumentsList.length > 1) {
-      throw new Error('Use exactly one of --dry-run or --write')
+      throw new Error('Use exactly one of --dry-run, --write or --check')
     }
     return 'dry-run'
   }
   if (argumentsList.length === 1 && argumentsList[0] === '--write') {
     return 'write'
   }
-  throw new Error('Use exactly one of --dry-run or --write')
+  if (argumentsList.length === 1 && argumentsList[0] === '--check') {
+    return 'check'
+  }
+  throw new Error('Use exactly one of --dry-run, --write or --check')
 }
 
 const readConfiguration = async () => {
@@ -392,3 +395,12 @@ for (const [relativePath, count] of perFileReplacements) {
 console.log(`Total replacements: ${totalReplacements}`)
 printCounts('Unmapped hardcoded palette utilities', unmappedPaletteUtilities)
 printCounts('Unmapped arbitrary radii', unmappedArbitraryRadii)
+
+if (
+  mode === 'check' &&
+  (totalReplacements > 0 ||
+    unmappedPaletteUtilities.size > 0 ||
+    unmappedArbitraryRadii.size > 0)
+) {
+  process.exitCode = 1
+}

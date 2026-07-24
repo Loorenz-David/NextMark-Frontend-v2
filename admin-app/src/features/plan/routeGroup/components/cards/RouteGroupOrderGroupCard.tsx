@@ -81,7 +81,7 @@ export const RouteGroupOrderGroupCard = ({
                     floatingClassName="z-[220]"
                     reference={
                       <div
-                        className="flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.08))]"
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.08))]"
                         onMouseEnter={() => setWarningOpen(true)}
                         onMouseLeave={() => setWarningOpen(false)}
                         onClick={(event) => event.stopPropagation()}
@@ -91,7 +91,7 @@ export const RouteGroupOrderGroupCard = ({
                     }
                   >
                     <div
-                      className="admin-backdrop-blur-xl w-56 rounded-3xl border border-warning-border bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.06))] p-3 text-[0.85rem] text-warning shadow-[0_18px_40px_rgba(0,0,0,0.26)]"
+                      className="admin-backdrop-blur-xl w-56 rounded-3xl border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.06))] p-3 text-[0.85rem] text-warning shadow-[0_18px_40px_rgba(0,0,0,0.26)]"
                       onMouseEnter={() => setWarningOpen(true)}
                       onMouseLeave={() => setWarningOpen(false)}
                     >

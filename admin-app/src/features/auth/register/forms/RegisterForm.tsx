@@ -97,7 +97,7 @@ export function RegisterForm() {
           type: 'submit',
           variant: 'primary',
           disabled: status.isSubmitDisabled,
-          className: 'h-12 w-full text-base shadow-[0_18px_38px_rgba(131,204,185,0.24)]',
+          className: 'h-12 w-full text-base shadow-[0_18px_38px_color-mix(in_srgb,var(--color-primary)_24%,transparent)]',
         }}
       >
         {status.isLoading ? 'Creating account...' : 'Create account'}

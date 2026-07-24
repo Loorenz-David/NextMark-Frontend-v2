@@ -40,19 +40,19 @@ const DEFAULT_VIEWPORT_INSETS = {
 
 const PLAN_TOGGLE_BUTTON_STYLE: CSSProperties = {
   padding: "29px 6px",
-  backgroundColor: "rgba(15, 23, 25, 0.78)",
+  backgroundColor: "rgba(var(--theme-surface-workspace-r),0.78)",
   borderRadius: "10px 0 0 10px",
-  border: "1px solid rgba(255, 255, 255, 0.12)",
+  border: "1px solid var(--rule)",
   boxShadow: "0 14px 32px rgba(0, 0, 0, 0.18)",
   backdropFilter: "blur(18px) saturate(120%)",
   WebkitBackdropFilter: "blur(18px) saturate(120%)",
 };
 const PLAN_TOGGLE_BUTTON_SPLIT_STYLE: CSSProperties = {
   padding: "6px 29px ",
-  backgroundColor: "rgba(15, 23, 25, 0.78)",
-  borderBottom: "2px solid rgba(15, 23, 25, 0.86)",
+  backgroundColor: "rgba(var(--theme-surface-workspace-r),0.78)",
+  borderBottom: "2px solid rgba(var(--theme-surface-workspace-r),0.86)",
   borderRadius: "15px 15px 0 0",
-  border: "1px solid rgba(255, 255, 255, 0.12)",
+  border: "1px solid var(--rule)",
   boxShadow: "0 14px 32px rgba(0, 0, 0, 0.18)",
   backdropFilter: "blur(18px) saturate(120%)",
   WebkitBackdropFilter: "blur(18px) saturate(120%)",
