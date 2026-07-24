@@ -32,6 +32,56 @@
     "shared/inputs/address-autocomplete/SuggestionSelector.tsx",
     "shared/spiners/loading-bar/LoadingBar.tsx"
   ],
+  "fileOverrides": [
+    {
+      "file": "features/order/forms/orderForm/components/OrderFormFooter.tsx",
+      "line": 60,
+      "from": "text-white",
+      "to": "text-danger-on-solid"
+    },
+    {
+      "file": "features/order/components/cards/OrderCard.tsx",
+      "line": 82,
+      "from": "text-white",
+      "to": "text-success-on-solid"
+    },
+    {
+      "file": "features/order/components/cards/OrderCard.tsx",
+      "line": 97,
+      "from": "text-white",
+      "to": "text-danger-on-solid"
+    },
+    {
+      "file": "features/order/item/components/ItemCard/ItemCard.tsx",
+      "line": 135,
+      "from": "text-white",
+      "to": "text-danger-on-solid"
+    },
+    {
+      "file": "features/plan/routeGroup/forms/routeGroupEditForm/components/RouteGroupEditFormFooter.tsx",
+      "line": 21,
+      "from": "text-white",
+      "to": "text-danger-on-solid"
+    },
+    {
+      "file": "features/plan/forms/planForm/PlanForm.layout.tsx",
+      "line": 90,
+      "from": "text-white",
+      "to": "text-danger-on-solid"
+    },
+    {
+      "file": "features/orderCase/components/OrderCaseCard.tsx",
+      "line": 68,
+      "from": "text-white",
+      "to": "text-danger-on-solid"
+    },
+    {
+      "file": "shared/popups/MainPopup/PopupFooter.tsx",
+      "line": 31,
+      "from": "text-white",
+      "to": "text-danger-on-solid"
+    }
+  ],
   "mapping": {
     "bg-white/[0.02]": "bg-surface-subtle",
     "bg-white/[0.025]": "bg-surface-subtle",
@@ -112,6 +162,7 @@
     "ring-white/30": "ring-border-accent",
     "divide-white/8": "divide-border-subtle",
     "text-slate-100": "text-text",
+    "text-gray-500": "text-muted",
     "border-slate-300/25": "border-border-accent",
     "bg-slate-300/[0.10]": "bg-surface-sunken",
 
@@ -120,6 +171,7 @@
     "text-red-300": "text-danger",
     "text-red-400": "text-danger",
     "text-red-500": "text-danger",
+    "text-red-600": "text-danger",
     "text-rose-50/95": "text-danger",
     "text-rose-100": "text-danger",
     "text-rose-200": "text-danger",
@@ -127,6 +179,8 @@
     "text-rose-300": "text-danger",
     "bg-red-500/[0.06]": "bg-danger-bg",
     "bg-red-500/[0.12]": "bg-danger-bg",
+    "bg-red-500": "bg-danger-solid",
+    "bg-red-500/85": "bg-danger-solid/85",
     "bg-red-500/8": "bg-danger-bg",
     "bg-red-500/10": "bg-danger-bg",
     "bg-red-500/12": "bg-danger-bg",
@@ -179,11 +233,13 @@
     "text-emerald-200": "text-success",
     "text-emerald-300": "text-success",
     "text-emerald-300/85": "text-success",
+    "text-green-600": "text-success",
     "bg-emerald-300/[0.12]": "bg-success-bg",
     "bg-emerald-300/[0.14]": "bg-success-bg",
     "bg-emerald-400/10": "bg-success-bg",
     "bg-emerald-400/15": "bg-success-bg",
     "bg-emerald-500/[0.12]": "bg-success-bg",
+    "bg-green-600": "bg-success-solid",
     "border-emerald-300/25": "border-success-border",
     "border-emerald-300/35": "border-success-border",
     "border-emerald-300/45": "border-success-border",
@@ -196,6 +252,7 @@
     "text-cyan-50/95": "text-info",
     "text-cyan-200/80": "text-info",
     "text-sky-100": "text-info",
+    "text-yellow-600": "text-warning",
     "bg-sky-300/[0.10]": "bg-info-bg",
     "bg-sky-300/[0.12]": "bg-info-bg",
     "border-blue-200": "border-info-border",
@@ -205,13 +262,23 @@
     "border-sky-300/30": "border-info-border",
     "stroke-sky-400": "stroke-info",
 
+    "rounded-[14px]": "rounded-2xl",
+    "rounded-[1rem]": "rounded-2xl",
+    "rounded-[1.15rem]": "rounded-2xl",
     "rounded-[16px]": "rounded-2xl",
     "rounded-[18px]": "rounded-2xl",
     "rounded-[1.1rem]": "rounded-2xl",
+    "rounded-[1.35rem]": "rounded-3xl",
+    "rounded-[1.4rem]": "rounded-3xl",
     "rounded-[20px]": "rounded-3xl",
     "rounded-[22px]": "rounded-3xl",
     "rounded-[24px]": "rounded-3xl",
     "rounded-[26px]": "rounded-3xl",
-    "rounded-[28px]": "rounded-3xl"
+    "rounded-[28px]": "rounded-3xl",
+    "rounded-[1.85rem]": "rounded-4xl",
+    "rounded-[2rem]": "rounded-4xl",
+    "rounded-[32px]": "rounded-4xl",
+    "rounded-[34px]": "rounded-4xl",
+    "rounded-[36px]": "rounded-4xl"
   }
 }

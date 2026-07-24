@@ -34,6 +34,14 @@ const arbitraryRadiusRegex = () =>
 const escapeRegExp = (value) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
+const createUtilityMatcher = (utility) =>
+  new RegExp(
+    `(^|[^${tokenBoundaryCharacters}])` +
+      `(${escapeRegExp(utility)})` +
+      `(?![${tokenBoundaryCharacters}])`,
+    'g',
+  )
+
 const parseMode = () => {
   const argumentsList = process.argv.slice(2)
   if (argumentsList.length === 0 || argumentsList[0] === '--dry-run') {
@@ -55,6 +63,7 @@ const readConfiguration = async () => {
   if (
     !Array.isArray(configuration.excludePathPrefixes) ||
     !Array.isArray(configuration.excludeFiles) ||
+    !Array.isArray(configuration.fileOverrides) ||
     typeof configuration.mapping !== 'object' ||
     configuration.mapping === null
   ) {
@@ -218,12 +227,7 @@ const replaceMappedUtilities = (source, mappingEntries) => {
     let content = source.slice(range.start, range.end)
 
     for (const [from, to] of mappingEntries) {
-      const matcher = new RegExp(
-        `(^|[^${tokenBoundaryCharacters}])` +
-          `(${escapeRegExp(from)})` +
-          `(?![${tokenBoundaryCharacters}])`,
-        'g',
-      )
+      const matcher = createUtilityMatcher(from)
       content = content.replace(matcher, (_match, prefix) => {
         replacements += 1
         return `${prefix}${to}`
@@ -236,6 +240,47 @@ const replaceMappedUtilities = (source, mappingEntries) => {
 
   output += source.slice(cursor)
   return { output, replacements }
+}
+
+const applyFileOverrides = (source, overrides) => {
+  const lines = source.split('\n')
+  let replacements = 0
+
+  for (const override of overrides) {
+    const lineIndex = override.line - 1
+    const line = lines[lineIndex]
+    if (line === undefined) {
+      throw new Error(
+        `${override.file}:${override.line} is outside the source file`,
+      )
+    }
+
+    let lineReplacements = 0
+    const matcher = createUtilityMatcher(override.from)
+    const updatedLine = line.replace(matcher, (_match, prefix) => {
+      lineReplacements += 1
+      return `${prefix}${override.to}`
+    })
+
+    if (lineReplacements > 1) {
+      throw new Error(
+        `${override.file}:${override.line} matched ${override.from} more than once`,
+      )
+    }
+    if (
+      lineReplacements === 0 &&
+      !createUtilityMatcher(override.to).test(line)
+    ) {
+      throw new Error(
+        `${override.file}:${override.line} contains neither ${override.from} nor ${override.to}`,
+      )
+    }
+
+    lines[lineIndex] = updatedLine
+    replacements += lineReplacements
+  }
+
+  return { output: lines.join('\n'), replacements }
 }
 
 const countMatchesInClassStrings = (source, createMatcher) => {
@@ -305,7 +350,19 @@ for (const filePath of files) {
 
   scannedFileCount += 1
   const source = await fs.readFile(filePath, 'utf8')
-  const result = replaceMappedUtilities(source, mappingEntries)
+  const fileOverrides = configuration.fileOverrides.filter(
+    (override) => override.file === relativePath,
+  )
+  const overrideResult = applyFileOverrides(source, fileOverrides)
+  const mappingResult = replaceMappedUtilities(
+    overrideResult.output,
+    mappingEntries,
+  )
+  const result = {
+    output: mappingResult.output,
+    replacements:
+      overrideResult.replacements + mappingResult.replacements,
+  }
 
   if (result.replacements > 0) {
     perFileReplacements.push([relativePath, result.replacements])
