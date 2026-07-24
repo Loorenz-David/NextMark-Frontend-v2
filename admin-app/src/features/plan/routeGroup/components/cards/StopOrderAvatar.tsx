@@ -12,7 +12,7 @@ export const StopOrderAvatar = ({
 
     return ( 
         <div
-            className={`flex items-center justify-center rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-[rgba(172,228,244,0.20)] shadow-[inset_0_1px_0_var(--rule-strong),0_10px_22px_rgba(29,74,102,0.14)]  ${classmap.containerClass}`}
+            className={`flex items-center justify-center rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-[rgba(172,228,244,0.20)] shadow-[var(--shadow-button-stop-avatar)]  ${classmap.containerClass}`}
         >
             <span className={`font-bold tracking-[-0.01em] text-[var(--stop-order-avatar-ink)] ${classmap.text}`}>
                 {stopOrder  ?? '--'}

@@ -63,7 +63,7 @@ export const ItemCard = ({
   }
 
   return (
-    <div className="admin-glass-panel admin-surface-compact relative shrink-0 overflow-hidden rounded-2xl border border-border p-3 px-2 transition-all duration-200 hover:border-border-accent hover:bg-surface-hover hover:shadow-[0_16px_38px_rgba(0,0,0,0.16)]">
+    <div className="admin-glass-panel admin-surface-compact relative shrink-0 overflow-hidden rounded-2xl border border-border p-3 px-2 transition-all duration-200 hover:border-border-accent hover:bg-surface-hover hover:shadow-[var(--shadow-panel-card)]">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,var(--glass-surface-weak),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
       <div
         role="button"

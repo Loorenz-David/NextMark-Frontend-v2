@@ -246,7 +246,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
                 </div>
               }
             >
-              <div className="admin-glass-popover min-w-[11rem] rounded-lg border border-border bg-[rgba(var(--theme-surface-popover-r),0.92)] px-3 py-2 shadow-[0_10px_24px_rgba(0,0,0,0.36)] backdrop-blur-md">
+              <div className="admin-glass-popover min-w-[11rem] rounded-lg border border-border bg-[rgba(var(--theme-surface-popover-r),0.92)] px-3 py-2 shadow-[var(--shadow-panel-popover)] backdrop-blur-md">
                 <div className="mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted)]/90">
                   Item Types
                 </div>

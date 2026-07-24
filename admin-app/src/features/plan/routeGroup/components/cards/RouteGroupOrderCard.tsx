@@ -65,7 +65,7 @@ export const RouteGroupOrderCard = ({
 
   return (
     <div
-      className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-visible rounded-lg border border-border p-4 pl-2 transition-all duration-200 hover:border-border-accent hover:bg-surface-hover hover:shadow-[0_16px_38px_rgba(0,0,0,0.16)]"
+      className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-visible rounded-lg border border-border p-4 pl-2 transition-all duration-200 hover:border-border-accent hover:bg-surface-hover hover:shadow-[var(--shadow-panel-card)]"
       onClick={openOrder}
     >
       <OrderMissingInfoNotifier order={order} />

@@ -142,13 +142,13 @@ export const RouteGroupRailAvatar = ({
                     scale: [1, 1.08, 0.98, 1.04, 1],
                     rotate: [0, -8, 6, -4, 0],
                     boxShadow:
-                      "inset 0 1px 0 color-mix(in srgb, var(--foreground-mark) 18%, transparent), 0 10px 22px rgba(29,74,102,0.14)",
+                      "var(--shadow-button-avatar)",
                   }
               : {
                   scale: 1,
                   rotate: 0,
                   boxShadow:
-                    "inset 0 1px 0 color-mix(in srgb, var(--foreground-mark) 18%, transparent), 0 10px 22px rgba(29,74,102,0.14)",
+                    "var(--shadow-button-avatar)",
                 }
           }
           transition={{

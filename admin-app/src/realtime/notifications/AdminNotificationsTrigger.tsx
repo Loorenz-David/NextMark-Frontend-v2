@@ -182,7 +182,7 @@ export function AdminNotificationsTrigger() {
       placement="bottom-end"
       renderInPortal
       closeOnInsideClick
-      floatingClassName="drop-shadow-[0_24px_50px_rgba(0,0,0,0.3)]"
+      floatingClassName="drop-shadow-[var(--shadow-panel-notifications)]"
       reference={
         <div className="relative">
           <AnimatePresence>

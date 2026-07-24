@@ -81,7 +81,7 @@ export const ActiveFilterPills = ({
         return (
           <div
             key={`${parentKey}-${itemKey}`}
-            className="inline-flex items-center gap-2 rounded-full border border-[rgba(var(--color-light-blue-r),0.32)] bg-[rgba(var(--color-light-blue-r),0.14)] px-3 py-1 text-xs font-medium text-[rgb(var(--color-light-blue-r))] shadow-[0_8px_18px_rgba(0,0,0,0.14)] backdrop-blur-md"
+            className="inline-flex items-center gap-2 rounded-full border border-[rgba(var(--color-light-blue-r),0.32)] bg-[rgba(var(--color-light-blue-r),0.14)] px-3 py-1 text-xs font-medium text-[rgb(var(--color-light-blue-r))] shadow-[var(--shadow-button-muted)] backdrop-blur-md"
           >
             <span className="whitespace-nowrap">
               {type === 'array'

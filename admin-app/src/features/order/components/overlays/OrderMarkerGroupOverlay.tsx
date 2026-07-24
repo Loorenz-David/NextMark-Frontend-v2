@@ -82,7 +82,7 @@ export const OrderMarkerGroupOverlay = () => {
       }}
       className="z-50"
     >
-      <div className="admin-glass-panel-strong w-[320px] overflow-hidden rounded-xl border border-border shadow-[0_20px_44px_rgba(var(--theme-overlay-shadow-r),0.55)]">
+      <div className="admin-glass-panel-strong w-[320px] overflow-hidden rounded-xl border border-border shadow-[var(--shadow-panel-overlay-strong)]">
         <div className="flex items-center justify-between border-b border-border bg-surface-subtle px-3 py-2">
           <p className="text-xs font-semibold text-[var(--color-text)]">
             {orders.length} grouped orders

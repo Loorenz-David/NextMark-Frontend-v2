@@ -37,7 +37,7 @@ export const OrderCard = ({
     <div
       className={`admin-glass-panel admin-surface-compact group relative flex flex-col gap-2.5 overflow-visible rounded-lg p-4 transition-all duration-200 ${
         isHovered
-          ? "border-[rgb(var(--color-light-blue-r),0.7)] shadow-[0_18px_42px_rgba(45,95,170,0.22)]"
+          ? "border-[rgb(var(--color-light-blue-r),0.7)] shadow-[var(--shadow-panel-state-strong)]"
           : "border-border hover:border-border-accent hover:bg-surface-hover"
       }`}
       onClick={() => onOpen?.(order)}
@@ -74,7 +74,7 @@ export const OrderCard = ({
                 onConfirm={() => onUnarchive?.(order)}
                 confirmOverLay={"bg-success-solid-strong"}
                 deleteContent={
-                  <div className="rounded-lg border border-border bg-surface-raised px-1.5 py-1.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)]">
+                  <div className="rounded-lg border border-border bg-surface-raised px-1.5 py-1.5 shadow-[var(--shadow-button-action)]">
                     <SendBackIcon className="h-4 w-4 text-[var(--color-muted)]/90" />
                   </div>
                 }
@@ -89,7 +89,7 @@ export const OrderCard = ({
                 <ConfirmActionButton
                   onConfirm={() => onArchive?.(order)}
                   deleteContent={
-                    <div className="rounded-lg border border-border bg-surface-raised px-1.5 py-1.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)]">
+                    <div className="rounded-lg border border-border bg-surface-raised px-1.5 py-1.5 shadow-[var(--shadow-button-action)]">
                       <ArchiveOrderIcon className="h-4 w-4 text-[var(--color-muted)]/90" />
                     </div>
                   }

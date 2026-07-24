@@ -24,7 +24,7 @@ export const SmsPhonePreview = ({
 }: SmsPhonePreviewProps) => {
   return (
     <div className="admin-glass-panel-strong rounded-3xl bg-[linear-gradient(180deg,rgba(var(--theme-surface-shell-mid-r),0.98),rgba(var(--theme-surface-shell-deep-r),0.98))] p-5 shadow-none">
-      <div className="mx-auto flex max-w-[360px] flex-col rounded-4xl border border-border-subtle bg-[linear-gradient(180deg,rgba(var(--theme-surface-shell-solid-r),1),rgba(var(--theme-surface-shell-deep-r),1))] p-4 shadow-[0_18px_48px_rgba(0,0,0,0.28)]">
+      <div className="mx-auto flex max-w-[360px] flex-col rounded-4xl border border-border-subtle bg-[linear-gradient(180deg,rgba(var(--theme-surface-shell-solid-r),1),rgba(var(--theme-surface-shell-deep-r),1))] p-4 shadow-[var(--shadow-panel-phone)]">
         <div className="mx-auto mb-3 h-1.5 w-24 rounded-full bg-surface-hover" />
 
         <div className="rounded-3xl border border-border-subtle bg-[radial-gradient(circle_at_bottom_right,color-mix(in_srgb,var(--color-primary)_4%,transparent),transparent_44%),linear-gradient(180deg,rgba(var(--theme-surface-message-r),0.98),rgba(var(--theme-surface-shell-solid-r),0.98))] p-4">
@@ -43,7 +43,7 @@ export const SmsPhonePreview = ({
               We will send this message when the selected trigger runs.
             </div>
 
-            <div className="ml-auto w-[82%] rounded-3xl rounded-br-md border border-[#83ccb9]/20 bg-[linear-gradient(145deg,var(--sms-preview-bubble-start),rgba(67,118,123,0.8))] p-3 text-text shadow-[0_8px_18px_rgba(56,103,108,0.08)]">
+            <div className="ml-auto w-[82%] rounded-3xl rounded-br-md border border-[#83ccb9]/20 bg-[linear-gradient(145deg,var(--sms-preview-bubble-start),rgba(67,118,123,0.8))] p-3 text-text shadow-[var(--shadow-panel-subtle-color)]">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-muted">
                   Live message

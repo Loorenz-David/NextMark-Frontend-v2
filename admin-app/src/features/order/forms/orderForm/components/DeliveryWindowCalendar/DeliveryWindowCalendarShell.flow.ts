@@ -171,7 +171,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       cancelButtonClassName:
         'px-4 py-1 text-[12px] rounded-sm border-1 border-[var(--color-border-accent)]  text-base text-[var(--color-text)] cursor-pointer hover:bg-[var(--color-border)]',
       applyButtonClassName:
-        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-4 py-1.5 text-[12px] font-semibold  text-[var(--color-primary)] shadow-[0_10px_24px_rgba(22,49,46,0.18),inset_0_1px_0_var(--paper-raised)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
+        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-4 py-1.5 text-[12px] font-semibold  text-[var(--color-primary)] shadow-[var(--shadow-button-calendar-sm)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
     },
   },
   desktopRegular: {
@@ -254,7 +254,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       cancelButtonClassName:
         'border-[var(--color-border-accent)] px-4 py-2 text-xl text-[var(--color-text)]',
       applyButtonClassName:
-        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-5 py-2 text-base font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)] shadow-[0_12px_28px_rgba(22,49,46,0.18),inset_0_1px_0_var(--paper-raised)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
+        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-5 py-2 text-base font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)] shadow-[var(--shadow-button-calendar-md)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
     },
   },
   mobile: {
@@ -337,7 +337,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       cancelButtonClassName:
         'border-[var(--color-border-accent)] px-3 py-1.5 text-base text-[var(--color-text)]',
       applyButtonClassName:
-        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-3.5 py-1.5 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-primary)] shadow-[0_10px_22px_rgba(22,49,46,0.18),inset_0_1px_0_var(--paper-raised)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
+        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-3.5 py-1.5 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-primary)] shadow-[var(--shadow-button-calendar-compact)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
     },
   },
 }

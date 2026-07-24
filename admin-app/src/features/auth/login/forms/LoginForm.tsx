@@ -72,7 +72,7 @@ export function LoginForm() {
           type: 'submit',
           variant: 'primary',
           disabled: isLoading || !email || !password,
-          className: 'h-12 w-full text-base shadow-[0_18px_38px_color-mix(in_srgb,var(--color-primary)_24%,transparent)]',
+          className: 'h-12 w-full text-base shadow-[var(--shadow-button-auth-accent)]',
         }}
       >
         {isLoading ? 'Signing in...' : 'Sign in'}

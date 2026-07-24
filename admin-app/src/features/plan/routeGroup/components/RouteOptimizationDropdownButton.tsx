@@ -62,7 +62,7 @@ export const RouteOptimizationDropdownButton = ({
         background:
           'linear-gradient(135deg, rgba(var(--accent-r),0.18), rgba(var(--accent-r),0.08))',
         borderColor: 'rgba(var(--accent-r),0.24)',
-        boxShadow: '0 16px 34px rgba(0, 0, 0, 0.18)',
+        boxShadow: 'var(--shadow-button-route)',
         color: 'var(--accent-ink)',
       }}
       onClick={routeGroupPageActions.optimizeRoute}

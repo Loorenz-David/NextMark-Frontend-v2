@@ -16,7 +16,7 @@ export const ExternalFormAccessPage = () => {
         className="pointer-events-none absolute bottom-[-18%] right-[-10%] h-[24rem] w-[24rem] rounded-full bg-[radial-gradient(circle,rgba(102,168,255,0.16),transparent_68%)] blur-3xl"
       />
 
-      <section className="relative w-full max-w-2xl overflow-hidden rounded-4xl border border-border bg-[linear-gradient(180deg,rgba(var(--theme-surface-external-r),0.96),rgba(var(--theme-surface-shell-top-r),0.94))] shadow-[0_28px_80px_rgba(0,0,0,0.42)]">
+      <section className="relative w-full max-w-2xl overflow-hidden rounded-4xl border border-border bg-[linear-gradient(180deg,rgba(var(--theme-surface-external-r),0.96),rgba(var(--theme-surface-shell-top-r),0.94))] shadow-[var(--shadow-panel-external)]">
         <div className="border-b border-border-subtle px-8 py-8">
           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.34em] text-[#83ccb9]/68">
             External Form

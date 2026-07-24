@@ -3,7 +3,7 @@ import type { StepCardProps } from './CustomInstructions.types'
 
 export const StepCard = ({ step, index, className, maxWidth }: StepCardProps) => {
   const containerClassName =
-    `flex min-w-[280px] flex-1 flex-col gap-4 rounded-3xl border border-[#83ccb9]/24 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_16%,transparent),rgba(var(--accent-r),0.07))] p-4 text-text shadow-[0_18px_40px_rgba(0,0,0,0.24)] backdrop-blur-xl ${className ?? ''}`.trim()
+    `flex min-w-[280px] flex-1 flex-col gap-4 rounded-3xl border border-[#83ccb9]/24 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_16%,transparent),rgba(var(--accent-r),0.07))] p-4 text-text shadow-[var(--shadow-panel-soft)] backdrop-blur-xl ${className ?? ''}`.trim()
 
   return (
     <article className={containerClassName} style={{ maxWidth: maxWidth }}>

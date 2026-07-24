@@ -14,7 +14,7 @@ export const RouteGroupReadyFooter = ({
         params={{
           variant: "primary",
           className:
-            "w-full py-3.5 rounded-4xl border border-[rgba(var(--accent-r),0.22)] shadow-[0_16px_34px_rgba(0,0,0,0.18)]",
+            "w-full py-3.5 rounded-4xl border border-[rgba(var(--accent-r),0.22)] shadow-[var(--shadow-button-route)]",
           style: {
             background:
               "linear-gradient(135deg, var(--ready-action-gradient-start), var(--ready-action-gradient-end))",

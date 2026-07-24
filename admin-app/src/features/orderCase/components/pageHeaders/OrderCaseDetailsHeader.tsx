@@ -24,7 +24,7 @@ export const OrderCaseDetailsHeader = ({
 
         <div className="relative flex items-start justify-between gap-4 px-5 py-4">
           <div className="flex min-w-0 items-center gap-3.5">
-            <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[0_12px_28px_color-mix(in_srgb,var(--color-primary)_10%,transparent)]">
+            <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[var(--shadow-button-accent-subtle)]">
               <MessageIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
             </div>
             <div className="flex min-w-0 flex-col">

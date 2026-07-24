@@ -20,7 +20,7 @@ export function AuthSwitch() {
   }, [location.pathname])
 
   return (
-    <div className="rounded-3xl border border-border bg-surface-hover p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.18)]">
+    <div className="rounded-3xl border border-border bg-surface-hover p-1.5 shadow-[var(--shadow-button-auth)]">
       <div className="grid grid-cols-2 gap-2">
       {tabs.map((tab) => {
         const isActive = activePath === tab.path

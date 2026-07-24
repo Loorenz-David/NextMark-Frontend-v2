@@ -42,7 +42,7 @@ export const RouteStopWarnings = ({ stop, planStartDate }: RouteStopWarningsProp
             }
         >
             <div
-                className="admin-backdrop-blur-xl w-72 rounded-3xl border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.06))] p-3 text-xs text-warning shadow-[0_18px_40px_rgba(0,0,0,0.26)]"
+                className="admin-backdrop-blur-xl w-72 rounded-3xl border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.06))] p-3 text-xs text-warning shadow-[var(--shadow-panel-floating)]"
                 onMouseEnter={() => setWarningOpen(true)}
                 onMouseLeave={() => setWarningOpen(false)}
             >

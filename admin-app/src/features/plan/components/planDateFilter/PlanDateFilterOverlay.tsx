@@ -15,7 +15,7 @@ export const PlanDateFilterOverlay = ({
 
 }: PlanDateFilterOverlayProps) => {
   return (
-    <div className="admin-glass-popover w-[320px] rounded-2xl border border-[var(--color-border-accent)] p-4 shadow-[0_18px_38px_rgba(0,0,0,0.28)]">
+    <div className="admin-glass-popover w-[320px] rounded-2xl border border-[var(--color-border-accent)] p-4 shadow-[var(--shadow-panel-filter)]">
       <div className="space-y-4">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]/80">

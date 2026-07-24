@@ -10,7 +10,7 @@ const DEFAULT_TEXT_TRIGGER_CLASSES = 'cursor-help underline underline-offset-2 t
 const DEFAULT_ICON_TRIGGER_CLASSES = 'rounded-full bg-[var(--color-border)]/50 p-1 text-[var(--color-text)]'
 const DEFAULT_ICON_CLASSES = 'h-3 w-3'
 const DEFAULT_OVERLAY_CLASSES =
-  'max-w-[280px] rounded-3xl border border-[rgba(var(--accent-r),0.24)] bg-[linear-gradient(135deg,rgba(var(--accent-r),0.18),rgba(var(--accent-r),0.07))] p-3 text-sm text-[var(--accent-ink)] shadow-[0_18px_40px_rgba(0,0,0,0.26)] backdrop-blur-xl'
+  'max-w-[280px] rounded-3xl border border-[rgba(var(--accent-r),0.24)] bg-[linear-gradient(135deg,rgba(var(--accent-r),0.18),rgba(var(--accent-r),0.07))] p-3 text-sm text-[var(--accent-ink)] shadow-[var(--shadow-panel-floating)] backdrop-blur-xl'
 
 const renderMessageCard = (message: InfoHoverMessage) => (
   <div className="flex h-full w-full flex-col gap-2 p-1">

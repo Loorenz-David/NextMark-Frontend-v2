@@ -124,7 +124,7 @@ const CaseDetailsPageContent = () => {
       <div className="flex justify-center px-5 pb-2">
         {showNewMessagesPill ? (
           <button
-            className="mb-2 flex w-max items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[linear-gradient(135deg,rgba(var(--accent-r),0.16),rgba(var(--accent-r),0.08))] px-4 py-2 text-sm font-medium text-[var(--color-text)] shadow-[0_12px_28px_rgba(0,0,0,0.14)] backdrop-blur-xl transition hover:bg-[linear-gradient(135deg,rgba(var(--accent-r),0.22),rgba(var(--accent-r),0.1))]"
+            className="mb-2 flex w-max items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[linear-gradient(135deg,rgba(var(--accent-r),0.16),rgba(var(--accent-r),0.08))] px-4 py-2 text-sm font-medium text-[var(--color-text)] shadow-[var(--shadow-button-case)] backdrop-blur-xl transition hover:bg-[linear-gradient(135deg,rgba(var(--accent-r),0.22),rgba(var(--accent-r),0.1))]"
             onClick={handleJumpToLatest}
             type="button"
           >

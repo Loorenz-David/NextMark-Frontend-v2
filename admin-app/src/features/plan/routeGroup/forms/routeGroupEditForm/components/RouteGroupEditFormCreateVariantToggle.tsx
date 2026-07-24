@@ -22,7 +22,7 @@ export const RouteGroupEditFormCreateVariantToggle = () => {
         value={formState.create_variant_on_save}
         onChange={formSetters.handleCreateVariantToggle}
         ariaLabel="Create variant on save"
-        className="border-border bg-surface-raised shadow-[0_10px_24px_rgba(0,0,0,0.14)]"
+        className="border-border bg-surface-raised shadow-[var(--shadow-button-soft)]"
       />
     </div>
   )

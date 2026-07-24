@@ -34,7 +34,7 @@ export const SectionPanel = ({
         }}
       >
         {header && (
-          <header className="flex w-full flex-col shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
+          <header className="flex w-full flex-col shadow-[var(--shadow-panel-section)]">
             <div
               className={`admin-glass-divider flex items-center justify-between gap-3 border-b px-4 py-3 transition-colors duration-200 ${header.headerButtonsBgClass ?? ""}`}
               style={{

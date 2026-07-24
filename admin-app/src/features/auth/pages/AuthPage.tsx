@@ -29,7 +29,7 @@ export function AuthPage() {
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.38, ease: 'easeOut' }}
-          className="admin-auth-panel relative w-full overflow-hidden rounded-4xl border border-border bg-surface-hover p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34)] backdrop-blur-2xl sm:p-7"
+          className="admin-auth-panel relative w-full overflow-hidden rounded-4xl border border-border bg-surface-hover p-5 shadow-[var(--shadow-panel-auth)] backdrop-blur-2xl sm:p-7"
         >
           <div className="admin-auth-panel-highlight pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--foreground-mark)_14%,transparent),transparent_54%)]" />
           <div className="relative flex flex-col gap-6">

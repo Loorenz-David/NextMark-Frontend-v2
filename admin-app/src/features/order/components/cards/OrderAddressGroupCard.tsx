@@ -58,7 +58,7 @@ export const OrderAddressGroupCard = ({
   return (
     <div className={`flex flex-col border-y-1 transition-all duration-200 ${
       isGroupHovered
-        ? 'border-y-[rgb(var(--color-light-blue-r),0.7)] bg-surface-hover shadow-[0_18px_42px_rgba(45,95,170,0.18)]'
+        ? 'border-y-[rgb(var(--color-light-blue-r),0.7)] bg-surface-hover shadow-[var(--shadow-panel-state-soft)]'
         : 'border-y-[var(--color-muted)]/60'
     }`}
     >

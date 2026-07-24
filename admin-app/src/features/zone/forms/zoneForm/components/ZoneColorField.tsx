@@ -47,7 +47,7 @@ export const ZoneColorField = ({
         </button>
       )}
     >
-      <div className="admin-glass-panel-strong w-[260px] rounded-3xl border border-border p-4 shadow-[0_20px_44px_rgba(var(--theme-overlay-shadow-r),0.45)]">
+      <div className="admin-glass-panel-strong w-[260px] rounded-3xl border border-border p-4 shadow-[var(--shadow-panel-overlay-soft)]">
         <div className="flex items-center gap-3">
           <span
             className="h-10 w-10 rounded-full border border-border"

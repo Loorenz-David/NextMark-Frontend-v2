@@ -127,6 +127,54 @@
   --shadow-panel: 0 24px 70px rgba(0, 0, 0, 0.28);
   --shadow-popover: 0 26px 60px rgba(0, 0, 0, 0.36);
 
+  /* Button / pill elevation. Dark keeps each variant's original arbitrary value
+     verbatim; vintage collapses them all onto --shadow-button (see the vintage
+     block) so the whole button set is dialled from one line. */
+  --shadow-button: 0 12px 28px rgba(0, 0, 0, 0.18);
+  --shadow-button-primary: 0 12px 30px color-mix(in srgb, var(--color-primary) 22%, transparent);
+  --shadow-button-primary-sm: 0 8px 18px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  --shadow-button-info: 0 12px 28px color-mix(in srgb, var(--color-dark-blue) 20%, transparent);
+  --shadow-button-teal: 0 12px 28px color-mix(in srgb, var(--color-green-turquess) 18%, transparent);
+  --shadow-button-neutral: 0 12px 28px rgba(0, 0, 0, 0.14);
+  --shadow-button-compact: 0 10px 22px rgba(0, 0, 0, 0.12);
+  --shadow-button-icon: 0 10px 24px rgba(0, 0, 0, 0.16);
+  --shadow-button-field: 0 10px 24px rgba(0, 0, 0, 0.10);
+  --shadow-button-field-focus: 0 12px 26px rgba(0, 0, 0, 0.14);
+  --shadow-button-xs-accent: 0 6px 14px color-mix(in srgb, var(--color-green-turquess) 6%, transparent);
+  --shadow-button-muted: 0 8px 18px rgba(0, 0, 0, 0.14);
+  --shadow-button-action: 0 8px 18px rgba(0, 0, 0, 0.16);
+  --shadow-button-soft: 0 10px 24px rgba(0, 0, 0, 0.14);
+  --shadow-button-badge: 0 10px 24px color-mix(in srgb, var(--color-primary) 14%, transparent);
+  --shadow-button-case: 0 12px 28px rgba(0, 0, 0, 0.14);
+  --shadow-button-accent-subtle: 0 12px 28px color-mix(in srgb, var(--color-primary) 10%, transparent);
+  --shadow-button-date: 0 12px 26px rgba(0, 0, 0, 0.18);
+  --shadow-button-route: 0 16px 34px rgba(0, 0, 0, 0.18);
+  --shadow-button-auth: 0 18px 40px rgba(0, 0, 0, 0.18);
+  --shadow-button-auth-accent: 0 18px 38px color-mix(in srgb, var(--color-primary) 24%, transparent);
+  --shadow-button-calendar-sm: 0 10px 24px rgba(22, 49, 46, 0.18), inset 0 1px 0 var(--paper-raised);
+  --shadow-button-calendar-md: 0 12px 28px rgba(22, 49, 46, 0.18), inset 0 1px 0 var(--paper-raised);
+  --shadow-button-calendar-compact: 0 10px 22px rgba(22, 49, 46, 0.18), inset 0 1px 0 var(--paper-raised);
+  --shadow-button-avatar: inset 0 1px 0 color-mix(in srgb, var(--foreground-mark) 18%, transparent), 0 10px 22px rgba(29, 74, 102, 0.14);
+  --shadow-button-stop-avatar: inset 0 1px 0 var(--rule-strong), 0 10px 22px rgba(29, 74, 102, 0.14);
+
+  --shadow-panel-subtle-color: 0 8px 18px rgba(56, 103, 108, 0.08);
+  --shadow-panel-popover: 0 10px 24px rgba(0, 0, 0, 0.36);
+  --shadow-panel-section: 0 12px 30px rgba(0, 0, 0, 0.12);
+  --shadow-panel-notice: 0 14px 32px rgba(0, 0, 0, 0.18);
+  --shadow-panel-card: 0 16px 38px rgba(0, 0, 0, 0.16);
+  --shadow-panel-filter: 0 18px 38px rgba(0, 0, 0, 0.28);
+  --shadow-panel-soft: 0 18px 40px rgba(0, 0, 0, 0.24);
+  --shadow-panel-floating: 0 18px 40px rgba(0, 0, 0, 0.26);
+  --shadow-panel-state-soft: 0 18px 42px rgba(45, 95, 170, 0.18);
+  --shadow-panel-state-strong: 0 18px 42px rgba(45, 95, 170, 0.22);
+  --shadow-panel-phone: 0 18px 48px rgba(0, 0, 0, 0.28);
+  --shadow-panel-overlay-soft: 0 20px 44px rgba(var(--theme-overlay-shadow-r), 0.45);
+  --shadow-panel-overlay-strong: 0 20px 44px rgba(var(--theme-overlay-shadow-r), 0.55);
+  --shadow-panel-image: 0 20px 48px rgba(0, 0, 0, 0.38);
+  --shadow-panel-notifications: 0 24px 50px rgba(0, 0, 0, 0.30);
+  --shadow-panel-external: 0 28px 80px rgba(0, 0, 0, 0.42);
+  --shadow-panel-auth: 0 28px 90px rgba(0, 0, 0, 0.34);
+
   --bg-app-color: 24, 34, 36;
   --color-accent: rgba(255, 255, 255, 0.10);
   --color-muted-r: 206, 220, 224;
@@ -266,6 +314,61 @@
 
   --shadow-panel: 0 1px 0 0 var(--rule);
   --shadow-popover: 0 6px 18px rgba(46, 42, 36, 0.14);
+
+  /* ── THE BUTTON / PILL SHADOW DIAL ──────────────────────────────────────
+     Paper does not cast a 28px shadow. Every button and pill variant below
+     points at --shadow-button, so this ONE line controls the whole set.
+
+       shadow-sm (current):  0 1px 2px 0 rgba(46, 42, 36, 0.10)
+       barely there:         0 1px 0 0 rgba(46, 42, 36, 0.08)
+       flat, hairline only:  none        (borders still define the shape)
+
+     Change --shadow-button and nothing else. */
+  --shadow-button: 0 1px 2px 0 rgba(46, 42, 36, 0.10);
+
+  --shadow-button-primary: var(--shadow-button);
+  --shadow-button-primary-sm: var(--shadow-button);
+  --shadow-button-info: var(--shadow-button);
+  --shadow-button-teal: var(--shadow-button);
+  --shadow-button-neutral: var(--shadow-button);
+  --shadow-button-compact: var(--shadow-button);
+  --shadow-button-icon: var(--shadow-button);
+  --shadow-button-field: var(--shadow-button);
+  --shadow-button-field-focus: var(--shadow-button);
+  --shadow-button-xs-accent: var(--shadow-button);
+  --shadow-button-muted: var(--shadow-button);
+  --shadow-button-action: var(--shadow-button);
+  --shadow-button-soft: var(--shadow-button);
+  --shadow-button-badge: var(--shadow-button);
+  --shadow-button-case: var(--shadow-button);
+  --shadow-button-accent-subtle: var(--shadow-button);
+  --shadow-button-date: var(--shadow-button);
+  --shadow-button-route: var(--shadow-button);
+  --shadow-button-auth: var(--shadow-button);
+  --shadow-button-auth-accent: var(--shadow-button);
+  --shadow-button-calendar-sm: var(--shadow-button), inset 0 1px 0 var(--paper-raised);
+  --shadow-button-calendar-md: var(--shadow-button), inset 0 1px 0 var(--paper-raised);
+  --shadow-button-calendar-compact: var(--shadow-button), inset 0 1px 0 var(--paper-raised);
+  --shadow-button-avatar: inset 0 1px 0 color-mix(in srgb, var(--foreground-mark) 18%, transparent), var(--shadow-button);
+  --shadow-button-stop-avatar: inset 0 1px 0 var(--rule-strong), var(--shadow-button);
+
+  --shadow-panel-subtle-color: var(--shadow-panel);
+  --shadow-panel-popover: var(--shadow-panel);
+  --shadow-panel-section: var(--shadow-panel);
+  --shadow-panel-notice: var(--shadow-panel);
+  --shadow-panel-card: var(--shadow-panel);
+  --shadow-panel-filter: var(--shadow-panel);
+  --shadow-panel-soft: var(--shadow-panel);
+  --shadow-panel-floating: var(--shadow-panel);
+  --shadow-panel-state-soft: var(--shadow-panel);
+  --shadow-panel-state-strong: var(--shadow-panel);
+  --shadow-panel-phone: var(--shadow-panel);
+  --shadow-panel-overlay-soft: var(--shadow-panel);
+  --shadow-panel-overlay-strong: var(--shadow-panel);
+  --shadow-panel-image: var(--shadow-panel);
+  --shadow-panel-notifications: var(--shadow-panel);
+  --shadow-panel-external: var(--shadow-panel);
+  --shadow-panel-auth: var(--shadow-panel);
 
   --bg-app-color: 239, 231, 215;
   --color-accent: var(--paper-sunken);

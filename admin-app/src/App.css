@@ -39,14 +39,14 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(42, 52, 54, 0.96);
   padding: 0.625rem 0.9rem;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-button-field);
   transition: all 0.2s ease;
 }
 
 .custom-field-container:focus-within {
   border-color: rgba(255, 255, 255, 0.28);
   background: rgba(48, 60, 62, 0.98);
-  box-shadow: 0 0 0 1px rgba(131, 204, 185, 0.28), 0 12px 26px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 0 0 1px rgba(131, 204, 185, 0.28), var(--shadow-button-field-focus);
 }
 
 .custom-field-container.is-invalid {
@@ -83,4 +83,3 @@
 .row-default > * + * {
   border-top: 1px solid var(--color-border-accent);
 }
-

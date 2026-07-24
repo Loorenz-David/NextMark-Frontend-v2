@@ -25,7 +25,7 @@ export const UserSubscriptionCard = () => (
             Active • Renews monthly
           </p>
         </div>
-        <span className="rounded-full border border-[#83ccb9]/34 bg-[#83ccb9]/16 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[#a6f1dc] shadow-[0_10px_24px_color-mix(in_srgb,var(--color-primary)_14%,transparent)] backdrop-blur-md">
+        <span className="rounded-full border border-[#83ccb9]/34 bg-[#83ccb9]/16 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[#a6f1dc] shadow-[var(--shadow-button-badge)] backdrop-blur-md">
           Current
         </span>
       </div>
