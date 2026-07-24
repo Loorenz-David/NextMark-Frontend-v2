@@ -35,6 +35,7 @@ export const SettingsPage = () => {
   const TrustedDevicesMain = sectionRegistry['trustedDevice.main']
   const PrintDocumentMain = sectionRegistry['printDocument.main']
   const ExternalFormAccess = sectionRegistry['externalForm.access']
+  const ExternalFormConfig = sectionRegistry['externalForm.formConfig']
 
   return (
     <SettingsProvider>
@@ -52,6 +53,7 @@ export const SettingsPage = () => {
           <Route path="facilities" element={<FacilitiesMain />} />
           <Route path="trusted-devices" element={<TrustedDevicesMain />} />
           <Route path="external-form" element={<ExternalFormAccess />} />
+          <Route path="external-form/configuration" element={<ExternalFormConfig />} />
           <Route path="print-templates" element={<PrintDocumentMain />}>
             <Route path=":channel" element={<PrintTemplateChannelPage />} />
             <Route path=":channel/:event" element={<PrintTemplateConfigPage />} />

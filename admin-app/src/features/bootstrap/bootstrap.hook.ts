@@ -13,6 +13,9 @@ import { insertEmailMessages } from '../messaging/emailMessage/store'
 import { insertSmsMessages } from '../messaging/smsMessage/store'
 import { insertRoutePlanStates } from '../plan/store/routePlanState.store'
 import { insertZonesFromBootstrap } from '../zone/flows/insertZonesFromBootstrap.flow'
+import { insertClientFormRules } from '../clientFormConfig/store/clientFormRules.store'
+import { insertClientFormMedia } from '../clientFormConfig/store/clientFormMedia.store'
+import { setClientFormSettings } from '../clientFormConfig/store/clientFormSettings.store'
 
 
 
@@ -66,6 +69,20 @@ export function useBootstrap() {
 
         if (payload.zones_context) {
           insertZonesFromBootstrap(payload.zones_context)
+        }
+
+        // Terms history is deliberately absent from bootstrap — it grows unbounded
+        // and is fetched when the terms editor opens.
+        if (payload.client_form_settings) {
+          setClientFormSettings(payload.client_form_settings)
+        }
+
+        if (payload.client_form_rules) {
+          insertClientFormRules(payload.client_form_rules)
+        }
+
+        if (payload.client_form_media) {
+          insertClientFormMedia(payload.client_form_media)
         }
 
         return payload

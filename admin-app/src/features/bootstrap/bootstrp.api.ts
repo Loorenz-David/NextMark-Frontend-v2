@@ -9,6 +9,9 @@ import type { SmsMessageTemplateMap } from '../messaging/smsMessage/types'
 import type { DeliveryPlanStateMap } from '../plan/types/planState'
 import type { VehicleMap } from '../infrastructure/vehicle/types/vehicle'
 import type { ZonesContext } from '../zone/types'
+import type { ClientFormSettings } from '../clientFormConfig/types/clientFormSettings'
+import type { ClientFormRuleMap } from '../clientFormConfig/types/clientFormRule'
+import type { ClientFormMediaMap } from '../clientFormConfig/types/clientFormMedia'
 
 
 export type BootstrapResponse = {
@@ -21,6 +24,9 @@ export type BootstrapResponse = {
   plan_states: DeliveryPlanStateMap
   vehicles?: VehicleMap
   zones_context?: ZonesContext
+  client_form_settings?: ClientFormSettings
+  client_form_rules?: ClientFormRuleMap
+  client_form_media?: ClientFormMediaMap
 }
 
 export const bootstrapApi = {

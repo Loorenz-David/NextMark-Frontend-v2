@@ -11,6 +11,8 @@ import { StackActionManager } from '@/shared/stack-manager/StackActionManager'
 
 import { homePopupRegistry } from '@/features/home-route-operations/registry/homePopups'
 import { homeSectionRegistry } from '@/features/home-route-operations/registry/homeSections'
+import { useBaseControlls } from '@/features/home-route-operations/hooks/useBaseControlls'
+import type { PayloadBase } from '@/features/home-route-operations/types/types'
 
 type ExtractPayload<T> = T extends ComponentType<StackComponentProps<infer P>> ? P : never
 
@@ -25,6 +27,8 @@ type HomePopupPayloads = {
  * This ensures Cases and global notifications work without depending on workspace-specific runtime state.
  */
 export function HomeAppManagersProvider({ children }: { children: ReactNode }) {
+  const baseControlls = useBaseControlls<PayloadBase>()
+
   const popupManager = useMemo(
     () =>
       new StackActionManager<HomePopupPayloads>({
@@ -46,6 +50,7 @@ export function HomeAppManagersProvider({ children }: { children: ReactNode }) {
       managers={{
         sectionManager,
         popupManager,
+        baseControlls,
       }}
     >
       <AdminNotificationsActiveViewBridge />

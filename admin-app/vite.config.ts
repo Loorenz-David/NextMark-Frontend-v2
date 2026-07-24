@@ -166,6 +166,10 @@ export default defineConfig({
         replacement: path.resolve(__dirname, "../packages/shared-realtime/src"),
       },
       {
+        find: "@client-form-kit",
+        replacement: path.resolve(__dirname, "../packages/client-form-kit/src"),
+      },
+      {
         find: "@shared-inputs",
         replacement: path.resolve(__dirname, "../packages/shared-inputs/src"),
       },

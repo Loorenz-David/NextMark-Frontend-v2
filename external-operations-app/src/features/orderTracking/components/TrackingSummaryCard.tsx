@@ -72,18 +72,18 @@ export function TrackingSummaryCard({ data }: Props) {
     timeline.length > 0 ? timeline[timeline.length - 1] : null;
 
   return (
-    <div className="backdrop-blur-2xl bg-white/[0.06] border border-white/10 rounded-[28px] p-6 space-y-4">
+    <div className="backdrop-blur-2xl bg-[var(--paper-raised)] border border-[var(--rule)] rounded-[28px] p-6 space-y-4">
       {/* Team name */}
 
       {/* Tracking number */}
       <div className="space-y-1">
-        <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-white/30">
+        <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-[var(--ink-faint)]">
           Tracking Number
         </p>
-        <p className="font-mono text-2xl font-semibold tracking-wide text-[#83ccb9]">
+        <p className="font-mono text-2xl font-semibold tracking-wide text-[var(--accent)]">
           {tracking_number ?? "—"}
         </p>
-        <p className="text-xs text-white/40">
+        <p className="text-xs text-[var(--ink-faint)]">
           Order ID: <span className="font-mono">{orderIdDisplay}</span>
         </p>
       </div>
@@ -98,12 +98,12 @@ export function TrackingSummaryCard({ data }: Props) {
 
       {/* Delivery window */}
       {delivery_window_summary && (
-        <div className="flex items-center gap-2 rounded-xl border border-white/8 bg-white/[0.04] px-4 py-3">
+        <div className="flex items-center gap-2 rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)]/60 px-4 py-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#83ccb9"
+            stroke="currentColor"
             strokeWidth="1.8"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -115,7 +115,7 @@ export function TrackingSummaryCard({ data }: Props) {
             <line x1="8" y1="2" x2="8" y2="6" />
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
-          <p className="text-sm text-white/70">
+          <p className="text-sm text-[var(--ink-soft)]">
             {formatDeliveryWindow(
               delivery_window_summary.start_at,
               delivery_window_summary.end_at,
@@ -127,7 +127,7 @@ export function TrackingSummaryCard({ data }: Props) {
 
       {/* Last updated */}
       {latestEntry && (
-        <p className="text-xs text-white/30">
+        <p className="text-xs text-[var(--ink-faint)]">
           Last updated:{" "}
           {formatLastUpdated(latestEntry.occurred_at, team_timezone)}
         </p>

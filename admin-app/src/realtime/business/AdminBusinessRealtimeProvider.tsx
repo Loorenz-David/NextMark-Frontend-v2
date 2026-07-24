@@ -14,6 +14,7 @@ import {
 import { getOrder } from "@/features/order/api/orderApi";
 import { useOrderModel } from "@/features/order/domain/useOrderModel";
 import { useOrderRouteContextFlow } from "@/features/order/flows/orderRouteContext.flow";
+import { useOrderEventHistoryRealtime } from "@/features/order/realtime/useOrderEventHistoryRealtime";
 import { useItemFlow } from "@/features/order/item/hooks/useItemFlow";
 import {
   addVisibleOrder,
@@ -154,6 +155,8 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
   const { normalizeOrderCaseEntity, normalizeOrderCaseMap } =
     useOrderCaseModel();
   const { loadAllCases } = useOrderCaseFlow();
+
+  useOrderEventHistoryRealtime();
 
   useEffect(() => {
     const socketToken = session?.socketToken ?? null;

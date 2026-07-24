@@ -17,7 +17,7 @@ function Spinner() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#83ccb9"
+      stroke="currentColor"
       strokeWidth="2.2"
       strokeLinecap="round"
       className="h-7 w-7 animate-spin"
@@ -35,7 +35,7 @@ function LoadingScreen() {
     <PublicCenteredState>
       <div className="flex flex-col items-center gap-3">
         <Spinner />
-        <p className="text-sm text-white/46">Loading order status…</p>
+        <p className="text-sm text-[var(--ink-soft)]">Loading order status…</p>
       </div>
     </PublicCenteredState>
   );
@@ -45,12 +45,12 @@ function NotFoundScreen() {
   return (
     <PublicCenteredState
       icon={
-        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#83ccb9]/30 bg-[#83ccb9]/15 shadow-[0_0_24px_rgba(131,204,185,0.3)]">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 shadow-none">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#83ccb9"
+            stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -74,7 +74,7 @@ function ErrorScreen() {
   return (
     <PublicCenteredState
       icon={
-        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/[0.06]">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--rule)] bg-[var(--paper-raised)]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -109,10 +109,10 @@ function OrderTrackingContent({ data }: ReadyContentProps) {
       <main className="relative z-10 mx-auto flex w-full max-w-lg flex-col gap-6 px-4 py-10 sm:px-6">
         {/* Page header */}
         <header className="space-y-1 text-center">
-          <h1 className="text-3xl font-semibold tracking-[-0.03em] text-white">
+          <h1 className="text-3xl font-semibold tracking-[-0.03em] text-[var(--ink)]">
             Order Status
           </h1>
-          <p className="text-sm text-white/46">
+          <p className="text-sm text-[var(--ink-soft)]">
             Here's the latest information about your order.
           </p>
         </header>

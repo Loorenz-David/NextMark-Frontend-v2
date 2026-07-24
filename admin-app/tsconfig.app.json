@@ -13,6 +13,8 @@
       "libphonenumber-js": ["./node_modules/libphonenumber-js/index.d.ts"],
       "zustand": ["./node_modules/zustand/index.d.ts"],
       "zustand/*": ["./node_modules/zustand/*"],
+      "@client-form-kit": ["../packages/client-form-kit/src/index.ts"],
+      "@client-form-kit/*": ["../packages/client-form-kit/src/*"],
       "@shared-utils": ["../packages/shared-utils/src/index.ts"],
       "@shared-utils/*": ["../packages/shared-utils/src/*"],
       "@shared-domain": ["../packages/shared-domain/index.ts"],

@@ -56,8 +56,9 @@ The following files were repaired across two build passes. All changes are commi
 - `features/routes/flows/hydrateDriverRouteById.flow.ts` — added `route_solution_id` and `route_group_id` to `toRouteSummary`
 
 ### client-form-app
-- All config files restored from git commit `23ac47b`: `package.json`, `vite.config.ts`, `tsconfig.json`, `index.html`, `postcss.config.js`
-- Still needs `npm install` before building
+- Deleted. It was a dead fork of the customer form; the live one is
+  `external-operations-app`, whose implementation now lives in
+  `packages/client-form-kit`.
 
 ---
 
@@ -142,8 +143,8 @@ cd Front_end/admin-app && npm run build
 # driver-app
 cd Front_end/driver-app && npm run build
 
-# client-form-app (needs install first)
-cd Front_end/client-form-app && npm install && npm run build
+# external-operations-app
+cd Front_end/external-operations-app && npm run build
 ```
 
 **Expected:** Zero TypeScript errors in all three builds.

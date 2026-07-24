@@ -34,6 +34,14 @@ export type OrderFormState = {
   client_primary_phone: Phone;
   client_secondary_phone: Phone;
   client_address: address | null;
+  /**
+   * Set only by the in-store linked device, where the customer accepted the
+   * terms before the order existed. `null` everywhere else — staff filling the
+   * form themselves are not accepting anything on the customer's behalf.
+   */
+  accepted_terms_version_id: number | null;
+  /** The customer's marketing opt-in, as given on the form they filled in. */
+  marketing_messages: boolean;
   delivery_windows: OrderDeliveryWindow[];
   delivery_plan_id?: number | null;
   route_group_id?: number | null;

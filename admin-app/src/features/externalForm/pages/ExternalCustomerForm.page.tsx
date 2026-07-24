@@ -1,117 +1,191 @@
-import type { ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { CheckMarkIcon } from "@/assets/icons";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  CheckMarkIcon,
+  ClientFormFrame,
+  ClientFormProvider,
+  ClientFormSteps,
+  EMPTY_CLIENT_FORM_CONFIG,
+  EMPTY_CLIENT_FORM_META,
+  type ClientFormConfig,
+  type ClientFormOptions,
+} from '@client-form-kit'
 
-import { ClientInfoStep } from "../components/ClientInfoStep";
-import { ContactInfoStep } from "../components/ContactInfoStep";
-import { DeliveryAddressStep } from "../components/DeliveryAddressStep";
-import { StepIndicator } from "../components/StepIndicator";
-import { StepLayout } from "../components/StepLayout";
-import { ExternalFormProvider } from "../context/ExternalForm.provider";
-import { useExternalForm } from "../context";
+import { useExternalFormRealtime } from '@/realtime/externalForm/useExternalFormRealtime'
 
-type PageLayoutProps = {
-  children: ReactNode;
-};
+import { fetchLinkedDeviceClientFormConfig } from '../api/linkedDeviceConfig.api'
+import { createLinkedDeviceClientFormPorts } from '../ports/linkedDeviceClientForm.ports'
 
-const PageLayout = ({ children }: PageLayoutProps) => {
-  return (
-    <div className="relative min-h-dvh overflow-hidden bg-[#131a1b]">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-[-14%] top-[-10%] h-[24rem] w-[24rem] rounded-full bg-[radial-gradient(circle,rgba(131,204,185,0.24),transparent_66%)] blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-[-18%] right-[-12%] h-[26rem] w-[26rem] rounded-full bg-[radial-gradient(circle,rgba(117,168,255,0.16),transparent_70%)] blur-3xl"
-      />
+const SUBMITTED_NOTICE_MS = 10_000
 
-      <main className="relative z-10 mx-auto flex w-full max-w-lg flex-col gap-6 px-4 py-10 sm:px-6">
-        <header className="space-y-2 text-center">
-          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-[#83ccb9]/58">
-            External Customer Form
-          </p>
-          <h1 className="text-3xl font-semibold tracking-[-0.03em] text-white">
-            Confirm delivery details
-          </h1>
-          <p className="text-sm text-white/46">
-            Complete all three steps to submit customer details.
-          </p>
-        </header>
-        {children}
-      </main>
-    </div>
-  );
-};
+/**
+ * The counter tablet is handed from one customer to the next, so it must
+ * remember nothing about the last one — saved delivery addresses are read from
+ * local storage and would be offered as suggestions to whoever holds it next.
+ *
+ * The delivery note stays off: the order draft has its own notes field, and two
+ * places to write the same note is how they end up disagreeing. Terms
+ * acceptance and the marketing opt-in are both the customer's own act, made on
+ * this device, and both travel to the order.
+ */
+const OPTIONS: ClientFormOptions = {
+  storageNamespace: 'beyo.admin.linked-device-form',
+  savedLocationsIntentKey: 'admin-linked-device-delivery',
+  enableSavedLocations: false,
+  collectOrderNotes: false,
+  collectMarketingConsent: true,
+}
 
-const ExternalCustomerFormContent = () => {
-  const { currentStep, isFormVisible, hasSubmitted } = useExternalForm();
+type Screen = 'idle' | 'preparing' | 'collecting' | 'submitted' | 'unavailable'
+
+const PageLayout = ({ children }: { children: ReactNode }) => (
+  <div className="client-form-theme relative min-h-dvh overflow-hidden bg-[var(--paper)]">
+    <main className="relative z-10">{children}</main>
+  </div>
+)
+
+const Notice = ({
+  motionKey,
+  children,
+}: {
+  motionKey: string
+  children: ReactNode
+}) => (
+  <motion.section
+    key={motionKey}
+    initial={{ y: -14, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    exit={{ y: -14, opacity: 0 }}
+    transition={{ duration: 0.28, ease: 'easeOut' }}
+    className="mt-16 w-full rounded-[var(--radius)] border border-[var(--rule-strong)] bg-[var(--paper-raised)] p-8 text-center"
+  >
+    {children}
+  </motion.section>
+)
+
+export const ExternalCustomerFormPage = () => {
+  const [screen, setScreen] = useState<Screen>('idle')
+  const [config, setConfig] = useState<ClientFormConfig>(EMPTY_CLIENT_FORM_CONFIG)
+  // Remounts the provider per request, which is how a fresh form gets blank
+  // answers and a re-read of the team's terms.
+  const [sessionKey, setSessionKey] = useState(0)
+
+  const ports = useMemo(() => createLinkedDeviceClientFormPorts(), [])
+
+  // The media is signage: it runs while the device sits idle at the counter,
+  // with no form session behind it, so the configuration is read at mount and
+  // not only when a form is requested.
+  useEffect(() => {
+    void fetchLinkedDeviceClientFormConfig()
+      .then(setConfig)
+      .catch(() => undefined)
+  }, [])
+
+  useEffect(() => {
+    if (screen !== 'submitted') return
+
+    const timeoutId = window.setTimeout(() => setScreen('idle'), SUBMITTED_NOTICE_MS)
+    return () => window.clearTimeout(timeoutId)
+  }, [screen])
+
+  const handleRequested = useCallback(() => {
+    setSessionKey((current) => current + 1)
+    setScreen('preparing')
+
+    // Read per request rather than once at mount: this page stays open for days
+    // on a counter, and the team can publish new terms, rules or media in the
+    // meantime.
+    //
+    // The form is not shown until this resolves. Rendering on a failed read
+    // would drop the terms, the rules gate and the media without saying so —
+    // and a form with no terms happily submits an order with no acceptance
+    // recorded against it, which is the one failure that must not be silent.
+    void fetchLinkedDeviceClientFormConfig()
+      .then((loaded) => {
+        setConfig(loaded)
+        setScreen('collecting')
+      })
+      .catch(() => setScreen('unavailable'))
+  }, [])
+
+  useExternalFormRealtime({ onRequested: handleRequested })
+
+  const handleSubmitted = useCallback(() => setScreen('submitted'), [])
 
   return (
     <PageLayout>
-      <AnimatePresence mode="wait">
-        {isFormVisible ? (
+      <ClientFormFrame config={config}>
+        <AnimatePresence mode="wait">
+        {screen === 'collecting' ? (
           <motion.div
             key="external-form"
             initial={{ y: -26, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -32, opacity: 0 }}
-            transition={{ duration: 0.32, ease: "easeOut" }}
-            className="space-y-6"
+            transition={{ duration: 0.32, ease: 'easeOut' }}
           >
-            <StepIndicator />
-            <StepLayout>
-              {currentStep === "client_info" && <ClientInfoStep />}
-              {currentStep === "contact_info" && <ContactInfoStep />}
-              {currentStep === "delivery_address" && <DeliveryAddressStep />}
-            </StepLayout>
+            <ClientFormProvider
+              key={sessionKey}
+              meta={EMPTY_CLIENT_FORM_META}
+              config={config}
+              ports={ports}
+              options={OPTIONS}
+              onSubmitted={handleSubmitted}
+            >
+              <div className="flex flex-col gap-6">
+                <header className="space-y-3 pb-2 text-center">
+                  <p className="text-[0.62rem] font-semibold uppercase tracking-[0.34em] text-[var(--ink-faint)]">
+                    Delivery Details
+                  </p>
+                  <h1 className="text-[2rem] font-normal leading-tight tracking-[0.01em] text-[var(--ink)]">
+                    Confirm delivery details
+                  </h1>
+                  <div aria-hidden="true" className="mx-auto w-24 space-y-[3px] pt-1">
+                    <div className="h-px bg-[var(--rule-strong)]" />
+                    <div className="h-px bg-[var(--rule)]" />
+                  </div>
+                  <p className="text-sm italic leading-6 text-[var(--ink-soft)]">
+                    Complete all three steps to submit your details.
+                  </p>
+                </header>
+
+                <ClientFormSteps />
+              </div>
+            </ClientFormProvider>
           </motion.div>
-        ) : hasSubmitted ? (
-          <motion.section
-            key="external-form-submitted"
-            initial={{ y: -14, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -14, opacity: 0 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
-            className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.08] p-8 text-center shadow-[0_24px_80px_rgba(0,0,0,0.40)] backdrop-blur-2xl"
-          >
-            <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_52%)]" />
-            <div className="relative flex min-h-[224px] flex-col items-center justify-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#83ccb9]/30 bg-[#83ccb9]/15 text-[#83ccb9] shadow-[0_0_28px_rgba(131,204,185,0.30)]">
+        ) : screen === 'preparing' ? (
+          <Notice motionKey="external-form-preparing">
+            <p className="py-10 text-sm italic text-[var(--ink-soft)]">
+              Preparing form…
+            </p>
+          </Notice>
+        ) : screen === 'unavailable' ? (
+          <Notice motionKey="external-form-unavailable">
+            <p className="py-10 text-sm text-[var(--danger)]">
+              Could not load the form. Ask a member of staff to send it again.
+            </p>
+          </Notice>
+        ) : screen === 'submitted' ? (
+          <Notice motionKey="external-form-submitted">
+            <div className="flex min-h-[224px] flex-col items-center justify-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)]">
                 <CheckMarkIcon className="h-8 w-8" />
               </div>
-              <p className="text-xl font-semibold text-white/92">
-                Form submitted
-              </p>
-              <p className="text-sm text-white/46">
-                Waiting for a new form request...
+              <p className="text-xl text-[var(--ink)]">Form submitted</p>
+              <p className="text-sm text-[var(--ink-soft)]">
+                Waiting for a new form request…
               </p>
             </div>
-          </motion.section>
+          </Notice>
         ) : (
-          <motion.section
-            key="external-form-idle"
-            initial={{ y: -14, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -14, opacity: 0 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
-            className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.08] p-8 text-center shadow-[0_24px_80px_rgba(0,0,0,0.40)] backdrop-blur-2xl"
-          >
-            <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_52%)]" />
-            <div className="relative py-10 text-sm text-white/46">
-              Waiting for form request...
-            </div>
-          </motion.section>
+          <Notice motionKey="external-form-idle">
+            <p className="py-10 text-sm italic text-[var(--ink-soft)]">
+              Waiting for form request…
+            </p>
+          </Notice>
         )}
-      </AnimatePresence>
+        </AnimatePresence>
+      </ClientFormFrame>
     </PageLayout>
-  );
-};
-
-export const ExternalCustomerFormPage = () => {
-  return (
-    <ExternalFormProvider>
-      <ExternalCustomerFormContent />
-    </ExternalFormProvider>
-  );
-};
+  )
+}

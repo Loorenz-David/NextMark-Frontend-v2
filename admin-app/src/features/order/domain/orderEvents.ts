@@ -55,7 +55,8 @@ export const ORDER_EVENTS: OrderEventDefinition[] = [
   {
     key: "client_form_submitted",
     label: "Client form submitted",
-    description: "Triggered when a client submits the customer information form.",
+    description:
+      "Triggered when a client submits the customer information form.",
   },
   {
     key: "order_rescheduled",

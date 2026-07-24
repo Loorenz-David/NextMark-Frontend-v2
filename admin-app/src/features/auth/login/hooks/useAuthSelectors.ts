@@ -6,9 +6,11 @@ import type {
   TrustedDeviceMetadata,
 } from '@/features/auth/login/domain/authState'
 import { listAvailableAuthUsers } from '@/features/auth/login/domain/authState'
+import type { LoginFailureKind } from '@/features/auth/login/domain/loginFailure'
 import type { SessionUser } from '@/features/auth/login/store/sessionStorage'
 import {
   selectAuthError,
+  selectAuthErrorKind,
   selectAuthLoading,
   selectAuthSession,
   selectAuthState,
@@ -20,6 +22,9 @@ export const useAuthSession = () => useAuthSessionStore(selectAuthSession)
 export const useAuthLoading = () => useAuthSessionStore(selectAuthLoading)
 
 export const useAuthError = () => useAuthSessionStore(selectAuthError)
+
+export const useAuthErrorKind = (): LoginFailureKind | undefined =>
+  useAuthSessionStore(selectAuthErrorKind)
 
 export const useAuthenticationMode = (): AuthenticationMode =>
   useAuthSessionStore(

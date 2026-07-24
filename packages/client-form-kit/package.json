@@ -1,0 +1,24 @@
+{
+  "name": "@nextmark/client-form-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/client-form.css"
+  },
+  "types": "./src/index.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "@floating-ui/react": "^0.27.0",
+    "framer-motion": "^11.0.0",
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  }
+}

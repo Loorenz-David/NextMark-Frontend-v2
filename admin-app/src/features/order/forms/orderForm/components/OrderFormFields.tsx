@@ -11,12 +11,14 @@ import { OptionPopoverSelect } from "@/shared/inputs/OptionPopoverSelect";
 import { PhoneField } from "@/shared/inputs/PhoneField";
 import { AddressAutocomplete } from "@/shared/inputs/address-autocomplete/AddressAutocomplete";
 
+import { OrderManualMessageField } from "@/features/order/manualMessage";
+
 import {
   ORDER_PLAN_OBJECTIVE_OPTIONS,
   type OrderFormLayoutModel,
 } from "../OrderForm.layout.model";
 import { Switch } from "@/shared/inputs/Switch";
-import { OrderFormDeliveryWindowCalendar } from "./DeliveryWindowCalendar";
+// import { OrderFormDeliveryWindowCalendar } from "./DeliveryWindowCalendar";
 import { Cell, SplitRow } from "@/shared/layout/cells";
 import { ORDER_PLAN_OBJECTIVE_INFO } from "../info/orderPlanObjective.info";
 
@@ -29,7 +31,7 @@ export const OrderFormFields = ({
   model,
   compact = false,
 }: OrderFormFieldsProps) => {
-  const { formState, warnings, formSetters } = model;
+  const { formState, warnings, formSetters, orderServerId } = model;
 
   const [showMore, setShowMore] = useState(false);
 
@@ -301,10 +303,15 @@ export const OrderFormFields = ({
         </BasicButton>
       </div>
 
-      <OrderFormDeliveryWindowCalendar
+      {/* Manual messaging targets an existing order, so it stays hidden until the order has a server id. */}
+      {orderServerId !== null ? (
+        <OrderManualMessageField orderId={orderServerId} className="mb-2" />
+      ) : null}
+
+      {/* <OrderFormDeliveryWindowCalendar
         compact={compact}
         sizePreset={"desktopPopup550"}
-      />
+      /> */}
     </form>
   );
 };

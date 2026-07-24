@@ -25,6 +25,10 @@ Allowed package imports:
 - `@shared-optimistic`
 - `@shared-message-handler`
 - `@shared-utils`
+- `@client-form-kit`
+
+`@client-form-kit/styles/client-form.css` is the one permitted deep import, since a
+stylesheet cannot travel through a barrel.
 
 Disallowed examples:
 
@@ -60,6 +64,9 @@ Exception:
 - `@shared-store` must remain app-independent and must not import app code, feature code, or React UI
 - `@shared-message-handler` is an allowed shared React UI/runtime package for cross-app transient notification handling
 - `@shared-message-handler` must remain app-independent and must not import app or feature code
+- `@client-form-kit` is an allowed shared React UI package for the customer-facing delivery-details form, rendered by both `external-operations-app` (public token link) and `admin-app` (in-store linked device)
+- `@client-form-kit` must remain app-independent: transport, session lifecycle and the screens around the form belong to the host, and reach the kit only through `ClientFormPorts`
+- `@client-form-kit` owns its own theme; the tokens are scoped to `.client-form-theme` / `.client-form-portal` and must never be declared on `:root`
 
 Utilities in shared packages must be pure:
 

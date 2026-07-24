@@ -1,0 +1,191 @@
+/* ── Client form theme ──────────────────────────────────────────────────────
+   Vintage stationery: aged paper, ink, and a single burnt-sienna accent.
+   Everything is separated by hairline rules rather than by shadow or fill,
+   which is what makes a printed form read as a printed form.
+
+   Tokens are declared on a scope class rather than on `:root` because this
+   sheet is loaded by apps with their own themes — the admin app is dark
+   everywhere except the in-store form route.
+
+   `.client-form-portal` carries the same tokens for surfaces that floating-ui
+   renders at `document.body`, outside the themed subtree: the terms sheet, the
+   rules gate, the address suggestions and the phone-prefix list. */
+
+.client-form-theme,
+.client-form-portal {
+  --paper:        #efe7d7;  /* page */
+  --paper-raised: #f6f1e6;  /* card / field */
+  --paper-sunken: #e7dcc7;  /* inset rows */
+
+  --ink:          #2e2a24;  /* body copy */
+  --ink-soft:     #6c6252;  /* secondary copy */
+  --ink-faint:    #9a8e7b;  /* labels, placeholders */
+
+  --rule:         #d3c6ac;  /* hairline */
+  --rule-strong:  #b5a684;  /* emphasis rule, field border */
+
+  --accent:       #8a4b2f;  /* burnt sienna — primary action, marks */
+  --accent-soft:  #a9714f;
+  --accent-ink:   #f6f1e6;  /* copy on accent */
+
+  --danger:       #8f3128;
+
+  /* Just enough radius to soften the printed-form squareness without reading as
+     an app surface. */
+  --radius-sm:    3px;   /* checkbox */
+  --radius:       6px;   /* buttons, fields, containers */
+  --radius-lg:    10px;  /* sheet panels */
+
+  /* Read by the shared inputs package, which knows these names and not ours. */
+  --color-text:          var(--ink);
+  --color-muted:         var(--ink-soft);
+  --color-border:        var(--rule);
+  --color-border-accent: var(--rule-strong);
+  --color-surface:       var(--paper-raised);
+  --color-surface-2:     var(--paper-sunken);
+  --color-ligth-bg:      var(--paper-sunken);
+  --color-primary:       var(--accent);
+  --color-primary-text:  var(--accent-ink);
+  --color-page:          var(--paper);
+}
+
+.client-form-theme {
+  /* A serif body is the whole character of the thing — this is a printed form,
+     not an app screen. All system faces, so nothing is fetched. */
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
+    'Times New Roman', serif;
+  color: var(--ink);
+  background-color: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+.client-form-portal {
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
+    'Times New Roman', serif;
+  color: var(--ink);
+}
+
+/* ── Field primitives ───────────────────────────────────────────────────────
+   Underline only: a ruled line to write on, not a container.
+
+   Scoped rather than global because both host apps already define
+   `.custom-input` for their own theme — the extra class raises specificity so
+   these win inside the form and change nothing outside it.
+
+   Every state re-declares the full set — background, border, shadow — rather
+   than only what changes. A host's own `:focus-within` or `.is-invalid` rule
+   sets properties this one would otherwise stay silent about, and silence is
+   how the admin app's dark focus fill turned up behind a paper field. */
+
+.client-form-theme .custom-input,
+.client-form-portal .custom-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.95rem;
+  box-shadow: none;
+  color: var(--ink);
+}
+
+.client-form-theme .custom-input::placeholder,
+.client-form-portal .custom-input::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.client-form-theme .custom-input:focus,
+.client-form-portal .custom-input:focus {
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.client-form-theme .custom-field-container,
+.client-form-portal .custom-field-container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  border-bottom: 1px solid var(--rule-strong);
+  border-radius: 0;
+  background: transparent;
+  /* A ruled line to write on casts nothing. The admin app lifts its own fields
+     off the page with a drop shadow, and an undeclared shadow here is that
+     shadow. */
+  box-shadow: none;
+  padding: 0.5rem 0.125rem;
+  transition: border-color 0.15s;
+  color: var(--ink);
+}
+
+.client-form-theme .custom-field-container:focus-within,
+.client-form-portal .custom-field-container:focus-within {
+  border: none;
+  border-bottom: 1px solid var(--accent);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0 1px 0 0 var(--accent);
+}
+
+.client-form-theme .custom-field-container.is-invalid,
+.client-form-portal .custom-field-container.is-invalid {
+  border: none;
+  border-bottom: 1px solid var(--danger);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.client-form-theme .custom-field-container.is-invalid:focus-within,
+.client-form-portal .custom-field-container.is-invalid:focus-within {
+  border-bottom-color: var(--danger);
+  background: transparent;
+  box-shadow: 0 1px 0 0 var(--danger);
+}
+
+/* Strip nested containers (e.g. PhoneField's inner InputFields inside a wrapper) */
+.client-form-theme .custom-field-container .custom-field-container,
+.client-form-portal .custom-field-container .custom-field-container {
+  border: none;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  width: auto;
+  box-shadow: none;
+}
+
+.client-form-theme .custom-field-container .custom-field-container:focus-within,
+.client-form-portal .custom-field-container .custom-field-container:focus-within {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* ── Dropdown surfaces (address autocomplete, phone prefix) ─────────────────
+   The autocomplete puts its own element inside the popover; the phone prefix
+   list puts the class on the popover itself. Both spellings are covered. */
+
+.client-form-theme .address-ac-dropdown,
+.client-form-portal .address-ac-dropdown,
+.address-ac-dropdown.client-form-portal {
+  background: var(--paper-raised) !important;
+  border: 1px solid var(--rule-strong) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 6px 18px rgba(46, 42, 36, 0.14) !important;
+  color: var(--ink);
+}
+
+/* ── Carousel track ─────────────────────────────────────────────────────────
+   The scrollbar is suppressed but the scrolling is not: the dots carry the
+   position, and touch, trackpad, shift-wheel and keyboard all still drive it. */
+
+.client-form-carousel-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.client-form-carousel-track::-webkit-scrollbar {
+  display: none;
+}

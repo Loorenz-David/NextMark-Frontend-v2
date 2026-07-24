@@ -41,8 +41,8 @@ export function TrackingTimelineEntry({ entry, isCurrent, teamTimezone }: Props)
           className={[
             "relative z-10 mt-1 h-3 w-3 flex-shrink-0 rounded-full",
             isCurrent
-              ? "bg-[#83ccb9] shadow-[0_0_8px_rgba(131,204,185,0.6)]"
-              : "bg-white/30",
+              ? "bg-[var(--accent)] shadow-[0_0_8px_rgba(131,204,185,0.6)]"
+              : "bg-[var(--rule-strong)]",
           ].join(" ")}
         />
       </div>
@@ -52,12 +52,12 @@ export function TrackingTimelineEntry({ entry, isCurrent, teamTimezone }: Props)
         <p
           className={[
             "text-sm leading-snug",
-            isCurrent ? "font-semibold text-[#83ccb9]" : "font-normal text-white/80",
+            isCurrent ? "font-semibold text-[var(--accent)]" : "font-normal text-[var(--ink)]",
           ].join(" ")}
         >
           {entry.label}
         </p>
-        <p className="mt-0.5 text-xs text-white/40">
+        <p className="mt-0.5 text-xs text-[var(--ink-faint)]">
           {formatTimestamp(entry.occurred_at, teamTimezone)}
         </p>
       </div>

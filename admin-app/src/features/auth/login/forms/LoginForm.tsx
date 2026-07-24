@@ -5,16 +5,22 @@ import { InputField } from '@/shared/inputs/InputField'
 import { BasicButton } from '@/shared/buttons/BasicButton'
 
 import { useLoginMutations } from '@/features/auth/login/hooks/useLoginMutations'
-import { useAuthError, useAuthLoading } from '@/features/auth/login/hooks/useAuthSelectors'
+import {
+  useAuthError,
+  useAuthErrorKind,
+  useAuthLoading,
+} from '@/features/auth/login/hooks/useAuthSelectors'
+import { UntrustedDeviceRecovery } from '@/features/auth/trusted-device/components/UntrustedDeviceRecovery'
 
 
 export function LoginForm() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const { login } = useLoginMutations()
+  const { login, clearError } = useLoginMutations()
   const isLoading = useAuthLoading()
   const error = useAuthError()
+  const errorKind = useAuthErrorKind()
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -53,8 +59,11 @@ export function LoginForm() {
       </div>
 
       {error && (
-        <div className="rounded-2xl border border-rose-300/24 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
-          {error}
+        <div className="flex flex-col gap-3 rounded-2xl border border-rose-300/24 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+          <span>{error}</span>
+          {errorKind === 'trusted_device_credential' && (
+            <UntrustedDeviceRecovery onCleared={clearError} />
+          )}
         </div>
       )}
 

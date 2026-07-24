@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { BackArrowIcon2 } from "@/assets/icons";
-import { apiClient } from "@/lib/api/ApiClient";
+import { useLoginMutations } from "@/features/auth/login/hooks/useLoginMutations";
 
 import type { SectionKey } from "../registry/sectionRegistry";
 import { SettingsSectionSkeleton } from "../components/SettingsSectionSkeleton";
@@ -27,6 +27,7 @@ const SETTINGS_ROUTE_MAP: Record<SectionKey, string> = {
   "facility.main": "/settings/facilities",
   "trustedDevice.main": "/settings/trusted-devices",
   "externalForm.access": "/settings/external-form",
+  "externalForm.formConfig": "/settings/external-form/configuration",
   "printDocument.main": "/settings/print-templates/item",
   "emailMessage.main": "/settings/messages/email",
   "smsMessage.main": "/settings/messages/sms",
@@ -55,12 +56,20 @@ const SETTINGS_SECTIONS: SettingsSections[] = [
       { key: "trustedDevice.main", label: "Trusted Devices" },
     ],
   },
-  { key: "externalForm.access", label: "External Form" },
+  {
+    key: "externalForm.access",
+    label: "External Form",
+    sections: [
+      { key: "externalForm.access", label: "Form Access" },
+      { key: "externalForm.formConfig", label: "Form Configuration" },
+    ],
+  },
 ];
 
 export const SettingsDesktopView = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logOutDevice } = useLoginMutations();
   const [expandedKey, setExpandedKey] = useState<
     SectionKey | "no-section" | null
   >(null);
@@ -82,17 +91,29 @@ export const SettingsDesktopView = () => {
     setExpandedKey((current) => (current === option.key ? null : option.key));
   };
 
+  // Clears every stored session and reloads into login, so no in-memory state
+  // from this user survives into the next sign-in on this browser.
   const handleLogout = () => {
-    apiClient.clearSession();
-    navigate("/auth/login", { replace: true });
+    logOutDevice();
   };
 
-  const isRouteActive = (key: SectionKey | "no-section") => {
+  // Parents highlight for anything under them, so the open group stays marked.
+  // Leaves must match exactly — a nested sibling route such as
+  // `/settings/external-form/configuration` is a prefix of its parent's route
+  // and would otherwise light up both entries at once.
+  const isRouteActive = (
+    key: SectionKey | "no-section",
+    { exact = false }: { exact?: boolean } = {},
+  ) => {
     if (key === "no-section") {
       return false;
     }
 
     const route = SETTINGS_ROUTE_MAP[key];
+    if (exact) {
+      return location.pathname === route;
+    }
+
     return (
       location.pathname === route || location.pathname.startsWith(`${route}/`)
     );
@@ -140,7 +161,7 @@ export const SettingsDesktopView = () => {
                         type="button"
                         onClick={() => handleSelectSection(subSection.key)}
                         className={`flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-2 text-left text-xs transition-colors ${
-                          isRouteActive(subSection.key)
+                          isRouteActive(subSection.key, { exact: true })
                             ? "border-[var(--color-light-blue-r)]/40 bg-[rgb(var(--color-light-blue-r),0.12)] text-[rgb(var(--color-light-blue-r))]"
                             : "border-transparent text-[var(--color-muted)] hover:border-white/[0.06] hover:bg-white/[0.03] hover:text-[var(--color-text)]"
                         }`}

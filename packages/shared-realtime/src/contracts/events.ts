@@ -59,6 +59,9 @@ export type BusinessEventName =
   | 'route_solution.deleted'
   | 'route_solution_stop.updated'
   | 'order_chat.message_created'
+  // Manual order messaging. Admin-scoped only; automatic sends do not emit these.
+  | 'order_message.dispatched'
+  | 'order_message.updated'
 
 export const ADMIN_BUSINESS_EVENT_NAMES = [
   'order.created',
@@ -76,6 +79,8 @@ export const ADMIN_BUSINESS_EVENT_NAMES = [
   'route_solution.updated',
   'route_solution.deleted',
   'route_solution_stop.updated',
+  'order_message.dispatched',
+  'order_message.updated',
 ] as const satisfies readonly BusinessEventName[]
 
 export const DRIVER_BUSINESS_EVENT_NAMES = [
@@ -102,6 +107,8 @@ export type BusinessEntityType =
   | 'route_solution'
   | 'route_solution_stop'
   | 'app_event'
+  // Carried by order_message.dispatched, which is request-scoped and has no entity id.
+  | 'order_message_request'
 
 export const BUSINESS_ENTITY_TYPES = [
   'order',
@@ -112,6 +119,7 @@ export const BUSINESS_ENTITY_TYPES = [
   'route_solution',
   'route_solution_stop',
   'app_event',
+  'order_message_request',
 ] as const satisfies readonly BusinessEntityType[]
 
 export type BusinessEventEnvelope<TPayload = Record<string, unknown>> = {

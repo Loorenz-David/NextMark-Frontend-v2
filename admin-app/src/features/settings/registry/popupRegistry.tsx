@@ -9,6 +9,8 @@ import { ItemPositionForm } from '@/features/itemConfigurations/popups/ItemPosit
 import { ItemStateForm } from '@/features/itemConfigurations/popups/ItemStateForm/ItemStateForm'
 import { VehicleForm } from '@/features/infrastructure/vehicle/popups/VehicleForm/VehicleForm'
 import { FacilityForm } from '@/features/infrastructure/facility/popups/FacilityForm/FacilityForm'
+import { ClientFormRuleForm } from '@/features/clientFormConfig/popups/ClientFormRuleForm/ClientFormRuleForm'
+import { ClientFormMediaForm } from '@/features/clientFormConfig/popups/ClientFormMediaForm/ClientFormMediaForm'
 import { TrustedDeviceEnrollPopup } from '@/features/auth/trusted-device/popups/TrustedDeviceEnroll/TrustedDeviceEnrollPopup'
 import { TrustedDeviceReprovisionPopup } from '@/features/auth/trusted-device/popups/TrustedDeviceReprovision/TrustedDeviceReprovisionPopup'
 import { TrustedDeviceSecretRevealPopup } from '@/features/auth/trusted-device/popups/TrustedDeviceSecretReveal/TrustedDeviceSecretRevealPopup'
@@ -36,6 +38,8 @@ export const popupRegistry = {
   'item.state.form': ItemStateForm,
   'vehicle.form': VehicleForm,
   'facility.form': FacilityForm,
+  'clientFormConfig.rule.form': ClientFormRuleForm,
+  'clientFormConfig.media.form': ClientFormMediaForm,
   'trustedDevice.enroll': TrustedDeviceEnrollPopup,
   'trustedDevice.reprovision': TrustedDeviceReprovisionPopup,
   'trustedDevice.secretReveal': TrustedDeviceSecretRevealPopup,

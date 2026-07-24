@@ -12,6 +12,10 @@ import {
   normalizeSingleUserResponse,
   normalizeTrustedDeviceResponse,
 } from '@/features/auth/login/domain/normalizeLoginResponse'
+import {
+  classifyLoginFailure,
+  TRUSTED_DEVICE_CREDENTIAL_ERROR,
+} from '@/features/auth/login/domain/loginFailure'
 import { useAuthSessionStore } from '@/features/auth/login/store/authSessionStore'
 import { authStateStorage } from '@/features/auth/login/store/authStateStorage'
 
@@ -57,6 +61,10 @@ export function useLoginMutations() {
           return null
         }
 
+        // Branch on the discriminant only. A browser enrolled as a trusted
+        // device still receives `single_user` when the signing-in user is not
+        // assigned to it, so the presence of a stored device credential says
+        // nothing about the response shape.
         if (data.authentication_mode === 'trusted_device') {
           const normalized = normalizeTrustedDeviceResponse(
             data as TrustedDeviceLoginResponse,
@@ -86,8 +94,17 @@ export function useLoginMutations() {
       } catch (error) {
         const resolved = resolveError(error, 'Unable to login.')
         console.error('Failed to login', error)
-        setError(resolved.message)
-        showMessage({ status: resolved.status, message: resolved.message })
+        // A 410 on /login is a failed login, never an expired session — the
+        // backend maps every ValidationFailed to 410. Separate "wrong password"
+        // from "this browser's device credential is dead", because the latter
+        // fails EVERY login here until the credential is cleared.
+        const kind = classifyLoginFailure(resolved.status, resolved.message)
+        const message =
+          kind === 'trusted_device_credential'
+            ? TRUSTED_DEVICE_CREDENTIAL_ERROR
+            : resolved.message
+        setError(message, kind)
+        showMessage({ status: resolved.status, message })
         return null
       } finally {
         setLoading(false)
@@ -96,11 +113,28 @@ export function useLoginMutations() {
     [showMessage],
   )
 
-  /** Full device logout — clears every stored user session and auth state. */
+  const clearError = useCallback(() => {
+    useAuthSessionStore.getState().setError(undefined)
+  }, [])
+
+  /**
+   * Full device logout. Clears every stored user session (the whole
+   * `sessionsByUserClientId` map and the active pointer), then hard-navigates to
+   * login so the entire in-memory context — feature stores, cached queries,
+   * socket subscriptions — is discarded with the document. This is the same
+   * reset strategy `switchActiveUser` uses, and it is what keeps the previous
+   * user's data from surviving into the next user's session.
+   *
+   * The trusted-device credential is deliberately KEPT: enrollment is
+   * device-level, not user-level.
+   */
   const logOutDevice = useCallback(() => {
     const { clearAuthenticationState, setError } = useAuthSessionStore.getState()
     setError(undefined)
     clearAuthenticationState()
+    if (typeof window !== 'undefined') {
+      window.location.replace('/auth/login')
+    }
   }, [])
 
   /**
@@ -124,5 +158,5 @@ export function useLoginMutations() {
     logOutDevice()
   }, [logOutDevice])
 
-  return { login, logout: logOutDevice, logOutDevice, logOutCurrentUser }
+  return { login, logout: logOutDevice, logOutDevice, logOutCurrentUser, clearError }
 }

@@ -79,11 +79,18 @@ const normalizeOrderEvents = (
     }));
 };
 
+/**
+ * One history request per order at a time. The detail view, the manual-message
+ * status refresh, its fallback poll and the realtime listener all read the same
+ * endpoint, and a single send can trigger all of them within a few hundred ms.
+ */
+const inFlightLoadsByOrderId = new Map<number, Promise<OrderEvent[] | null>>();
+
 export const useOrderEventFlow = () => {
   const getOrderEvents = useGetOrderEvents();
   const { showMessage } = useMessageHandler();
 
-  const loadOrderEvents = useCallback(
+  const requestOrderEvents = useCallback(
     async (orderId: number) => {
       try {
         const response = await getOrderEvents(orderId);
@@ -113,6 +120,23 @@ export const useOrderEventFlow = () => {
       }
     },
     [getOrderEvents, showMessage],
+  );
+
+  const loadOrderEvents = useCallback(
+    (orderId: number) => {
+      const existing = inFlightLoadsByOrderId.get(orderId);
+      if (existing) {
+        return existing;
+      }
+
+      const request = requestOrderEvents(orderId).finally(() => {
+        inFlightLoadsByOrderId.delete(orderId);
+      });
+
+      inFlightLoadsByOrderId.set(orderId, request);
+      return request;
+    },
+    [requestOrderEvents],
   );
 
   const loadOrderEventsIfNeeded = useCallback(

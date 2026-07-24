@@ -8,6 +8,8 @@
       "framer-motion": ["./node_modules/framer-motion/dist/index.d.ts"],
       "@floating-ui/react": ["./node_modules/@floating-ui/react/dist/floating-ui.react.d.ts"],
       "libphonenumber-js": ["./node_modules/libphonenumber-js/index.d.ts"],
+      "@client-form-kit": ["../packages/client-form-kit/src/index.ts"],
+      "@client-form-kit/*": ["../packages/client-form-kit/src/*"],
       "@shared-inputs": ["../packages/shared-inputs/src/index.ts"],
       "@shared-inputs/*": ["../packages/shared-inputs/src/*"],
       "@shared-google-maps": ["../packages/shared-google-maps/index.ts"],

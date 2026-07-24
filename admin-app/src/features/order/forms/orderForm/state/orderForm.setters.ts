@@ -121,6 +121,11 @@ export const useOrderFormSetters = ({
       client_secondary_phone:
         data.client_secondary_phone ?? prev.client_secondary_phone,
       client_address: data.client_address ?? prev.client_address,
+      // The acceptance happened at the counter, against a version the customer
+      // actually saw. Never widened by a later edit — only the device sets it.
+      accepted_terms_version_id:
+        data.accepted_terms_version_id ?? prev.accepted_terms_version_id,
+      marketing_messages: data.marketing_messages,
     }));
   };
 

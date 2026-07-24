@@ -25,6 +25,8 @@ export type Order = {
   client_id: string;
   order_plan_objective?: string | null;
   help_to_carry?: boolean | null;
+  /** The customer's marketing opt-in, taken on whichever client form they used. */
+  marketing_messages?: boolean | null;
   operation_type?: OrderOperationTypes | null;
   order_scalar_id?: number | null;
   reference_number?: string | null;
@@ -60,6 +62,9 @@ export type Order = {
   archive_at?: ISODateTime | null;
   client_form_token_hash?: string | null;
   client_form_submitted_at?: ISODateTime | null;
+  /** The terms version the customer accepted, from either client-form surface. */
+  accepted_terms_version_id?: number | null;
+  terms_accepted_at?: ISODateTime | null;
   order_notes?:
     | (
         | string

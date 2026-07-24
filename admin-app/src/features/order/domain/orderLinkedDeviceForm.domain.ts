@@ -8,6 +8,8 @@ export type LinkedDeviceClientFormData = Pick<
   | "client_secondary_phone"
   | "client_email"
   | "client_address"
+  | "accepted_terms_version_id"
+  | "marketing_messages"
 >;
 
 export const mapLinkedDeviceFormToOrderUpdate = (
@@ -19,6 +21,8 @@ export const mapLinkedDeviceFormToOrderUpdate = (
   client_secondary_phone: formData.client_secondary_phone,
   client_email: formData.client_email,
   client_address: formData.client_address,
+  accepted_terms_version_id: formData.accepted_terms_version_id,
+  marketing_messages: formData.marketing_messages,
 });
 
 export type LinkedDeviceSendDecision =

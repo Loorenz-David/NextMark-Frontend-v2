@@ -1,6 +1,6 @@
 import type { Descendant } from 'slate'
 import { Editable, Slate } from 'slate-react'
-import type { RenderElementProps } from 'slate-react'
+import type { RenderElementProps, RenderLeafProps } from 'slate-react'
 import type { BaseEditor } from 'slate'
 
 import type { FocusEvent, KeyboardEvent, JSX } from 'react'
@@ -12,6 +12,8 @@ type SlateEditorProps = {
   value: Descendant[]
   onChange: (value: Descendant[]) => void
   renderElement: (props: RenderElementProps) => JSX.Element
+  /** Supply only when the editor uses text marks (bold, italic, …). */
+  renderLeaf?: (props: RenderLeafProps) => JSX.Element
   placeholder?: string
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void
   onFocus?: (event: FocusEvent<HTMLDivElement>) => void
@@ -23,6 +25,7 @@ export const SlateEditor = ({
   value,
   onChange,
   renderElement,
+  renderLeaf,
   placeholder,
   onKeyDown,
   onFocus,
@@ -32,6 +35,7 @@ export const SlateEditor = ({
     <Editable
       className={`slate-editor min-h-[140px] rounded-[22px] border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-[var(--color-text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] focus:outline-none ${className ?? ''}`.trim()}
       renderElement={renderElement}
+      renderLeaf={renderLeaf}
       placeholder={placeholder}
       onKeyDown={onKeyDown}
       onFocus={onFocus}

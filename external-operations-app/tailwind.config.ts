@@ -5,6 +5,7 @@ export default {
     './index.html',
     './src/**/*.{ts,tsx}',
     '../packages/shared-inputs/src/**/*.{ts,tsx}',
+    '../packages/client-form-kit/src/**/*.{ts,tsx}',
   ],
   theme: { extend: {} },
   plugins: [],

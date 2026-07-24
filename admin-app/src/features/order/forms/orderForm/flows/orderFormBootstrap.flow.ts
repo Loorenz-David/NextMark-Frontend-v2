@@ -75,6 +75,8 @@ export const buildInitialOrderForm = ({
     client_primary_phone: normalizePhone(order?.client_primary_phone),
     client_secondary_phone: normalizePhone(order?.client_secondary_phone),
     client_address: order?.client_address ?? null,
+    accepted_terms_version_id: order?.accepted_terms_version_id ?? null,
+    marketing_messages: order?.marketing_messages ?? false,
     delivery_windows: sortDeliveryWindowsUtc(order?.delivery_windows ?? []),
     delivery_plan_id: order?.delivery_plan_id ?? deliveryPlanId ?? null,
     route_group_id: order?.route_group_id ?? routeGroupId ?? null,

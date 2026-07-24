@@ -23,6 +23,8 @@ export const runOrderLinkedDeviceFormDomainTests = () => {
     client_email: "ada@example.com",
     client_primary_phone: { prefix: "+46", number: "701234567" },
     client_secondary_phone: null,
+    accepted_terms_version_id: null,
+    marketing_messages: false,
     client_address: address,
   });
 

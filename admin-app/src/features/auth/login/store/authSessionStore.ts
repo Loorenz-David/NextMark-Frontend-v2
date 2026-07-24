@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import type { SessionSnapshot } from '@/features/auth/login/store/sessionStorage'
 import type { AuthStateSnapshot } from '@/features/auth/login/domain/authState'
 import { deriveActiveSession } from '@/features/auth/login/domain/authState'
+import type { LoginFailureKind } from '@/features/auth/login/domain/loginFailure'
 import { authStateStorage } from '@/features/auth/login/store/authStateStorage'
 import { setAuthNotice } from '@/features/auth/login/store/authNotice'
 import { apiClient } from '@/lib/api/ApiClient'
@@ -18,6 +19,8 @@ export type AuthSessionState = {
   session: SessionSnapshot | null
   isLoading: boolean
   error?: string
+  /** Why the last login failed — drives the recovery affordance on the form. */
+  errorKind?: LoginFailureKind
 
   setAuthenticationState: (state: AuthStateSnapshot) => void
   setSingleUserSession: (state: AuthStateSnapshot) => void
@@ -36,7 +39,7 @@ export type AuthSessionState = {
   handleTerminalAuthFailure: () => boolean
 
   setLoading: (loading: boolean) => void
-  setError: (error?: string) => void
+  setError: (error?: string, errorKind?: LoginFailureKind) => void
 }
 
 const initialState = authStateStorage.getState()
@@ -58,20 +61,21 @@ export const useAuthSessionStore = create<AuthSessionState>((set) => ({
   session: deriveActiveSession(initialState),
   isLoading: false,
   error: undefined,
+  errorKind: undefined,
 
   setAuthenticationState: (state) => {
     applyAuthState(state)
-    set({ error: undefined })
+    set({ error: undefined, errorKind: undefined })
   },
 
   setSingleUserSession: (state) => {
     applyAuthState(state)
-    set({ error: undefined })
+    set({ error: undefined, errorKind: undefined })
   },
 
   setTrustedDeviceSessions: (state) => {
     applyAuthState(state)
-    set({ error: undefined })
+    set({ error: undefined, errorKind: undefined })
   },
 
   switchActiveUser: (userClientId) => {
@@ -147,7 +151,7 @@ export const useAuthSessionStore = create<AuthSessionState>((set) => ({
   },
 
   setLoading: (loading) => set({ isLoading: loading }),
-  setError: (error) => set({ error }),
+  setError: (error, errorKind) => set({ error, errorKind }),
 }))
 
 // Keep the zustand mirror in sync with every storage-level mutation — including
@@ -164,3 +168,4 @@ export const selectAuthSession = (state: AuthSessionState) => state.session
 export const selectAuthState = (state: AuthSessionState) => state.authState
 export const selectAuthLoading = (state: AuthSessionState) => state.isLoading
 export const selectAuthError = (state: AuthSessionState) => state.error
+export const selectAuthErrorKind = (state: AuthSessionState) => state.errorKind

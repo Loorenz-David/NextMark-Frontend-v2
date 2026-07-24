@@ -238,6 +238,27 @@ export const markOrderEventsLoaded = (orderId: number) => {
   });
 };
 
+/**
+ * Marks a history stale without dropping its rows, so the next
+ * `loadOrderEventsIfNeeded` refetches instead of serving the cached events.
+ */
+export const invalidateOrderEvents = (orderId: number) => {
+  const state = useOrderEventStore.getState() as OrderEventStoreWithIndexes;
+  const loaded = state.loadedOrderEventOrderIds;
+  if (!loaded?.has(orderId)) {
+    return;
+  }
+
+  const nextLoaded = new Set(loaded);
+  nextLoaded.delete(orderId);
+
+  useOrderEventStore.setState({
+    loadedOrderEventOrderIds: nextLoaded,
+  } as Partial<EntityTable<OrderEvent>> & {
+    loadedOrderEventOrderIds: Set<number>;
+  });
+};
+
 export const registerViewedOrderEventHistory = (orderId: number) => {
   const state = useOrderEventStore.getState() as OrderEventStoreWithIndexes;
   const nextViewed = new Set(state.viewedOrderEventOrderIds ?? []);

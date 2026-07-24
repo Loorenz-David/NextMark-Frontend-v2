@@ -19,7 +19,7 @@ function getStatusStyle(status: string | null): StatusStyle {
     case "ready":
       return { background: "rgba(255,210,80,0.20)", color: "rgba(255,215,90,0.95)" };
     case "processing":
-      return { background: "rgba(131,204,185,0.20)", color: "#83ccb9" };
+      return { background: "rgba(138, 75, 47, 0.12)", color: "var(--accent)" };
     case "completed":
       return { background: "rgba(100,200,120,0.20)", color: "rgba(110,215,130,0.95)" };
     case "fail":

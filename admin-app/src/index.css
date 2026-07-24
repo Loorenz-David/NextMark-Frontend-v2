@@ -2,9 +2,13 @@
 @source "./**/*.{ts,tsx}";
 @source "../../packages/shared-message-handler/src";
 @source "../../packages/shared-inputs/src";
+@source "../../packages/client-form-kit/src";
 @source "../../packages/shared-icons/src";
 @source "../../packages/shared-failure-notes/src";
 @import './shared/map/map.css';
+/* Scoped to `.client-form-theme`, which only the /external-form route carries —
+   the rest of the admin app stays on its own dark palette. */
+@import '../../packages/client-form-kit/src/styles/client-form.css';
 
 
 :root {

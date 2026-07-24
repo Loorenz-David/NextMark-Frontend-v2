@@ -87,6 +87,11 @@ export const sectionRegistry = {
       default: module.ExternalFormAccessPage,
     })),
   ),
+  'externalForm.formConfig': lazy(() =>
+    import('@/features/clientFormConfig/pages/ClientFormConfigMainPage').then((module) => ({
+      default: module.ClientFormConfigMainPage,
+    })),
+  ),
   'trustedDevice.main': lazy(() =>
     import('@/features/auth/trusted-device/pages/TrustedDeviceMainPage').then((module) => ({
       default: module.TrustedDeviceMainPage,

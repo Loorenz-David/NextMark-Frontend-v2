@@ -28,9 +28,10 @@ I operate as a **senior full-stack engineer** with principal-level expectations 
 | AI Operator | Multi-step tool-calling agent (OpenAI gpt-4.1-mini) | `Back_end/Delivery_app_BK/ai/` |
 | Admin App | React 19, TypeScript, Zustand, Vite, Tailwind, Socket.IO | `Front_end/admin-app/` |
 | Driver App | React 19, TypeScript | `Front_end/driver-app/` |
-| Client Form App | React 19, TypeScript | `Front_end/client-form-app/` |
+| External Operations App | React 19, TypeScript | `Front_end/external-operations-app/` |
 | Tracking App | React 19, TypeScript | `Front_end/tracking-order-app/` |
 | Shared Packages | Pure TypeScript, no React, no app code | `Front_end/packages/` |
+| Client Form Kit | React, shared by admin + external-operations | `Front_end/packages/client-form-kit/` |
 
 **Core domains:** Orders, Delivery Plans (Local Delivery / Store Pickup / International Shipping), Route Solutions, Route Stops, Zones, Drivers, Analytics, AI Operator, Messaging.
 

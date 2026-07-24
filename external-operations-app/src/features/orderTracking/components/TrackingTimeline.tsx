@@ -14,7 +14,7 @@ export function TrackingTimeline({
 }: Props) {
   if (timeline.length === 0) {
     return (
-      <div className="py-4 text-center text-sm text-white/40">
+      <div className="py-4 text-center text-sm text-[var(--ink-faint)]">
         No tracking events recorded yet.
       </div>
     );
@@ -27,12 +27,12 @@ export function TrackingTimeline({
 
   return (
     <section>
-      <h2 className="mb-4 text-[0.68rem] font-semibold uppercase tracking-[0.25em] text-white/40">
+      <h2 className="mb-4 text-[0.68rem] font-semibold uppercase tracking-[0.25em] text-[var(--ink-faint)]">
         Timeline
       </h2>
 
       {/* Vertical timeline container */}
-      <div className="relative border-l-2 border-white/10 pl-4">
+      <div className="relative border-l-2 border-[var(--rule)] pl-4">
         {timelineMostRecentFirst.map((entry, index) => {
           const isCurrent = index === 0;
           return (

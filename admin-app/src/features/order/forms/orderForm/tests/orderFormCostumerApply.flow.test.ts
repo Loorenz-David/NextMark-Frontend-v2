@@ -23,6 +23,8 @@ const buildState = (): OrderFormState => ({
   client_primary_phone: { prefix: "+1", number: "1111111111" },
   client_secondary_phone: { prefix: "+1", number: "2222222222" },
   client_address: null,
+  accepted_terms_version_id: null,
+  marketing_messages: false,
   delivery_windows: [],
   delivery_plan_id: null,
   general_note: "",

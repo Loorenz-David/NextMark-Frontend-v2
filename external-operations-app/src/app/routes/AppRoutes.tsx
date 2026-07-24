@@ -4,12 +4,12 @@ import { OrderTrackingPage } from '../../features/orderTracking/pages/OrderTrack
 import { PublicCenteredState } from '../layout/PublicCenteredState'
 
 const InvalidLinkIcon = () => (
-  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#83ccb9]/30 bg-[#83ccb9]/15 shadow-[0_0_24px_rgba(131,204,185,0.3)]">
+  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 shadow-none">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#83ccb9"
+      stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
