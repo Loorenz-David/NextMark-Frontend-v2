@@ -617,6 +617,103 @@ textarea:focus {
   }
 }
 
+[data-theme="vintage"] body {
+  background-image:
+    radial-gradient(120% 70% at 50% 0%, rgba(255, 252, 245, 0.55), transparent 62%),
+    radial-gradient(90% 60% at 50% 100%, rgba(150, 130, 96, 0.10), transparent 58%);
+}
+
+[data-theme="vintage"] ::selection {
+  background-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: var(--ink);
+}
+
+[data-theme="vintage"] .app-icon {
+  color: var(--ink-soft);
+}
+
+[data-theme="vintage"] .app-icon-white,
+[data-theme="vintage"] .app-icon-dark {
+  color: var(--ink);
+}
+
+[data-theme="vintage"] .app-icon-white path,
+[data-theme="vintage"] .app-icon-dark path {
+  color: var(--ink);
+}
+
+[data-theme="vintage"] .popup-overlay {
+  background-color: var(--overlay);
+  backdrop-filter: none;
+}
+
+[data-theme="vintage"] .scroll-thin {
+  scrollbar-color: var(--rule-strong) transparent;
+}
+
+[data-theme="vintage"] .scroll-thin::-webkit-scrollbar-thumb {
+  background-color: var(--rule-strong);
+}
+
+[data-theme="vintage"] .admin-shell-aurora,
+[data-theme="vintage"] .admin-auth-aurora,
+[data-theme="vintage"] .admin-auth-grid,
+[data-theme="vintage"] .admin-app-shell::before,
+[data-theme="vintage"] .admin-auth-panel-highlight {
+  display: none;
+}
+
+[data-theme="vintage"] .admin-app-shell,
+[data-theme="vintage"] .admin-auth-shell {
+  background: var(--paper);
+}
+
+[data-theme="vintage"] .admin-auth-panel {
+  background: var(--paper-raised);
+  border-color: var(--rule);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: none;
+}
+
+[data-theme="vintage"] .admin-glass-panel,
+[data-theme="vintage"] .admin-glass-panel-strong,
+[data-theme="vintage"] .admin-glass-popover {
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+[data-theme="vintage"] .admin-glass-popover {
+  box-shadow: var(--shadow-popover);
+}
+
+[data-theme="vintage"] .admin-glass-divider {
+  border-color: var(--rule);
+}
+
+[data-theme="vintage"] .admin-surface-compact {
+  border-radius: var(--radius-2xl);
+}
+
+[data-theme="vintage"] .admin-toolbar-strip {
+  background: var(--paper-raised);
+  border-color: var(--rule);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+[data-theme="vintage"] .admin-backdrop-blur-md,
+[data-theme="vintage"] .admin-backdrop-blur-xl,
+[data-theme="vintage"] .admin-glass-action-bar {
+  background: var(--paper-raised);
+  backdrop-filter: none;
+}
+
+[data-theme="vintage"] .admin-glass-action-bar {
+  border-color: var(--rule);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .layout-animate {
     transition: none !important;
