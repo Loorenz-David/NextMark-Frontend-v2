@@ -37,7 +37,7 @@ export const FacilityCard = ({ facility, onEdit }: FacilityCardProps) => {
     .join(' · ') || locationSummary
 
   return (
-    <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] px-5 py-4 shadow-none">
+    <div className="rounded-3xl border border-border bg-surface-raised px-5 py-4 shadow-none">
       <div className="flex items-start justify-between gap-3">
         <button
           type="button"
@@ -52,13 +52,13 @@ export const FacilityCard = ({ facility, onEdit }: FacilityCardProps) => {
         <button
           type="button"
           onClick={() => onEdit(facility.client_id)}
-          className="shrink-0 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+          className="shrink-0 rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
         >
           Edit
         </button>
       </div>
       {isExpanded ? (
-        <div className="mt-4 grid gap-2 border-t border-white/[0.06] pt-4 text-xs text-[var(--color-muted)]">
+        <div className="mt-4 grid gap-2 border-t border-border-subtle pt-4 text-xs text-[var(--color-muted)]">
           <div>Name: {facility.name}</div>
           <div>Facility type: {facility.facility_type}</div>
           <div>Location: {locationSummary}</div>

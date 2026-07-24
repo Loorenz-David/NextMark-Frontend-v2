@@ -6,8 +6,8 @@ type Props = {
 export const WarningCount = ({count}: Props) => {
     return ( 
         <div className="flex gap-1 ">
-            <span className="text-sm text-red-500 font-semibold">{count}</span>
-            <WarningIcon className="h-5 w-5 text-red-500"/>
+            <span className="text-sm text-danger font-semibold">{count}</span>
+            <WarningIcon className="h-5 w-5 text-danger"/>
         </div>
     );
 }

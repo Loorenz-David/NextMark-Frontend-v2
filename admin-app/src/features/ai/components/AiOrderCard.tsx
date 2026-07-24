@@ -54,7 +54,7 @@ function AiOrderCardComponent({ order, onRowClick }: AiOrderCardProps) {
   return (
     <div
       aria-label={isInteractive ? `Open order ${orderLabel} details` : undefined}
-      className={`admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-hidden rounded-lg border-white/10 p-4 ${isInteractive ? 'cursor-pointer transition-colors hover:bg-white/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-light-blue)]/60' : ''}`.trim()}
+      className={`admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-hidden rounded-lg border-border p-4 ${isInteractive ? 'cursor-pointer transition-colors hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-light-blue)]/60' : ''}`.trim()}
       onClick={isInteractive ? handleCardClick : undefined}
       onKeyDown={isInteractive ? handleCardKeyDown : undefined}
       role={isInteractive ? 'button' : undefined}
@@ -67,7 +67,7 @@ function AiOrderCardComponent({ order, onRowClick }: AiOrderCardProps) {
           <span className="truncate text-base font-semibold text-[var(--color-text)]">{orderLabel}</span>
           <OrderOperationTypeBadges operationType={order.operation_type} />
           {order.external_source && (
-            <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
+            <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
               {order.external_source}
             </span>
           )}
@@ -79,7 +79,7 @@ function AiOrderCardComponent({ order, onRowClick }: AiOrderCardProps) {
 
       <div className="relative z-10 flex items-center justify-between gap-3 text-xs text-[var(--color-muted)]">
         <span className="truncate text-xs text-[var(--color-muted)]/95">{streetAddress}</span>
-        <div className="flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-2 py-1">
+        <div className="flex shrink-0 items-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1">
           <ItemIcon className="h-3 w-3 text-[var(--color-primary)]/85" />
           <span>{itemCount}</span>
         </div>

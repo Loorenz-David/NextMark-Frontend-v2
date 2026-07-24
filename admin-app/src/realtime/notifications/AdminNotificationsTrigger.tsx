@@ -127,11 +127,11 @@ export function AdminNotificationsTrigger() {
           />
         </div>
 
-        <div className="divide-y divide-white/8">
+        <div className="divide-y divide-border-subtle">
           {items.map((notification) => (
             <div
               key={notification.notification_id}
-              className="group flex gap-3 rounded-xl px-3 py-3 transition hover:bg-white/[0.05]"
+              className="group flex gap-3 rounded-xl px-3 py-3 transition hover:bg-surface-raised"
             >
               <div className="flex min-w-0 flex-1 flex-col gap-2">
                 <div className="flex items-start justify-between gap-3">
@@ -157,7 +157,7 @@ export function AdminNotificationsTrigger() {
 
               <button
                 aria-label="Mark notification as read"
-                className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-muted)] opacity-70 transition hover:bg-white/[0.07] hover:opacity-100"
+                className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-muted)] opacity-70 transition hover:bg-surface-hover hover:opacity-100"
                 onClick={() => {
                   markAdminNotificationsReadLocally([
                     notification.notification_id,
@@ -193,7 +193,7 @@ export function AdminNotificationsTrigger() {
                 animate={{ scale: 1.8, opacity: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 1.1, ease: "easeOut" }}
-                className="pointer-events-none absolute inset-0 rounded-[18px] border border-[rgb(var(--color-light-blue-r))]/60 bg-[rgb(var(--color-light-blue-r))]/12"
+                className="pointer-events-none absolute inset-0 rounded-2xl border border-[rgb(var(--color-light-blue-r))]/60 bg-[rgb(var(--color-light-blue-r))]/12"
               />
             ) : null}
           </AnimatePresence>
@@ -230,7 +230,7 @@ export function AdminNotificationsTrigger() {
                 isIncomingPulseActive ? { scale: [1, 1.22, 1] } : { scale: 1 }
               }
               transition={{ duration: 0.55, ease: "easeOut" }}
-              className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[rgb(var(--color-danger-r))] px-1 text-[10px] font-semibold text-white"
+              className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[rgb(var(--color-danger-r))] px-1 text-[10px] font-semibold text-text"
             >
               {unreadCount > 99 ? "99+" : unreadCount}
             </motion.span>

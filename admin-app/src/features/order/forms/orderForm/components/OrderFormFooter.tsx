@@ -35,12 +35,12 @@ export const OrderFormFooter = ({
 
   const statusToneClass =
     sendStatus?.state === "error"
-      ? "border-rose-300/25 bg-rose-300/[0.12] text-rose-100"
+      ? "border-danger-border bg-danger-bg text-danger"
       : sendStatus?.state === "warning"
-        ? "border-amber-300/25 bg-amber-300/[0.12] text-amber-100"
+        ? "border-warning-border bg-warning-bg text-warning"
       : sendStatus?.state === "success"
-        ? "border-emerald-300/25 bg-emerald-300/[0.12] text-emerald-100"
-        : "border-sky-300/25 bg-sky-300/[0.12] text-sky-100";
+        ? "border-success-border bg-success-bg text-success"
+        : "border-info-border bg-info-bg text-info";
 
   return (
     <footer
@@ -54,10 +54,10 @@ export const OrderFormFooter = ({
           deleteContent={"Delete"}
           confirmContent={"Confirm Deletion"}
           deleteClassName={
-            "text-sm rounded-md bg-[var(--color-page)] text-red-500 border-[text-red-500] px-2 py-2"
+            "text-sm rounded-md bg-[var(--color-page)] text-danger border-[text-red-500] px-2 py-2"
           }
           confirmClassName={
-            "text-sm rounded-md bg-red-500 py-2 px-2 text-white"
+            "text-sm rounded-md bg-danger-solid py-2 px-2 text-danger-on-solid"
           }
         />
       )}
@@ -100,7 +100,7 @@ export const OrderFormFooter = ({
             <div className="admin-glass-popover w-[240px] rounded-2xl border border-[var(--color-border-accent)] p-2 shadow-xl">
               <button
                 type="button"
-                className="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm text-[var(--color-text)] transition-colors hover:bg-white/[0.08]"
+                className="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm text-[var(--color-text)] transition-colors hover:bg-surface-hover"
                 disabled={sendInProgress}
                 onClick={() => {
                   setIsSendOptionsOpen(false);
@@ -111,7 +111,7 @@ export const OrderFormFooter = ({
               </button>
               <button
                 type="button"
-                className="mt-1 flex w-full items-center rounded-lg px-3 py-2 text-left text-sm text-[var(--color-text)] transition-colors hover:bg-white/[0.08]"
+                className="mt-1 flex w-full items-center rounded-lg px-3 py-2 text-left text-sm text-[var(--color-text)] transition-colors hover:bg-surface-hover"
                 disabled={sendInProgress}
                 onClick={() => {
                   setIsSendOptionsOpen(false);

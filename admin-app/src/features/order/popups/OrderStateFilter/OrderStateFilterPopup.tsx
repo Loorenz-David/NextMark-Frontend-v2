@@ -88,12 +88,12 @@ export const OrderStateFilterPopup = ({
                   onClick={() => toggleState(state.name)}
                   className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors ${
                     isSelected
-                      ? "border-cyan-300/25 bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))] text-[var(--color-text)]"
-                      : "border-white/10 bg-[var(--color-page)] text-white/80 hover:border-white/25"
+                      ? "border-info-border bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))] text-[var(--color-text)]"
+                      : "border-border bg-[var(--color-page)] text-muted hover:border-border-accent"
                   }`}
                 >
                   {isSelected ? (
-                    <div className="mt-[1px] flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(96,165,250,0.92)] text-white">
+                    <div className="mt-[1px] flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(96,165,250,0.92)] text-text">
                       <CheckMarkIcon className="h-3 w-3" />
                     </div>
                   ) : (
@@ -106,7 +106,7 @@ export const OrderStateFilterPopup = ({
             })}
           </div>
 
-          <div className="mt-auto flex justify-between gap-2 border-t border-white/10 bg-[var(--color-page)] px-4 pb-4 pt-4">
+          <div className="mt-auto flex justify-between gap-2 border-t border-border bg-[var(--color-page)] px-4 pb-4 pt-4">
             <BasicButton
               params={{
                 variant: "ghost",

@@ -101,10 +101,10 @@ function AiOrdersTableComponent({ orders, columns, onRowClick }: AiOrdersTablePr
   }, [onRowClick])
 
   return (
-    <div className="admin-glass-panel admin-surface-compact overflow-hidden rounded-lg border border-white/10">
+    <div className="admin-glass-panel admin-surface-compact overflow-hidden rounded-lg border border-border">
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse text-left text-xs text-[var(--color-text)]">
-          <thead className="bg-white/[0.04] text-[0.65rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <thead className="bg-surface-raised text-[0.65rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
             <tr>
               {resolvedColumns.map((columnId) => {
                 const column = COLUMN_CONFIG[columnId]
@@ -121,7 +121,7 @@ function AiOrdersTableComponent({ orders, columns, onRowClick }: AiOrdersTablePr
               <tr
                 key={order.client_id ?? order.id ?? `${getOrderIdentifier(order)}-${index}`}
                 aria-label={isInteractive ? `Open order ${getOrderIdentifier(order)} details` : undefined}
-                className={`border-t border-white/8 text-[var(--color-text)]/92 ${isInteractive ? 'cursor-pointer transition-colors hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-light-blue)]/60' : ''}`.trim()}
+                className={`border-t border-border-subtle text-[var(--color-text)]/92 ${isInteractive ? 'cursor-pointer transition-colors hover:bg-surface-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-light-blue)]/60' : ''}`.trim()}
                 onClick={isInteractive ? () => onRowClick(order) : undefined}
                 onKeyDown={isInteractive ? (event) => handleRowKeyDown(event, order) : undefined}
                 role={isInteractive ? 'button' : undefined}

@@ -59,7 +59,7 @@ export function LoginForm() {
       </div>
 
       {error && (
-        <div className="flex flex-col gap-3 rounded-2xl border border-rose-300/24 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+        <div className="flex flex-col gap-3 rounded-2xl border border-danger-border bg-danger-bg px-4 py-3 text-sm text-danger">
           <span>{error}</span>
           {errorKind === 'trusted_device_credential' && (
             <UntrustedDeviceRecovery onCleared={clearError} />

@@ -104,7 +104,7 @@ export const TrustedDeviceEnrollPopup = () => {
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 placeholder="e.g. Front desk iMac"
-                className="rounded-lg border border-white/10 bg-[var(--color-page)] px-3 py-2 text-sm text-[var(--color-text)] outline-none focus:border-white/25"
+                className="rounded-lg border border-border bg-[var(--color-page)] px-3 py-2 text-sm text-[var(--color-text)] outline-none focus:border-border-accent"
               />
             </label>
             <AssignUsersField

@@ -18,7 +18,7 @@ export const IntegrationStatusPage = () => {
         return (
         <div className="p-6">
             <h1 className="text-lg font-semibold">Integration</h1>
-            <p className="text-red-500">Missing integration status.</p>
+            <p className="text-danger">Missing integration status.</p>
         </div>
         )
     }
@@ -32,31 +32,31 @@ export const IntegrationStatusPage = () => {
   const statusConfig = {
     connected: {
       title: 'Connected',
-      color: 'text-green-600',
+      color: 'text-success',
       description: 'The integration was successfully connected.',
     },
     failed: {
       title: 'Connection failed',
-      color: 'text-red-600',
+      color: 'text-danger',
       description: 'Something went wrong during the connection.',
     },
     pending: {
       title: 'Pending',
-      color: 'text-yellow-600',
+      color: 'text-warning',
       description: 'The integration is still being processed.',
     },
   }[status]
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-[var(--color-page)] p-6 text-center">
-      <div className="admin-glass-panel-strong relative flex w-full max-w-2xl flex-col overflow-hidden rounded-[32px] p-8 shadow-none">
+      <div className="admin-glass-panel-strong relative flex w-full max-w-2xl flex-col overflow-hidden rounded-4xl p-8 shadow-none">
         <div className="pointer-events-none absolute left-0 top-0 h-40 w-56 rounded-full bg-[rgb(var(--color-light-blue-r),0.1)] blur-3xl" />
         <div className="relative flex flex-col items-center justify-center">
-          <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-[24px] border border-white/[0.08] bg-white/[0.05] text-[rgb(var(--color-light-blue-r))]">
+          <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-3xl border border-border bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
             <SettingIcon className="h-8 w-8" />
           </div>
         {Icon ? (
-          <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-[28px] border border-white/[0.08] bg-white/[0.05] text-[var(--color-text)]">
+          <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl border border-border bg-surface-raised text-[var(--color-text)]">
             <Icon.icon className={Icon.size} />
           </div>
         ) : null}
@@ -71,7 +71,7 @@ export const IntegrationStatusPage = () => {
           {statusConfig.title}
         </p>
 
-        <div className="mt-6 flex w-full max-w-xl flex-col gap-3 rounded-[24px] border border-white/[0.08] bg-white/[0.04] p-5">
+        <div className="mt-6 flex w-full max-w-xl flex-col gap-3 rounded-3xl border border-border bg-surface-raised p-5">
           <p className="max-w-md text-sm leading-6 text-[var(--color-text)]">
             {statusConfig.description}
           </p>

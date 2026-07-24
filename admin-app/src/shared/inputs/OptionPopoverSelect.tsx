@@ -125,7 +125,7 @@ export const OptionPopoverSelect = <TValue,>({
             className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
               value === null
                 ? "border border-[rgb(var(--color-light-blue-r),0.28)] bg-[rgb(var(--color-light-blue-r),0.12)] text-[rgb(var(--color-light-blue-r))]"
-                : "text-[var(--color-text)] hover:bg-white/[0.08]"
+                : "text-[var(--color-text)] hover:bg-surface-hover"
             } ${optionClassName ?? ""}`.trim()}
             data-popover-close="true"
           >
@@ -147,7 +147,7 @@ export const OptionPopoverSelect = <TValue,>({
               className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 selected
                   ? "border border-[rgb(var(--color-light-blue-r),0.28)] bg-[rgb(var(--color-light-blue-r),0.12)] text-[rgb(var(--color-light-blue-r))]"
-                  : "text-[var(--color-text)] hover:bg-white/[0.08]"
+                  : "text-[var(--color-text)] hover:bg-surface-hover"
               } ${optionClassName ?? ""}`.trim()}
               data-popover-close="true"
             >

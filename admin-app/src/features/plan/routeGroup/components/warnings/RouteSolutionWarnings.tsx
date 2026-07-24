@@ -83,28 +83,28 @@ export const RouteSolutionWarnings = ({
       floatingClassName="z-[220]"
       reference={
         <div
-          className="flex h-7 w-7 items-center justify-center rounded-full border border-amber-300/25 bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.08))]"
+          className="flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.08))]"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <TriangleWarningIcon className="h-4 w-4 text-amber-300" />
+          <TriangleWarningIcon className="h-4 w-4 text-warning" />
         </div>
       }
     >
       <div
-        className="admin-backdrop-blur-xl w-72 rounded-[20px] border border-amber-300/25 bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.06))] p-3 text-xs text-amber-50 shadow-[0_18px_40px_rgba(0,0,0,0.26)]"
+        className="admin-backdrop-blur-xl w-72 rounded-3xl border border-warning-border bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.06))] p-3 text-xs text-warning shadow-[0_18px_40px_rgba(0,0,0,0.26)]"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-3">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-amber-200/80">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-warning">
               Route warning
             </div>
             {resolvableWarnings.length > 0 && (
               <button
                 type="button"
-                className="rounded-full border border-amber-300/30 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-100/90 transition-colors hover:bg-amber-300/10 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full border border-warning-border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-warning transition-colors hover:bg-warning-bg disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={handleResolve}
                 disabled={isResolving}
               >
@@ -118,13 +118,13 @@ export const RouteSolutionWarnings = ({
             return (
               <div
                 key={`${warning.type ?? 'warning'}-${index}`}
-                className="rounded-[16px] border border-amber-200/15 bg-black/10 p-2.5"
+                className="rounded-2xl border border-warning-border bg-shade p-2.5"
               >
-                <div className="text-[0.85rem] font-medium text-amber-50/95">
+                <div className="text-[0.85rem] font-medium text-warning">
                   {message}
                 </div>
                 {meta.length > 0 && (
-                  <div className="mt-2 space-y-1 text-[0.72rem] text-amber-100/70">
+                  <div className="mt-2 space-y-1 text-[0.72rem] text-warning">
                     {meta.map((item) => (
                       <div key={item.label} className="flex w-full justify-between">
                         <span>{item.label}:</span>

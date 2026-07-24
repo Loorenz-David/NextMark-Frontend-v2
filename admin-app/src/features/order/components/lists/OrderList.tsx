@@ -124,7 +124,7 @@ export const OrderList = ({
   if (orders.length === 0) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <p className="text-gray-500">No orders found</p>
+        <p className="text-muted">No orders found</p>
       </div>
     )
   }

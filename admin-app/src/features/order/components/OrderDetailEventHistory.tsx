@@ -28,10 +28,10 @@ const EVENT_LABEL_BY_KEY = new Map(
 );
 
 const STATUS_TONE_CLASS: Record<OrderEventActionStatus, string> = {
-  PENDING: "border-sky-300/25 bg-sky-300/[0.10] text-sky-100",
-  SUCCESS: "border-emerald-300/25 bg-emerald-300/[0.12] text-emerald-100",
-  FAILED: "border-rose-300/28 bg-rose-300/[0.12] text-rose-100",
-  SKIPPED: "border-slate-300/25 bg-slate-300/[0.10] text-slate-100",
+  PENDING: "border-info-border bg-info-bg text-info",
+  SUCCESS: "border-success-border bg-success-bg text-success",
+  FAILED: "border-danger-border bg-danger-bg text-danger",
+  SKIPPED: "border-border-accent bg-surface-sunken text-text",
 };
 
 const toTimestamp = (value?: string | null) => {
@@ -138,7 +138,7 @@ export const OrderDetailEventHistory = ({
 
   return (
     <div
-      className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-[26px] border-white/10"
+      className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-3xl border-border"
       style={{ boxShadow: "none" }}
     >
       <div className="admin-glass-divider flex items-center justify-between gap-3 border-b px-5 py-4">
@@ -161,7 +161,7 @@ export const OrderDetailEventHistory = ({
                   ? "Refreshing order events"
                   : "Refresh order events"
               }
-              className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.045] px-3 py-1 text-[0.62rem] font-medium uppercase tracking-[0.14em] text-[var(--color-muted)] transition-colors hover:bg-white/[0.08] hover:text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-1 text-[0.62rem] font-medium uppercase tracking-[0.14em] text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <RetryIcon
                 aria-hidden="true"
@@ -180,7 +180,7 @@ export const OrderDetailEventHistory = ({
 
       <div className="flex h-full flex-col overflow-y-auto px-5 py-4.5 scroll-thin">
         {typeof orderId !== "number" ? (
-          <div className="flex h-full items-center justify-center rounded-[20px] border border-dashed border-white/10 bg-white/[0.025]">
+          <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle">
             <span className="text-sm text-[var(--color-muted)]">
               Event history is available after the order has a server id.
             </span>
@@ -188,13 +188,13 @@ export const OrderDetailEventHistory = ({
         ) : null}
 
         {typeof orderId === "number" && !loaded ? (
-          <div className="admin-glass-panel rounded-[22px] p-4 text-sm text-[var(--color-muted)]">
+          <div className="admin-glass-panel rounded-3xl p-4 text-sm text-[var(--color-muted)]">
             Loading order events...
           </div>
         ) : null}
 
         {typeof orderId === "number" && loaded && events.length === 0 ? (
-          <div className="flex h-full items-center justify-center rounded-[20px] border border-dashed border-white/10 bg-white/[0.025]">
+          <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle">
             <span className="text-sm text-[var(--color-muted)]">
               No order events recorded yet.
             </span>
@@ -203,7 +203,7 @@ export const OrderDetailEventHistory = ({
 
         {typeof orderId === "number" && loaded && events.length > 0 ? (
           <div className="relative flex flex-col gap-3 pb-1">
-            <div className="pointer-events-none absolute bottom-0 left-[0.72rem] top-1 w-px bg-white/10" />
+            <div className="pointer-events-none absolute bottom-0 left-[0.72rem] top-1 w-px bg-surface-hover" />
             {events.map((event) => {
               const latestAction = resolveLatestAction(event);
               const latestStatus = latestAction?.status ?? null;
@@ -211,17 +211,17 @@ export const OrderDetailEventHistory = ({
 
               return (
                 <div key={event.client_id} className="relative pl-7">
-                  <div className="absolute left-[0.42rem] top-5 flex h-2.5 w-2.5 items-center justify-center rounded-full border border-white/25 bg-[var(--color-page)]">
+                  <div className="absolute left-[0.42rem] top-5 flex h-2.5 w-2.5 items-center justify-center rounded-full border border-border-accent bg-[var(--color-page)]">
                     {latestStatus === "PENDING" ? (
-                      <span className="pointer-events-none absolute -inset-2 animate-spin rounded-full border border-sky-300/15 border-t-sky-200 border-r-sky-200/80"></span>
+                      <span className="pointer-events-none absolute -inset-2 animate-spin rounded-full border border-info-border border-t-sky-200 border-r-sky-200/80"></span>
                     ) : null}
                   </div>
 
-                  <div className="rounded-[20px] border border-white/10 bg-white/[0.035]">
+                  <div className="rounded-3xl border border-border bg-surface-subtle">
                     <button
                       type="button"
                       onClick={() => toggleExpanded(event.client_id)}
-                      className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-white/[0.04]  rounded-[20px]"
+                      className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-raised  rounded-3xl"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
@@ -252,13 +252,13 @@ export const OrderDetailEventHistory = ({
                     </button>
 
                     {isExpanded ? (
-                      <div className="border-t border-white/8 px-4 py-3">
+                      <div className="border-t border-border-subtle px-4 py-3">
                         {event.actions.length ? (
                           <div className="flex flex-col gap-2.5">
                             {event.actions.map((action) => (
                               <div
                                 key={action.id}
-                                className="rounded-[16px] border border-white/10 bg-[var(--color-surface-secondary)]/35 px-3 py-2.5"
+                                className="rounded-2xl border border-border bg-[var(--color-surface-secondary)]/35 px-3 py-2.5"
                               >
                                 <div className="flex flex-wrap items-center gap-2">
                                   <p className="text-xs font-medium text-[var(--color-text)]">
@@ -280,7 +280,7 @@ export const OrderDetailEventHistory = ({
                                     </span>
                                   ) : null}
                                   {action.last_error ? (
-                                    <span className="text-rose-200">
+                                    <span className="text-danger">
                                       Error: {action.last_error}
                                     </span>
                                   ) : null}
@@ -289,7 +289,7 @@ export const OrderDetailEventHistory = ({
                             ))}
                           </div>
                         ) : (
-                          <div className="rounded-[16px] border border-dashed border-white/10 bg-white/[0.02] px-3 py-2 text-xs text-[var(--color-muted)]">
+                          <div className="rounded-2xl border border-dashed border-border bg-surface-subtle px-3 py-2 text-xs text-[var(--color-muted)]">
                             No actions registered for this event.
                           </div>
                         )}

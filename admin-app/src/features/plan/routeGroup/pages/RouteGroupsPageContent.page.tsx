@@ -57,11 +57,11 @@ export const RouteGroupsPageContent = ({
       ) : null}
       {!hasActiveRouteGroup ? (
         <div className="flex flex-1 items-center justify-center px-6 py-10">
-          <div className="max-w-md rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-            <h3 className="text-lg font-semibold text-white">
+          <div className="max-w-md rounded-xl border border-border bg-surface-raised p-6 text-center">
+            <h3 className="text-lg font-semibold text-text">
               Select a Route Group
             </h3>
-            <p className="mt-2 text-sm text-white/70">
+            <p className="mt-2 text-sm text-muted">
               Choose a zone from the rail to open its route, review the stop
               order, and edit it from the action panel.
             </p>

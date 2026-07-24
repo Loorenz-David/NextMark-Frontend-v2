@@ -86,8 +86,8 @@ export const AssignUsersField = ({
               aria-pressed={isSelected}
               className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
                 isSelected
-                  ? 'border-cyan-300/25 bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))] text-[var(--color-text)]'
-                  : 'border-white/10 bg-[var(--color-page)] text-white/80 hover:border-white/25'
+                  ? 'border-info-border bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))] text-[var(--color-text)]'
+                  : 'border-border bg-[var(--color-page)] text-muted hover:border-border-accent'
               }`}
             >
               <MemberAvatar username={member.username} />
@@ -100,7 +100,7 @@ export const AssignUsersField = ({
                 </span>
               </div>
               {isSelected ? (
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[rgba(96,165,250,0.92)] text-white">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[rgba(96,165,250,0.92)] text-text">
                   <CheckMarkIcon className="h-3 w-3" />
                 </span>
               ) : (

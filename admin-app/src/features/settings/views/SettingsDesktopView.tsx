@@ -122,11 +122,11 @@ export const SettingsDesktopView = () => {
   return (
     <div className="flex h-full w-full bg-[var(--color-page)]">
       <aside className="admin-glass-panel-strong relative flex h-full w-72 min-w-72 flex-col border-r border-[var(--color-border)]/70 px-4 py-6">
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-white/[0.05]" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-surface-raised" />
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm text-[var(--color-muted)] transition-colors hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-[var(--color-text)]"
+          className="flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm text-[var(--color-muted)] transition-colors hover:border-border hover:bg-surface-raised hover:text-[var(--color-text)]"
         >
           <BackArrowIcon2 className="h-4 w-4" />
           Back
@@ -140,8 +140,8 @@ export const SettingsDesktopView = () => {
                 onClick={() => handleToggleSection(option)}
                 className={`flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-colors ${
                   isRouteActive(option.key)
-                    ? "border-[var(--color-border)] bg-white/[0.07] text-[var(--color-text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
-                    : "border-transparent text-[var(--color-text)] hover:border-white/[0.08] hover:bg-white/[0.04]"
+                    ? "border-[var(--color-border)] bg-surface-hover text-[var(--color-text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+                    : "border-transparent text-[var(--color-text)] hover:border-border hover:bg-surface-raised"
                 }`}
               >
                 {option.label}
@@ -163,7 +163,7 @@ export const SettingsDesktopView = () => {
                         className={`flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-2 text-left text-xs transition-colors ${
                           isRouteActive(subSection.key, { exact: true })
                             ? "border-[var(--color-light-blue-r)]/40 bg-[rgb(var(--color-light-blue-r),0.12)] text-[rgb(var(--color-light-blue-r))]"
-                            : "border-transparent text-[var(--color-muted)] hover:border-white/[0.06] hover:bg-white/[0.03] hover:text-[var(--color-text)]"
+                            : "border-transparent text-[var(--color-muted)] hover:border-border-subtle hover:bg-surface-subtle hover:text-[var(--color-text)]"
                         }`}
                       >
                         {subSection.label}
@@ -180,7 +180,7 @@ export const SettingsDesktopView = () => {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-transparent px-3 py-2 text-left text-sm text-[var(--color-text)] transition-colors hover:border-red-400/20 hover:bg-red-500/[0.06] hover:text-red-200"
+            className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-transparent px-3 py-2 text-left text-sm text-[var(--color-text)] transition-colors hover:border-danger-border hover:bg-danger-bg hover:text-danger"
           >
             Log out
           </button>

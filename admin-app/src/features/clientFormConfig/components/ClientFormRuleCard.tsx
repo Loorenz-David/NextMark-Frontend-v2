@@ -21,7 +21,7 @@ export const ClientFormRuleCard = ({
   dragHandle,
 }: ClientFormRuleCardProps) => (
   <div
-    className={`flex w-full items-start gap-4 rounded-[24px] border border-white/[0.08] bg-white/[0.04] px-5 py-4 ${
+    className={`flex w-full items-start gap-4 rounded-3xl border border-border bg-surface-raised px-5 py-4 ${
       rule.enabled ? '' : 'opacity-60'
     }`}
   >
@@ -31,7 +31,7 @@ export const ClientFormRuleCard = ({
       <img
         src={rule.image_url}
         alt=""
-        className="h-12 w-12 shrink-0 rounded-[14px] border border-white/[0.08] object-cover"
+        className="h-12 w-12 shrink-0 rounded-2xl border border-border object-cover"
       />
     ) : null}
 
@@ -39,7 +39,7 @@ export const ClientFormRuleCard = ({
       <div className="flex items-center gap-2">
         <p className="truncate text-sm font-semibold text-[var(--color-text)]">{rule.title}</p>
         {rule.icon ? (
-          <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <span className="rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
             {rule.icon}
           </span>
         ) : null}
@@ -61,7 +61,7 @@ export const ClientFormRuleCard = ({
       <button
         type="button"
         onClick={() => onEdit(rule.client_id)}
-        className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+        className="rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
       >
         Edit
       </button>
@@ -69,8 +69,8 @@ export const ClientFormRuleCard = ({
         onConfirm={() => onDelete(rule)}
         deleteContent="Delete"
         confirmContent="Confirm"
-        deleteClassName="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-red-400 hover:text-red-300"
-        confirmClassName="rounded-full px-3 py-1 text-xs text-white"
+        deleteClassName="rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-danger hover:text-danger"
+        confirmClassName="rounded-full px-3 py-1 text-xs text-text"
       />
     </div>
   </div>

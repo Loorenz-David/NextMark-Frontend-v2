@@ -64,7 +64,7 @@ export const PlanDateFilterBar = ({
             type="button"
             aria-label="Previous date filter window"
             onClick={controller.goToPrevious}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-text)]/85 transition-colors hover:bg-white/[0.08]"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-text)]/85 transition-colors hover:bg-surface-hover"
           >
             <BackArrowIcon2 className="h-4 w-4" />
           </button>
@@ -115,7 +115,7 @@ export const PlanDateFilterBar = ({
                 reference={
                   <button
                     type="button"
-                    className="min-w-0 flex-1 truncate rounded-md px-2 py-1 text-left text-xs font-medium text-[var(--color-text)]/95 hover:bg-white/[0.08]"
+                    className="min-w-0 flex-1 truncate rounded-md px-2 py-1 text-left text-xs font-medium text-[var(--color-text)]/95 hover:bg-surface-hover"
                     onClick={openRangeStartPicker}
                   >
                     {controller.displayRangeLabel.start}
@@ -147,7 +147,7 @@ export const PlanDateFilterBar = ({
                 reference={
                   <button
                     type="button"
-                    className="min-w-0 flex-1 truncate rounded-md px-2 py-1 text-left text-xs font-medium text-[var(--color-text)]/95 hover:bg-white/[0.08]"
+                    className="min-w-0 flex-1 truncate rounded-md px-2 py-1 text-left text-xs font-medium text-[var(--color-text)]/95 hover:bg-surface-hover"
                     onClick={openRangeEndPicker}
                   >
                     {controller.displayRangeLabel.end}
@@ -177,7 +177,7 @@ export const PlanDateFilterBar = ({
             type="button"
             aria-label="Next date filter window"
             onClick={controller.goToNext}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-text)]/85 transition-colors hover:bg-white/[0.08]"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-text)]/85 transition-colors hover:bg-surface-hover"
           >
             <BackArrowIcon2 className="h-4 w-4 rotate-180" />
           </button>

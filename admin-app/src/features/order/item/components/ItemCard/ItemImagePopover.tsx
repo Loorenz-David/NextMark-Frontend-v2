@@ -63,7 +63,7 @@ export const ItemImagePopover = ({
       reference={
         <button
           type="button"
-          className="h-14 w-14 overflow-hidden rounded-md border border-white/10 bg-white/[0.04] focus:outline-none focus:ring-2 focus:ring-[var(--color-turques)]/60"
+          className="h-14 w-14 overflow-hidden rounded-md border border-border bg-surface-raised focus:outline-none focus:ring-2 focus:ring-[var(--color-turques)]/60"
           aria-label="Open item images"
           onClick={(event) => {
             event.stopPropagation();
@@ -88,12 +88,12 @@ export const ItemImagePopover = ({
       }
     >
       <div
-        className="admin-glass-popover w-[min(92vw,440px)] rounded-lg border border-white/14 bg-[rgba(9,16,26,0.94)] p-4 shadow-[0_20px_48px_rgba(0,0,0,0.38)] backdrop-blur-md"
+        className="admin-glass-popover w-[min(92vw,440px)] rounded-lg border border-border bg-[rgba(9,16,26,0.94)] p-4 shadow-[0_20px_48px_rgba(0,0,0,0.38)] backdrop-blur-md"
         onClick={(event) => event.stopPropagation()}
       >
         <button
           type="button"
-          className="relative flex min-h-[400px] w-full items-center justify-center overflow-hidden rounded-md bg-black/20"
+          className="relative flex min-h-[400px] w-full items-center justify-center overflow-hidden rounded-md bg-overlay"
           onClick={showNextImage}
           aria-label={hasMultipleImages ? "Show next item image" : "Item image"}
         >
@@ -113,7 +113,7 @@ export const ItemImagePopover = ({
           <div className="mt-3 flex items-center justify-between gap-3">
             <button
               type="button"
-              className="rounded-md border border-white/12 px-3 py-2 text-xs text-[var(--color-text)] transition hover:bg-white/10"
+              className="rounded-md border border-border px-3 py-2 text-xs text-[var(--color-text)] transition hover:bg-surface-hover"
               onClick={showPreviousImage}
             >
               Previous
@@ -123,7 +123,7 @@ export const ItemImagePopover = ({
             </span>
             <button
               type="button"
-              className="rounded-md border border-white/12 px-3 py-2 text-xs text-[var(--color-text)] transition hover:bg-white/10"
+              className="rounded-md border border-border px-3 py-2 text-xs text-[var(--color-text)] transition hover:bg-surface-hover"
               onClick={showNextImage}
             >
               Next

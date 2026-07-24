@@ -19,34 +19,34 @@ export const RouteGroupDriverCard = ({ driver }: RouteGroupDriverCardProps) => {
         type="button"
         onClick={() => setExpanded((current) => !current)}
         aria-expanded={expanded}
-        className="admin-backdrop-blur-md pointer-events-auto relative flex min-w-[180px] flex-col rounded-[24px] border border-white/20 bg-black/28 px-4 py-4 text-sm text-white transition-colors hover:bg-black/38"
+        className="admin-backdrop-blur-md pointer-events-auto relative flex min-w-[180px] flex-col rounded-3xl border border-border-accent bg-overlay px-4 py-4 text-sm text-text transition-colors hover:bg-overlay"
       >
         <div className="flex items-center justify-end gap-3 ">
           <div className="min-w-0 text-left">
-            <div className="truncate text-sm font-semibold text-white">
+            <div className="truncate text-sm font-semibold text-text">
               {driver.name}
             </div>
             {driver.registration != null && (
-              <div className="mt-1 text-sm font-medium text-white/82">
+              <div className="mt-1 text-sm font-medium text-muted">
                 {driver.registration}
               </div>
             )}
           </div>
           <MemberAvatar
             username={driver.initials}
-            className="h-12 w-12 shrink-0 bg-white/12 p-0 text-lg text-white"
+            className="h-12 w-12 shrink-0 bg-surface-sunken p-0 text-lg text-text"
           />
         </div>
         <ChevronDownIcon
           className={cn(
-            "absolute left-3 top-3 h-4 w-4 text-white/72 transition-transform",
+            "absolute left-3 top-3 h-4 w-4 text-muted transition-transform",
             expanded ? "rotate-90" : "rotate-0",
           )}
         />
       </button>
 
       {expanded ? (
-        <div className="admin-backdrop-blur-md pointer-events-auto absolute right-full top-0 mr-3 min-w-[220px] rounded-[24px] border border-white/45 bg-black/28 px-4 py-4 text-left text-xs text-white/72">
+        <div className="admin-backdrop-blur-md pointer-events-auto absolute right-full top-0 mr-3 min-w-[220px] rounded-3xl border border-border-emphasis bg-overlay px-4 py-4 text-left text-xs text-muted">
           Driver stats will be added here.
         </div>
       ) : null}

@@ -61,7 +61,7 @@ export const TrustedDeviceReprovisionPopup = () => {
             value={clientId}
             onChange={(event) => setClientId(event.target.value)}
             placeholder="tdv_…"
-            className="rounded-lg border border-white/10 bg-[var(--color-page)] px-3 py-2 font-mono text-sm text-[var(--color-text)] outline-none focus:border-white/25"
+            className="rounded-lg border border-border bg-[var(--color-page)] px-3 py-2 font-mono text-sm text-[var(--color-text)] outline-none focus:border-border-accent"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs font-medium text-[var(--color-muted)]">
@@ -70,7 +70,7 @@ export const TrustedDeviceReprovisionPopup = () => {
             value={secret}
             onChange={(event) => setSecret(event.target.value)}
             placeholder="paste the rotated secret"
-            className="rounded-lg border border-white/10 bg-[var(--color-page)] px-3 py-2 font-mono text-sm text-[var(--color-text)] outline-none focus:border-white/25"
+            className="rounded-lg border border-border bg-[var(--color-page)] px-3 py-2 font-mono text-sm text-[var(--color-text)] outline-none focus:border-border-accent"
           />
         </label>
       </div>

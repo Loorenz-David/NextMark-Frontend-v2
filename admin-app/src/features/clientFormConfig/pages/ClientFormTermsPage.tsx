@@ -68,7 +68,7 @@ export const ClientFormTermsPage = () => {
             <button
               type="button"
               onClick={startBlankDraft}
-              className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+              className="rounded-full border border-border bg-surface-raised px-3 py-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
             >
               Start blank
             </button>
@@ -88,7 +88,7 @@ export const ClientFormTermsPage = () => {
       </div>
 
       {/* Version cards need a readable, stable column — not a share of the width. */}
-      <div className="flex w-64 shrink-0 flex-col gap-3 overflow-auto border-l border-white/[0.06] pl-4 scroll-thin xl:w-72">
+      <div className="flex w-64 shrink-0 flex-col gap-3 overflow-auto border-l border-border-subtle pl-4 scroll-thin xl:w-72">
         <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
           Version history
         </p>

@@ -108,7 +108,7 @@ export const RouteGroupRailAvatar = ({
     <button
       type="button"
       className={`flex w-full flex-col items-center gap-2 rounded-2xl px-2 py-3 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-light-blue-r),0.55)] ${
-        item.isActive ? "bg-white/[0.08]" : "hover:bg-white/[0.04]"
+        item.isActive ? "bg-surface-hover" : "hover:bg-surface-raised"
       }`}
       onClick={() => onClick(item)}
       onMouseEnter={schedulePopoverOpen}

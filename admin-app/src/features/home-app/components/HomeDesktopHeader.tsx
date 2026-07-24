@@ -18,7 +18,7 @@ export function HomeDesktopHeader() {
       </div>
 
       {/* Right — actions */}
-      <div className="flex shrink-0 items-center gap-2 rounded-[1.15rem]">
+      <div className="flex shrink-0 items-center gap-2 rounded-2xl">
         <AdminNotificationsPushCta visibility="enable-only" />
         <div className="pr-2">
           <AdminNotificationsTrigger />

@@ -20,7 +20,7 @@ export const TeamInvitationCard = (props: TeamInvitationCardProps) => {
   const inviteId = invite.id ?? null
 
   return (
-    <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] px-5 py-4 shadow-none">
+    <div className="rounded-3xl border border-border bg-surface-raised px-5 py-4 shadow-none">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold text-[var(--color-text)]">

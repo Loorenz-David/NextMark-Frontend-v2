@@ -86,7 +86,7 @@ export const DeliveryWindowCalendarDayPopover = ({
                             onClick: () => onRemoveWindow(row),
                             style:{padding:'5px 8px'},
                             className:
-                              'text-[10px] border-none font-normal normal-case tracking-normal text-red-400 hover:bg-red-500/12 ',
+                              'text-[10px] border-none font-normal normal-case tracking-normal text-danger hover:bg-danger-bg ',
                           }}
                         >
                           Remove
@@ -104,7 +104,7 @@ export const DeliveryWindowCalendarDayPopover = ({
                 type="button"
                 disabled={disableAdd}
                 onClick={() => onAddWindow(localDate)}
-                className="w-full rounded-md border-1 border-[var(--color-border-accent)] border-dashed px-2 py-1 text-[10px] text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:bg-white/[0.08]"
+                className="w-full rounded-md border-1 border-[var(--color-border-accent)] border-dashed px-2 py-1 text-[10px] text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:bg-surface-hover"
               >
                 Add time window
               </button>

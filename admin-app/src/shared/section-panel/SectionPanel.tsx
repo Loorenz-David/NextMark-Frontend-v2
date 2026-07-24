@@ -47,7 +47,7 @@ export const SectionPanel = ({
             >
               <div className="flex items-center gap-3">
                 {header.icon && (
-                  <div className="inline-flex items-center justify-center rounded-xl border border-white/8 bg-white/[0.06] px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                  <div className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-hover px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                     {header.icon}
                   </div>
                 )}

@@ -220,7 +220,7 @@ export const ItemFormLayout = () => {
               params={{
                 variant: "secondary",
                 onClick: footerConfig.deleteButton.action,
-                className: "py-2 px-4 text-red-500 border-red-500",
+                className: "py-2 px-4 text-danger border-danger-border",
               }}
             >
               {footerConfig.deleteButton.label}

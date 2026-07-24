@@ -45,7 +45,7 @@ export const OrderDetailSummary = ({
 
   return (
     <div
-      className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-[26px] border-white/10"
+      className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-3xl border-border"
       style={{ boxShadow: "none" }}
     >
       <div className="admin-glass-divider flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
@@ -67,10 +67,10 @@ export const OrderDetailSummary = ({
             <button
               type="button"
               onClick={onMissingOrderInfoClick}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-amber-400/45 bg-amber-300/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100 transition-colors hover:bg-amber-300/25"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-warning-border bg-warning-bg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-warning transition-colors hover:bg-amber-300/25"
               aria-label="Open client form for missing order information"
             >
-              <ExclamationIcon className="h-3 w-3 text-amber-200" />
+              <ExclamationIcon className="h-3 w-3 text-warning" />
               Missing order info
             </button>
           ) : null}
@@ -172,7 +172,7 @@ export const OrderDetailSummary = ({
                     <button
                       type="button"
                       onClick={onTrackingLinkCopy}
-                      className="inline-flex shrink-0 items-center rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs font-medium text-[var(--color-muted)] transition-colors hover:bg-white/[0.08] hover:text-[var(--color-text)]"
+                      className="inline-flex shrink-0 items-center rounded-xl border border-border bg-surface-raised px-2.5 py-1 text-xs font-medium text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)]"
                       aria-label="Copy tracking link"
                     >
                       Copy
@@ -198,7 +198,7 @@ export const OrderDetailSummary = ({
 const DetailCard = ({ label, value, className }: DetailCardProps) => {
   return (
     <div
-      className={`rounded-[20px] border border-white/10 bg-white/[0.035] px-4 py-3 ${className ?? ""}`}
+      className={`rounded-3xl border border-border bg-surface-subtle px-4 py-3 ${className ?? ""}`}
     >
       <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-muted)]">
         {label}

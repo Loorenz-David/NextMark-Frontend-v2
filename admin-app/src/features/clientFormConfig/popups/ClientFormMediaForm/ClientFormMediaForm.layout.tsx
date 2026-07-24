@@ -71,7 +71,7 @@ export const ClientFormMediaFormLayout = () => {
           <img
             src={formState.url.trim()}
             alt={formState.alt_text}
-            className="h-32 w-full rounded-[18px] border border-white/[0.08] object-cover"
+            className="h-32 w-full rounded-2xl border border-border object-cover"
           />
         ) : null}
 

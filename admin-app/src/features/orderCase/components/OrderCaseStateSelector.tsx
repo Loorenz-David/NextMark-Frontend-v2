@@ -9,7 +9,7 @@ type OrderCaseStateSelectorProps = {
 
 export const OrderCaseStateSelector = ({ value, onSelect }: OrderCaseStateSelectorProps) => {
   return (
-    <div className="inline-flex w-full rounded-[1.35rem] border border-white/12 bg-white/[0.035] p-1.5 backdrop-blur-xl">
+    <div className="inline-flex w-full rounded-3xl border border-border bg-surface-subtle p-1.5 backdrop-blur-xl">
       {Object.values(CaseRegistry).map((state) => {
         const isActive = state === value
         const activeClasses =
@@ -24,10 +24,10 @@ export const OrderCaseStateSelector = ({ value, onSelect }: OrderCaseStateSelect
             key={state}
             type="button"
             onClick={() => onSelect(state)}
-            className={`flex-1 rounded-[1rem] border px-3 py-2 text-sm font-medium transition-all ${
+            className={`flex-1 rounded-2xl border px-3 py-2 text-sm font-medium transition-all ${
               isActive
                 ? activeClasses
-                : 'border-transparent text-[var(--color-muted)] hover:bg-white/[0.06]'
+                : 'border-transparent text-[var(--color-muted)] hover:bg-surface-hover'
             }`}
           >
             {state}

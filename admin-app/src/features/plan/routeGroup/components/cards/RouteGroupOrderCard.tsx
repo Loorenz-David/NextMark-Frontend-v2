@@ -65,7 +65,7 @@ export const RouteGroupOrderCard = ({
 
   return (
     <div
-      className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-visible rounded-lg border border-white/10 p-4 pl-2 transition-all duration-200 hover:border-white/18 hover:bg-white/[0.08] hover:shadow-[0_16px_38px_rgba(0,0,0,0.16)]"
+      className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-visible rounded-lg border border-border p-4 pl-2 transition-all duration-200 hover:border-border-accent hover:bg-surface-hover hover:shadow-[0_16px_38px_rgba(0,0,0,0.16)]"
       onClick={openOrder}
     >
       <OrderMissingInfoNotifier order={order} />
@@ -86,7 +86,7 @@ export const RouteGroupOrderCard = ({
               </div>
               {order.external_source && (
                 <div className="flex items-center justify-center">
-                  <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
                     {order.external_source}
                   </span>
                 </div>
@@ -112,7 +112,7 @@ export const RouteGroupOrderCard = ({
                 itemTypeCounts={order.item_type_counts}
               />
               {expectedArrival ? (
-                <div className="flex min-w-[72px] items-center justify-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-2 py-1">
+                <div className="flex min-w-[72px] items-center justify-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1">
                   <>
                     <TimeIcon className="h-3 w-3 text-[var(--color-light-blue)]" />
                     <span className="whitespace-nowrap">{expectedArrival}</span>

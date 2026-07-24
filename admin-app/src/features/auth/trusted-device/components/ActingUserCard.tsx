@@ -46,8 +46,8 @@ export const ActingUserCard = ({ user, isActive, onSelect }: ActingUserCardProps
       aria-pressed={isActive}
       className={`flex w-full cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors ${
         isActive
-          ? 'border-cyan-300/25 bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))] text-[var(--color-text)]'
-          : 'border-white/10 bg-[var(--color-page)] text-white/80 hover:border-white/25'
+          ? 'border-info-border bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(56,189,248,0.05))] text-[var(--color-text)]'
+          : 'border-border bg-[var(--color-page)] text-muted hover:border-border-accent'
       }`}
     >
       <ActingUserAvatar user={user} />

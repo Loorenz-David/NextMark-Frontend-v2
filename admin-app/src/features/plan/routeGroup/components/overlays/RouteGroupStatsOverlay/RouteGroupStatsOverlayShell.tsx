@@ -126,7 +126,7 @@ export const RouteGroupStatsOverlayShell = ({
             <button
               type="button"
               onClick={onShow}
-              className="admin-backdrop-blur-md pointer-events-auto rounded-full border border-white/70 bg-black/28 px-4 py-2 text-md font-medium text-white transition-colors hover:bg-white/24"
+              className="admin-backdrop-blur-md pointer-events-auto rounded-full border border-border-emphasis bg-overlay px-4 py-2 text-md font-medium text-text transition-colors hover:bg-white/24"
             >
               Stats
             </button>
@@ -146,7 +146,7 @@ export const RouteGroupStatsOverlayShell = ({
                 <button
                   type="button"
                   onClick={onHide}
-                  className="admin-backdrop-blur-md pointer-events-auto self-start rounded-full border border-white/75 bg-black/28 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-black/38"
+                  className="admin-backdrop-blur-md pointer-events-auto self-start rounded-full border border-border-emphasis bg-overlay px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-overlay"
                 >
                   Hide
                 </button>

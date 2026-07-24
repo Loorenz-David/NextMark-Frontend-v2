@@ -38,7 +38,7 @@ const resolveInitials = (name: string) => {
 export const OrderCaseChatList = ({ chats, currentUserId }: OrderCaseChatListProps) => {
   if (!chats.length) {
     return (
-      <div className="admin-glass-panel rounded-[24px] border border-dashed border-white/10 px-4 py-5 text-sm text-[var(--color-muted)]" style={{ boxShadow: 'none' }}>
+      <div className="admin-glass-panel rounded-3xl border border-dashed border-border px-4 py-5 text-sm text-[var(--color-muted)]" style={{ boxShadow: 'none' }}>
         No messages yet.
       </div>
     )
@@ -64,16 +64,16 @@ export const OrderCaseChatList = ({ chats, currentUserId }: OrderCaseChatListPro
             <div className={`max-w-[85%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
               <div className={`flex w-full items-end gap-2 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
                 <div
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-[10px] font-semibold text-[var(--color-text)]"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-surface-raised text-[10px] font-semibold text-[var(--color-text)]"
                   title={displayName}
                 >
                   {initials}
                 </div>
 
-                <div className={`max-w-[82%] rounded-[20px] border px-3.5 py-2.5 backdrop-blur-xl ${
+                <div className={`max-w-[82%] rounded-3xl border px-3.5 py-2.5 backdrop-blur-xl ${
                   isMine
                     ? 'border-[rgba(104,214,195,0.22)] bg-[linear-gradient(135deg,rgba(72,180,194,0.16),rgba(111,224,207,0.08))]'
-                    : 'border-white/10 bg-white/[0.04]'
+                    : 'border-border bg-surface-raised'
                 }`}>
                   {!isMine ? (
                     <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted)]">

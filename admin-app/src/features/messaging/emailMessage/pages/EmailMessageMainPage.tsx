@@ -13,7 +13,7 @@ export const EmailMessageMainPage = (_: StackComponentProps<undefined>) => {
   if (!hasEmailIntegration) {
     return (
       <div className="flex h-full w-full items-start px-6 py-6 text-sm text-[var(--color-muted)]">
-        <div className="admin-glass-panel-strong max-h-100 flex max-w-2xl flex-col items-start gap-6 rounded-[28px] p-8 shadow-none">
+        <div className="admin-glass-panel-strong max-h-100 flex max-w-2xl flex-col items-start gap-6 rounded-3xl p-8 shadow-none">
           <div className="flex flex-col gap-6">
             <span className="text-lg font-semibold text-[var(--color-text)]">
               Set up Email integration to manage email templates.

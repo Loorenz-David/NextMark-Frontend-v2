@@ -41,7 +41,7 @@ export const SlideCarousel = ({ children, initialIndex = 0 }: SlideCarouselProps
             <button
               type="button"
               onClick={prev}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] shadow-[0_10px_22px_rgba(0,0,0,0.12)] transition-colors hover:bg-white/[0.08]"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-raised shadow-[0_10px_22px_rgba(0,0,0,0.12)] transition-colors hover:bg-surface-hover"
               aria-label="Previous slide"
             >
               <BoldArrowIcon className="h-3 w-3 rotate-180 text-[var(--color-text)]" />
@@ -58,7 +58,7 @@ export const SlideCarousel = ({ children, initialIndex = 0 }: SlideCarouselProps
             <button
               type="button"
               onClick={next}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] shadow-[0_10px_22px_rgba(0,0,0,0.12)] transition-colors hover:bg-white/[0.08]"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-raised shadow-[0_10px_22px_rgba(0,0,0,0.12)] transition-colors hover:bg-surface-hover"
               aria-label="Next slide"
             >
               <BoldArrowIcon className="h-3 w-3 text-[var(--color-text)]" />

@@ -11,7 +11,7 @@ type UserProfileCardProps = {
 }
 
 export const UserSubscriptionCard = () => (
-  <div className="admin-glass-panel-strong relative overflow-hidden rounded-[28px] p-6 shadow-none">
+  <div className="admin-glass-panel-strong relative overflow-hidden rounded-3xl p-6 shadow-none">
     <div className="absolute right-0 top-0 h-28 w-44 translate-x-10 -translate-y-8 rounded-full bg-[rgb(var(--color-light-blue-r),0.14)] blur-3xl" />
     <div className="absolute bottom-0 left-0 h-24 w-32 -translate-x-6 translate-y-6 rounded-full bg-[rgba(226,197,94,0.08)] blur-3xl" />
     <div className="relative flex flex-col gap-5">
@@ -31,18 +31,18 @@ export const UserSubscriptionCard = () => (
       </div>
 
       <div className="grid gap-3">
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.04] px-4 py-3 text-sm text-[var(--color-text)]">
+        <div className="rounded-2xl border border-border-subtle bg-surface-raised px-4 py-3 text-sm text-[var(--color-text)]">
           Up to 3 team members
         </div>
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.04] px-4 py-3 text-sm text-[var(--color-text)]">
+        <div className="rounded-2xl border border-border-subtle bg-surface-raised px-4 py-3 text-sm text-[var(--color-text)]">
           Basic route optimization
         </div>
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.04] px-4 py-3 text-sm text-[var(--color-text)]">
+        <div className="rounded-2xl border border-border-subtle bg-surface-raised px-4 py-3 text-sm text-[var(--color-text)]">
           Email support
         </div>
       </div>
 
-      <div className="flex items-end justify-between gap-4 rounded-2xl border border-white/[0.06] bg-white/[0.03] px-4 py-4">
+      <div className="flex items-end justify-between gap-4 rounded-2xl border border-border-subtle bg-surface-subtle px-4 py-4">
         <div>
           <p className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
             Next invoice
@@ -64,12 +64,12 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
   const phone = formatPhone(user?.phone_number) ?? '—'
 
   return (
-    <div className="admin-glass-panel-strong relative overflow-hidden rounded-[28px] p-6 shadow-none">
+    <div className="admin-glass-panel-strong relative overflow-hidden rounded-3xl p-6 shadow-none">
       <div className="pointer-events-none absolute left-0 top-0 h-36 w-52 -translate-x-12 -translate-y-10 rounded-full bg-[rgb(var(--color-light-blue-r),0.14)] blur-3xl" />
       <div className="relative flex flex-col gap-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4">
-            <MemberAvatar username={username} className="text-xl ring-1 ring-white/[0.08]" />
+            <MemberAvatar username={username} className="text-xl ring-1 ring-border" />
             <div className="flex flex-col gap-1">
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)]">
                 Personal profile
@@ -79,7 +79,7 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+            <span className="rounded-full border border-border bg-surface-raised px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
               Active profile
             </span>
             <BasicButton
@@ -97,9 +97,9 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-[24px] border border-white/[0.06] bg-white/[0.04] px-5 py-5">
+          <div className="rounded-3xl border border-border-subtle bg-surface-raised px-5 py-5">
             <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.05] text-[rgb(var(--color-light-blue-r))]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
                 <UserIcon className="h-5 w-5" />
               </div>
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
@@ -109,9 +109,9 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
             <p className="text-lg font-medium text-[var(--color-text)]">{capitalize(username)}</p>
           </div>
 
-          <div className="rounded-[24px] border border-white/[0.06] bg-white/[0.04] px-5 py-5">
+          <div className="rounded-3xl border border-border-subtle bg-surface-raised px-5 py-5">
             <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.05] text-[rgb(var(--color-light-blue-r))]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
                 <MailIcon className="h-5 w-5" />
               </div>
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
@@ -121,9 +121,9 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
             <p className="break-words text-lg font-medium text-[var(--color-text)]">{email}</p>
           </div>
 
-          <div className="rounded-[24px] border border-white/[0.06] bg-white/[0.04] px-5 py-5">
+          <div className="rounded-3xl border border-border-subtle bg-surface-raised px-5 py-5">
             <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.05] text-[rgb(var(--color-light-blue-r))]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
                 <MessageIcon className="h-5 w-5" />
               </div>
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
@@ -133,9 +133,9 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
             <p className="text-lg font-medium text-[var(--color-text)]">{phone}</p>
           </div>
 
-          <div className="rounded-[24px] border border-white/[0.06] bg-white/[0.04] px-5 py-5">
+          <div className="rounded-3xl border border-border-subtle bg-surface-raised px-5 py-5">
             <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.05] text-[rgb(var(--color-light-blue-r))]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
                 <UserIcon className="h-5 w-5" />
               </div>
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">

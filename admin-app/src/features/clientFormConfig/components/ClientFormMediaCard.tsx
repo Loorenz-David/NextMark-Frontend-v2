@@ -21,7 +21,7 @@ export const ClientFormMediaCard = ({
   dragHandle,
 }: ClientFormMediaCardProps) => (
   <div
-    className={`flex w-full items-start gap-4 rounded-[24px] border border-white/[0.08] bg-white/[0.04] px-5 py-4 ${
+    className={`flex w-full items-start gap-4 rounded-3xl border border-border bg-surface-raised px-5 py-4 ${
       media.enabled ? '' : 'opacity-60'
     }`}
   >
@@ -30,7 +30,7 @@ export const ClientFormMediaCard = ({
     <img
       src={media.url}
       alt={media.alt_text ?? ''}
-      className="h-16 w-24 shrink-0 rounded-[14px] border border-white/[0.08] object-cover"
+      className="h-16 w-24 shrink-0 rounded-2xl border border-border object-cover"
     />
 
     <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -45,12 +45,12 @@ export const ClientFormMediaCard = ({
       <p className="truncate text-[0.65rem] text-[var(--color-muted)]/70">{media.url}</p>
       <div className="flex flex-wrap items-center gap-2 pt-1">
         {media.link_url ? (
-          <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <span className="rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
             Links out
           </span>
         ) : null}
         {media.alt_text ? null : (
-          <span className="rounded-full border border-amber-400/25 bg-amber-400/10 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-amber-300/80">
+          <span className="rounded-full border border-warning-border bg-warning-bg px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-warning">
             No alt text
           </span>
         )}
@@ -67,7 +67,7 @@ export const ClientFormMediaCard = ({
       <button
         type="button"
         onClick={() => onEdit(media.client_id)}
-        className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+        className="rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
       >
         Edit
       </button>
@@ -75,8 +75,8 @@ export const ClientFormMediaCard = ({
         onConfirm={() => onDelete(media)}
         deleteContent="Delete"
         confirmContent="Confirm"
-        deleteClassName="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-red-400 hover:text-red-300"
-        confirmClassName="rounded-full px-3 py-1 text-xs text-white"
+        deleteClassName="rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-danger hover:text-danger"
+        confirmClassName="rounded-full px-3 py-1 text-xs text-text"
       />
     </div>
   </div>

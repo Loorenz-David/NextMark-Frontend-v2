@@ -30,7 +30,7 @@ export const OrderCaseChatComposer = ({
 
 
   return (
-    <div className="admin-glass-panel rounded-[24px] border-white/10 p-3" style={{ boxShadow: 'none' }}>
+    <div className="admin-glass-panel rounded-3xl border-border p-3" style={{ boxShadow: 'none' }}>
       <div className="flex items-end gap-3">
       <div className="flex-1">
         <div className={fieldContainer}>
@@ -50,7 +50,7 @@ export const OrderCaseChatComposer = ({
           onClick: onSend,
           disabled,
           ariaLabel: 'Send case message',
-          className: 'h-11 rounded-[1.35rem] px-5',
+          className: 'h-11 rounded-3xl px-5',
         }}
       >
         Send

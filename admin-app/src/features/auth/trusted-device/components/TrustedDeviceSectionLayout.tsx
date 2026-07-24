@@ -24,7 +24,7 @@ export const TrustedDeviceSectionLayout = ({
   bodyClassName,
   children,
 }: TrustedDeviceSectionLayoutProps) => (
-  <section className="admin-glass-panel-strong flex h-full flex-col overflow-hidden rounded-[28px] shadow-none">
+  <section className="admin-glass-panel-strong flex h-full flex-col overflow-hidden rounded-3xl shadow-none">
     <div className="flex flex-col gap-6 border-b border-[var(--color-border)]/70 p-5 pb-6">
       <div className="flex items-center justify-between gap-3">
         <div>
@@ -35,7 +35,7 @@ export const TrustedDeviceSectionLayout = ({
           <button
             type="button"
             onClick={onReprovision}
-            className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+            className="rounded-full border border-border bg-surface-raised px-3 py-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
           >
             Re-provision
           </button>
@@ -49,7 +49,7 @@ export const TrustedDeviceSectionLayout = ({
 
       <SearchBar
         onChange={(value) => onSearch(value.input ?? '')}
-        className="w-full rounded-full border border-[var(--color-border)]/70 bg-white/[0.04] px-3 py-2 text-sm"
+        className="w-full rounded-full border border-[var(--color-border)]/70 bg-surface-raised px-3 py-2 text-sm"
         placeholder="search trusted devices"
       />
     </div>

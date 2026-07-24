@@ -16,7 +16,7 @@ export const SmsTemplateList = () => {
         <SearchBar
           onChange={(value) => setSearchQuery(value.input ?? '')}
           placeholder="Search template triggers..."
-          className="w-full rounded-full border border-[var(--color-border)]/70 bg-white/[0.04] px-3 py-2"
+          className="w-full rounded-full border border-[var(--color-border)]/70 bg-surface-raised px-3 py-2"
         />
       </div>
       
@@ -32,7 +32,7 @@ export const SmsTemplateList = () => {
             />
           ))}
           {!filteredTriggers.length ? (
-            <div className="col-span-full rounded-[24px] border border-dashed border-white/[0.08] bg-white/[0.03] px-6 py-10 text-center text-sm text-[var(--color-muted)]">
+            <div className="col-span-full rounded-3xl border border-dashed border-border bg-surface-subtle px-6 py-10 text-center text-sm text-[var(--color-muted)]">
               No SMS template triggers matched your search.
             </div>
           ) : null}

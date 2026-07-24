@@ -12,7 +12,7 @@ type OrderCaseListProps = {
 export const OrderCaseList = ({ cases, onOpenCase, onDeleteCase }: OrderCaseListProps) => {
   if (!cases.length) {
     return (
-      <div className="admin-glass-panel rounded-[24px] border-white/10 px-4 py-5 text-sm text-[var(--color-muted)]" style={{ boxShadow: 'none' }}>
+      <div className="admin-glass-panel rounded-3xl border-border px-4 py-5 text-sm text-[var(--color-muted)]" style={{ boxShadow: 'none' }}>
         No cases yet.
       </div>
     )

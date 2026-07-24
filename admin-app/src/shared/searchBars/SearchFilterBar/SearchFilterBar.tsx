@@ -197,7 +197,7 @@ export const SearchFilterBar = ({
                   type="button"
                   data-popover-close="true"
                   onClick={() => updateFilter?.(filter.key, filter.value)}
-                  className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-white/[0.08]"
+                  className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-surface-hover"
                 >
                   <span>{filter.label}</span>
                   {selected ? (
@@ -221,7 +221,7 @@ export const SearchFilterBar = ({
                     openPopupFilter?.(filter.popupKey)
                     setOpen(false)
                   }}
-                  className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-white/[0.08]"
+                  className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-surface-hover"
                 >
                   <span>{filter.label}</span>
                   {selectedCount > 0 ? (
@@ -238,7 +238,7 @@ export const SearchFilterBar = ({
               return (
                 <div
                   key={`${filter.type}-${filter.key}-${index}`}
-                  className="flex flex-col gap-2 rounded-md border border-white/[0.08] bg-white/[0.04] p-2"
+                  className="flex flex-col gap-2 rounded-md border border-border bg-surface-raised p-2"
                 >
                   <span className="text-xs font-semibold text-[var(--color-muted)]">
                     {filter.label}
@@ -299,7 +299,7 @@ export const SearchFilterBar = ({
                     openPopupFilter?.(filter.popupKey)
                     setOpen(false)
                   }}
-                  className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-white/[0.08]"
+                  className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-surface-hover"
                 >
                   <span>{filter.label}</span>
                   {hasSelection ? (
@@ -315,7 +315,7 @@ export const SearchFilterBar = ({
             return (
               <div
                 key={`${filter.type}-${filter.keyStart}-${filter.keyEnd}-${index}`}
-                className="flex flex-col gap-2 rounded-md border border-white/[0.08] bg-white/[0.04] p-2"
+                className="flex flex-col gap-2 rounded-md border border-border bg-surface-raised p-2"
               >
                 <span className="text-xs font-semibold text-[var(--color-muted)]">
                   {filter.label}

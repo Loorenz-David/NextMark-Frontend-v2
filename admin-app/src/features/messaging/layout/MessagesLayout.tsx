@@ -18,7 +18,7 @@ export const MessagesLayout = <Key extends string>({
   onTabChange,
   children,
 }: MessagesLayoutProps<Key>) => (
-  <section className="admin-glass-panel-strong flex w-full shrink-0 flex-col rounded-[28px] shadow-none">
+  <section className="admin-glass-panel-strong flex w-full shrink-0 flex-col rounded-3xl shadow-none">
     <div className="flex shrink-0 gap-4 border-b border-[var(--color-border)]/70 px-6 pb-5 pt-6">
       {tabs.map((tab) => (
         <button
@@ -28,7 +28,7 @@ export const MessagesLayout = <Key extends string>({
           className={`rounded-2xl px-4 py-2 text-xs font-semibold transition-colors ${
             activeTab === tab.key
               ? 'border border-[rgb(var(--color-light-blue-r),0.35)] bg-[rgb(var(--color-light-blue-r),0.14)] text-[rgb(var(--color-light-blue-r))]'
-              : 'border border-white/[0.05] bg-white/[0.04] text-[var(--color-text)]'
+              : 'border border-border-subtle bg-surface-raised text-[var(--color-text)]'
           }`}
         >
           {tab.label}

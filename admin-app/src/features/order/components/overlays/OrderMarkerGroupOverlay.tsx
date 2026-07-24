@@ -26,7 +26,7 @@ const OrderGroupOverlayRow = ({ order, onSelectOrder }: OrderGroupOverlayRowProp
       key={order.client_id}
       type="button"
       onClick={() => onSelectOrder(order)}
-      className="admin-glass-panel w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-left transition-colors hover:border-white/20 hover:bg-white/[0.1]"
+      className="admin-glass-panel w-full rounded-lg border border-border bg-surface-subtle px-3 py-2 text-left transition-colors hover:border-border-accent hover:bg-surface-sunken"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
@@ -41,7 +41,7 @@ const OrderGroupOverlayRow = ({ order, onSelectOrder }: OrderGroupOverlayRowProp
           {orderState && (
             <StateCard label={orderState.name} color={orderState.color ? orderState.color : '#363636ff'} />
           )}
-          <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[11px] text-[var(--color-muted)]">
+          <div className="flex items-center gap-1 rounded-full border border-border bg-surface-raised px-2 py-1 text-[11px] text-[var(--color-muted)]">
             <ItemIcon className="h-3 w-3 app-icon" />
             <span>{totalItems}</span>
           </div>
@@ -82,8 +82,8 @@ export const OrderMarkerGroupOverlay = () => {
       }}
       className="z-50"
     >
-      <div className="admin-glass-panel-strong w-[320px] overflow-hidden rounded-xl border border-white/12 shadow-[0_20px_44px_rgba(4,12,22,0.55)]">
-        <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-3 py-2">
+      <div className="admin-glass-panel-strong w-[320px] overflow-hidden rounded-xl border border-border shadow-[0_20px_44px_rgba(4,12,22,0.55)]">
+        <div className="flex items-center justify-between border-b border-border bg-surface-subtle px-3 py-2">
           <p className="text-xs font-semibold text-[var(--color-text)]">
             {orders.length} grouped orders
           </p>
@@ -91,7 +91,7 @@ export const OrderMarkerGroupOverlay = () => {
             type="button"
             onClick={closeGroupOverlay}
             aria-label="Close grouped marker list"
-            className="rounded-md p-1 text-[var(--color-muted)] transition-colors hover:bg-white/[0.1]"
+            className="rounded-md p-1 text-[var(--color-muted)] transition-colors hover:bg-surface-sunken"
           >
             <CloseIcon className="h-3 w-3" />
           </button>

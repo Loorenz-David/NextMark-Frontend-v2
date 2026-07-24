@@ -87,7 +87,7 @@ export function RegisterForm() {
       </div>
 
       {status.error && (
-        <div className="rounded-2xl border border-rose-300/24 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+        <div className="rounded-2xl border border-danger-border bg-danger-bg px-4 py-3 text-sm text-danger">
           {status.error}
         </div>
       )}

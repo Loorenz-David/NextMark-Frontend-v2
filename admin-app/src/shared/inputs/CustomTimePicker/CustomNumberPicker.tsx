@@ -169,7 +169,7 @@ export const CustomNumberPicker = ({
       </div>
 
       <div
-        className="flex items-center justify-end gap-2 border-t border-white/[0.08] p-3"
+        className="flex items-center justify-end gap-2 border-t border-border p-3"
         onPointerDown={(event) => {
           event.stopPropagation();
         }}

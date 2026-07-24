@@ -136,7 +136,7 @@ export const CustomDatePickerCalendarPanel = ({
             className={`flex-1 rounded-md px-3 py-1.5 text-xs font-semibold ${
               strategy === 'single'
                 ? 'bg-[var(--color-primary)] text-[var(--color-secondary)]'
-                : 'text-[var(--color-muted)] hover:bg-white/[0.06]'
+                : 'text-[var(--color-muted)] hover:bg-surface-hover'
             }`}
             onClick={() => onStrategyChange?.('single')}
           >
@@ -147,7 +147,7 @@ export const CustomDatePickerCalendarPanel = ({
             className={`flex-1 rounded-md px-3 py-1.5 text-xs font-semibold ${
               strategy === 'range'
                 ? 'bg-[var(--color-primary)] text-[var(--color-secondary)]'
-                : 'text-[var(--color-muted)] hover:bg-white/[0.06]'
+                : 'text-[var(--color-muted)] hover:bg-surface-hover'
             }`}
             onClick={() => onStrategyChange?.('range')}
           >
@@ -169,7 +169,7 @@ export const CustomDatePickerCalendarPanel = ({
               <div className='mb-2 flex items-center justify-between gap-2'>
                 <button
                   type='button'
-                  className='rounded-md p-1 hover:bg-white/[0.08]'
+                  className='rounded-md p-1 hover:bg-surface-hover'
                   onClick={calendarModel.prevMonth}
                   aria-label='Previous month'
                 >
@@ -180,7 +180,7 @@ export const CustomDatePickerCalendarPanel = ({
 
                 <button
                   type='button'
-                  className='rounded-md p-1 hover:bg-white/[0.08]'
+                  className='rounded-md p-1 hover:bg-surface-hover'
                   onClick={calendarModel.nextMonth}
                   aria-label='Next month'
                 >
@@ -256,7 +256,7 @@ export const CustomDatePickerCalendarPanel = ({
                 isInRange && !isSelected
                   ? 'bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] text-[var(--color-text)]'
                   : '',
-                !isSelected && !isDisabled ? 'hover:bg-white/[0.08]' : '',
+                !isSelected && !isDisabled ? 'hover:bg-surface-hover' : '',
                 isDisabled ? 'cursor-not-allowed opacity-35' : '',
               ].join(' ')}
             >
@@ -267,7 +267,7 @@ export const CustomDatePickerCalendarPanel = ({
       />
 
       {calendarSelectionMode === 'single' && !isTodaySelected ? (
-        <div className='mt-2 border-t border-white/[0.08] pt-2'>
+        <div className='mt-2 border-t border-border pt-2'>
           <button
             type='button'
             className='w-full rounded-md py-1.5 text-xs font-semibold text-[var(--color-primary)] hover:bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] disabled:cursor-not-allowed disabled:text-[var(--color-muted)]/70 disabled:hover:bg-transparent'

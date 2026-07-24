@@ -97,7 +97,7 @@ export const ActiveFilterPills = ({
                   ? removeFilter(parentKey, value)
                   : removeFilter(parentKey)
               }
-              className="inline-flex items-center justify-center rounded-full p-0.5 text-[rgb(var(--color-light-blue-r))] transition-colors hover:bg-[rgba(var(--color-light-blue-r),0.18)] hover:text-white"
+              className="inline-flex items-center justify-center rounded-full p-0.5 text-[rgb(var(--color-light-blue-r))] transition-colors hover:bg-[rgba(var(--color-light-blue-r),0.18)] hover:text-text"
             >
               <CloseIcon className="h-3 w-3" />
             </button>

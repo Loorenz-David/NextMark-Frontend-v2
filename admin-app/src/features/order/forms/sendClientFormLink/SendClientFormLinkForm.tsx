@@ -55,7 +55,7 @@ export const SendClientFormLinkForm = ({
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-4 scroll-thin">
         {!payload.hasGeneratedLink ? (
-          <div className="rounded-[18px] border border-amber-300/20 bg-amber-400/[0.1] px-4 py-3 text-sm leading-6 text-amber-100">
+          <div className="rounded-2xl border border-warning-border bg-warning-bg px-4 py-3 text-sm leading-6 text-warning">
             A client form link must be generated before it can be sent.
           </div>
         ) : null}
@@ -79,7 +79,7 @@ export const SendClientFormLinkForm = ({
         </Field>
 
         {payload.formUrl ? (
-          <div className="rounded-[18px] border border-white/10 bg-white/[0.035] px-4 py-4 mt-4">
+          <div className="rounded-2xl border border-border bg-surface-subtle px-4 py-4 mt-4">
             <div className="flex items-center justify-between gap-3">
               <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-muted)]">
                 Generated Link
@@ -91,7 +91,7 @@ export const SendClientFormLinkForm = ({
               ) : null}
             </div>
 
-            <div className="mt-3 rounded-[14px] border border-white/10 bg-white/[0.04] px-3 py-3">
+            <div className="mt-3 rounded-2xl border border-border bg-surface-raised px-3 py-3">
               <p className="truncate text-xs text-[var(--color-text)]">
                 {payload.formUrl}
               </p>
@@ -101,7 +101,7 @@ export const SendClientFormLinkForm = ({
               <button
                 type="button"
                 onClick={handleCopy}
-                className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.12em] text-[var(--color-muted)] transition-colors hover:bg-white/[0.08] hover:text-[var(--color-text)]"
+                className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.12em] text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)]"
               >
                 {copied ? "Copied" : "Copy"}
               </button>
@@ -109,7 +109,7 @@ export const SendClientFormLinkForm = ({
                 href={payload.formUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.12em] text-[var(--color-primary)] transition-colors hover:bg-white/[0.08] hover:text-white"
+                className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.12em] text-[var(--color-primary)] transition-colors hover:bg-surface-hover hover:text-text"
               >
                 Open in page
               </a>

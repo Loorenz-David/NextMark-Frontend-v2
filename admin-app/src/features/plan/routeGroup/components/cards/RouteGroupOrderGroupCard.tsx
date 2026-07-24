@@ -81,17 +81,17 @@ export const RouteGroupOrderGroupCard = ({
                     floatingClassName="z-[220]"
                     reference={
                       <div
-                        className="flex h-7 w-7 items-center justify-center rounded-full border border-amber-300/25 bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.08))]"
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.08))]"
                         onMouseEnter={() => setWarningOpen(true)}
                         onMouseLeave={() => setWarningOpen(false)}
                         onClick={(event) => event.stopPropagation()}
                       >
-                        <TriangleWarningIcon className="h-4 w-4 text-amber-300" />
+                        <TriangleWarningIcon className="h-4 w-4 text-warning" />
                       </div>
                     }
                   >
                     <div
-                      className="admin-backdrop-blur-xl w-56 rounded-[20px] border border-amber-300/25 bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.06))] p-3 text-[0.85rem] text-amber-50/95 shadow-[0_18px_40px_rgba(0,0,0,0.26)]"
+                      className="admin-backdrop-blur-xl w-56 rounded-3xl border border-warning-border bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.06))] p-3 text-[0.85rem] text-warning shadow-[0_18px_40px_rgba(0,0,0,0.26)]"
                       onMouseEnter={() => setWarningOpen(true)}
                       onMouseLeave={() => setWarningOpen(false)}
                     >

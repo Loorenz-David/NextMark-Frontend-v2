@@ -63,7 +63,7 @@ export const ItemCard = ({
   }
 
   return (
-    <div className="admin-glass-panel admin-surface-compact relative shrink-0 overflow-hidden rounded-[1.1rem] border border-white/10 p-3 px-2 transition-all duration-200 hover:border-white/18 hover:bg-white/[0.08] hover:shadow-[0_16px_38px_rgba(0,0,0,0.16)]">
+    <div className="admin-glass-panel admin-surface-compact relative shrink-0 overflow-hidden rounded-2xl border border-border p-3 px-2 transition-all duration-200 hover:border-border-accent hover:bg-surface-hover hover:shadow-[0_16px_38px_rgba(0,0,0,0.16)]">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
       <div
         role="button"
@@ -130,9 +130,9 @@ export const ItemCard = ({
               <div className="pl-1 ">
                     <ConfirmActionButton
                       onConfirm={handleDelete}
-                      deleteContent={<DeleteIcon className="h-4 w-4 text-red-500"/>}
+                      deleteContent={<DeleteIcon className="h-4 w-4 text-danger"/>}
                       confirmContent={'Confirm deletion'}
-                      confirmClassName="text-white text-[10px] px-2 py-1 rounded-md bg-red-500"
+                      confirmClassName="text-danger-on-solid text-[10px] px-2 py-1 rounded-md bg-danger-solid"
                     />
               </div>
             ) : null}

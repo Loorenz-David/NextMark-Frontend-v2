@@ -38,7 +38,7 @@ export const ZoneColorField = ({
           className={`${inputContainerClassName} flex w-full items-center gap-3 px-3 py-2 text-left`}
         >
           <span
-            className="h-6 w-6 rounded-full border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]"
+            className="h-6 w-6 rounded-full border border-border shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]"
             style={{ backgroundColor: normalizedValue }}
           />
           <span className="text-sm font-medium uppercase tracking-[0.08em] text-[var(--color-text)]">
@@ -47,10 +47,10 @@ export const ZoneColorField = ({
         </button>
       )}
     >
-      <div className="admin-glass-panel-strong w-[260px] rounded-[22px] border border-white/12 p-4 shadow-[0_20px_44px_rgba(4,12,22,0.45)]">
+      <div className="admin-glass-panel-strong w-[260px] rounded-3xl border border-border p-4 shadow-[0_20px_44px_rgba(4,12,22,0.45)]">
         <div className="flex items-center gap-3">
           <span
-            className="h-10 w-10 rounded-full border border-white/15"
+            className="h-10 w-10 rounded-full border border-border"
             style={{ backgroundColor: normalizedValue }}
           />
           <div className="min-w-0">
@@ -71,8 +71,8 @@ export const ZoneColorField = ({
               aria-label={`Select ${preset}`}
               className={`h-9 w-9 rounded-full border transition-transform hover:scale-[1.05] ${
                 normalizedValue === preset
-                  ? 'border-white/80 ring-2 ring-white/30'
-                  : 'border-white/12'
+                  ? 'border-border-emphasis ring-2 ring-border-accent'
+                  : 'border-border'
               }`}
               style={{ backgroundColor: preset }}
               onClick={() => {
@@ -91,7 +91,7 @@ export const ZoneColorField = ({
             value={value}
             onChange={(event) => onChange(event.target.value)}
             placeholder="#111111"
-            className="h-11 w-full rounded-xl border border-white/12 bg-[var(--color-page)] px-3 text-sm text-[var(--color-text)] outline-none transition-colors placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)]/50"
+            className="h-11 w-full rounded-xl border border-border bg-[var(--color-page)] px-3 text-sm text-[var(--color-text)] outline-none transition-colors placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)]/50"
           />
           <p className="text-xs text-[var(--color-muted)]">
             {hasValidHex

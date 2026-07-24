@@ -30,7 +30,7 @@ export const InlineRouteMetric = ({
   const isEstimated = sourceType === "estimated";
 
   return (
-    <div className="flex min-h-[52px] min-w-0 flex-col justify-between rounded-2xl bg-white/6 px-3 py-2 text-white">
+    <div className="flex min-h-[52px] min-w-0 flex-col justify-between rounded-2xl bg-surface-raised px-3 py-2 text-text">
       <div className="flex min-w-0 items-baseline gap-2">
         <motion.span
           key={`${metric.id}-${changeTick}`}
@@ -41,17 +41,17 @@ export const InlineRouteMetric = ({
               ? undefined
               : { duration: 0.2, ease: "easeOut" }
           }
-          className={`min-w-0 truncate text-sm font-semibold ${isEstimated ? "text-white/82" : "text-white"}`}
+          className={`min-w-0 truncate text-sm font-semibold ${isEstimated ? "text-muted" : "text-text"}`}
         >
           {resolvedValue}
         </motion.span>
         {metric.delta ? (
-          <span className="shrink-0 text-[10px] font-medium text-white/72">
+          <span className="shrink-0 text-[10px] font-medium text-muted">
             {metric.delta}
           </span>
         ) : null}
       </div>
-      <span className="truncate text-[11px] font-medium uppercase tracking-[0.08em] text-white/68">
+      <span className="truncate text-[11px] font-medium uppercase tracking-[0.08em] text-muted">
         {metric.label || " "}
         {isEstimated ? " est." : ""}
       </span>

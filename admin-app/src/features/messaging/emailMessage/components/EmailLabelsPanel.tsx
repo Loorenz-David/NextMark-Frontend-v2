@@ -11,7 +11,7 @@ export const EmailLabelsPanel = ({
   onSelect,
 }: EmailLabelsPanelProps) => {
   return (
-    <aside className="admin-glass-panel-strong rounded-[26px] p-5 shadow-none">
+    <aside className="admin-glass-panel-strong rounded-3xl p-5 shadow-none">
       <div className="mt-4 flex flex-col gap-2">
         <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
           Labels

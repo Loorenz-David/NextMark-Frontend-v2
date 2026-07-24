@@ -108,7 +108,7 @@ export const SearchBar = ({
                   key={String(option.value)}
                   type="button"
                   onClick={() => toggleFilter(option.value)}
-                  className="flex w-full items-center justify-between rounded-md px-2 py-1 text-sm hover:bg-white/[0.08]"
+                  className="flex w-full items-center justify-between rounded-md px-2 py-1 text-sm hover:bg-surface-hover"
                 >
                   <span className={` ${isSelected ? "text-[rgb(var(--color-light-blue-r))]": "text-[var(--color-text)]"}`}>{option.label}</span>
                   

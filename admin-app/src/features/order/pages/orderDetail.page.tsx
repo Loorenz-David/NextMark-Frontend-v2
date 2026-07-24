@@ -57,7 +57,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
               initialIndex={initialCarouselIndex}
             >
               {isRefreshing && !order ? (
-                <div className="admin-glass-panel rounded-[22px] p-4 text-sm text-[var(--color-muted)]">
+                <div className="admin-glass-panel rounded-3xl p-4 text-sm text-[var(--color-muted)]">
                   Loading order details...
                 </div>
               ) : order ? (
@@ -69,7 +69,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
                   onTrackingLinkCopy={handleTrackingLinkCopy}
                 />
               ) : (
-                <div className="admin-glass-panel rounded-[22px] p-4 text-sm text-[var(--color-muted)]">
+                <div className="admin-glass-panel rounded-3xl p-4 text-sm text-[var(--color-muted)]">
                   Order not found.
                 </div>
               )}
@@ -102,7 +102,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
               />
             </div>
           ) : (
-            <div className="admin-glass-panel mx-5 rounded-[22px] p-4 text-xs text-[var(--color-muted)]">
+            <div className="admin-glass-panel mx-5 rounded-3xl p-4 text-xs text-[var(--color-muted)]">
               Items are available after the order has a server id.
             </div>
           )}

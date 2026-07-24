@@ -8,7 +8,7 @@ export const RouteGroupEditFormCreateVariantToggle = () => {
   const { formState, formSetters } = useRouteGroupEditForm()
 
   return (
-    <div className="admin-glass-panel admin-surface-compact flex items-center justify-between rounded-xl border border-white/10 p-4">
+    <div className="admin-glass-panel admin-surface-compact flex items-center justify-between rounded-xl border border-border p-4">
       <div className="min-w-0 pr-4">
         <div className="flex items-center gap-2">
           <p className="text-sm font-medium text-[var(--color-text)]">Create variant on save</p>
@@ -22,7 +22,7 @@ export const RouteGroupEditFormCreateVariantToggle = () => {
         value={formState.create_variant_on_save}
         onChange={formSetters.handleCreateVariantToggle}
         ariaLabel="Create variant on save"
-        className="border-white/12 bg-white/[0.04] shadow-[0_10px_24px_rgba(0,0,0,0.14)]"
+        className="border-border bg-surface-raised shadow-[0_10px_24px_rgba(0,0,0,0.14)]"
       />
     </div>
   )

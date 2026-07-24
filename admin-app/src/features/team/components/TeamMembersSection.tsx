@@ -46,7 +46,7 @@ export const TeamMembersSection = ({
   }
 
   return (
-    <section className="admin-glass-panel-strong flex h-full flex-col overflow-hidden rounded-[28px] shadow-none">
+    <section className="admin-glass-panel-strong flex h-full flex-col overflow-hidden rounded-3xl shadow-none">
       <div className="flex flex-col gap-5 border-b border-[var(--color-border)]/70 px-6 pb-8 pt-6">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-2">
@@ -79,7 +79,7 @@ export const TeamMembersSection = ({
         <SearchBar
           options={FILTER_OPTIONS}
           onChange={handleSearchChange}
-          className="w-full rounded-2xl border border-[var(--color-border)]/70 bg-white/[0.04]"
+          className="w-full rounded-2xl border border-[var(--color-border)]/70 bg-surface-raised"
           inputClassName="w-full  px-3 py-2 text-sm"
           iconClassName="p-2 pr-3 cursor-pointer"
           placeholder="Search for members"
@@ -96,7 +96,7 @@ export const TeamMembersSection = ({
           />
         ))}
         {!filteredMembers.length ? (
-          <div className="rounded-2xl border border-dashed border-white/[0.08] bg-white/[0.03] px-4 py-8 text-center text-sm text-[var(--color-muted)]">
+          <div className="rounded-2xl border border-dashed border-border bg-surface-subtle px-4 py-8 text-center text-sm text-[var(--color-muted)]">
             No members found.
           </div>
         ) : null}

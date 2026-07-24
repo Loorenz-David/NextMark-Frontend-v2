@@ -24,7 +24,7 @@ export const ClientFormSectionLayout = ({
   bodyClassName,
   children,
 }: ClientFormSectionLayoutProps) => (
-  <section className="admin-glass-panel-strong flex h-full flex-col overflow-hidden rounded-[28px] shadow-none">
+  <section className="admin-glass-panel-strong flex h-full flex-col overflow-hidden rounded-3xl shadow-none">
     <div className="flex flex-col gap-5 border-b border-[var(--color-border)]/70 p-5 pb-6">
       <div className="flex items-start justify-between gap-4">
         <div>

@@ -37,14 +37,14 @@ const renderBlock = (block: SlateBlock, key: string): ReactNode => {
 
   if (block.type === 'title') {
     return (
-      <h4 key={key} className="text-sm font-semibold text-white/95">
+      <h4 key={key} className="text-sm font-semibold text-text">
         {children}
       </h4>
     )
   }
 
   return (
-    <p key={key} className="text-sm leading-6 text-white/72">
+    <p key={key} className="text-sm leading-6 text-muted">
       {children}
     </p>
   )

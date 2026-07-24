@@ -13,7 +13,7 @@ export const CreateRouteGroupFormZoneSelector = () => {
           className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
             formState.zone_id == null
               ? "border-[rgb(var(--color-light-blue-r),0.6)] bg-[rgb(var(--color-light-blue-r),0.08)]"
-              : "border-transparent bg-[var(--color-page)] hover:border-white/10"
+              : "border-transparent bg-[var(--color-page)] hover:border-border"
           }`}
           onClick={() => formSetters.setZoneId(null)}
         >
@@ -40,8 +40,8 @@ export const CreateRouteGroupFormZoneSelector = () => {
                     isSelected
                       ? "border-[rgb(var(--color-light-blue-r),0.6)] bg-[rgb(var(--color-light-blue-r),0.08)]"
                       : zone.disabled
-                        ? "cursor-not-allowed border-transparent bg-white/[0.03] opacity-55"
-                        : "border-transparent bg-[var(--color-page)] hover:border-white/10"
+                        ? "cursor-not-allowed border-transparent bg-surface-subtle opacity-55"
+                        : "border-transparent bg-[var(--color-page)] hover:border-border"
                   }`}
                   onClick={() =>
                     formSetters.setZoneId(isSelected ? null : zone.id, zone.name)

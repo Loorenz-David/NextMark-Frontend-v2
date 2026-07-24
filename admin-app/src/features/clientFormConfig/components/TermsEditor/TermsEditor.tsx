@@ -32,7 +32,7 @@ const toolbarButtonClass = (isActive: boolean) =>
   `rounded-full border px-3 py-1 text-xs transition-colors ${
     isActive
       ? 'border-[rgb(var(--color-light-blue-r),0.35)] bg-[rgb(var(--color-light-blue-r),0.14)] text-[rgb(var(--color-light-blue-r))]'
-      : 'border-white/[0.08] bg-white/[0.04] text-[var(--color-muted)] hover:text-[var(--color-text)]'
+      : 'border-border bg-surface-raised text-[var(--color-muted)] hover:text-[var(--color-text)]'
   }`
 
 type TermsEditorProps = {
@@ -76,7 +76,7 @@ const TermsEditorInstanceView = ({ value, onChange }: Omit<TermsEditorProps, 'ed
             {option.label}
           </button>
         ))}
-        <span className="mx-1 h-4 w-px bg-white/[0.08]" />
+        <span className="mx-1 h-4 w-px bg-surface-hover" />
         {MARK_OPTIONS.map((option) => (
           <button
             key={option.mark}

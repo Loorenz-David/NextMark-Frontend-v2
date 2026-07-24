@@ -34,7 +34,7 @@ export const ObjectLinkSelectorSelectedOverlay = ({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
-            className="relative z-10 flex max-h-[70vh] w-full max-w-[560px] flex-col overflow-hidden rounded-[28px] border border-white/[0.08] bg-[var(--color-page)] shadow-2xl"
+            className="relative z-10 flex max-h-[70vh] w-full max-w-[560px] flex-col overflow-hidden rounded-3xl border border-border bg-[var(--color-page)] shadow-2xl"
           >
             <div className="flex items-center justify-between border-b border-[var(--color-border)]/70 px-5 py-4">
               <div>
@@ -44,7 +44,7 @@ export const ObjectLinkSelectorSelectedOverlay = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-full border border-white/[0.08] bg-white/[0.04] p-2 text-[var(--color-muted)] hover:text-[var(--color-text)]"
+                className="rounded-full border border-border bg-surface-raised p-2 text-[var(--color-muted)] hover:text-[var(--color-text)]"
                 aria-label="Close selected values overlay"
               >
                 <CloseIcon className="h-4 w-4" />

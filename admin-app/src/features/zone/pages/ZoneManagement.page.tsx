@@ -319,17 +319,17 @@ export const ZoneManagementPage = () => {
   };
 
   return (
-    <div className="flex h-full w-full flex-col bg-[var(--color-primary)]/5 p-4 text-white md:flex-row md:gap-4">
+    <div className="flex h-full w-full flex-col bg-[var(--color-primary)]/5 p-4 text-text md:flex-row md:gap-4">
       <ZoneMapLayer zones={zoneList} selectedZoneId={selectedZoneId} />
 
-      <section className="w-full rounded-xl border border-white/10 bg-white/5 p-4 md:max-w-sm">
+      <section className="w-full rounded-xl border border-border bg-surface-raised p-4 md:max-w-sm">
         <h2 className="text-lg font-semibold">Zone Versions</h2>
         <div className="mt-3 flex gap-2">
           <input
             value={cityKeyDraft}
             onChange={(event) => setCityKeyDraft(event.target.value)}
             placeholder="city_key"
-            className="w-full rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-border bg-surface-raised px-3 py-2 text-sm"
           />
           <button
             type="button"
@@ -345,7 +345,7 @@ export const ZoneManagementPage = () => {
 
         <div className="mt-3 max-h-64 space-y-2 overflow-y-auto pr-1">
           {isLoadingVersions ? (
-            <p className="text-sm text-white/70">Loading versions...</p>
+            <p className="text-sm text-muted">Loading versions...</p>
           ) : (
             versions.map((version) => {
               const versionId =
@@ -358,7 +358,7 @@ export const ZoneManagementPage = () => {
                   className={`rounded-md border px-3 py-2 ${
                     isSelected
                       ? "border-[var(--color-light-blue)] bg-[var(--color-light-blue)]/15"
-                      : "border-white/10 bg-white/5"
+                      : "border-border bg-surface-raised"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -386,14 +386,14 @@ export const ZoneManagementPage = () => {
         </div>
       </section>
 
-      <section className="w-full rounded-xl border border-white/10 bg-white/5 p-4">
+      <section className="w-full rounded-xl border border-border bg-surface-raised p-4">
         <h2 className="text-lg font-semibold">Zones</h2>
         <div className="mt-3 flex gap-2">
           <input
             value={zoneNameDraft}
             onChange={(event) => setZoneNameDraft(event.target.value)}
             placeholder="Zone name"
-            className="w-full rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-border bg-surface-raised px-3 py-2 text-sm"
           />
           <button
             type="button"
@@ -409,9 +409,9 @@ export const ZoneManagementPage = () => {
 
         <div className="mt-3 max-h-40 space-y-2 overflow-y-auto pr-1">
           {isLoadingZones ? (
-            <p className="text-sm text-white/70">Loading zones...</p>
+            <p className="text-sm text-muted">Loading zones...</p>
           ) : zoneList.length === 0 ? (
-            <p className="text-sm text-white/70">No zones for this version.</p>
+            <p className="text-sm text-muted">No zones for this version.</p>
           ) : (
             zoneList.map((zone) => {
               const isSelected = zone.id === selectedZoneId;
@@ -423,7 +423,7 @@ export const ZoneManagementPage = () => {
                   className={`block w-full rounded-md border px-3 py-2 text-left text-sm ${
                     isSelected
                       ? "border-[var(--color-light-blue)] bg-[var(--color-light-blue)]/15"
-                      : "border-white/10 bg-white/5"
+                      : "border-border bg-surface-raised"
                   }`}
                 >
                   {zone.name || `Zone ${zone.id}`}
@@ -433,7 +433,7 @@ export const ZoneManagementPage = () => {
           )}
         </div>
 
-        <div className="mt-4 rounded-md border border-white/10 bg-black/10 p-3">
+        <div className="mt-4 rounded-md border border-border bg-shade p-3">
           <h3 className="mb-2 text-sm font-semibold">Zone Template</h3>
           {selectedZone ? (
             <ZoneTemplateForm
@@ -442,7 +442,7 @@ export const ZoneManagementPage = () => {
               onSubmit={handleSaveTemplate}
             />
           ) : (
-            <p className="text-sm text-white/70">
+            <p className="text-sm text-muted">
               Select a zone to edit template defaults.
             </p>
           )}

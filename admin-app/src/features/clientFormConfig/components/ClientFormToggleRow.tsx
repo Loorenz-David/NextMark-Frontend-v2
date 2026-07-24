@@ -19,7 +19,7 @@ export const ClientFormToggleRow = ({
   disabledHint,
 }: ClientFormToggleRowProps) => (
   <div
-    className={`flex items-center justify-between gap-4 rounded-[20px] border border-white/[0.08] bg-white/[0.04] px-4 py-3 ${
+    className={`flex items-center justify-between gap-4 rounded-3xl border border-border bg-surface-raised px-4 py-3 ${
       disabled ? 'opacity-60' : ''
     }`}
   >

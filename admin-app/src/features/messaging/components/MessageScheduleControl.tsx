@@ -172,7 +172,7 @@ export const MessageScheduleControl = ({
         </BasicButton>
       }
     >
-      <div className="admin-glass-popover w-[min(420px,92vw)] rounded-[24px] border border-[var(--color-border-accent)] shadow-xl">
+      <div className="admin-glass-popover w-[min(420px,92vw)] rounded-3xl border border-[var(--color-border-accent)] shadow-xl">
         <div className="flex items-start justify-between gap-3 border-b border-[var(--color-border)]/70 px-4 py-4">
           <div className="min-w-0 flex-1">
             <h3 className="text-base font-semibold text-[var(--color-text)]">
@@ -282,7 +282,7 @@ export const MessageScheduleControl = ({
                           className={`rounded-lg px-3 py-2 text-left text-sm transition ${
                             isSelected
                               ? 'bg-[var(--color-accent)]/10 font-semibold text-[var(--color-text)]'
-                              : 'text-[var(--color-muted)] hover:bg-black/5'
+                              : 'text-[var(--color-muted)] hover:bg-shade'
                           }`}
                         >
                           {unit.charAt(0).toUpperCase() + unit.slice(1)}
@@ -296,7 +296,7 @@ export const MessageScheduleControl = ({
           ) : null}
 
           {!isImmediate && isAtAnchor ? (
-            <div className="rounded-2xl border border-[var(--color-border)] bg-black/[0.02] px-4 py-3 text-sm text-[var(--color-muted)]">
+            <div className="rounded-2xl border border-[var(--color-border)] bg-shade px-4 py-3 text-sm text-[var(--color-muted)]">
               This message will be sent exactly when the delivery window starts.
             </div>
           ) : null}

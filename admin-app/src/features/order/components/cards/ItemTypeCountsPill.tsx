@@ -103,7 +103,7 @@ export const ItemTypeCountsPill = ({
         floatingClassName="z-[120]"
         reference={
           <div
-            className={`flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-2 py-1 ${
+            className={`flex items-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1 ${
               hasItemTypeCounts
                 ? "cursor-pointer transition-all duration-200 hover:border-[rgb(var(--color-light-blue-r),0.45)] hover:shadow-[0_0_0_1px_rgba(113,205,233,0.2),0_0_16px_rgba(72,180,194,0.18)]"
                 : ""
@@ -114,7 +114,7 @@ export const ItemTypeCountsPill = ({
           </div>
         }
       >
-        <div className="admin-glass-popover min-w-[11rem] rounded-lg border border-white/14 bg-[rgba(9,16,26,0.92)] px-3 py-2 shadow-[0_10px_24px_rgba(0,0,0,0.36)] backdrop-blur-md">
+        <div className="admin-glass-popover min-w-[11rem] rounded-lg border border-border bg-[rgba(9,16,26,0.92)] px-3 py-2 shadow-[0_10px_24px_rgba(0,0,0,0.36)] backdrop-blur-md">
           <div className="mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted)]/90">
             Item Types
           </div>

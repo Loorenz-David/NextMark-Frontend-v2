@@ -231,7 +231,7 @@ const buildGaussianCards = ({
           label: 'On time stops',
           displayValue: `${onTimeStops}`,
           progressValue: clampPercent(totalStops === 0 ? 0 : (onTimeStops / totalStops) * 100),
-          accentClassName: 'stroke-emerald-400',
+          accentClassName: 'stroke-success',
           animation: {
             numericValue: onTimeStops,
             valueType: 'integer',
@@ -244,7 +244,7 @@ const buildGaussianCards = ({
           label: 'Late stops',
           displayValue: `${lateStops}`,
           progressValue: clampPercent(totalStops === 0 ? 0 : (lateStops / totalStops) * 100),
-          accentClassName: 'stroke-amber-400',
+          accentClassName: 'stroke-warning',
           animation: {
             numericValue: lateStops,
             valueType: 'integer',
@@ -257,7 +257,7 @@ const buildGaussianCards = ({
           label: 'Early stops',
           displayValue: `${earlyStops}`,
           progressValue: clampPercent(totalStops === 0 ? 0 : (earlyStops / totalStops) * 100),
-          accentClassName: 'stroke-sky-400',
+          accentClassName: 'stroke-info',
           animation: {
             numericValue: earlyStops,
             valueType: 'integer',
@@ -310,7 +310,7 @@ const buildGaussianCards = ({
           label: 'Orders completed',
           displayValue: `${completedOrders}`,
           progressValue: clampPercent(totalStops === 0 ? 0 : (completedOrders / totalStops) * 100),
-          accentClassName: 'stroke-lime-400',
+          accentClassName: 'stroke-success',
           animation: {
             numericValue: completedOrders,
             valueType: 'integer',
@@ -323,7 +323,7 @@ const buildGaussianCards = ({
           label: 'Orders fail',
           displayValue: `${failedOrders}`,
           progressValue: clampPercent(totalStops === 0 ? 0 : (failedOrders / totalStops) * 100),
-          accentClassName: 'stroke-rose-400',
+          accentClassName: 'stroke-danger',
           animation: {
             numericValue: failedOrders,
             valueType: 'integer',

@@ -15,7 +15,7 @@ export const InternationalShippingOrdersPageContent = ({}: InternationalShipping
     <div className="flex h-full w-full flex-col items-center justify-center">
       <div className="text-center">
         <p className="text-lg font-semibold">International Shipping Orders</p>
-        <p className="text-sm text-gray-500">Feature implementation in progress</p>
+        <p className="text-sm text-muted">Feature implementation in progress</p>
       </div>
     </div>
   )

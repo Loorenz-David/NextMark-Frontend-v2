@@ -43,7 +43,7 @@ export const PlanDateFilterOverlay = ({
 
         
 
-        <div className="rounded-xl border border-dashed border-white/12 bg-transparent p-3 text-xs text-[var(--color-muted)]/85">
+        <div className="rounded-xl border border-dashed border-border bg-transparent p-3 text-xs text-[var(--color-muted)]/85">
           Additional filters will appear here.
         </div>
       </div>

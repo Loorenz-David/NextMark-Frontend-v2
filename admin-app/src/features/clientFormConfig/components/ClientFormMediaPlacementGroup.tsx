@@ -30,7 +30,7 @@ export const ClientFormMediaPlacementGroup = ({
   onDelete,
   onReorder,
 }: ClientFormMediaPlacementGroupProps) => (
-  <section className="flex flex-col gap-3 rounded-[24px] border border-white/[0.06] bg-white/[0.02] p-4">
+  <section className="flex flex-col gap-3 rounded-3xl border border-border-subtle bg-surface-subtle p-4">
     <div className="flex items-start justify-between gap-4">
       <div>
         <h3 className="text-sm font-semibold text-[var(--color-text)]">
@@ -43,7 +43,7 @@ export const ClientFormMediaPlacementGroup = ({
       <button
         type="button"
         onClick={() => onCreate(placement)}
-        className="shrink-0 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+        className="shrink-0 rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
       >
         Add image
       </button>

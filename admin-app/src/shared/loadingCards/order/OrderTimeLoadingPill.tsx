@@ -3,7 +3,7 @@ import { LoadingCardBase } from "..";
 export const OrderTimeLoadingPill = () => {
   return (
     <div
-      className="flex min-w-[72px] items-center justify-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-2 py-1"
+      className="flex min-w-[72px] items-center justify-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1"
       aria-label="Loading expected arrival time"
       aria-busy="true"
     >

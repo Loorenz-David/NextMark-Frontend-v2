@@ -52,7 +52,7 @@ function AiAnalyticsKpiComponent({ title, subtitle, data }: AiAnalyticsKpiProps)
     : null
 
   return (
-    <div className="admin-glass-panel admin-surface-compact flex min-h-[140px] flex-col gap-3 rounded-lg border border-white/10 p-4">
+    <div className="admin-glass-panel admin-surface-compact flex min-h-[140px] flex-col gap-3 rounded-lg border border-border p-4">
       <div className="flex flex-col gap-1">
         <div className="text-[0.68rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
           {title ?? data.metric_name ?? 'Metric'}
@@ -65,7 +65,7 @@ function AiAnalyticsKpiComponent({ title, subtitle, data }: AiAnalyticsKpiProps)
         {formatValue(data.value, data.display_value)}
       </div>
       {deltaLabel ? (
-        <div className="text-sm font-medium text-emerald-300">
+        <div className="text-sm font-medium text-success">
           {deltaLabel}
         </div>
       ) : null}

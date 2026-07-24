@@ -46,7 +46,7 @@ export const RouteGroupsPageLayout = ({
           onRequestClose={onRequestClose}
         />
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden md:flex-row">
-          <div className="min-h-0 min-w-0 border-b border-white/8 md:h-full md:border-b-0 md:border-r md:border-white/8">
+          <div className="min-h-0 min-w-0 border-b border-border-subtle md:h-full md:border-b-0 md:border-r md:border-border-subtle">
             <RouteGroupRail
               items={routeGroups}
               onClick={onRouteGroupClick}
@@ -110,11 +110,11 @@ const RouteGroupsPageScreen = ({
           onRequestClose={onRequestClose}
         />
         <div className="flex flex-1 items-center justify-center px-6 py-10">
-          <div className="max-w-lg rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-            <h3 className="text-lg font-semibold text-white">
+          <div className="max-w-lg rounded-xl border border-border bg-surface-raised p-6 text-center">
+            <h3 className="text-lg font-semibold text-text">
               No Route Groups Yet
             </h3>
-            <p className="mt-2 text-sm text-white/70">
+            <p className="mt-2 text-sm text-muted">
               This plan has no route groups yet. Create one now by selecting a
               zone or leaving it as a no-zone group.
             </p>

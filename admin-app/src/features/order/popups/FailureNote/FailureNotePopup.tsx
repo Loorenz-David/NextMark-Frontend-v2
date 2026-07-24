@@ -88,7 +88,7 @@ export const FailureNotePopup = ({
         <FeaturePopupBody className="space-y-4   h-full flex flex-col bg-[var(--color-ligth-bg)]">
           <FailureNoteComposer value={noteValue} onValueChange={setNoteValue} />
 
-          <div className="flex justify-end mt-auto gap-2 border-t px-4 pt-4 pb-4 border-white/10 bg-[var(--color-page)]">
+          <div className="flex justify-end mt-auto gap-2 border-t px-4 pt-4 pb-4 border-border bg-[var(--color-page)]">
             <BasicButton
               params={{
                 variant: "primary",

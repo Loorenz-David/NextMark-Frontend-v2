@@ -40,7 +40,7 @@ export const ZoneTemplateForm = ({
       }}
     >
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           Template Name
           <input
             value={fields.template_name}
@@ -50,11 +50,11 @@ export const ZoneTemplateForm = ({
                 template_name: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
             placeholder="Downtown Vans"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           Default Facility ID
           <input
             value={fields.default_facility_id}
@@ -64,11 +64,11 @@ export const ZoneTemplateForm = ({
                 default_facility_id: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
             placeholder="5"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           Max Orders per Route
           <input
             value={fields.max_orders_per_route}
@@ -78,11 +78,11 @@ export const ZoneTemplateForm = ({
                 max_orders_per_route: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
             placeholder="20"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           Max Vehicles
           <input
             value={fields.max_vehicles}
@@ -92,11 +92,11 @@ export const ZoneTemplateForm = ({
                 max_vehicles: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
             placeholder="4"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           Window Start
           <input
             type="time"
@@ -107,10 +107,10 @@ export const ZoneTemplateForm = ({
                 operating_window_start: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           Window End
           <input
             type="time"
@@ -121,10 +121,10 @@ export const ZoneTemplateForm = ({
                 operating_window_end: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           ETA Tolerance Seconds
           <input
             value={fields.eta_tolerance_seconds}
@@ -134,11 +134,11 @@ export const ZoneTemplateForm = ({
                 eta_tolerance_seconds: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
             placeholder="300"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           Route End Strategy
           <input
             value={fields.default_route_end_strategy}
@@ -148,11 +148,11 @@ export const ZoneTemplateForm = ({
                 default_route_end_strategy: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
             placeholder="round_trip"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           Vehicle Capabilities
           <input
             value={fields.vehicle_capabilities_required}
@@ -162,11 +162,11 @@ export const ZoneTemplateForm = ({
                 vehicle_capabilities_required: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
             placeholder="cold_chain, fragile"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm text-white/80">
+        <label className="flex flex-col gap-1 text-sm text-muted">
           Preferred Vehicle IDs
           <input
             value={fields.preferred_vehicle_ids}
@@ -176,7 +176,7 @@ export const ZoneTemplateForm = ({
                 preferred_vehicle_ids: event.target.value,
               }))
             }
-            className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-border bg-surface-raised px-3 py-2 text-sm text-text"
             placeholder="10, 11"
           />
         </label>

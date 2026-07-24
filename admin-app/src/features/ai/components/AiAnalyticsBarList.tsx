@@ -82,10 +82,10 @@ function AnalyticsTooltip({
 
   const datum = payload[0].payload
   return (
-    <div className="rounded-md border border-white/10 bg-[#0f172a]/95 px-2 py-1.5 text-xs text-white shadow-xl">
+    <div className="rounded-md border border-border bg-[#0f172a]/95 px-2 py-1.5 text-xs text-text shadow-xl">
       <div className="font-medium">{datum.label}</div>
-      <div className="text-white/80">{formatValue(datum.value, datum.displayValue)}</div>
-      {datum.hint ? <div className="mt-1 text-white/60">{datum.hint}</div> : null}
+      <div className="text-muted">{formatValue(datum.value, datum.displayValue)}</div>
+      {datum.hint ? <div className="mt-1 text-muted">{datum.hint}</div> : null}
     </div>
   )
 }
@@ -112,7 +112,7 @@ function AiAnalyticsBarListComponent({ data, meta }: AiAnalyticsBarListProps) {
   )
 
   return (
-    <div className="admin-glass-panel admin-surface-compact flex flex-col gap-3 rounded-lg border border-white/10 p-4">
+    <div className="admin-glass-panel admin-surface-compact flex flex-col gap-3 rounded-lg border border-border p-4">
       <svg className="h-0 w-0" aria-hidden>
         <defs>
           <linearGradient id="aiBarGradient" x1="0" x2="1" y1="0" y2="0">

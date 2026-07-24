@@ -27,7 +27,7 @@ export const RouteGroupRail = ({
             ariaLabel: "Create route group",
           }}
         >
-          <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-white/[0.03]">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-surface-subtle">
             <PlusIcon className="h-4 w-4 stroke-[var(--color-light-blue)]" />
           </span>
           <span className="text-[10px] font-medium text-[var(--color-text)]">

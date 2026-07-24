@@ -20,7 +20,7 @@ export const VehicleSectionLayout = ({
   bodyClassName,
   children,
 }: VehicleSectionLayoutProps) => (
-  <section className="admin-glass-panel-strong flex h-full flex-col overflow-hidden rounded-[28px] shadow-none">
+  <section className="admin-glass-panel-strong flex h-full flex-col overflow-hidden rounded-3xl shadow-none">
     <div className="flex flex-col gap-6 border-b border-[var(--color-border)]/70 p-5 pb-6">
       <div className="flex items-center justify-between">
         <div>
@@ -34,7 +34,7 @@ export const VehicleSectionLayout = ({
 
       <SearchBar
         onChange={(value) => onSearch(value.input ?? '')}
-        className="w-full rounded-full border border-[var(--color-border)]/70 bg-white/[0.04] px-3 py-2 text-sm"
+        className="w-full rounded-full border border-[var(--color-border)]/70 bg-surface-raised px-3 py-2 text-sm"
         placeholder="search vehicles"
       />
     </div>

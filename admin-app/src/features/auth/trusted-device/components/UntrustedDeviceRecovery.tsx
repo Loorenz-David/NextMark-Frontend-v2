@@ -34,7 +34,7 @@ export const UntrustedDeviceRecovery = ({
     <button
       type="button"
       onClick={handleClear}
-      className="cursor-pointer self-start rounded-lg border border-rose-200/30 px-3 py-1.5 text-xs font-medium text-rose-100 transition-colors hover:border-rose-200/60 hover:bg-rose-400/10"
+      className="cursor-pointer self-start rounded-lg border border-danger-border px-3 py-1.5 text-xs font-medium text-danger transition-colors hover:border-danger-border hover:bg-danger-bg"
     >
       Clear device credential and sign in normally
     </button>

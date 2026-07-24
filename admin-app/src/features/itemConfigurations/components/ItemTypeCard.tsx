@@ -37,7 +37,7 @@ export const ItemTypeCard = ({ item, onEdit }: ItemTypeCardProps) => {
   }
 
   return (
-    <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] px-5 py-4 shadow-none">
+    <div className="rounded-3xl border border-border bg-surface-raised px-5 py-4 shadow-none">
       <div
         role="button"
         onClick={() => setIsExpanded((prev) => !prev)}
@@ -53,7 +53,7 @@ export const ItemTypeCard = ({ item, onEdit }: ItemTypeCardProps) => {
               event.stopPropagation()
               onEdit(item.client_id)
             }}
-            className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+            className="rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
           >
             Edit
           </button>
@@ -61,13 +61,13 @@ export const ItemTypeCard = ({ item, onEdit }: ItemTypeCardProps) => {
             onConfirm={handleDelete}
             deleteContent="Delete"
             confirmContent="Confirm"
-            deleteClassName="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-red-400 hover:text-red-300"
-            confirmClassName="rounded-full px-3 py-1 text-xs text-white"
+            deleteClassName="rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-danger hover:text-danger"
+            confirmClassName="rounded-full px-3 py-1 text-xs text-text"
           />
         </div>
       </div>
       {isExpanded ? (
-        <div className="mt-4 border-t border-white/[0.06] pt-4 text-xs text-[var(--color-muted)]">
+        <div className="mt-4 border-t border-border-subtle pt-4 text-xs text-[var(--color-muted)]">
           Properties: {item.properties?.length ?? 0}
         </div>
       ) : null}

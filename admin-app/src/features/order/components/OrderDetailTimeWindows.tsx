@@ -28,7 +28,7 @@ export const OrderDetailTimeWindows = ({ order, headerRight }: OrderDetailTimeWi
 
   return (
     <div
-      className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-[26px] border-white/10"
+      className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-3xl border-border"
       style={{ boxShadow: 'none' }}
     >
       <div className="admin-glass-divider flex items-center justify-between gap-3 border-b px-5 py-4">
@@ -67,7 +67,7 @@ export const OrderDetailTimeWindows = ({ order, headerRight }: OrderDetailTimeWi
             )
           })
           : (
-          <div className="flex h-full items-center justify-center rounded-[20px] border border-dashed border-white/10 bg-white/[0.025]">
+          <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle">
             <span className="text-sm text-[var(--color-muted)]">
               No time windows set.
             </span>

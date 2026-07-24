@@ -24,7 +24,7 @@ export const ObjectLinkSelectorOptionCard = ({
             event.stopPropagation()
             onRemove(item)
           }}
-          className="shrink-0 rounded-full border border-white/[0.08] bg-white/[0.04] p-2 text-[var(--color-muted)] hover:text-[var(--color-text)]"
+          className="shrink-0 rounded-full border border-border bg-surface-raised p-2 text-[var(--color-muted)] hover:text-[var(--color-text)]"
           aria-label={`Remove ${item.label}`}
         >
           <CloseIcon className="h-3 w-3" />
@@ -39,7 +39,7 @@ export const ObjectLinkSelectorOptionCard = ({
         className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${
           selected
             ? 'border-[rgb(var(--color-light-blue-r),0.28)] bg-[rgb(var(--color-light-blue-r),0.12)]'
-            : 'border-white/[0.08] bg-white/[0.04]'
+            : 'border-border bg-surface-raised'
         }`}
       >
         {cardContent}
@@ -54,7 +54,7 @@ export const ObjectLinkSelectorOptionCard = ({
       className={`flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors ${
         selected
           ? 'border-[rgb(var(--color-light-blue-r),0.28)] bg-[rgb(var(--color-light-blue-r),0.12)]'
-          : 'border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.07]'
+          : 'border-border bg-surface-raised hover:bg-surface-hover'
       }`}
       data-popover-close="true"
     >

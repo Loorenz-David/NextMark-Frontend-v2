@@ -47,10 +47,10 @@ export const TermsVersionList = ({
         return (
           <div
             key={version.client_id}
-            className={`flex flex-col gap-2 rounded-[20px] border px-4 py-3 ${
+            className={`flex flex-col gap-2 rounded-3xl border px-4 py-3 ${
               isSource
                 ? 'border-[rgb(var(--color-light-blue-r),0.35)] bg-[rgb(var(--color-light-blue-r),0.08)]'
-                : 'border-white/[0.08] bg-white/[0.04]'
+                : 'border-border bg-surface-raised'
             }`}
           >
             <div className="flex items-center justify-between gap-3">
@@ -59,7 +59,7 @@ export const TermsVersionList = ({
                   Version {version.version_number}
                 </p>
                 {version.is_active ? (
-                  <span className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-emerald-300/85">
+                  <span className="rounded-full border border-success-border bg-success-bg px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-success">
                     Live
                   </span>
                 ) : null}
@@ -67,7 +67,7 @@ export const TermsVersionList = ({
               <button
                 type="button"
                 onClick={() => onLoadVersion(version)}
-                className="shrink-0 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-[0.65rem] text-[var(--color-muted)] hover:text-[var(--color-text)]"
+                className="shrink-0 rounded-full border border-border bg-surface-raised px-3 py-1 text-[0.65rem] text-[var(--color-muted)] hover:text-[var(--color-text)]"
               >
                 Load into editor
               </button>

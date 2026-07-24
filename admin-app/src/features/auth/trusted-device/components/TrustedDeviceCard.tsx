@@ -48,7 +48,7 @@ export const TrustedDeviceCard = ({
   const isRevoked = Boolean(device.revoked_at) || !device.is_active
 
   return (
-    <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] px-5 py-4 shadow-none">
+    <div className="rounded-3xl border border-border bg-surface-raised px-5 py-4 shadow-none">
       <div className="flex items-start justify-between gap-3">
         <button
           type="button"
@@ -65,7 +65,7 @@ export const TrustedDeviceCard = ({
               </span>
             ) : null}
             {isRevoked ? (
-              <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-semibold text-red-200">
+              <span className="rounded-full bg-danger-bg px-2 py-0.5 text-[11px] font-semibold text-danger">
                 {device.revoked_at ? 'Revoked' : 'Inactive'}
               </span>
             ) : null}
@@ -81,14 +81,14 @@ export const TrustedDeviceCard = ({
             <button
               type="button"
               onClick={() => onRotate(device.client_id)}
-              className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+              className="rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
             >
               Rotate secret
             </button>
             <button
               type="button"
               onClick={() => onDelete(device.client_id)}
-              className="rounded-full border border-red-400/20 bg-red-500/10 px-3 py-1 text-xs text-red-200 hover:text-red-100"
+              className="rounded-full border border-danger-border bg-danger-bg px-3 py-1 text-xs text-danger hover:text-danger"
             >
               {isThisBrowser ? 'Un-trust this browser' : 'Remove'}
             </button>
@@ -97,7 +97,7 @@ export const TrustedDeviceCard = ({
       </div>
 
       {isExpanded ? (
-        <div className="mt-4 grid gap-2 border-t border-white/[0.06] pt-4 text-xs text-[var(--color-muted)]">
+        <div className="mt-4 grid gap-2 border-t border-border-subtle pt-4 text-xs text-[var(--color-muted)]">
           <div>Device id: {device.client_id}</div>
           <div>Last used: {formatDate(device.last_used_at)}</div>
           <div>Status: {isRevoked ? (device.revoked_at ? 'Revoked' : 'Inactive') : 'Active'}</div>

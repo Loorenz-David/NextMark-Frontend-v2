@@ -38,13 +38,13 @@ export const OrderCard = ({
       className={`admin-glass-panel admin-surface-compact group relative flex flex-col gap-2.5 overflow-visible rounded-lg p-4 transition-all duration-200 ${
         isHovered
           ? "border-[rgb(var(--color-light-blue-r),0.7)] shadow-[0_18px_42px_rgba(45,95,170,0.22)]"
-          : "border-white/10 hover:border-white/18 hover:bg-white/[0.08]"
+          : "border-border hover:border-border-accent hover:bg-surface-hover"
       }`}
       onClick={() => onOpen?.(order)}
     >
       <OrderMissingInfoNotifier order={order} />
       {order.archive_at && (
-        <div className="absolute right-1 -top-3 z-20 flex items-center rounded-full border border-amber-300/20 bg-amber-500/50 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-amber-100 backdrop-blur-md">
+        <div className="absolute right-1 -top-3 z-20 flex items-center rounded-full border border-warning-border bg-amber-500/50 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-warning backdrop-blur-md">
           Archived
         </div>
       )}
@@ -61,7 +61,7 @@ export const OrderCard = ({
           </div>
           {external_source && (
             <div className="flex items-center justify-center">
-              <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
+              <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
                 {external_source}
               </span>
             </div>
@@ -74,12 +74,12 @@ export const OrderCard = ({
                 onConfirm={() => onUnarchive?.(order)}
                 confirmOverLay={"bg-green-700"}
                 deleteContent={
-                  <div className="rounded-lg border border-white/10 bg-white/[0.05] px-1.5 py-1.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)]">
+                  <div className="rounded-lg border border-border bg-surface-raised px-1.5 py-1.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)]">
                     <SendBackIcon className="h-4 w-4 text-[var(--color-muted)]/90" />
                   </div>
                 }
                 confirmContent={"Confirm unarchive"}
-                confirmClassName="text-white text-[10px] px-2 py-1 rounded-md bg-green-600"
+                confirmClassName="text-success-on-solid text-[10px] px-2 py-1 rounded-md bg-success-solid"
                 duration={4000}
               />
             </div>
@@ -89,12 +89,12 @@ export const OrderCard = ({
                 <ConfirmActionButton
                   onConfirm={() => onArchive?.(order)}
                   deleteContent={
-                    <div className="rounded-lg border border-white/10 bg-white/[0.05] px-1.5 py-1.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)]">
+                    <div className="rounded-lg border border-border bg-surface-raised px-1.5 py-1.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)]">
                       <ArchiveOrderIcon className="h-4 w-4 text-[var(--color-muted)]/90" />
                     </div>
                   }
                   confirmContent={"Confirm archive"}
-                  confirmClassName="text-white text-[10px] px-2 py-1 rounded-md bg-red-500"
+                  confirmClassName="text-danger-on-solid text-[10px] px-2 py-1 rounded-md bg-danger-solid"
                   duration={4000}
                 />
               </div>

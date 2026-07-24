@@ -18,7 +18,7 @@ export const TeamMemberCard = ({ member, onKick, showKick }: TeamMemberCardProps
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
-    <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] px-5 py-4 shadow-none">
+    <div className="rounded-3xl border border-border bg-surface-raised px-5 py-4 shadow-none">
       <button
         type="button"
         onClick={() => setIsExpanded((prev) => !prev)}
@@ -39,12 +39,12 @@ export const TeamMemberCard = ({ member, onKick, showKick }: TeamMemberCardProps
       </button>
 
       {isExpanded ? (
-        <div className="mt-5 flex flex-col gap-3 border-t border-white/[0.06] pt-4 text-xs text-[var(--color-text)]">
-          <div className="flex items-center justify-between rounded-2xl border border-white/[0.05] bg-white/[0.03] px-4 py-3">
+        <div className="mt-5 flex flex-col gap-3 border-t border-border-subtle pt-4 text-xs text-[var(--color-text)]">
+          <div className="flex items-center justify-between rounded-2xl border border-border-subtle bg-surface-subtle px-4 py-3">
             <span className="text-[var(--color-muted)]">Email</span>
             <span className="text-right">{member.email}</span>
           </div>
-          <div className="flex items-center justify-between rounded-2xl border border-white/[0.05] bg-white/[0.03] px-4 py-3">
+          <div className="flex items-center justify-between rounded-2xl border border-border-subtle bg-surface-subtle px-4 py-3">
             <span className="text-[var(--color-muted)]">Phone</span>
             <span className="text-right">
               {member.phone_number ? formatPhone(member.phone_number) : '—'}
@@ -55,7 +55,7 @@ export const TeamMemberCard = ({ member, onKick, showKick }: TeamMemberCardProps
               <BasicButton
                 params={{
                   variant: 'secondary',
-                  className: 'border-red-400/20 bg-red-500/[0.06] text-red-100 hover:bg-red-500/[0.12]',
+                  className: 'border-danger-border bg-danger-bg text-danger hover:bg-danger-bg',
                   onClick: () => {
                     if (member.id) {
                       onKick(member.id)

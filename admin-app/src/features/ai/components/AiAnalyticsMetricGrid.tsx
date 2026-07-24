@@ -23,11 +23,11 @@ function getMetricValue(metric: AiAnalyticsMetricGridData['metrics'][number]): s
 }
 
 function getTrendClassName(trend?: string, emphasis?: string): string {
-  if (emphasis === 'critical') return 'text-rose-300'
-  if (emphasis === 'warning') return 'text-amber-300'
-  if (emphasis === 'positive') return 'text-emerald-300'
-  if (trend === 'up') return 'text-emerald-300'
-  if (trend === 'down') return 'text-amber-300'
+  if (emphasis === 'critical') return 'text-danger'
+  if (emphasis === 'warning') return 'text-warning'
+  if (emphasis === 'positive') return 'text-success'
+  if (trend === 'up') return 'text-success'
+  if (trend === 'down') return 'text-warning'
   return 'text-[var(--color-muted)]'
 }
 
@@ -37,7 +37,7 @@ function AiAnalyticsMetricGridComponent({ data }: AiAnalyticsMetricGridProps) {
       {data.metrics.map((metric) => (
         <div
           key={metric.id}
-          className="admin-glass-panel admin-surface-compact flex min-h-[110px] flex-col gap-2 rounded-lg border border-white/10 p-4"
+          className="admin-glass-panel admin-surface-compact flex min-h-[110px] flex-col gap-2 rounded-lg border border-border p-4"
           title={metric.hint ?? metric.description}
         >
           <div className="text-[0.68rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">

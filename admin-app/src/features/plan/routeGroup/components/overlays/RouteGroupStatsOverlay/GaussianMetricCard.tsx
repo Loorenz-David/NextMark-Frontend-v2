@@ -149,9 +149,9 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
             }
           : undefined
       }
-      className="admin-backdrop-blur-md pointer-events-auto relative flex min-h-[150px] min-w-0 w-full flex-col rounded-2xl border border-white/45 bg-black/28 p-4 pt-3 text-left text-sm text-white transition-colors hover:bg-black/34"
+      className="admin-backdrop-blur-md pointer-events-auto relative flex min-h-[150px] min-w-0 w-full flex-col rounded-2xl border border-border-emphasis bg-overlay p-4 pt-3 text-left text-sm text-text transition-colors hover:bg-overlay"
     >
-      <ChevronDownIcon className="-rotate-90 absolute right-3 top-[10px] h-4 w-4 text-white/70" />
+      <ChevronDownIcon className="-rotate-90 absolute right-3 top-[10px] h-4 w-4 text-muted" />
 
       <div className="flex gap-1 pr-6">
         {card.faces.map((face, index) => (
@@ -209,7 +209,7 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
                       : {}),
                   }}
                   transition={{ duration: progressDuration, ease: [0.22, 1, 0.36, 1] }}
-                  className={activeFace.useCapacityColor ? undefined : cn('stroke-lime-400', activeFace.accentClassName)}
+                  className={activeFace.useCapacityColor ? undefined : cn('stroke-success', activeFace.accentClassName)}
                 />
               </svg>
 
@@ -219,7 +219,7 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
                   initial={prefersReducedMotion ? undefined : { scale: 1.1 }}
                   animate={prefersReducedMotion ? undefined : { scale: 1 }}
                   transition={prefersReducedMotion ? undefined : { duration: 0.26, ease: 'easeOut' }}
-                  className={`text-center text-sm font-semibold leading-tight ${isEstimated ? 'text-white/82' : 'text-white'}`}
+                  className={`text-center text-sm font-semibold leading-tight ${isEstimated ? 'text-muted' : 'text-text'}`}
                 >
                   {activeFace.displayValue} 
                 </motion.span>
@@ -229,17 +229,17 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
 
           {activeFace.subDisplayValue ? (
             <div className="-mt-1 flex justify-center">
-              <span className="text-center text-[10px] font-medium text-white/60">
+              <span className="text-center text-[10px] font-medium text-muted">
                 {activeFace.subDisplayValue}
               </span>
             </div>
           ) : null}
 
           <div className="flex justify-center">
-            <div className="text-center text-xs font-semibold text-white">
+            <div className="text-center text-xs font-semibold text-text">
               {activeFace.label}
               {isEstimated ? (
-                <span className="ml-1 rounded-full border border-white/22 px-1.5 py-[1px] text-[9px] uppercase tracking-[0.08em] text-white/62">
+                <span className="ml-1 rounded-full border border-border-accent px-1.5 py-[1px] text-[9px] uppercase tracking-[0.08em] text-muted">
                   Est.
                 </span>
               ) : null}

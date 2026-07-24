@@ -15,7 +15,7 @@ export const ConfirmActionPopup = ({ onConfirm, onCancel, message }: PropsConfir
         transition={{ duration: 0.2 }}
         onClick={onCancel}
     >
-      <div className="admin-glass-popover flex max-w-[min(520px,calc(100vw-48px))] flex-col gap-5 rounded-[28px] p-7 shadow-2xl">
+      <div className="admin-glass-popover flex max-w-[min(520px,calc(100vw-48px))] flex-col gap-5 rounded-3xl p-7 shadow-2xl">
         <p className="text-lg text-[var(--color-text)]"> {
         message 
         ? message 

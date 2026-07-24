@@ -16,7 +16,7 @@ export const MemberSelectorMemberCard = ({
     <li>
       <button
         type="button"
-        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left hover:bg-white/[0.08]"
+        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left hover:bg-surface-hover"
         onMouseDown={(event) => event.preventDefault()}
         onClick={() => onSelectMember(teamMember)}
       >
@@ -26,7 +26,7 @@ export const MemberSelectorMemberCard = ({
           <span className="text-xs text-[var(--color-muted)]">{teamMember.email}</span>
         </div>
         {isSelected && (
-          <div className="ml-auto h-2 w-2 rounded-full bg-green-600" />
+          <div className="ml-auto h-2 w-2 rounded-full bg-success-solid" />
         )}
       </button>
     </li>

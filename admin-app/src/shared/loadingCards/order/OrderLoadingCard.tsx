@@ -9,7 +9,7 @@ type OrderLoadingCardProps = {
 
 const RouteGroupOrderLoadingCard = () => {
   return (
-    <div className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-hidden rounded-lg border border-white/10 p-4 pl-2">
+    <div className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-hidden rounded-lg border border-border p-4 pl-2">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_26%,transparent_72%,rgba(0,0,0,0.04))]" />
 
       <div className="relative z-10 flex w-full gap-3">
@@ -27,7 +27,7 @@ const RouteGroupOrderLoadingCard = () => {
           <div className="flex w-full items-center justify-between gap-3">
             <LoadingCardBase className="h-3 w-32 rounded-full" />
             <div className="flex items-center justify-end gap-3">
-              <div className="flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-2 py-1">
+              <div className="flex items-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1">
                 <LoadingCardBase className="h-3 w-3 rounded-full" />
                 <LoadingCardBase className="h-3 w-4 rounded-full" />
               </div>
@@ -42,7 +42,7 @@ const RouteGroupOrderLoadingCard = () => {
 
 const OrderMainLoadingCard = () => {
   return (
-    <div className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-hidden rounded-lg border border-white/10 p-4">
+    <div className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-hidden rounded-lg border border-border p-4">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
 
       <div className="relative z-10 flex items-start justify-between gap-3">
@@ -61,7 +61,7 @@ const OrderMainLoadingCard = () => {
 
       <div className="relative z-10 flex items-center justify-between gap-3 text-xs text-[var(--color-muted)]">
         <LoadingCardBase className="h-3 w-36 rounded-full" />
-        <div className="flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-2 py-1">
+        <div className="flex shrink-0 items-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1">
           <LoadingCardBase className="h-3 w-3 rounded-full" />
           <LoadingCardBase className="h-3 w-5 rounded-full" />
         </div>

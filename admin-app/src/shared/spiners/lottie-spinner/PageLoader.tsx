@@ -64,7 +64,7 @@ export function LottieSpinner({
       </div>
 
       {!inline && (
-        <span className="font-[500] text-gray-500">
+        <span className="font-[500] text-muted">
           {loadingText}
         </span>
       )}

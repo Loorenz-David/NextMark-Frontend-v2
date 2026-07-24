@@ -11,7 +11,7 @@ export const RouteStopGroupDragOverlay = ({
   firstStopOrder,
   lastStopOrder,
 }: RouteStopGroupDragOverlayProps) => (
-  <div className="rounded-xl border border-white/10 admin-glass-panel admin-surface-compact px-4 py-3 ">
+  <div className="rounded-xl border border-border admin-glass-panel admin-surface-compact px-4 py-3 ">
     <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
       Moving Stop Group
     </p>

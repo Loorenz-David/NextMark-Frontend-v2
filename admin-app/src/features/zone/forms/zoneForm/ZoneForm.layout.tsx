@@ -43,7 +43,7 @@ export const ZoneFormLayout = ({
             type="button"
             onClick={onDelete}
             disabled={isDeleting || isSubmitting}
-            className="rounded-xl border border-red-500/70 px-3 py-1.5 text-sm text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-xl border border-danger-border px-3 py-1.5 text-sm text-danger disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isDeleting ? "Deleting..." : "Delete Zone"}
           </button>

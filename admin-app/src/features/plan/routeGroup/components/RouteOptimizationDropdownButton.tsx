@@ -86,7 +86,7 @@ export const RouteOptimizationDropdownButton = ({
                 <button
                   key={solution.client_id}
                   type="button"
-                  className="flex w-full items-center justify-between rounded-[16px] px-3 py-2.5 transition-colors hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-70"
+                  className="flex w-full items-center justify-between rounded-2xl px-3 py-2.5 transition-colors hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-70"
                   disabled={isLoadingPreview}
                   onClick={() => solution.id && handlePreviewRouteSolution(solution.id)}
                 >

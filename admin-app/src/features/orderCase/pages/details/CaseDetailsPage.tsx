@@ -97,7 +97,7 @@ const CaseDetailsPageContent = () => {
 
   if (!orderCase) {
     return (
-      <div className="m-4 rounded-[22px] border border-[var(--color-border)] bg-[rgba(14,22,23,0.72)] p-4 text-sm text-[var(--color-muted)] backdrop-blur-xl">
+      <div className="m-4 rounded-3xl border border-[var(--color-border)] bg-[rgba(14,22,23,0.72)] p-4 text-sm text-[var(--color-muted)] backdrop-blur-xl">
         {isRefreshing ? 'Loading case details...' : 'Case not found.'}
       </div>
     )
@@ -114,7 +114,7 @@ const CaseDetailsPageContent = () => {
 
       <div ref={chatScrollRef} className="flex-1 overflow-y-auto scroll-thin px-5 pb-2 pt-3" onScroll={handleScroll}>
         {isRefreshing ? (
-          <div className="mb-3 rounded-[20px] border border-[var(--color-border)] bg-[rgba(14,22,23,0.72)] px-4 py-3 text-xs text-[var(--color-muted)] backdrop-blur-xl">
+          <div className="mb-3 rounded-3xl border border-[var(--color-border)] bg-[rgba(14,22,23,0.72)] px-4 py-3 text-xs text-[var(--color-muted)] backdrop-blur-xl">
             Refreshing case details...
           </div>
         ) : null}
@@ -152,7 +152,7 @@ export const CaseDetailsPage = ({ payload, onClose }: StackComponentProps<OrderC
 
   if (!orderCaseClientId && typeof orderCaseId !== 'number') {
     return (
-      <div className="m-4 rounded-[22px] border border-[var(--color-border)] bg-[rgba(14,22,23,0.72)] p-4 text-sm text-[var(--color-muted)] backdrop-blur-xl">
+      <div className="m-4 rounded-3xl border border-[var(--color-border)] bg-[rgba(14,22,23,0.72)] p-4 text-sm text-[var(--color-muted)] backdrop-blur-xl">
         Missing case id.
       </div>
     )

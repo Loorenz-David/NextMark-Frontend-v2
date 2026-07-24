@@ -25,7 +25,7 @@ export const SecretRevealPanel = ({ secret, clientId }: SecretRevealPanelProps) 
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-lg border border-amber-400/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+      <div className="rounded-lg border border-warning-border bg-warning-bg px-3 py-2 text-xs text-warning">
         This secret is shown once and is now stored on this browser. Copy it only if you
         need to move it to another machine — it cannot be retrieved again (rotate to
         replace it).
@@ -34,7 +34,7 @@ export const SecretRevealPanel = ({ secret, clientId }: SecretRevealPanelProps) 
       {clientId ? (
         <label className="flex flex-col gap-1 text-xs text-[var(--color-muted)]">
           Device id
-          <div className="rounded-lg border border-white/10 bg-[var(--color-page)] px-3 py-2 font-mono text-xs text-[var(--color-text)] break-all">
+          <div className="rounded-lg border border-border bg-[var(--color-page)] px-3 py-2 font-mono text-xs text-[var(--color-text)] break-all">
             {clientId}
           </div>
         </label>
@@ -42,7 +42,7 @@ export const SecretRevealPanel = ({ secret, clientId }: SecretRevealPanelProps) 
 
       <label className="flex flex-col gap-1 text-xs text-[var(--color-muted)]">
         Device secret
-        <div className="rounded-lg border border-white/10 bg-[var(--color-page)] px-3 py-2 font-mono text-xs text-[var(--color-text)] break-all">
+        <div className="rounded-lg border border-border bg-[var(--color-page)] px-3 py-2 font-mono text-xs text-[var(--color-text)] break-all">
           {secret}
         </div>
       </label>
@@ -50,7 +50,7 @@ export const SecretRevealPanel = ({ secret, clientId }: SecretRevealPanelProps) 
       <button
         type="button"
         onClick={() => void copy()}
-        className="self-start rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+        className="self-start rounded-full border border-border bg-surface-raised px-3 py-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
       >
         {copied ? 'Copied' : 'Copy secret'}
       </button>

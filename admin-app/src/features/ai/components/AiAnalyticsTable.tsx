@@ -26,10 +26,10 @@ function getColumnAlignmentClassName(align?: string): string {
 
 function AiAnalyticsTableComponent({ data }: AiAnalyticsTableProps) {
   return (
-    <div className="admin-glass-panel admin-surface-compact overflow-hidden rounded-lg border border-white/10">
+    <div className="admin-glass-panel admin-surface-compact overflow-hidden rounded-lg border border-border">
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse text-left text-xs text-[var(--color-text)]">
-          <thead className="bg-white/[0.04] text-[0.65rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <thead className="bg-surface-raised text-[0.65rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
             <tr>
               {data.columns.map((column) => (
                 <th
@@ -45,7 +45,7 @@ function AiAnalyticsTableComponent({ data }: AiAnalyticsTableProps) {
             {data.rows.map((row, rowIndex) => (
               <tr
                 key={(typeof row.id === 'string' && row.id) || `${rowIndex}`}
-                className="border-t border-white/8 text-[var(--color-text)]/92"
+                className="border-t border-border-subtle text-[var(--color-text)]/92"
               >
                 {data.columns.map((column) => (
                   <td

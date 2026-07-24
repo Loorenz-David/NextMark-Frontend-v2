@@ -27,7 +27,7 @@ export const TeamNameEditorRow = ({
       {isEditing ? (
         <>
           <input
-            className="rounded-xl border border-white/[0.08] bg-white/[0.05] px-3 py-1.5 text-xs text-[var(--color-text)] outline-none"
+            className="rounded-xl border border-border bg-surface-raised px-3 py-1.5 text-xs text-[var(--color-text)] outline-none"
             value={draftName}
             onChange={(event) => updateDraft(event.target.value)}
             placeholder="Team name"
@@ -41,7 +41,7 @@ export const TeamNameEditorRow = ({
             <BoldCheckIcon className="h-3.5 w-3.5" />
           </button>
           <button
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.05] text-[var(--color-muted)]"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised text-[var(--color-muted)]"
             onClick={cancelEdit}
             type="button"
             aria-label="Cancel team name edit"
@@ -55,7 +55,7 @@ export const TeamNameEditorRow = ({
             Team: {teamName}
           </p>
           <button
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.05] text-[var(--color-muted)]"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised text-[var(--color-muted)]"
             onClick={startEdit}
             type="button"
             aria-label="Edit team name"

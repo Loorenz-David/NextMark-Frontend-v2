@@ -107,7 +107,7 @@ export const ThreeDotMenu = ({
               px-3 py-2
               text-left
               text-[var(--color-text)]
-              hover:bg-white/[0.08]
+              hover:bg-surface-hover
               disabled:cursor-not-allowed
               disabled:opacity-50
               cursor-pointer

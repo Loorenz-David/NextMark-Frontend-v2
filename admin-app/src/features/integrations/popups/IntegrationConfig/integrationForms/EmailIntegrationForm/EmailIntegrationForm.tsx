@@ -51,7 +51,7 @@ export const EmailIntegrationForm = ({
             </Field>
             <CustomInstructions
                 steps={getSmtpPasswordInstructions(formState.smtp_server ?? '')}
-                className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4"
+                className="rounded-2xl border border-border bg-surface-subtle p-4"
                 stepCardClassName="min-w-[320px]"
                 stepCardMaxWidth={360}
                 scrollable={true}

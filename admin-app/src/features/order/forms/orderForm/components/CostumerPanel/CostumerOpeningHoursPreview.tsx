@@ -17,7 +17,7 @@ export const OpeningHoursPreview = ({
                 const isClosed = openingHour.is_closed
                 if(isClosed){
                     return(
-                        <PreviewDayRow date={date.shortLabel} time={'closed'} timeColor={'text-red-400'} />
+                        <PreviewDayRow date={date.shortLabel} time={'closed'} timeColor={'text-danger'} />
                     )
                 }
                 return (

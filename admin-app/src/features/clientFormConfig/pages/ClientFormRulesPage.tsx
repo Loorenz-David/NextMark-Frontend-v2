@@ -42,7 +42,7 @@ export const ClientFormRulesPage = () => {
       headerExtra={
         <SearchBar
           onChange={(value) => setQuery(value.input ?? '')}
-          className="w-full rounded-full border border-[var(--color-border)]/70 bg-white/[0.04] px-3 py-2 text-sm"
+          className="w-full rounded-full border border-[var(--color-border)]/70 bg-surface-raised px-3 py-2 text-sm"
           placeholder="Search rules"
         />
       }

@@ -85,7 +85,7 @@ export const OrderScheduleFilterPopup = ({
             </Field>
           </div>
 
-          <div className="mt-auto flex justify-between gap-2 border-t border-white/10 bg-[var(--color-page)] px-4 pb-4 pt-4">
+          <div className="mt-auto flex justify-between gap-2 border-t border-border bg-[var(--color-page)] px-4 pb-4 pt-4">
             <BasicButton
               params={{
                 variant: "ghost",

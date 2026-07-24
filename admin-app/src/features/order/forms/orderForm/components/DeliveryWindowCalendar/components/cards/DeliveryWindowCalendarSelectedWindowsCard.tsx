@@ -71,7 +71,7 @@ export const DeliveryWindowCalendarSelectedWindowsCard = ({
                           variant: 'text',
                           onClick: () => onRemove(row),
                           className:
-                            `${isCompact ? 'text-[10px]' : 'text-[11px] md:text-xs'} h-auto border-none bg-transparent px-0 py-0 font-semibold normal-case tracking-normal text-red-500 hover:bg-transparent`,
+                            `${isCompact ? 'text-[10px]' : 'text-[11px] md:text-xs'} h-auto border-none bg-transparent px-0 py-0 font-semibold normal-case tracking-normal text-danger hover:bg-transparent`,
                         }}
                       >
                         Remove

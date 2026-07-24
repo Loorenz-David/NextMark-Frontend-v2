@@ -57,7 +57,7 @@ const Notice = ({
     animate={{ y: 0, opacity: 1 }}
     exit={{ y: -14, opacity: 0 }}
     transition={{ duration: 0.28, ease: 'easeOut' }}
-    className="mt-16 w-full rounded-[var(--radius)] border border-[var(--rule-strong)] bg-[var(--paper-raised)] p-8 text-center"
+    className="mt-16 w-full rounded-lg border border-[var(--rule-strong)] bg-[var(--paper-raised)] p-8 text-center"
   >
     {children}
   </motion.section>

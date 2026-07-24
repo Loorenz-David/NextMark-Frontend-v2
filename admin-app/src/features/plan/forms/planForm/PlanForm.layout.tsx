@@ -84,10 +84,10 @@ export const PlanFormLayout = () => {
             deleteContent={"Delete"}
             confirmContent={"Confirm Deletion"}
             deleteClassName={
-              "text-sm rounded-md bg-[var(--color-page)] text-red-500 border-[text-red-500] px-2 py-2"
+              "text-sm rounded-md bg-[var(--color-page)] text-danger border-[text-red-500] px-2 py-2"
             }
             confirmClassName={
-              "text-sm rounded-md bg-red-500 py-2 px-2 text-white"
+              "text-sm rounded-md bg-danger-solid py-2 px-2 text-danger-on-solid"
             }
           />
         ) : (

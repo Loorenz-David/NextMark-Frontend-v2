@@ -24,7 +24,7 @@ export const OrderFormCostumerChangePrompt = ({
   onCancel,
 }: OrderFormCostumerChangePromptProps) => (
   <motion.div
-    className="absolute inset-0 z-20 flex items-center justify-center bg-black/35 p-4"
+    className="absolute inset-0 z-20 flex items-center justify-center bg-overlay p-4"
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}

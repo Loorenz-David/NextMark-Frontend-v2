@@ -18,10 +18,10 @@ const TeamInvitationsPageContent = () => {
 
   return (
     <div className="flex h-full w-full flex-col gap-6 overflow-auto bg-[var(--color-page)] p-6 scroll-thin">
-      <section className="admin-glass-panel-strong relative overflow-hidden rounded-[28px] px-8 py-7">
+      <section className="admin-glass-panel-strong relative overflow-hidden rounded-3xl px-8 py-7">
         <div className="pointer-events-none absolute right-0 top-0 h-36 w-52 translate-x-6 -translate-y-8 rounded-full bg-[rgb(var(--color-light-blue-r),0.1)] blur-3xl" />
         <div className="relative flex items-center gap-5">
-          <div className="flex h-20 w-20 items-center justify-center rounded-[28px] border border-white/[0.08] bg-white/[0.05] text-[rgb(var(--color-light-blue-r))]">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-border bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
             <MailIcon className="h-9 w-9" />
           </div>
           <div className="flex flex-col gap-1">

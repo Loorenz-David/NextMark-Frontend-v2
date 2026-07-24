@@ -31,7 +31,7 @@ export const SmsTemplateEditorPage = () => {
  
   return (
     <div className="flex flex-col gap-5 p-6">
-      <div className="admin-glass-panel-strong flex items-center justify-between rounded-[26px] px-5 py-4 shadow-none">
+      <div className="admin-glass-panel-strong flex items-center justify-between rounded-3xl px-5 py-4 shadow-none">
         <BasicButton
           params={{
             variant: 'secondary',

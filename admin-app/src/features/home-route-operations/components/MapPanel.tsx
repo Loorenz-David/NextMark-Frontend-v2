@@ -24,7 +24,7 @@ export const MapPanel = ({ isRouteLoading = false }: MapPanelProps) => {
           className="absolute inset-0 z-[60] flex items-center justify-center bg-[#07100f]/78 backdrop-blur-[2px]"
           role="status"
         >
-          <p className="animate-pulse text-sm font-semibold tracking-[0.16em] text-white uppercase">
+          <p className="animate-pulse text-sm font-semibold tracking-[0.16em] text-text uppercase">
             Loading route
           </p>
         </div>

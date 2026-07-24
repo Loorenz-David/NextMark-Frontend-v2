@@ -25,7 +25,7 @@ export const OrderCaseCard = ({
     return ( 
         <div
           key={orderCase.client_id}
-          className="admin-glass-panel rounded-[24px] border-white/10 px-4 py-4 cursor-pointer"
+          className="admin-glass-panel rounded-3xl border-border px-4 py-4 cursor-pointer"
           style={{ boxShadow: 'none' }}
           onClick={() => onOpenCase(orderCase.client_id)}
         >
@@ -39,7 +39,7 @@ export const OrderCaseCard = ({
                 <span className="text-[0.98rem] font-semibold tracking-tight text-[var(--color-text)]">
                   {orderCase.label?.trim() ? orderCase.label : `Case #${orderCase.id}`}
                 </span>
-                <div className="self-stretch w-px bg-white/10"></div>
+                <div className="self-stretch w-px bg-surface-hover"></div>
                 <span className="text-[0.8rem] text-[var(--color-muted)]">Order # {orderCase.order_reference}</span>
               </div>
 
@@ -64,8 +64,8 @@ export const OrderCaseCard = ({
                       onConfirm={ () => onDeleteCase(orderCase.client_id)}
                       deleteContent={<span>Delete</span>}
                       confirmContent={<span>Confirm delete</span>}
-                      deleteClassName="rounded-full border border-red-400/25 bg-red-500/8 px-3 py-1.5 text-[11px] font-medium text-red-200 transition hover:bg-red-500/12"
-                      confirmClassName="rounded-full px-3 py-1.5 text-[11px] font-medium text-white bg-red-500/85"
+                      deleteClassName="rounded-full border border-danger-border bg-danger-bg px-3 py-1.5 text-[11px] font-medium text-danger transition hover:bg-danger-bg"
+                      confirmClassName="rounded-full px-3 py-1.5 text-[11px] font-medium text-danger-on-solid bg-danger-solid/85"
                       confirmOverLay="bg-red-600/70"
                 />
                 
