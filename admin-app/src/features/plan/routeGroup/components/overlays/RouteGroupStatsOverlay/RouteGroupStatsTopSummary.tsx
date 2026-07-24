@@ -10,7 +10,7 @@ export const RouteGroupStatsTopSummary = ({
   routeSummary,
   routeScopeKey,
 }: RouteGroupStatsTopSummaryProps) => (
-  <div className="admin-backdrop-blur-md pointer-events-none min-w-0 rounded-3xl border border-border-accent bg-overlay px-4 py-4">
+  <div className="admin-backdrop-blur-md pointer-events-none min-w-0 rounded-3xl border border-border-accent bg-panel-floating px-4 py-4">
     <div className="flex flex-col gap-3">
       {routeSummary.rows.map((row, index) => (
         <div key={index} className="grid min-w-0 grid-cols-3 gap-3">

@@ -19,6 +19,13 @@
   --paper-subtle: rgba(255, 255, 255, 0.03);
   --surface: rgba(255, 255, 255, 0.06);
   --overlay: rgba(4, 8, 10, 0.54);
+  /* Card surface for panels floating over arbitrary content (the map). Distinct
+     from --overlay, which is the modal scrim: a scrim must darken what is behind
+     it, a floating panel must sit on top of it opaquely. */
+  --panel-floating: rgba(4, 8, 10, 0.54);
+  /* The external-form access route uses its own page tone, deliberately deeper
+     than --paper. Kept exact rather than folded into --paper. */
+  --page-external: #111819;
   --shade: rgba(0, 0, 0, 0.05);
 
   --ink: rgba(248, 251, 252, 0.94);
@@ -86,6 +93,10 @@
   --field-border-invalid: rgba(248, 113, 113, 0.45);
   --field-ring-invalid: rgba(248, 113, 113, 0.35);
   --field-radius: var(--radius-2xl);
+
+  /* Unfilled portion of a gauge/progress arc. A track is a groove, not a mark —
+     it must recede behind the filled stroke in both themes. */
+  --gauge-track: rgba(255, 255, 255, 0.88);
 
   --ready-action-gradient-start: rgba(31, 175, 193, 0.96);
   --ready-action-gradient-end: rgba(59, 211, 205, 0.88);
@@ -228,6 +239,12 @@
   --paper-subtle: #f3ece0;
   --surface: #f6f1e6;
   --overlay: rgba(46, 42, 36, 0.42);
+  /* Opaque paper — no dark wash behind stat cards floating over the map.
+     Deliberately the page tone, not --paper-raised: these cards nest
+     `surface-raised` pills inside them, which would vanish against an identical
+     fill. Card sits at page tone, pills lift above it. */
+  --panel-floating: var(--paper);
+  --page-external: var(--paper);
   --shade: rgba(46, 42, 36, 0.05);
 
   --ink: #2e2a24;
@@ -295,6 +312,8 @@
   --field-border-invalid: var(--danger);
   --field-ring-invalid: rgba(143, 49, 40, 0.30);
   --field-radius: var(--radius-2xl);
+
+  --gauge-track: var(--rule);
 
   --ready-action-gradient-start: var(--accent);
   --ready-action-gradient-end: var(--accent-soft);
@@ -441,6 +460,7 @@
   --color-surface-hover: var(--paper-hover);
   --color-surface-sunken: var(--paper-sunken);
   --color-overlay: var(--overlay);
+  --color-panel-floating: var(--panel-floating);
   --color-shade: var(--shade);
 
   --color-text: var(--ink);

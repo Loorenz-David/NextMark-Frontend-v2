@@ -93,7 +93,7 @@ export const ItemImagePopover = ({
       >
         <button
           type="button"
-          className="relative flex min-h-[400px] w-full items-center justify-center overflow-hidden rounded-md bg-overlay"
+          className="relative flex min-h-[400px] w-full items-center justify-center overflow-hidden rounded-md bg-panel-floating"
           onClick={showNextImage}
           aria-label={hasMultipleImages ? "Show next item image" : "Item image"}
         >

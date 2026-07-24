@@ -19,7 +19,7 @@ export const RouteGroupDriverCard = ({ driver }: RouteGroupDriverCardProps) => {
         type="button"
         onClick={() => setExpanded((current) => !current)}
         aria-expanded={expanded}
-        className="admin-backdrop-blur-md pointer-events-auto relative flex min-w-[180px] flex-col rounded-3xl border border-border-accent bg-overlay px-4 py-4 text-sm text-text transition-colors hover:bg-overlay"
+        className="admin-backdrop-blur-md pointer-events-auto relative flex min-w-[180px] flex-col rounded-3xl border border-border-accent bg-panel-floating px-4 py-4 text-sm text-text transition-colors hover:bg-panel-floating"
       >
         <div className="flex items-center justify-end gap-3 ">
           <div className="min-w-0 text-left">
@@ -46,7 +46,7 @@ export const RouteGroupDriverCard = ({ driver }: RouteGroupDriverCardProps) => {
       </button>
 
       {expanded ? (
-        <div className="admin-backdrop-blur-md pointer-events-auto absolute right-full top-0 mr-3 min-w-[220px] rounded-3xl border border-border-emphasis bg-overlay px-4 py-4 text-left text-xs text-muted">
+        <div className="admin-backdrop-blur-md pointer-events-auto absolute right-full top-0 mr-3 min-w-[220px] rounded-3xl border border-border-emphasis bg-panel-floating px-4 py-4 text-left text-xs text-muted">
           Driver stats will be added here.
         </div>
       ) : null}

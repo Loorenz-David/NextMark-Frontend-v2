@@ -52,8 +52,8 @@ const ConsumptionMetricCard = ({
             }
           : undefined
       }
-      className={`admin-backdrop-blur-md relative flex min-h-[78px] min-w-0 flex-col justify-between rounded-2xl border bg-overlay px-4 py-3 text-sm text-text transition-colors ${
-        isInteractive ? "cursor-pointer hover:bg-overlay" : ""
+      className={`admin-backdrop-blur-md relative flex min-h-[78px] min-w-0 flex-col justify-between rounded-2xl border bg-panel-floating px-4 py-3 text-sm text-text transition-colors ${
+        isInteractive ? "cursor-pointer hover:bg-panel-floating" : ""
       } ${isEstimated ? "border-border-accent" : "border-border-emphasis"}`}
     >
       {isInteractive ? (
@@ -92,7 +92,7 @@ const ConsumptionMetricCard = ({
       offSetNum={10}
       reference={cardContent}
     >
-      <div className="admin-backdrop-blur-md min-w-[180px] rounded-2xl border border-border-accent bg-overlay px-4 py-3 text-sm text-text shadow-xl">
+      <div className="admin-backdrop-blur-md min-w-[180px] rounded-2xl border border-border-accent bg-panel-floating px-4 py-3 text-sm text-text shadow-xl">
         <div className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">
           {metric.popover.title}
         </div>

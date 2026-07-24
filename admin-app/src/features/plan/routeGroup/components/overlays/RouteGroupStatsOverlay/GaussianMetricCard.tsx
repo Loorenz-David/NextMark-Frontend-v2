@@ -149,7 +149,7 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
             }
           : undefined
       }
-      className="admin-backdrop-blur-md pointer-events-auto relative flex min-h-[150px] min-w-0 w-full flex-col rounded-2xl border border-border-emphasis bg-overlay p-4 pt-3 text-left text-sm text-text transition-colors hover:bg-overlay"
+      className="admin-backdrop-blur-md pointer-events-auto relative flex min-h-[150px] min-w-0 w-full flex-col rounded-2xl border border-border-emphasis bg-panel-floating p-4 pt-3 text-left text-sm text-text transition-colors hover:bg-panel-floating"
     >
       <ChevronDownIcon className="-rotate-90 absolute right-3 top-[10px] h-4 w-4 text-muted" />
 
@@ -192,8 +192,7 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
                 <path
                   d={TRACK_PATH}
                   fill="none"
-                  stroke="var(--foreground-mark)"
-                  strokeOpacity={0.88}
+                  stroke="var(--gauge-track)"
                   strokeWidth="12"
                   strokeLinecap="round"
                   pathLength={100}

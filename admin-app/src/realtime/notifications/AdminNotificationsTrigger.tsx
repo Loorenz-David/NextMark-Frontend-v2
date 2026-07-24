@@ -230,7 +230,7 @@ export function AdminNotificationsTrigger() {
                 isIncomingPulseActive ? { scale: [1, 1.22, 1] } : { scale: 1 }
               }
               transition={{ duration: 0.55, ease: "easeOut" }}
-              className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[rgb(var(--color-danger-r))] px-1 text-[10px] font-semibold text-text"
+              className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[rgb(var(--color-danger-r))] px-1 text-[10px] font-semibold text-danger-on-solid"
             >
               {unreadCount > 99 ? "99+" : unreadCount}
             </motion.span>
