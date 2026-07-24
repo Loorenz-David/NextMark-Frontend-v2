@@ -73,6 +73,20 @@
   --info-border: rgba(125, 211, 252, 0.25);
 
   --foreground-mark: #ffffff;
+  --foreground-mark-r: 255, 255, 255;
+
+  /* Form field chrome — consumed by App.css, which styles every input in the app.
+     Dark values are verbatim copies of the literals they replaced. */
+  --field-bg: rgba(42, 52, 54, 0.96);
+  --field-border: rgba(255, 255, 255, 0.12);
+  --field-bg-focus: rgba(48, 60, 62, 0.98);
+  --field-border-focus: rgba(255, 255, 255, 0.28);
+  --field-ring-focus: rgba(var(--accent-r), 0.28);
+  --field-bg-invalid: rgba(86, 44, 44, 0.92);
+  --field-border-invalid: rgba(248, 113, 113, 0.45);
+  --field-ring-invalid: rgba(248, 113, 113, 0.35);
+  --field-radius: var(--radius-2xl);
+
   --ready-action-gradient-start: rgba(31, 175, 193, 0.96);
   --ready-action-gradient-end: rgba(59, 211, 205, 0.88);
   --sms-preview-bubble-start: rgba(92, 168, 163, 0.74);
@@ -268,6 +282,20 @@
   --info-border: rgba(61, 90, 108, 0.28);
 
   --foreground-mark: #2e2a24;
+  --foreground-mark-r: 46, 42, 36;
+
+  /* Fields read as ruled boxes on paper: raised stock, a firm rule, and the
+     accent only on focus. No dark fill, no glow. */
+  --field-bg: var(--paper-raised);
+  --field-border: var(--rule-strong);
+  --field-bg-focus: var(--paper-raised);
+  --field-border-focus: var(--accent);
+  --field-ring-focus: rgba(var(--accent-r), 0.24);
+  --field-bg-invalid: rgba(143, 49, 40, 0.06);
+  --field-border-invalid: var(--danger);
+  --field-ring-invalid: rgba(143, 49, 40, 0.30);
+  --field-radius: var(--radius-2xl);
+
   --ready-action-gradient-start: var(--accent);
   --ready-action-gradient-end: var(--accent-soft);
   --sms-preview-bubble-start: var(--paper-sunken);
