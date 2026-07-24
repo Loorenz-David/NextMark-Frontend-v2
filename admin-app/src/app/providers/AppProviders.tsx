@@ -4,6 +4,7 @@ import { BrowserRouter, useNavigate } from "react-router-dom";
 import { apiClient } from "@/lib/api/ApiClient";
 import { MessageHandlerProvider, useMessageHandler } from "@shared-message-handler";
 import { MobileProvider } from "@/app/providers/MobileProvider";
+import { ThemeProvider } from "@/app/theme";
 import { useBootstrap } from "@/features/bootstrap/bootstrap.hook";
 import { useAuthSessionStore } from "@/features/auth/login/store/authSessionStore";
 import { consumeAuthNotice } from "@/features/auth/login/store/authNotice";
@@ -101,24 +102,26 @@ export function AppProviders({ children }: PropsWithChildren) {
   );
 
   return (
-    <BrowserRouter>
-      <MobileProvider>
-        <MessageHandlerProvider defaultMessageDurationMs={8000} maxMessages={2}>
-          <AdminNotificationsProvider>
-            <AdminBusinessRealtimeProvider>
-              <DriverLiveRealtimeProvider>
-                <OrderLinkedDeviceFormProvider
-                  employeeUserId={employeeUserId}
-                >
-                  <ApiAuthBridge />
-                  {children}
-                  <DeferredAppEnhancers />
-                </OrderLinkedDeviceFormProvider>
-              </DriverLiveRealtimeProvider>
-            </AdminBusinessRealtimeProvider>
-          </AdminNotificationsProvider>
-        </MessageHandlerProvider>
-      </MobileProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <MobileProvider>
+          <MessageHandlerProvider defaultMessageDurationMs={8000} maxMessages={2}>
+            <AdminNotificationsProvider>
+              <AdminBusinessRealtimeProvider>
+                <DriverLiveRealtimeProvider>
+                  <OrderLinkedDeviceFormProvider
+                    employeeUserId={employeeUserId}
+                  >
+                    <ApiAuthBridge />
+                    {children}
+                    <DeferredAppEnhancers />
+                  </OrderLinkedDeviceFormProvider>
+                </DriverLiveRealtimeProvider>
+              </AdminBusinessRealtimeProvider>
+            </AdminNotificationsProvider>
+          </MessageHandlerProvider>
+        </MobileProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
