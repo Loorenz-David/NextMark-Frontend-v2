@@ -239,7 +239,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
     },
     editor: {
       rootClassName:
-        'rounded-[34px] border border-[var(--color-border-accent)] bg-[var(--color-page)] p-4',
+        'rounded-4xl border border-[var(--color-border-accent)] bg-[var(--color-page)] p-4',
       headerRowClassName: 'flex min-w-0 flex-1 flex-col gap-3',
       titleClassName:
         'text-2xl font-semibold text-[var(--color-text)]',
@@ -322,7 +322,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
     },
     editor: {
       rootClassName:
-        'rounded-[24px] border border-[var(--color-border-accent)] bg-[var(--color-page)] p-3',
+        'rounded-3xl border border-[var(--color-border-accent)] bg-[var(--color-page)] p-3',
       headerRowClassName: 'flex min-w-0 flex-1 flex-col gap-2',
       titleClassName:
         'text-lg font-semibold text-[var(--color-text)]',

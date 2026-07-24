@@ -66,7 +66,7 @@ export const OrderCaseCard = ({
                       confirmContent={<span>Confirm delete</span>}
                       deleteClassName="rounded-full border border-danger-border bg-danger-bg px-3 py-1.5 text-[11px] font-medium text-danger transition hover:bg-danger-bg"
                       confirmClassName="rounded-full px-3 py-1.5 text-[11px] font-medium text-danger-on-solid bg-danger-solid/85"
-                      confirmOverLay="bg-red-600/70"
+                      confirmOverLay="bg-danger-solid-medium/70"
                 />
                 
               ) : null}

@@ -165,7 +165,9 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
             aria-label={`Show ${face.label}`}
             className={cn(
               'h-[1px] flex-1 rounded-full transition-colors',
-              index === activeIndex ? 'bg-white/92' : 'bg-white/24 hover:bg-white/40',
+              index === activeIndex
+                ? 'bg-foreground-mark/92'
+                : 'bg-foreground-mark/24 hover:bg-foreground-mark/40',
             )}
           />
         ))}
@@ -190,7 +192,8 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
                 <path
                   d={TRACK_PATH}
                   fill="none"
-                  stroke="rgba(255,255,255,0.88)"
+                  stroke="var(--foreground-mark)"
+                  strokeOpacity={0.88}
                   strokeWidth="12"
                   strokeLinecap="round"
                   pathLength={100}

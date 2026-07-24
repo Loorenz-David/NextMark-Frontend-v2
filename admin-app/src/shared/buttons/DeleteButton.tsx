@@ -18,7 +18,7 @@ export const ConfirmActionButton = ({
   confirmContent,
   deleteClassName = '',
   confirmClassName = '',
-  confirmOverLay = 'bg-red-700',
+  confirmOverLay = 'bg-danger-solid-strong',
   duration = 2500,
   stopPropagation = true,
 }: ConfirmActionButtonProps) => {

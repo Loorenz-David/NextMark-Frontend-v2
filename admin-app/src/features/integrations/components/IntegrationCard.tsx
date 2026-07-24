@@ -33,7 +33,7 @@ export const IntegrationCard = ({
           <div className="pt-1">
             {isActive ? (
               <span className="inline-flex items-center gap-2 rounded-full border border-success-border bg-success-bg px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-success">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
+                <span className="h-1.5 w-1.5 rounded-full bg-success" />
                 Active
               </span>
             ) : (

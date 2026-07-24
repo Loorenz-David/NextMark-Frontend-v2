@@ -145,7 +145,7 @@ const OrderNoteActions = ({
             }}
             deleteClassName="rounded-lg"
             confirmClassName="rounded-lg"
-            confirmOverLay="bg-rose-700/90"
+            confirmOverLay="bg-danger-solid-deep/90"
             deleteContent={
               <div className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-[var(--color-text)] transition-colors hover:bg-surface-hover">
                 <DeleteIcon className="h-4 w-4 text-danger" />

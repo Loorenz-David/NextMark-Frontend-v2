@@ -39,7 +39,7 @@ export const TemplateTriggerCard = ({
         >
           {isEnabled ? (
             <span
-              className="h-1.5 w-1.5 rounded-full bg-emerald-200"
+              className="h-1.5 w-1.5 rounded-full bg-success-soft"
               aria-hidden="true"
             />
           ) : null}

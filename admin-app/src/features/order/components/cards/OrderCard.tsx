@@ -44,7 +44,7 @@ export const OrderCard = ({
     >
       <OrderMissingInfoNotifier order={order} />
       {order.archive_at && (
-        <div className="absolute right-1 -top-3 z-20 flex items-center rounded-full border border-warning-border bg-amber-500/50 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-warning backdrop-blur-md">
+        <div className="absolute right-1 -top-3 z-20 flex items-center rounded-full border border-warning-border bg-warning-strong/50 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-warning backdrop-blur-md">
           Archived
         </div>
       )}
@@ -72,7 +72,7 @@ export const OrderCard = ({
             <div className="flex items-center content-center pr-1">
               <ConfirmActionButton
                 onConfirm={() => onUnarchive?.(order)}
-                confirmOverLay={"bg-green-700"}
+                confirmOverLay={"bg-success-solid-strong"}
                 deleteContent={
                   <div className="rounded-lg border border-border bg-surface-raised px-1.5 py-1.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)]">
                     <SendBackIcon className="h-4 w-4 text-[var(--color-muted)]/90" />

@@ -126,7 +126,7 @@ export const RouteGroupStatsOverlayShell = ({
             <button
               type="button"
               onClick={onShow}
-              className="admin-backdrop-blur-md pointer-events-auto rounded-full border border-border-emphasis bg-overlay px-4 py-2 text-md font-medium text-text transition-colors hover:bg-white/24"
+              className="admin-backdrop-blur-md pointer-events-auto rounded-full border border-border-emphasis bg-overlay px-4 py-2 text-md font-medium text-text transition-colors hover:bg-foreground-mark/24"
             >
               Stats
             </button>

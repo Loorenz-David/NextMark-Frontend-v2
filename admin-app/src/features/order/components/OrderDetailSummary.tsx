@@ -67,7 +67,7 @@ export const OrderDetailSummary = ({
             <button
               type="button"
               onClick={onMissingOrderInfoClick}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-warning-border bg-warning-bg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-warning transition-colors hover:bg-amber-300/25"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-warning-border bg-warning-bg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-warning transition-colors hover:bg-warning/25"
               aria-label="Open client form for missing order information"
             >
               <ExclamationIcon className="h-3 w-3 text-warning" />

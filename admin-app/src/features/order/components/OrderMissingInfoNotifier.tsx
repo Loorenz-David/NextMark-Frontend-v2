@@ -53,7 +53,7 @@ export const OrderMissingInfoNotifier = ({
       }
     >
       <div
-        className="w-[240px] rounded-[20px] border border-amber-300/25 bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.06))] p-3 text-xs text-amber-50 shadow-[0_18px_40px_rgba(0,0,0,0.26)] backdrop-blur-xl"
+        className="w-[240px] rounded-3xl border border-warning-border bg-[linear-gradient(135deg,rgba(255,201,71,0.18),rgba(255,201,71,0.06))] p-3 text-xs text-amber-50 shadow-[0_18px_40px_rgba(0,0,0,0.26)] backdrop-blur-xl"
         onMouseEnter={() => setIsPopoverOpen(true)}
         onMouseLeave={() => setIsPopoverOpen(false)}
         onClick={(event) => event.stopPropagation()}
