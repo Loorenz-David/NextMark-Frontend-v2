@@ -53,6 +53,34 @@ export const resolveItemLabelOrderIdentifier = (
   return formatItemLabelOrderIdentifier(source.order_scalar_id);
 };
 
+const sanitizeFileName = (value: string): string =>
+  value.replace(/[\\/:*?"<>|]+/g, "").trim();
+
+/**
+ * Filename for a downloaded item label: the order scalar number (prefixed with
+ * "#"), or the external reference number when the order originated from Shopify.
+ */
+export const resolveItemLabelFileName = (
+  source?: OrderLabelIdentifierSource | null,
+): string => {
+  const fallback = "items";
+  if (!source) return fallback;
+
+  const referenceNumber = source.reference_number?.trim();
+  const isShopify = source.external_source?.trim().toLowerCase() === "shopify";
+
+  if (isShopify && referenceNumber) {
+    return sanitizeFileName(referenceNumber) || fallback;
+  }
+
+  const scalar = sanitizeFileName(
+    (source.order_scalar_id == null ? "" : String(source.order_scalar_id))
+      .trim()
+      .replace(/^#/, ""),
+  );
+  return scalar ? `#${scalar}` : fallback;
+};
+
 export const itemsForDownloading = (
   items: Item[],
   orderIdentifier?: OrderLabelIdentifierSource | number | null,

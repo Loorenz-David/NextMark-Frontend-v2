@@ -590,4 +590,56 @@ export const runOrderFormSubmitControllerTests = async () => {
       "edit mode with unchanged selected costumer and no field/item diffs should return no_changes",
     );
   }
+
+  {
+    let saveOrderCalls = 0;
+    let editPayload: unknown = null;
+
+    const formState = buildBaseFormState();
+    const command: OrderFormSubmitCommand = {
+      mode: "edit",
+      order: { id: 200, client_id: "order-client-1", costumer_id: 5 },
+      orderServerId: 200,
+      formState,
+      updateCostumer: true,
+      validateForm: () => true,
+      initialFormRef: { current: formState },
+      itemDraftController: {
+        getCreatedItems: () => [],
+        getUpdatedItems: () => [],
+        getDeletedItems: () => [],
+        reset: () => undefined,
+      },
+      itemInitialByClientId: {},
+    };
+
+    const result = await executeOrderFormSubmit(
+      {
+        saveOrder: async (params) => {
+          saveOrderCalls += 1;
+          editPayload = params.fields;
+          return true;
+        },
+        createItemApi: async () => okResult({} as never),
+        updateItemApi: async () => okResult({} as never),
+        deleteItemApi: async () => okResult({} as never),
+        loadItemsByOrderId: async () => null,
+        validateOrderFields: () => true,
+      },
+      command,
+    );
+
+    assert(
+      result.status === "success_edit",
+      "update_costumer flag alone should still submit an edit",
+    );
+    assert(
+      saveOrderCalls === 1,
+      "update_costumer flag alone should call saveOrder once",
+    );
+    assert(
+      (editPayload as { update_costumer?: boolean })?.update_costumer === true,
+      "edit payload should carry update_costumer inside fields",
+    );
+  }
 };

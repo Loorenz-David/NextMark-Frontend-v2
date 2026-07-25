@@ -268,6 +268,7 @@ export type OrderFormSubmitCommand = {
   orderServerId: number | null;
   formState: OrderFormState;
   selectedCostumer?: Costumer | null;
+  updateCostumer?: boolean;
   validateForm: () => boolean;
   validateRequiredFields?: boolean;
   validatePayloadFields?: boolean;
@@ -321,6 +322,7 @@ export const executeOrderFormSubmit = async (
     orderServerId,
     formState,
     selectedCostumer,
+    updateCostumer = false,
     validateForm,
     validateRequiredFields = true,
     validatePayloadFields = true,
@@ -387,11 +389,16 @@ export const executeOrderFormSubmit = async (
     nextCostumerId !== null &&
     nextCostumerId !== currentOrderCostumerId;
 
+  // Pushing the order's customer fields onto the linked customer is itself a
+  // meaningful edit, even when no order field changed in this session.
+  const shouldUpdateCostumer = mode === "edit" && updateCostumer === true;
+
   if (
     mode === "edit" &&
     !Object.keys(orderChanges).length &&
     !hasItemChanges &&
-    !hasCostumerAssociationChange
+    !hasCostumerAssociationChange &&
+    !shouldUpdateCostumer
   ) {
     return { status: "no_changes" };
   }
@@ -491,9 +498,12 @@ export const executeOrderFormSubmit = async (
       };
     }
 
-    const editPayload = hasCostumerAssociationChange
-      ? ({ ...orderChanges, costumer: costumerPayload } as OrderUpdateFields)
-      : orderChanges;
+    const editPayload = {
+      ...orderChanges,
+      ...(hasCostumerAssociationChange ? { costumer: costumerPayload } : {}),
+      // The backend only reads this flag from inside a target's `fields`.
+      ...(shouldUpdateCostumer ? { update_costumer: true } : {}),
+    } as OrderUpdateFields;
 
     if (Object.keys(editPayload).length > 0) {
       if (validatePayloadFields && !validateOrderFields(editPayload)) {

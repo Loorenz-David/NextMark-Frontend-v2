@@ -75,6 +75,11 @@ export type OrderFormMeta = {
   selectedCostumerSource: CostumerSelectionSource | null;
   pendingCostumerChange: Costumer | null;
   isCostumerChangePromptOpen: boolean;
+  /**
+   * When true, saving an edit also pushes the order's customer fields back to
+   * the linked customer. Auto-enabled when staff edit customer-identity fields.
+   */
+  updateCostumer: boolean;
   initialFormRef: RefObject<OrderFormState | null>;
   visibleItemDrafts: Item[];
   itemInitialByClientId: Record<string, Item>;

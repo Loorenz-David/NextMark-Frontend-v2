@@ -24,11 +24,17 @@ const normalizeOperationType = (
 export const useOrderFormSetters = ({
   setFormState,
   warnings,
+  setUpdateCostumer,
 }: {
   setFormState: Dispatch<SetStateAction<OrderFormState>>;
   warnings: OrderFormWarnings;
+  setUpdateCostumer: Dispatch<SetStateAction<boolean>>;
 }) => {
   const timeZone = resolveOrderFormTimeZone();
+
+  // Editing any customer-identity field opts the order into pushing those
+  // values back to the linked customer. Staff can still switch it back off.
+  const markCostumerFieldTouched = () => setUpdateCostumer(true);
 
   const updateFormState = (
     updater: (prev: OrderFormState) => OrderFormState,
@@ -82,32 +88,42 @@ export const useOrderFormSetters = ({
     const value = event.target.value;
     updateFormState((prev) => ({ ...prev, client_first_name: value }));
     warnings.firstNameWarning.validate(value);
+    markCostumerFieldTouched();
   };
 
   const handleLastName = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     updateFormState((prev) => ({ ...prev, client_last_name: value }));
     warnings.lastNameWarning.validate(value);
+    markCostumerFieldTouched();
   };
 
   const handleEmail = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     updateFormState((prev) => ({ ...prev, client_email: value }));
     warnings.emailWarning.validate(value);
+    markCostumerFieldTouched();
   };
 
   const handlePrimaryPhone = (value: Phone) => {
     updateFormState((prev) => ({ ...prev, client_primary_phone: value }));
     warnings.primaryPhoneWarning.validate(value);
+    markCostumerFieldTouched();
   };
 
   const handleSecondaryPhone = (value: Phone) => {
     updateFormState((prev) => ({ ...prev, client_secondary_phone: value }));
+    markCostumerFieldTouched();
   };
 
   const handleAddress = (value: address | null) => {
     updateFormState((prev) => ({ ...prev, client_address: value }));
     warnings.addressWarning.validate(value);
+    markCostumerFieldTouched();
+  };
+
+  const handleUpdateCostumer = (value: boolean) => {
+    setUpdateCostumer(value);
   };
 
   const mergeExternalClientData = (data: ExternalFormData) => {
@@ -172,6 +188,7 @@ export const useOrderFormSetters = ({
     handleCustomerNote,
     handleHelpToCarry,
     handleMarketingMessages,
+    handleUpdateCostumer,
     mergeExternalClientData,
   };
 };

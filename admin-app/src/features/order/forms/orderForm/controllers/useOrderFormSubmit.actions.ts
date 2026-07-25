@@ -12,6 +12,7 @@ import type { useOrderItemDraftController } from "../../../item";
 import type { Item } from "../../../item";
 import {
   itemsForDownloading,
+  resolveItemLabelFileName,
   startItemLabelDownload,
   useCreateItem,
   useDeleteItem,
@@ -78,6 +79,7 @@ export const useOrderFormActions = ({
   itemDraftController,
   itemInitialByClientId,
   selectedCostumer,
+  updateCostumer,
   onPromoteCreatedOrderToEdit,
 }: {
   mode: OrderFormMode;
@@ -89,6 +91,7 @@ export const useOrderFormActions = ({
   itemDraftController: ItemDraftControllerApi;
   itemInitialByClientId: Record<string, Item>;
   selectedCostumer: Costumer | null;
+  updateCostumer: boolean;
   onPromoteCreatedOrderToEdit?: (clientId: string) => void;
 }) => {
   const { showMessage } = useMessageHandler();
@@ -126,6 +129,7 @@ export const useOrderFormActions = ({
         itemDraftController,
         itemInitialByClientId,
         selectedCostumer,
+        updateCostumer,
         createCommitMode: "defer",
         itemCommitMode: "defer",
         onCreateCommitted: ({ resolvedOrder }) => {
@@ -136,22 +140,24 @@ export const useOrderFormActions = ({
             return;
           }
 
+          const labelIdentifierSource = {
+            order_scalar_id: resolvedOrder.order_scalar_id,
+            reference_number: resolvedOrder.reference_number,
+            external_source: resolvedOrder.external_source,
+            help_to_carry: resolvedOrder.help_to_carry,
+            order_plan_objective: resolvedOrder.order_plan_objective,
+          };
+
           downloadByEvent({
             channel: "item",
             event: "item_created",
             data: itemsForDownloading(
               createdItems,
-              {
-                order_scalar_id: resolvedOrder.order_scalar_id,
-                reference_number: resolvedOrder.reference_number,
-                external_source: resolvedOrder.external_source,
-                help_to_carry: resolvedOrder.help_to_carry,
-                order_plan_objective: resolvedOrder.order_plan_objective,
-              },
+              labelIdentifierSource,
               normalizedCurrent?.delivery_plan_id,
               normalizedCurrent?.order_notes,
             ),
-            fileName: "first test",
+            fileName: resolveItemLabelFileName(labelIdentifierSource),
           });
         },
         onItemMutationCommitted: ({ updatedItems: committedUpdatedItems }) => {
@@ -205,6 +211,7 @@ export const useOrderFormActions = ({
     saveOrder,
     selectedCostumer,
     showMessage,
+    updateCostumer,
     updateItemApi,
     validateForm,
     validation.validateOrderFields,
@@ -254,6 +261,7 @@ export const useOrderFormActions = ({
             itemDraftController,
             itemInitialByClientId,
             selectedCostumer,
+            updateCostumer,
             onOrderRollback: () =>
               reopenOrderFormOnRollback({
                 popupManager,

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import type { OrderFormLayoutModel } from '../../OrderForm.layout.model'
 import { OrderFormCostumerPanel } from '../../components/CostumerPanel'
 import { OrderFormItemsPanel } from '../../components/OrderFormItemsPanel'
+import { orderFormCostumerFieldsChanged } from '../../domain/costumerProfileSync'
 import type { DesktopLayoutMode } from './OrderFormDesktop.layout'
 
 type OrderFormDesktopRightColumnProps = {
@@ -17,6 +18,13 @@ export const OrderFormDesktopRightColumn = ({
   setLayoutMode
 }: OrderFormDesktopRightColumnProps) => {
   const isCustomerExpanded = layoutMode === 'customer-expanded'
+
+  const initialForm = model.initialFormRef.current
+  const canUpdateCostumer =
+    model.mode === 'edit' &&
+    !!model.selectedCostumer &&
+    !!initialForm &&
+    orderFormCostumerFieldsChanged(model.formState, initialForm)
 
   return (
     <motion.div
@@ -38,6 +46,9 @@ export const OrderFormDesktopRightColumn = ({
               onSelectCostumer={(costumer, source = 'panel') =>
                 model.requestSelectCostumer(costumer, source)
               }
+              canUpdateCostumer={canUpdateCostumer}
+              updateCostumer={model.updateCostumer}
+              onToggleUpdateCostumer={model.formSetters.handleUpdateCostumer}
           />
         </div>
       </div>

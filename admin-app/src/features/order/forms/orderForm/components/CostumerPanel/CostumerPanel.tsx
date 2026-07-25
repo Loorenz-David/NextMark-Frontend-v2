@@ -9,6 +9,7 @@ import {
 import { CostumerPanelSearchBackAction } from './CostumerPanelSearchBackAction'
 import { CostumerPanelSearchView } from './CostumerPanelSearchView'
 import { CostumerPanelShell } from './CostumerPanelShell'
+import { CostumerPanelUpdateToggle } from './CostumerPanelUpdateToggle'
 import { useCostumerPanelActions } from './CostumerPanel.actions'
 import type { OrderFormCostumerPanelProps } from './CostumerPanel.types'
 
@@ -16,12 +17,23 @@ export const OrderFormCostumerPanel = ({
   costumer = null,
   onSelectCostumer,
   setLayoutMode,
+  canUpdateCostumer = false,
+  updateCostumer = false,
+  onToggleUpdateCostumer,
 }: OrderFormCostumerPanelProps) => {
   const actions = useCostumerPanelActions({
     costumer,
     onSelectCostumer,
     setLayoutMode,
   })
+
+  const updateToggle =
+    canUpdateCostumer && onToggleUpdateCostumer ? (
+      <CostumerPanelUpdateToggle
+        value={updateCostumer}
+        onChange={onToggleUpdateCostumer}
+      />
+    ) : undefined
 
   if (isCostumerPanelFormView(actions.panelView)) {
     return (
@@ -65,6 +77,7 @@ export const OrderFormCostumerPanel = ({
 
   return (
     <CostumerPanelShell
+      titleAdornment={updateToggle}
       headerAction={
         actions.showDetailsMenuAction ? (
           <CostumerPanelDetailsMenuAction options={actions.detailsMenuOptions} />

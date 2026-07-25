@@ -115,6 +115,7 @@ export const OrderFormProvider = ({
     useState<CostumerSelectionSource | null>(null);
   const [isCostumerChangePromptOpen, setIsCostumerChangePromptOpen] =
     useState(false);
+  const [updateCostumer, setUpdateCostumer] = useState(false);
   const payloadCostumer = useCostumerByServerId(payloadCostumerId);
   const { queryCostumerByServerId } = useCostumerQueries();
   const appliedPayloadCostumerIdRef = useRef<number | null>(null);
@@ -303,6 +304,7 @@ export const OrderFormProvider = ({
   const formSetters = useOrderFormSetters({
     setFormState,
     warnings,
+    setUpdateCostumer,
   });
   const { validateForm } = useOrderFormValidation({ formState, warnings });
 
@@ -355,6 +357,7 @@ export const OrderFormProvider = ({
     },
     itemInitialByClientId,
     selectedCostumer,
+    updateCostumer,
     onPromoteCreatedOrderToEdit: (clientId) => {
       setActiveClientId(clientId);
       setMode("edit");
@@ -408,6 +411,7 @@ export const OrderFormProvider = ({
         selectedCostumerSource,
         pendingCostumerChange,
         isCostumerChangePromptOpen,
+        updateCostumer,
         creationDate,
         initialFormRef,
         visibleItemDrafts,
@@ -430,6 +434,7 @@ export const OrderFormProvider = ({
       requestSelectCostumer,
       selectedCostumer,
       selectedCostumerSource,
+      updateCostumer,
       visibleItemDrafts,
     ],
   );

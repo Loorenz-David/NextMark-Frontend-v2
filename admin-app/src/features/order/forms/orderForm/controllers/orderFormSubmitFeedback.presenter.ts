@@ -1,5 +1,5 @@
 import type { Item } from "../../../item";
-import { itemsForDownloading } from "../../../item";
+import { itemsForDownloading, resolveItemLabelFileName } from "../../../item";
 import { normalizeFormStateForSave } from "../../../api/mappers/orderForm.normalize";
 import type { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
 
@@ -72,24 +72,26 @@ export const presentOrderFormSubmitOutcome = ({
     createdItems.length > 0 &&
     typeof result.createdOrderScalarId === "number"
   ) {
+    const labelIdentifierSource = {
+      order_scalar_id: result.createdOrderScalarId,
+      reference_number: normalizedCurrent?.reference_number,
+      external_source: normalizedCurrent?.external_source,
+      help_to_carry: result.createdOrder?.help_to_carry,
+      order_plan_objective:
+        result.createdOrder?.order_plan_objective ??
+        normalizedCurrent?.order_plan_objective,
+    };
+
     downloadByEvent({
       channel: "item",
       event: "item_created",
       data: itemsForDownloading(
         createdItems,
-        {
-          order_scalar_id: result.createdOrderScalarId,
-          reference_number: normalizedCurrent?.reference_number,
-          external_source: normalizedCurrent?.external_source,
-          help_to_carry: result.createdOrder?.help_to_carry,
-          order_plan_objective:
-            result.createdOrder?.order_plan_objective ??
-            normalizedCurrent?.order_plan_objective,
-        },
+        labelIdentifierSource,
         normalizedCurrent?.delivery_plan_id,
         normalizedCurrent?.order_notes,
       ),
-      fileName: "first test",
+      fileName: resolveItemLabelFileName(labelIdentifierSource),
     });
   }
 

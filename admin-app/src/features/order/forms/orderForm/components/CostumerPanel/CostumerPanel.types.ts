@@ -19,6 +19,10 @@ export type OrderFormCostumerPanelProps = {
   ) => CostumerSelectionRequestResult
   layoutMode?: DesktopLayoutMode
   setLayoutMode?: (value: DesktopLayoutMode) => void
+  /** Edit mode only: lets staff push the order's customer fields to the linked customer. */
+  canUpdateCostumer?: boolean
+  updateCostumer?: boolean
+  onToggleUpdateCostumer?: (value: boolean) => void
 }
 
 export type UseCostumerPanelActionsResult = {

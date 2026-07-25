@@ -42,6 +42,8 @@ export const useOrderFormLayoutModel = () => {
     selectedCostumer,
     isCostumerChangePromptOpen,
     pendingCostumerChange,
+    updateCostumer,
+    initialFormRef,
   } = meta;
   const { handleSave, handleDelete, handlePrepareOrderForCustomerSend } =
     actions;
@@ -77,6 +79,8 @@ export const useOrderFormLayoutModel = () => {
     isLoadingInitialItems,
     closeController,
     selectedCostumer,
+    updateCostumer,
+    initialFormRef,
     isCostumerChangePromptOpen,
     pendingCostumerChange,
     requestSelectCostumer,

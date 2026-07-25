@@ -18,7 +18,10 @@ import {
   useOrderStore,
 } from "../../store/order.store";
 import type { Item } from "../types";
-import { itemsForDownloading } from "../domain/itemsForDownloading";
+import {
+  itemsForDownloading,
+  resolveItemLabelFileName,
+} from "../domain/itemsForDownloading";
 import type { availableEvents } from "@/features/templates/printDocument/types";
 
 type DownloadByEvent = ReturnType<
@@ -133,22 +136,24 @@ export const startItemLabelDownload = ({
     }
     onProgress?.(0.07);
 
+    const labelIdentifierSource = {
+      order_scalar_id: resolvedOrder?.order_scalar_id,
+      reference_number: resolvedOrder?.reference_number,
+      external_source: resolvedOrder?.external_source,
+      help_to_carry: resolvedOrder?.help_to_carry,
+      order_plan_objective: resolvedOrder?.order_plan_objective,
+    };
+
     await downloadByEvent({
       channel: "item",
       event,
       data: itemsForDownloading(
         items,
-        {
-          order_scalar_id: resolvedOrder?.order_scalar_id,
-          reference_number: resolvedOrder?.reference_number,
-          external_source: resolvedOrder?.external_source,
-          help_to_carry: resolvedOrder?.help_to_carry,
-          order_plan_objective: resolvedOrder?.order_plan_objective,
-        },
+        labelIdentifierSource,
         routePlanId,
         resolvedOrder?.order_notes,
       ),
-      fileName: "first test",
+      fileName: resolveItemLabelFileName(labelIdentifierSource),
       onProgress,
     });
   })();

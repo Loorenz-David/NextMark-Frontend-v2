@@ -1,5 +1,5 @@
 import type { jsPDF } from "jspdf";
-import { AirplaneIconSrc, HelpToCarryIconSrc } from "@/assets/icons";
+import { HelpToCarryIconSrc } from "@/assets/icons";
 
 type SevenByTenItemData = {
   delivery_date?: string | null;
@@ -31,12 +31,12 @@ const MID: [number, number, number] = [55, 55, 55];
 
 const FS = {
   identity: 20.45,
-  week: 17.16,
-  date: 20.76,
+  objective: 16,
   article: 21,
-  label: 7,
-  value: 9,
-  notesValue: 8,
+  // Item qualities — 30% larger than the previous 7 / 9 / 8.
+  label: 9.1,
+  value: 11.7,
+  notesValue: 10.4,
 } as const;
 
 function setFont(
@@ -104,6 +104,19 @@ const fmtItemProps = (properties?: Record<string, unknown> | null): string => {
   return parts.length ? parts.join("   ·   ") : "--";
 };
 
+const fmtPlanObjective = (objective?: string | null): string => {
+  switch (objective) {
+    case "international_shipping":
+      return "International";
+    case "local_delivery":
+      return "Local";
+    case "store_pickup":
+      return "Pickup";
+    default:
+      return "";
+  }
+};
+
 const fmtOrderNotes = (notes: unknown): string => {
   const entries = Array.isArray(notes) ? notes : notes != null ? [notes] : [];
   const general = entries
@@ -121,19 +134,11 @@ const fmtOrderNotes = (notes: unknown): string => {
 
 const HELP_TO_CARRY_ICON_PATH =
   HelpToCarryIconSrc.match(/<path[^>]*\sd="([^"]+)"/)?.[1] ?? "";
-const AIRPLANE_ICON_PATH =
-  AirplaneIconSrc.match(/<path[^>]*\sd="([^"]+)"/)?.[1] ?? "";
 
 const HELP_TO_CARRY_VIEWBOX = {
   x: 0,
   y: -64,
   size: 640,
-} as const;
-
-const AIRPLANE_VIEWBOX = {
-  x: 0,
-  y: 0,
-  size: 512,
 } as const;
 
 type PdfPathCommand = {
@@ -347,21 +352,6 @@ const drawCarryAssistIcon = (
   pdf.fill();
 };
 
-const drawAirplaneIcon = (pdf: jsPDF, x: number, y: number, size: number) => {
-  const iconPath = parseSvgIconPath(
-    AIRPLANE_ICON_PATH,
-    x,
-    y,
-    size,
-    AIRPLANE_VIEWBOX,
-  );
-  if (!iconPath.length) return;
-
-  pdf.setFillColor(17, 17, 17);
-  pdf.path(iconPath);
-  pdf.fill();
-};
-
 // ─── Sample data for preview ────────────────────────────────────────────────
 
 export const sevenByTenTemplateItemSampleData = {
@@ -418,32 +408,18 @@ export const drawSevenByTenTemplateItem = (
   pdf.setLineWidth(0.025);
   pdf.rect(0, 0, W, H, "S");
 
-  // ─── Top row: identity / week + date ───────────────────────────────────────
+  // ─── Top row: identity / plan objective ────────────────────────────────────
   const idText = safe(data.order_scalar_id);
-  const weekText = fmtWeek(data.delivery_date);
-  const dateText = fmtDateLabel(data.delivery_date);
+  const objectiveText = fmtPlanObjective(data.order_plan_objective);
   const topBaseY = topY + TOP_ROW_H / 2 + capH(FS.identity) / 2;
 
   setFont(pdf, FS.identity, true, DARK);
   pdf.text(idText, PAD, topBaseY);
-  if (data.order_plan_objective === "international_shipping") {
-    const airplaneSize = 0.58;
-    drawAirplaneIcon(
-      pdf,
-      PAD + pdf.getTextWidth(idText) + 0.27,
-      topBaseY - airplaneSize + capH(FS.identity) * 0.15,
-      airplaneSize,
-    );
-  }
 
-  setFont(pdf, FS.week, true, DARK);
-  const weekW = pdf.getTextWidth(weekText);
-  const dateGap = 0.75;
-  const dateRightX = W - PAD;
-  const weekX = dateRightX - pdf.getTextWidth(dateText) - dateGap - weekW;
-  pdf.text(weekText, weekX, topBaseY);
-  setFont(pdf, FS.date, false, MID);
-  pdf.text(dateText, dateRightX, topBaseY, { align: "right" });
+  if (objectiveText) {
+    setFont(pdf, FS.objective, true, DARK);
+    pdf.text(objectiveText, W - PAD, topBaseY, { align: "right" });
+  }
 
   // ─── Article row ───────────────────────────────────────────────────────────
   const articleText = safe(data.article_number || data.reference_number);
@@ -459,13 +435,30 @@ export const drawSevenByTenTemplateItem = (
   });
 
   // ─── Body row: info + drawing box ─────────────────────────────────────────
-  const sectionGap = 0.2;
-  const textMaxW = LEFT_COL_W;
-  const drawBoxW = rightW * 0.72;
-  const drawBoxH = bodyH * 0.864;
+  const sectionGap = 0.18;
+  // Drawing box: 30% smaller than the previous 0.72 / 0.864 footprint,
+  // kept anchored to the bottom-right of the body.
+  const drawBoxW = rightW * 0.72 * 0.7;
+  const drawBoxH = bodyH * 0.864 * 0.7;
   const drawBoxX = rightX + rightW - drawBoxW;
   const drawBoxY = bodyBottom - drawBoxH;
-  let cursorY = drawBoxY;
+
+  // Shared value column so every quality's value aligns under the same x.
+  const labelGap = 0.16;
+  setFont(pdf, FS.label, true, DARK);
+  const valueColX =
+    leftX +
+    Math.max(
+      pdf.getTextWidth("Type:"),
+      pdf.getTextWidth("Quantity:"),
+      pdf.getTextWidth("Properties:"),
+      pdf.getTextWidth("Notes:"),
+    ) +
+    labelGap;
+  // Values wrap into the free space up to the (now smaller) draw box.
+  const valueMaxW = drawBoxX - COL_GAP - valueColX;
+
+  let cursorY = bodyY;
 
   const drawField = (
     label: string,
@@ -473,30 +466,37 @@ export const drawSevenByTenTemplateItem = (
     valueFontSize: number,
     maxLines: number,
   ) => {
+    const baseY = cursorY + capH(valueFontSize);
+
     setFont(pdf, FS.label, true, DARK);
-    pdf.text(`${label}:`, leftX, cursorY + capH(FS.label));
-    cursorY += 0.36;
+    pdf.text(`${label}:`, leftX, baseY);
 
     setFont(pdf, valueFontSize, false, MID);
-    const lines = pdf.splitTextToSize(value, textMaxW) as string[];
+    const lines = pdf.splitTextToSize(value, valueMaxW) as string[];
+    const shown = lines.slice(0, maxLines);
     const lineH = capH(valueFontSize) + 0.11;
-    lines.slice(0, maxLines).forEach((line, idx) => {
-      pdf.text(
-        String(line),
-        leftX,
-        cursorY + capH(valueFontSize) + idx * lineH,
-      );
+    shown.forEach((line, idx) => {
+      pdf.text(String(line), valueColX, baseY + idx * lineH);
     });
-    cursorY +=
-      lineH * Math.min(Math.max(lines.length, 1), maxLines) + sectionGap;
+    cursorY += lineH * Math.max(shown.length, 1) + sectionGap;
   };
-
-  drawField("Quantity", safe(data.quantity), FS.value, 1);
 
   const propsLabel = fmtItemProps(data.properties);
   const notesText = fmtOrderNotes(data.order_notes);
+  drawField("Type", safe(data.item_type), FS.value, 1);
+  drawField("Quantity", safe(data.quantity), FS.value, 1);
   drawField("Properties", propsLabel, FS.value, 3);
-  drawField("Notes", notesText, FS.notesValue, 4);
+  drawField("Notes", notesText, FS.notesValue, 2);
+
+  // Week + date clamped to the bottom-left corner, at the SKU font size.
+  const weekText = fmtWeek(data.delivery_date);
+  const dateText = fmtDateLabel(data.delivery_date);
+  const weekDateBaseY = bodyBottom;
+  setFont(pdf, FS.article, true, DARK);
+  pdf.text(weekText, leftX, weekDateBaseY);
+  const weekW = pdf.getTextWidth(weekText);
+  setFont(pdf, FS.article, false, MID);
+  pdf.text(dateText, leftX + weekW + 0.3, weekDateBaseY);
 
   pdf.setDrawColor(17, 17, 17);
   pdf.setLineWidth(0.025);

@@ -47,6 +47,12 @@ export type Order = {
     costumer_id?: number | null;
     client_id?: string | null;
   } | null;
+  /**
+   * Write-only edit directive: when true on a PATCH, the linked Costumer is
+   * updated from the order's submitted customer fields in the same transaction.
+   * Never returned by the API — it only travels inside an update payload.
+   */
+  update_costumer?: boolean;
   delivery_windows?: OrderDeliveryWindow[];
   creation_date?: ISODateTime | null;
   updated_at?: ISODateTime | null;
