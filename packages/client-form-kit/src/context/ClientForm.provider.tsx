@@ -1,4 +1,11 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { useDefaultPhonePrefix } from "@shared-inputs";
 import { ClientFormContext } from "./ClientForm.context";
 import type {
@@ -40,6 +47,12 @@ type Props = {
   ports: ClientFormPorts;
   options: ClientFormOptions;
   onSubmitted: () => void;
+  /**
+   * Observes committed form state: fired whenever the answers or the current
+   * step change, including once at mount with the empty form. The kit stays
+   * transport-agnostic — throttling and delivery are the host's concern.
+   */
+  onStateChange?: (data: ClientFormData, currentStep: ClientFormStep) => void;
   children: ReactNode;
 };
 
@@ -49,6 +62,7 @@ export const ClientFormProvider = ({
   ports,
   options,
   onSubmitted,
+  onStateChange,
   children,
 }: Props) => {
   const defaultPrefix = useDefaultPhonePrefix(
@@ -79,6 +93,15 @@ export const ClientFormProvider = ({
   const [termsError, setTermsError] = useState<string | null>(null);
   const [isRulesGateOpen, setIsRulesGateOpen] = useState(false);
   const [hasAcknowledgedRules, setHasAcknowledgedRules] = useState(false);
+
+  // Latest-ref so an unstable host callback never re-fires the effect: only a
+  // real change to the answers or the step notifies.
+  const onStateChangeRef = useRef(onStateChange);
+  onStateChangeRef.current = onStateChange;
+
+  useEffect(() => {
+    onStateChangeRef.current?.(data, currentStep);
+  }, [data, currentStep]);
 
   const setField = <K extends keyof ClientFormData>(
     key: K,

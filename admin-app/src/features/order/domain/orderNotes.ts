@@ -18,7 +18,7 @@ export const NOTE_TYPE_PRIORITY: Record<NormalizedNoteType, number> = {
 
 export const NOTE_TYPE_LABEL: Record<NormalizedNoteType, string> = {
   FAILURE: "Failure Note",
-  COSTUMER: "Costumer Note",
+  COSTUMER: "Customer Note",
   GENERAL: "General Note",
 };
 
@@ -104,6 +104,49 @@ export const extractNormalizedNotes = (
     })
     .filter((note): note is NormalizedOrderNote => Boolean(note))
     .sort((a, b) => NOTE_TYPE_PRIORITY[a.type] - NOTE_TYPE_PRIORITY[b.type]);
+};
+
+type OrderNoteEntry = NonNullable<Order["order_notes"]>[number];
+
+export const normalizeOrderNotesForStore = (
+  notes: unknown,
+): Order["order_notes"] => {
+  const entries = Array.isArray(notes)
+    ? notes
+    : notes != null
+      ? [notes]
+      : [];
+
+  const normalized = entries
+    .map((note): OrderNoteEntry | null => {
+      if (typeof note === "string") {
+        const content = note.trim();
+        return content || null;
+      }
+
+      if (!note || typeof note !== "object") return null;
+
+      const typedNote = note as {
+        type?: unknown;
+        content?: unknown;
+        creation_date?: unknown;
+      };
+      const content =
+        typeof typedNote.content === "string" ? typedNote.content.trim() : "";
+      if (!content) return null;
+
+      return {
+        type: String(typedNote.type ?? "GENERAL").toUpperCase(),
+        content,
+        creation_date:
+          typeof typedNote.creation_date === "string"
+            ? typedNote.creation_date
+            : null,
+      };
+    })
+    .filter((note): note is OrderNoteEntry => note != null);
+
+  return normalized.length > 0 ? normalized : null;
 };
 
 export const canEditOrderNote = (type: NormalizedNoteType) =>

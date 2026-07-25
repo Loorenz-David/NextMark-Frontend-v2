@@ -1,6 +1,5 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
-import { sessionStorage } from '@/features/auth/login/store/sessionStorage'
 import {
   emitExternalFormRequest,
   type ExternalFormReceivedPayload,
@@ -8,12 +7,20 @@ import {
 import { useExternalFormRealtime } from '@/realtime/externalForm/useExternalFormRealtime'
 
 import { useOrderFormFormSlice } from '../context/OrderFormForm.context'
+import { getLinkedDeviceEmployeeUserId } from '../../../flows/linkedDeviceEmployeeUser.flow'
 import {
   clearPendingLinkedDeviceForm,
   getPendingLinkedDeviceForm,
   registerPendingLinkedDeviceForm,
 } from '../../../store/orderLinkedDeviceForm.store'
+import {
+  clearLinkedDeviceLiveProgress,
+  registerLinkedDeviceLiveRequested,
+  useOrderLinkedDeviceLiveProgressStore,
+} from '../../../store/orderLinkedDeviceLiveProgress.store'
+import { selectOrderByClientId, useOrderStore } from '../../../store/order.store'
 import { resolveLinkedDeviceSendDecision } from '../../../domain/orderLinkedDeviceForm.domain'
+import { shouldMergeLiveProgressIntoOrderForm } from '../../../domain/orderLinkedDeviceLiveProgress.domain'
 
 export type OrderFormLinkedDeviceSendTarget = {
   orderId: number
@@ -35,10 +42,12 @@ export const useOrderFormExternalRealtimeFlow = ({
   mergeExternalClientData,
   referenceNumber,
   employeeUserId,
+  clientId,
 }: {
   mergeExternalClientData: (payload: ExternalFormReceivedPayload['form_data']) => void
   referenceNumber: string
   employeeUserId: number
+  clientId: string | null
 }) => {
   const awaitingDraftResponseRef = useRef(false)
 
@@ -57,6 +66,45 @@ export const useOrderFormExternalRealtimeFlow = ({
   useExternalFormRealtime({
     onReceived: handleExternalFormReceived,
   })
+
+  // Live preview: the background flow writes every progress frame into the
+  // live-progress store; this form merges the frames that are its own — the
+  // fill targeting the order it edits, or a draft fill it armed itself.
+  // Watching the store (instead of the socket) gives mount-time catch-up: a
+  // form opened mid-fill shows the current answers immediately, without the
+  // unsaved customer input ever touching the order store.
+  const formOrderServerId = useOrderStore(
+    (state) => selectOrderByClientId(clientId)(state)?.id ?? null,
+  )
+  const liveEntry = useOrderLinkedDeviceLiveProgressStore(
+    (state) => state.entryByEmployeeUserId[employeeUserId] ?? null,
+  )
+  const lastMergedRef = useRef<{ session: string; seq: number } | null>(null)
+
+  useEffect(() => {
+    if (
+      !liveEntry ||
+      !shouldMergeLiveProgressIntoOrderForm({
+        entry: liveEntry,
+        formOrderServerId,
+        isAwaitingDraft: awaitingDraftResponseRef.current,
+      })
+    ) {
+      return
+    }
+
+    const lastMerged = lastMergedRef.current
+    if (
+      lastMerged &&
+      lastMerged.session === liveEntry.session &&
+      lastMerged.seq >= liveEntry.seq
+    ) {
+      return
+    }
+
+    lastMergedRef.current = { session: liveEntry.session, seq: liveEntry.seq }
+    mergeExternalClientData(liveEntry.formData)
+  }, [liveEntry, formOrderServerId, mergeExternalClientData])
 
   const handleSendForm = useCallback((
     target?: OrderFormLinkedDeviceSendTarget | null,
@@ -77,8 +125,18 @@ export const useOrderFormExternalRealtimeFlow = ({
       }
     }
 
+    // A resend must not surface the previous customer's snapshot.
+    clearLinkedDeviceLiveProgress(employeeUserId)
+    lastMergedRef.current = null
+
     if (target) {
       registerPendingLinkedDeviceForm({
+        employeeUserId,
+        orderId: target.orderId,
+      })
+      // The widget shows from the send, not from the customer's first
+      // keystroke — the first progress frame supersedes this placeholder.
+      registerLinkedDeviceLiveRequested({
         employeeUserId,
         orderId: target.orderId,
       })
@@ -97,6 +155,9 @@ export const useOrderFormExternalRealtimeFlow = ({
       awaitingDraftResponseRef.current = false
       if (target) {
         clearPendingLinkedDeviceForm(employeeUserId)
+        // The request never reached the device — a "waiting" widget for it
+        // would be a lie.
+        clearLinkedDeviceLiveProgress(employeeUserId)
       }
       return { status: 'error', message: 'Unable to contact linked device.' }
     }
@@ -111,16 +172,13 @@ export const useOrderFormExternalRealtimeFlow = ({
 
 export const useOrderFormExternalFlow = (): OrderFormExternalFlow => {
   const { formState, formSetters } = useOrderFormFormSlice()
-  const session = sessionStorage.getSession()
-
-  const employeeUserId = Number(
-    session?.user?.id ?? (session as { userId?: string | number | null } | null)?.userId ?? -1,
-  )
+  const employeeUserId = getLinkedDeviceEmployeeUserId()
 
   const { handleSendForm } = useOrderFormExternalRealtimeFlow({
     mergeExternalClientData: formSetters.mergeExternalClientData,
     referenceNumber: formState.reference_number ?? '',
     employeeUserId,
+    clientId: formState.client_id ?? null,
   })
 
   return {

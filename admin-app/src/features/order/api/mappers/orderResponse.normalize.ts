@@ -1,5 +1,6 @@
 import type { Order } from "@/features/order/types/order";
 import type { OrderMap } from "@/features/order/types/order";
+import { normalizeOrderNotesForStore } from "@/features/order/domain/orderNotes";
 
 type ApiOrder = Order & {
   route_plan_id?: number | null;
@@ -19,6 +20,19 @@ export const normalizeOrderResponseForStore = (
     delivery_plan_id: deliveryPlanId,
   };
 };
+
+export const mergeOrderResponseForStore = (
+  currentOrder: Order,
+  responseOrder: Order,
+): Order => ({
+  ...currentOrder,
+  ...responseOrder,
+  order_notes:
+    responseOrder.order_notes !== undefined
+      ? normalizeOrderNotesForStore(responseOrder.order_notes)
+      : currentOrder.order_notes,
+  __optimistic: undefined,
+});
 
 export const normalizeOrderMapResponseForStore = (
   table: OrderMap | null | undefined,

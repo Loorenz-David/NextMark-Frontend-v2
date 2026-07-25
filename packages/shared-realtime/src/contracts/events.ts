@@ -7,6 +7,7 @@ export const REALTIME_SERVER_EVENTS = {
   notificationSnapshot: 'notification:snapshot',
   externalFormReceived: 'external_form:received',
   externalFormRequested: 'external_form:requested',
+  externalFormProgress: 'external_form:progress',
   clientFormSubmitted: 'client_form:submitted',
 } as const
 
@@ -19,6 +20,7 @@ export const REALTIME_CLIENT_EVENTS = {
   externalFormLeaveUser: 'external_form:leave_user',
   externalFormSubmitUser: 'external_form:submit_user',
   externalFormRequestUser: 'external_form:request_user',
+  externalFormProgressUser: 'external_form:progress_user',
 } as const
 
 export const REALTIME_CHANNELS = {
@@ -168,6 +170,33 @@ export type ExternalFormReceivedPayload<TFormData> = {
 export type ExternalFormRequestedPayload = {
   request_data?: Record<string, unknown>
   requested_by: number
+}
+
+/**
+ * In-progress snapshot of the form being filled on the linked device.
+ * Frames are full snapshots, so a dropped frame is replaced by the next one.
+ * `step` stays a plain string here — the app narrows it; the package must not
+ * depend on the form kit.
+ */
+export type ExternalFormProgressData<TFormData> = {
+  form_data: TFormData
+  step: string
+  /** Monotonic within one device fill session; orders frames on the receiver. */
+  seq: number
+  /**
+   * Random id per fill session. The device resets `seq` per session, so the
+   * receiver compares seq only within a session — a new session always wins.
+   */
+  session: string
+}
+
+export type ExternalFormProgressPublishPayload<TFormData> = {
+  progress_data: ExternalFormProgressData<TFormData>
+}
+
+export type ExternalFormProgressPayload<TFormData> = {
+  progress_data: ExternalFormProgressData<TFormData>
+  progressed_by: number
 }
 
 export type ClientFormSubmittedPayload = {

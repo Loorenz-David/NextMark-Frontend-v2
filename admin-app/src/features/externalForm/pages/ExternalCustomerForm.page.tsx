@@ -14,6 +14,7 @@ import {
 import { useExternalFormRealtime } from '@/realtime/externalForm/useExternalFormRealtime'
 
 import { fetchLinkedDeviceClientFormConfig } from '../api/linkedDeviceConfig.api'
+import { useExternalFormLiveProgressEmitter } from '../flows/externalFormLiveProgress.flow'
 import { createLinkedDeviceClientFormPorts } from '../ports/linkedDeviceClientForm.ports'
 
 const SUBMITTED_NOTICE_MS = 10_000
@@ -71,6 +72,13 @@ export const ExternalCustomerFormPage = () => {
   const [sessionKey, setSessionKey] = useState(0)
 
   const ports = useMemo(() => createLinkedDeviceClientFormPorts(), [])
+
+  // Live preview for the till: while the customer fills the form, throttled
+  // snapshots stream to the team room. Deactivating on submit stops any
+  // trailing frame from arriving after the answers themselves.
+  const { handleStateChange } = useExternalFormLiveProgressEmitter({
+    active: screen === 'collecting',
+  })
 
   // The media is signage: it runs while the device sits idle at the counter,
   // with no form session behind it, so the configuration is read at mount and
@@ -131,6 +139,7 @@ export const ExternalCustomerFormPage = () => {
               ports={ports}
               options={OPTIONS}
               onSubmitted={handleSubmitted}
+              onStateChange={handleStateChange}
             >
               <div className="flex flex-col gap-6">
                 <header className="space-y-3 pb-2 text-center">

@@ -33,9 +33,11 @@ const FS = {
   identity: 20.45,
   objective: 16,
   article: 21,
-  // Item qualities — 30% larger than the previous 7 / 9 / 8.
-  label: 9.1,
-  value: 11.7,
+  // Item qualities — enlarged (with wider row spacing) to fill the body.
+  // Notes stays compact per design.
+  label: 10.5,
+  value: 14,
+  notesLabel: 9.1,
   notesValue: 10.4,
 } as const;
 
@@ -370,14 +372,23 @@ export const sevenByTenTemplateItemSampleData = {
   },
 };
 
-// ─── Layout constants (cm) ──────────────────────────────────────────────────
+// ─── Layout constants (reference-frame cm, designed for a 10×7 canvas) ───────
+// The whole layout is authored in this reference frame and then scaled
+// uniformly to fit the actual page, so the design prints 1:1 at any label size.
 
+const REF_W = 10;
+const REF_H = 7;
 const PAD = 0.24;
 const TOP_ROW_H = 0.82;
 const ARTICLE_ROW_H = 1.34;
 const BODY_GAP = 0.22;
 const COL_GAP = 0.24;
 const LEFT_COL_W = 4.18;
+const SECTION_GAP = 0.42;
+const LABEL_GAP = 0.16;
+const LINE_EXTRA = 0.11;
+const WEEK_DATE_GAP = 0.3;
+const LINE_W = 0.025;
 
 // ─── Public draw function ────────────────────────────────────────────────────
 
@@ -390,52 +401,72 @@ export const drawSevenByTenTemplateItem = (
   const wrapper = rawData as { itemPayload?: SevenByTenItemData };
   const data: SevenByTenItemData =
     wrapper.itemPayload ?? (rawData as SevenByTenItemData);
-  const W = widthCm;
-  const H = heightCm;
 
-  const topY = PAD;
-  const articleY = topY + TOP_ROW_H;
-  const bodyY = articleY + ARTICLE_ROW_H + BODY_GAP;
-  const bodyBottom = H - PAD;
+  // Uniform scale that fits the 10×7 design into the actual page, centered.
+  const s = Math.min(widthCm / REF_W, heightCm / REF_H);
+  const contentW = REF_W * s;
+  const contentH = REF_H * s;
+  const left = (widthCm - contentW) / 2;
+  const top = (heightCm - contentH) / 2;
+  const right = left + contentW;
+  const bottom = top + contentH;
+
+  const sf = (pt: number) => pt * s; // reference pt → scaled pt
+
+  const pad = PAD * s;
+  const topRowH = TOP_ROW_H * s;
+  const articleRowH = ARTICLE_ROW_H * s;
+  const bodyGap = BODY_GAP * s;
+  const colGap = COL_GAP * s;
+  const leftColW = LEFT_COL_W * s;
+  const sectionGap = SECTION_GAP * s;
+  const labelGap = LABEL_GAP * s;
+  const lineExtra = LINE_EXTRA * s;
+  const weekDateGap = WEEK_DATE_GAP * s;
+  const lineW = LINE_W * s;
+
+  const topY = top + pad;
+  const articleY = topY + topRowH;
+  const bodyY = articleY + articleRowH + bodyGap;
+  const bodyBottom = bottom - pad;
   const bodyH = Math.max(0, bodyBottom - bodyY);
-  const leftX = PAD;
-  const rightX = leftX + LEFT_COL_W + COL_GAP;
-  const rightW = W - rightX - PAD;
-  const midX = W / 2;
+  const leftX = left + pad;
+  const rightX = leftX + leftColW + colGap;
+  const rightW = right - pad - rightX;
+  const midX = left + contentW / 2;
 
-  // Outer border
+  // Outer border (page edges)
   pdf.setDrawColor(17, 17, 17);
-  pdf.setLineWidth(0.025);
-  pdf.rect(0, 0, W, H, "S");
+  pdf.setLineWidth(lineW);
+  pdf.rect(0, 0, widthCm, heightCm, "S");
 
   // ─── Top row: identity / plan objective ────────────────────────────────────
   const idText = safe(data.order_scalar_id);
   const objectiveText = fmtPlanObjective(data.order_plan_objective);
-  const topBaseY = topY + TOP_ROW_H / 2 + capH(FS.identity) / 2;
+  const topBaseY = topY + topRowH / 2 + capH(sf(FS.identity)) / 2;
 
-  setFont(pdf, FS.identity, true, DARK);
-  pdf.text(idText, PAD, topBaseY);
+  setFont(pdf, sf(FS.identity), true, DARK);
+  pdf.text(idText, leftX, topBaseY);
 
   if (objectiveText) {
-    setFont(pdf, FS.objective, true, DARK);
-    pdf.text(objectiveText, W - PAD, topBaseY, { align: "right" });
+    setFont(pdf, sf(FS.objective), true, DARK);
+    pdf.text(objectiveText, right - pad, topBaseY, { align: "right" });
   }
 
   // ─── Article row ───────────────────────────────────────────────────────────
   const articleText = safe(data.article_number || data.reference_number);
-  const articleBaseY = articleY + ARTICLE_ROW_H / 2 + capH(FS.article) / 2;
+  const articleBaseY = articleY + articleRowH / 2 + capH(sf(FS.article)) / 2;
 
-  setFont(pdf, FS.article, true, DARK);
+  setFont(pdf, sf(FS.article), true, DARK);
   const articleLines = pdf.splitTextToSize(
     articleText,
-    W - PAD * 2,
+    contentW - pad * 2,
   ) as string[];
   pdf.text(String(articleLines[0] ?? "--"), midX, articleBaseY, {
     align: "center",
   });
 
   // ─── Body row: info + drawing box ─────────────────────────────────────────
-  const sectionGap = 0.18;
   // Drawing box: 30% smaller than the previous 0.72 / 0.864 footprint,
   // kept anchored to the bottom-right of the body.
   const drawBoxW = rightW * 0.72 * 0.7;
@@ -444,37 +475,36 @@ export const drawSevenByTenTemplateItem = (
   const drawBoxY = bodyBottom - drawBoxH;
 
   // Shared value column so every quality's value aligns under the same x.
-  const labelGap = 0.16;
-  setFont(pdf, FS.label, true, DARK);
+  setFont(pdf, sf(FS.label), true, DARK);
   const valueColX =
     leftX +
     Math.max(
       pdf.getTextWidth("Type:"),
-      pdf.getTextWidth("Quantity:"),
-      pdf.getTextWidth("Properties:"),
+      pdf.getTextWidth("Prop:"),
       pdf.getTextWidth("Notes:"),
     ) +
     labelGap;
   // Values wrap into the free space up to the (now smaller) draw box.
-  const valueMaxW = drawBoxX - COL_GAP - valueColX;
+  const valueMaxW = drawBoxX - colGap - valueColX;
 
   let cursorY = bodyY;
 
   const drawField = (
     label: string,
+    labelFontSize: number,
     value: string,
     valueFontSize: number,
     maxLines: number,
   ) => {
-    const baseY = cursorY + capH(valueFontSize);
+    const baseY = cursorY + capH(sf(valueFontSize));
 
-    setFont(pdf, FS.label, true, DARK);
+    setFont(pdf, sf(labelFontSize), true, DARK);
     pdf.text(`${label}:`, leftX, baseY);
 
-    setFont(pdf, valueFontSize, false, MID);
+    setFont(pdf, sf(valueFontSize), false, MID);
     const lines = pdf.splitTextToSize(value, valueMaxW) as string[];
     const shown = lines.slice(0, maxLines);
-    const lineH = capH(valueFontSize) + 0.11;
+    const lineH = capH(sf(valueFontSize)) + lineExtra;
     shown.forEach((line, idx) => {
       pdf.text(String(line), valueColX, baseY + idx * lineH);
     });
@@ -483,31 +513,35 @@ export const drawSevenByTenTemplateItem = (
 
   const propsLabel = fmtItemProps(data.properties);
   const notesText = fmtOrderNotes(data.order_notes);
-  drawField("Type", safe(data.item_type), FS.value, 1);
-  drawField("Quantity", safe(data.quantity), FS.value, 1);
-  drawField("Properties", propsLabel, FS.value, 3);
-  drawField("Notes", notesText, FS.notesValue, 2);
+
+  // Type row carries the quantity in parentheses: "item_type (quantity)".
+  const typeValue = safe(data.item_type);
+  const typeWithQty =
+    data.quantity == null ? typeValue : `${typeValue} (${data.quantity})`;
+  drawField("Type", FS.label, typeWithQty, FS.value, 1);
+  drawField("Prop", FS.label, propsLabel, FS.value, 2);
+  drawField("Notes", FS.notesLabel, notesText, FS.notesValue, 2);
 
   // Week + date clamped to the bottom-left corner, at the SKU font size.
   const weekText = fmtWeek(data.delivery_date);
   const dateText = fmtDateLabel(data.delivery_date);
   const weekDateBaseY = bodyBottom;
-  setFont(pdf, FS.article, true, DARK);
+  setFont(pdf, sf(FS.article), true, DARK);
   pdf.text(weekText, leftX, weekDateBaseY);
   const weekW = pdf.getTextWidth(weekText);
-  setFont(pdf, FS.article, false, MID);
-  pdf.text(dateText, leftX + weekW + 0.3, weekDateBaseY);
+  setFont(pdf, sf(FS.article), false, MID);
+  pdf.text(dateText, leftX + weekW + weekDateGap, weekDateBaseY);
 
   pdf.setDrawColor(17, 17, 17);
-  pdf.setLineWidth(0.025);
+  pdf.setLineWidth(lineW);
   pdf.rect(drawBoxX, drawBoxY, drawBoxW, drawBoxH, "S");
 
   if (data.help_to_carry === true) {
-    const iconSize = Math.min(0.86, Math.max(0.62, drawBoxW * 0.22));
+    const iconSize = Math.min(0.86 * s, Math.max(0.62 * s, drawBoxW * 0.22));
     drawCarryAssistIcon(
       pdf,
-      drawBoxX + drawBoxW - iconSize - 0.18,
-      drawBoxY + drawBoxH - iconSize - 0.16,
+      drawBoxX + drawBoxW - iconSize - 0.18 * s,
+      drawBoxY + drawBoxH - iconSize - 0.16 * s,
       iconSize,
     );
   }

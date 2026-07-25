@@ -5,12 +5,34 @@ import type { address } from "@/types/address";
 import type { Phone } from "@/types/phone";
 import type { OrderDeliveryWindow } from "../../../types/order";
 import type { OrderOperationTypes } from "../../../types/order";
-import {
-  resolveOrderFormTimeZone,
-  sortDeliveryWindowsUtc,
-} from "../flows/orderFormDeliveryWindows.flow";
+import { sortDeliveryWindowsUtc } from "../flows/orderFormDeliveryWindows.flow";
 
 import type { OrderFormState, OrderFormWarnings } from "./OrderForm.types";
+
+/**
+ * Overlays customer data collected on the linked device onto the form state.
+ * Pure so the bootstrap path can apply it during (re)initialization — a merge
+ * done only from effects loses to the provider's own reset, which runs after
+ * child effects on mount and again whenever the order refreshes.
+ */
+export const mergeExternalClientDataIntoFormState = (
+  prev: OrderFormState,
+  data: ExternalFormData,
+): OrderFormState => ({
+  ...prev,
+  client_first_name: data.client_first_name || prev.client_first_name,
+  client_last_name: data.client_last_name || prev.client_last_name,
+  client_email: data.client_email || prev.client_email,
+  client_primary_phone: data.client_primary_phone ?? prev.client_primary_phone,
+  client_secondary_phone:
+    data.client_secondary_phone ?? prev.client_secondary_phone,
+  client_address: data.client_address ?? prev.client_address,
+  // The acceptance happened at the counter, against a version the customer
+  // actually saw. Never widened by a later edit — only the device sets it.
+  accepted_terms_version_id:
+    data.accepted_terms_version_id ?? prev.accepted_terms_version_id,
+  marketing_messages: data.marketing_messages,
+});
 
 const normalizeOperationType = (
   value: string | number,
@@ -30,8 +52,6 @@ export const useOrderFormSetters = ({
   warnings: OrderFormWarnings;
   setUpdateCostumer: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const timeZone = resolveOrderFormTimeZone();
-
   // Editing any customer-identity field opts the order into pushing those
   // values back to the linked customer. Staff can still switch it back off.
   const markCostumerFieldTouched = () => setUpdateCostumer(true);
@@ -127,22 +147,7 @@ export const useOrderFormSetters = ({
   };
 
   const mergeExternalClientData = (data: ExternalFormData) => {
-    updateFormState((prev) => ({
-      ...prev,
-      client_first_name: data.client_first_name || prev.client_first_name,
-      client_last_name: data.client_last_name || prev.client_last_name,
-      client_email: data.client_email || prev.client_email,
-      client_primary_phone:
-        data.client_primary_phone ?? prev.client_primary_phone,
-      client_secondary_phone:
-        data.client_secondary_phone ?? prev.client_secondary_phone,
-      client_address: data.client_address ?? prev.client_address,
-      // The acceptance happened at the counter, against a version the customer
-      // actually saw. Never widened by a later edit — only the device sets it.
-      accepted_terms_version_id:
-        data.accepted_terms_version_id ?? prev.accepted_terms_version_id,
-      marketing_messages: data.marketing_messages,
-    }));
+    updateFormState((prev) => mergeExternalClientDataIntoFormState(prev, data));
   };
 
   const handleDeliveryWindows = (windows: OrderDeliveryWindow[]) => {

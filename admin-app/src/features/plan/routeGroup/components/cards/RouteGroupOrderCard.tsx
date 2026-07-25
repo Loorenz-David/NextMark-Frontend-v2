@@ -1,4 +1,3 @@
-import type { Order } from "@/features/order/types/order";
 import { TimeIcon } from "@/assets/icons";
 import { StateCard } from "@/shared/layout/StateCard";
 import { useOrderStateByServerId } from "@/features/order/store/orderStateHooks.store";
@@ -6,12 +5,14 @@ import type { RouteSolutionStop } from "@/features/plan/routeGroup/types/routeSo
 import { RouteStopWarnings } from "../warnings/RouteStopWarnings";
 import { formatRouteTime } from "@/features/plan/routeGroup/utils/formatRouteTime";
 import {
+  ItemTypeCountsPill,
+  OrderCardNotesTray,
   OrderMissingInfoNotifier,
+  OrderOperationTypeBadges,
   useOrderActions,
+  type Order,
 } from "@/features/order";
 import { StopOrderAvatar } from "./StopOrderAvatar";
-import { OrderOperationTypeBadges } from "@/features/order/components/cards/OrderOperationTypeBadges";
-import { ItemTypeCountsPill } from "@/features/order/components/cards/ItemTypeCountsPill";
 import { OrderTimeLoadingPill } from "@/shared/loadingCards/order";
 
 type RouteGroupOrderCardProps = {
@@ -64,69 +65,69 @@ export const RouteGroupOrderCard = ({
   };
 
   return (
-    <div
-      className="admin-glass-panel admin-surface-compact relative flex flex-col gap-2.5 overflow-visible rounded-lg border border-border p-4 pl-2 transition-all duration-200 hover:border-border-accent hover:bg-surface-hover hover:shadow-[var(--shadow-panel-card)]"
-      onClick={openOrder}
-    >
-      <OrderMissingInfoNotifier order={order} />
-      <div className="admin-card-sheen [--card-sheen-stop:26%] pointer-events-none absolute inset-0 rounded-lg" />
+    <div className="group relative" onClick={openOrder}>
+      <div className="admin-glass-panel admin-surface-compact relative z-10 flex flex-col gap-2.5 overflow-visible rounded-lg border border-border p-4 pl-2 transition-all duration-200 group-hover:border-border-accent group-hover:bg-surface-hover group-hover:shadow-[var(--shadow-panel-card)]">
+        <OrderMissingInfoNotifier order={order} />
+        <div className="admin-card-sheen [--card-sheen-stop:26%] pointer-events-none absolute inset-0 rounded-lg" />
 
-      <div className="relative z-10 flex w-full gap-3">
-        <StopOrderAvatar stopOrder={stopOrder} />
-        <div className="flex min-w-0 flex-col gap-2 flex-1 pl-1">
-          <div className="flex justify-between">
-            <div className="flex min-w-0 gap-3">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-base font-semibold text-[var(--color-text)]">
-                  {orderLabel}
-                </span>
-                <OrderOperationTypeBadges
-                  operationType={order.operation_type}
-                />
-              </div>
-              {order.external_source && (
-                <div className="flex items-center justify-center">
-                  <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
-                    {order.external_source}
+        <div className="relative z-10 flex w-full gap-3">
+          <StopOrderAvatar stopOrder={stopOrder} />
+          <div className="flex min-w-0 flex-col gap-2 flex-1 pl-1">
+            <div className="flex justify-between">
+              <div className="flex min-w-0 gap-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-base font-semibold text-[var(--color-text)]">
+                    {orderLabel}
                   </span>
+                  <OrderOperationTypeBadges
+                    operationType={order.operation_type}
+                  />
+                </div>
+                {order.external_source && (
+                  <div className="flex items-center justify-center">
+                    <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                      {order.external_source}
+                    </span>
+                  </div>
+                )}
+              </div>
+              {orderState && (
+                <div className="flex gap-3 items-center">
+                  <RouteStopWarnings stop={stop} planStartDate={planStartDate} />
+                  <StateCard
+                    label={orderState.name}
+                    color={orderState.color ? orderState.color : "#363636ff"}
+                  />
                 </div>
               )}
             </div>
-            {orderState && (
-              <div className="flex gap-3 items-center">
-                <RouteStopWarnings stop={stop} planStartDate={planStartDate} />
-                <StateCard
-                  label={orderState.name}
-                  color={orderState.color ? orderState.color : "#363636ff"}
+            <div className="flex w-full items-center justify-between">
+              <span className="truncate pr-1 text-xs text-[var(--color-muted)]/95">
+                {streetAddress}
+              </span>
+              <div className="flex items-center justify-end gap-3 text-xs text-[var(--color-muted)]">
+                <ItemTypeCountsPill
+                  itemCount={itemCount}
+                  itemTypeCounts={order.item_type_counts}
                 />
+                {expectedArrival ? (
+                  <div className="flex min-w-[72px] items-center justify-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1">
+                    <>
+                      <TimeIcon className="h-3 w-3 text-[var(--color-light-blue)]" />
+                      <span className="whitespace-nowrap">{expectedArrival}</span>
+                    </>
+                  </div>
+                ) : streetAddress ? (
+                  <OrderTimeLoadingPill />
+                ) : (
+                  "--"
+                )}
               </div>
-            )}
-          </div>
-          <div className="flex w-full items-center justify-between">
-            <span className="truncate pr-1 text-xs text-[var(--color-muted)]/95">
-              {streetAddress}
-            </span>
-            <div className="flex items-center justify-end gap-3 text-xs text-[var(--color-muted)]">
-              <ItemTypeCountsPill
-                itemCount={itemCount}
-                itemTypeCounts={order.item_type_counts}
-              />
-              {expectedArrival ? (
-                <div className="flex min-w-[72px] items-center justify-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1">
-                  <>
-                    <TimeIcon className="h-3 w-3 text-[var(--color-light-blue)]" />
-                    <span className="whitespace-nowrap">{expectedArrival}</span>
-                  </>
-                </div>
-              ) : streetAddress ? (
-                <OrderTimeLoadingPill />
-              ) : (
-                "--"
-              )}
             </div>
           </div>
         </div>
       </div>
+      <OrderCardNotesTray notes={order.order_notes} />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { HomeAppProvider, useHomeApp } from '../providers/HomeAppProvider'
 import { HomeAppManagersProvider } from '../providers/HomeAppManagersProvider'
 import { HomeDesktopHeader } from '../components/HomeDesktopHeader'
 import { HomeOverlays } from '@/features/home-route-operations/components/HomeOverlays'
+import { OrderLinkedDeviceLiveWidget } from '@/features/order/components/linkedDeviceLive/OrderLinkedDeviceLiveWidget'
 
 const HomeStorePickupPage = lazy(() =>
   import('@/features/home-store-pickup/pages/HomeStorePickupPage').then((module) => ({
@@ -40,6 +41,7 @@ function HomeAppShell() {
       <>
         <ActiveWorkspaceView workspace={activeWorkspace} />
         <HomeOverlays />
+        <OrderLinkedDeviceLiveWidget />
       </>
     )
   }
@@ -54,6 +56,7 @@ function HomeAppShell() {
           account switcher (and every home popup) renders regardless of the
           active workspace. */}
       <HomeOverlays />
+      <OrderLinkedDeviceLiveWidget />
     </div>
   )
 }

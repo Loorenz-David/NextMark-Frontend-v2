@@ -13,7 +13,11 @@ import {
   useArchiveOrder as useArchiveOrderApi,
   useUnarchiveOrder as useUnarchiveOrderApi,
 } from "../api/orderApi";
-import { normalizeOrderResponseForStore } from "../api/mappers/orderResponse.normalize";
+import {
+  mergeOrderResponseForStore,
+  normalizeOrderResponseForStore,
+} from "../api/mappers/orderResponse.normalize";
+import { normalizeOrderNotesForStore } from "../domain/orderNotes";
 
 import {
   addVisibleOrder,
@@ -38,13 +42,6 @@ export type SaveOrderParams = {
   onRollback?: () => void;
   optimisticImmediate?: boolean;
   onCreateCommitted?: (createdBundles: Array<{ order?: Order | null }>) => void;
-};
-
-const normalizeOrderNotesForOptimistic = (
-  notes: unknown,
-): Order["order_notes"] => {
-  if (!Array.isArray(notes)) return notes != null ? [String(notes)] : null;
-  return notes.filter((n): n is string => typeof n === "string");
 };
 
 export const useOrderController = () => {
@@ -76,7 +73,7 @@ export const useOrderController = () => {
           mutate: () => {
             setOrder({
               ...baseOrder,
-              order_notes: normalizeOrderNotesForOptimistic(
+              order_notes: normalizeOrderNotesForStore(
                 baseOrder.order_notes,
               ),
               __optimistic: true,
@@ -105,12 +102,9 @@ export const useOrderController = () => {
                 order: normalizedOrder,
               });
 
-              setOrder({
-                ...normalizedOrder,
-                order_notes: normalizeOrderNotesForOptimistic(
-                  normalizedOrder.order_notes,
-                ),
-              });
+              setOrder(
+                mergeOrderResponseForStore(baseOrder, normalizedOrder),
+              );
               addVisibleOrder(normalizedOrder.client_id);
             });
 
@@ -122,14 +116,7 @@ export const useOrderController = () => {
                 createdBundles[0]?.order,
               );
               if (fallback?.client_id) {
-                setOrder({
-                  ...baseOrder,
-                  ...fallback,
-                  order_notes: normalizeOrderNotesForOptimistic(
-                    (fallback.order_notes ??
-                      baseOrder.order_notes) as Order["order_notes"],
-                  ),
-                });
+                setOrder(mergeOrderResponseForStore(baseOrder, fallback));
                 addVisibleOrder(fallback.client_id);
               }
             }
@@ -182,7 +169,7 @@ export const useOrderController = () => {
           updateOrderByClientId(clientId, (order) => ({
             ...order,
             ...fields,
-            order_notes: normalizeOrderNotesForOptimistic(
+            order_notes: normalizeOrderNotesForStore(
               (fields.order_notes ?? order.order_notes) as Order["order_notes"],
             ),
             __optimistic: true,
@@ -201,13 +188,9 @@ export const useOrderController = () => {
                 bundle?.order,
               );
               if (normalizedOrder?.client_id) {
-                setOrder({
-                  ...normalizedOrder,
-                  order_notes: normalizeOrderNotesForOptimistic(
-                    normalizedOrder.order_notes,
-                  ),
-                  __optimistic: undefined,
-                });
+                updateOrderByClientId(clientId, (currentOrder) =>
+                  mergeOrderResponseForStore(currentOrder, normalizedOrder),
+                );
               }
               handlePlanOrderUpdate(bundle);
             });

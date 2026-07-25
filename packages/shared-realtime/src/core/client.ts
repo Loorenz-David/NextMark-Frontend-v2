@@ -76,6 +76,13 @@ export class SharedRealtimeClient {
   private readonly sessionAccessor: SessionSource
   private readonly transport = new SocketIoTransport()
   private readonly subscriptions = new Map<string, SubscriptionRecord>()
+  // Fire-and-forget room joins that carry no channel params and so cannot use
+  // the subscription-record protocol (e.g. the team-scoped external-form room,
+  // whose room the backend derives from the socket's claims). Kept here so they
+  // are replayed on every reconnect exactly like tracked subscriptions —
+  // otherwise a transient drop silently ejects the socket from the room while
+  // the connection itself looks healthy.
+  private readonly rejoinEmits = new Map<string, unknown>()
   private readonly diagnosticsHandlers = new Set<(diagnostics: RealtimeClientDiagnostics) => void>()
   private currentSocketToken: string | null = null
   private readonly removeSessionListener?: () => void
@@ -88,6 +95,7 @@ export class SharedRealtimeClient {
     this.transport.onConnectionChange((connected) => {
       if (connected) {
         this.resubscribeAll()
+        this.replayRejoins()
       } else {
         this.markSubscriptionsPending()
       }
@@ -287,6 +295,34 @@ export class SharedRealtimeClient {
     this.transport.emit(event, payload)
   }
 
+  /**
+   * Registers a room join that must survive reconnects. The emit is replayed on
+   * every successful (re)connection until {@link unregisterRejoin} is called, so
+   * the socket rejoins the room after any transient drop without the caller
+   * having to observe the connection state. Emits immediately when already
+   * connected; otherwise the pending connect replays it once connected.
+   *
+   * Keyed by event name, so repeated registrations for the same room collapse to
+   * one — the caller owns the join/leave lifecycle (typically via a ref count).
+   */
+  registerRejoin(event: string, payload: unknown = {}): void {
+    this.rejoinEmits.set(event, payload)
+    this.connect()
+
+    if (this.transport.isConnected()) {
+      this.transport.emit(event, payload)
+    }
+  }
+
+  /**
+   * Stops replaying a join registered with {@link registerRejoin}. Does not emit
+   * a leave — the caller sends its own leave event, since a leave is meaningful
+   * only while connected and must not be replayed.
+   */
+  unregisterRejoin(event: string): void {
+    this.rejoinEmits.delete(event)
+  }
+
   private resubscribeAll(): void {
     this.subscriptions.forEach((record) => {
       if (record.count <= 0) {
@@ -298,6 +334,12 @@ export class SharedRealtimeClient {
     })
 
     this.emitDiagnosticsChange()
+  }
+
+  private replayRejoins(): void {
+    this.rejoinEmits.forEach((payload, event) => {
+      this.transport.emit(event, payload)
+    })
   }
 
   private markSubscriptionsPending(): void {

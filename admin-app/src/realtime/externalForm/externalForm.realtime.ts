@@ -1,5 +1,9 @@
+import type { ClientFormStep } from '@client-form-kit'
 import type { ExternalFormData } from '@/features/externalForm/domain/externalForm.types'
-import { createExternalFormChannel } from '@shared-realtime'
+import {
+  createExternalFormChannel,
+  type ExternalFormProgressPayload as SharedExternalFormProgressPayload,
+} from '@shared-realtime'
 import { adminRealtimeClient } from '../client'
 
 export type ExternalFormSubmitPayload = {
@@ -20,6 +24,24 @@ export type ExternalFormRequestedPayload = {
   requested_by: number
 }
 
+// The publish side narrows `step` to the kit's step union (the package keeps
+// it as a plain string because it must not depend on the form kit). The
+// receive side deliberately does NOT narrow: the relay forwards the wire value
+// opaquely, so consumers coerce it (`coerceClientFormStep`) before use.
+export type ExternalFormProgressData = {
+  form_data: ExternalFormData
+  step: ClientFormStep
+  seq: number
+  session: string
+}
+
+export type ExternalFormProgressPublishPayload = {
+  progress_data: ExternalFormProgressData
+}
+
+export type ExternalFormProgressPayload =
+  SharedExternalFormProgressPayload<ExternalFormData>
+
 const externalFormChannel = createExternalFormChannel<ExternalFormData>(adminRealtimeClient)
 const receivedSubscriptions = new Map<
   (payload: ExternalFormReceivedPayload) => void,
@@ -27,6 +49,10 @@ const receivedSubscriptions = new Map<
 >()
 const requestedSubscriptions = new Map<
   (payload: ExternalFormRequestedPayload) => void,
+  () => void
+>()
+const progressSubscriptions = new Map<
+  (payload: ExternalFormProgressPayload) => void,
   () => void
 >()
 
@@ -64,6 +90,10 @@ export const emitExternalFormRequest = (payload: ExternalFormRequestPayload = {}
   externalFormChannel.request(payload)
 }
 
+export const emitExternalFormProgress = (payload: ExternalFormProgressPublishPayload) => {
+  externalFormChannel.progress(payload)
+}
+
 export const subscribeToExternalFormReceived = (
   handler: (payload: ExternalFormReceivedPayload) => void,
 ) => {
@@ -81,6 +111,26 @@ export const unsubscribeFromExternalFormReceived = (
   }
 
   receivedSubscriptions.delete(handler)
+  release()
+}
+
+export const subscribeToExternalFormProgress = (
+  handler: (payload: ExternalFormProgressPayload) => void,
+) => {
+  const release = externalFormChannel.onProgress(handler)
+  progressSubscriptions.set(handler, release)
+  return release
+}
+
+export const unsubscribeFromExternalFormProgress = (
+  handler: (payload: ExternalFormProgressPayload) => void,
+) => {
+  const release = progressSubscriptions.get(handler)
+  if (!release) {
+    return
+  }
+
+  progressSubscriptions.delete(handler)
   release()
 }
 
