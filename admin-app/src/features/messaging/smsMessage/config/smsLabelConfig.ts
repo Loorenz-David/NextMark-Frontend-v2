@@ -12,4 +12,10 @@ export const allowedLabels: LabelDefinition[] = [
   },
   { id: "driver_phone", displayName: "Driver phone" },
   { id: "client_address", displayName: "Client address" },
+  { id: "client_phone_number", displayName: "Client phone number" },
+  {
+    id: "client_phone_number_secondary",
+    displayName: "Client secondary phone number",
+  },
+  { id: "client_form_link", displayName: "Client form link" },
 ];

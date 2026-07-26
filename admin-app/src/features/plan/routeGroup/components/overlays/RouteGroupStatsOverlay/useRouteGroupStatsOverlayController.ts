@@ -14,6 +14,10 @@ import { useTeamMemberByServerId } from '@/features/team/members/hooks/useTeamMe
 import { useVehicleStore } from '@/features/infrastructure/vehicle/store/vehicleStore'
 import { useBaseControlls } from '@/shared/resource-manager/useResourceManager'
 
+import {
+  loadRouteGroupStatsOverlayHidden,
+  saveRouteGroupStatsOverlayHidden,
+} from './routeGroupStatsOverlay.storage'
 import type {
   RouteGroupGaussianMetricCard,
   RouteGroupStatsLayoutMode,
@@ -654,7 +658,7 @@ export const useRouteGroupStatsOverlayController = () => {
   const driver = useTeamMemberByServerId(selectedRouteSolution?.driver_id ?? null)
   const vehicleIds = useVehicleStore((state) => state.allIds)
   const vehicleByClientId = useVehicleStore((state) => state.byClientId)
-  const [hidden, setHidden] = useState(false)
+  const [hidden, setHidden] = useState(loadRouteGroupStatsOverlayHidden)
   const [layoutMode, setLayoutMode] = useState<RouteGroupStatsLayoutMode>('wide')
   const overlayRef = useRef<HTMLDivElement | null>(null)
 
@@ -780,7 +784,13 @@ export const useRouteGroupStatsOverlayController = () => {
     layoutMode,
     overlayRef,
     statsData,
-    hide: () => setHidden(true),
-    show: () => setHidden(false),
+    hide: () => {
+      saveRouteGroupStatsOverlayHidden(true)
+      setHidden(true)
+    },
+    show: () => {
+      saveRouteGroupStatsOverlayHidden(false)
+      setHidden(false)
+    },
   }
 }

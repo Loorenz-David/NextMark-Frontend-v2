@@ -23,6 +23,14 @@
      from --overlay, which is the modal scrim: a scrim must darken what is behind
      it, a floating panel must sit on top of it opaquely. */
   --panel-floating: rgba(4, 8, 10, 0.54);
+  /* Bottom-anchored scrim behind the route stats overlay: darkens the map so the
+     stat text stays legible. Light theme flips this to a bright wash below. */
+  --route-stats-overlay-scrim: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.35) 35%,
+    rgba(0, 0, 0, 0) 100%
+  );
   /* The external-form access route uses its own page tone, deliberately deeper
      than --paper. Kept exact rather than folded into --paper. */
   --page-external: #111819;
@@ -281,6 +289,15 @@
      `surface-raised` pills inside them, which would vanish against an identical
      fill. Card sits at page tone, pills lift above it. */
   --panel-floating: var(--paper);
+  /* Light wash rather than a dark scrim: the stat text over the map is dark ink,
+     so the overlay must brighten what is behind it, not darken it. */
+  --route-stats-overlay-scrim: linear-gradient(
+    to top,
+    rgba(242, 242, 242, 0.98) 0%,
+    rgba(242, 242, 242, 0.95) 55%,
+    rgba(242, 242, 242, 0.7) 80%,
+    rgba(242, 242, 242, 0) 100%
+  );
   --page-external: var(--paper);
   --shade: rgba(23, 23, 23, 0.04);
 
