@@ -3,9 +3,9 @@ import { useCallback, useState } from 'react'
 import { ApiError } from '@/lib/api/ApiClient'
 import { useMessageHandler } from '@shared-message-handler'
 
-import { useGetOrderItems } from '../api/item.api'
+import { useGetItemsByOrderIds, useGetOrderItems } from '../api/item.api'
 import { useItemModel } from '../domain/useItemModel'
-import type { ItemMap } from '../types'
+import type { Item, ItemMap } from '../types'
 import {
   getItemOrderSyncMeta,
   getItemsByOrderId,
@@ -16,7 +16,22 @@ import {
 } from '../store/item.store'
 
 export const ITEMS_CACHE_TTL_MS = 5 * 60 * 1000
+// Per-request page size for the batched fetch. The endpoint defaults to 50, so
+// callers should size their limit to the expected item count; this is the floor.
+export const ITEMS_BATCH_DEFAULT_LIMIT = 500
+// Backstop against a runaway pagination loop; each page is `limit` items.
+const ITEMS_BATCH_MAX_PAGES = 50
 const inFlightItemsByOrderId = new Map<number, Promise<ItemMap | null>>()
+
+const buildItemMap = (items: Item[]): ItemMap => {
+  const byClientId: Record<string, Item> = {}
+  const allIds: string[] = []
+  for (const item of items) {
+    byClientId[item.client_id] = item
+    allIds.push(item.client_id)
+  }
+  return { byClientId, allIds }
+}
 
 export const shouldRefreshItemsForOrder = ({
   orderId,
@@ -64,6 +79,7 @@ export const useItemFlow = ({
   itemId?: string | null
 } = {}) => {
   const getOrderItems = useGetOrderItems()
+  const getItemsByOrderIds = useGetItemsByOrderIds()
   const { normalizeItemsForOrder } = useItemModel()
   const { showMessage } = useMessageHandler()
   const items = useItemsByOrderId(orderId ?? null)
@@ -128,10 +144,86 @@ export const useItemFlow = ({
     [getOrderItems, normalizeItemsForOrder, showMessage],
   )
 
+  // Batched replacement for calling loadItemsByOrderId once per order. Fetches
+  // every requested order's items in one request (following cursor pagination),
+  // buckets the flat response by order_id, and writes each order to the store —
+  // including orders that returned no items, so they are not refetched.
+  const loadItemsByOrderIds = useCallback(
+    async (
+      orderIds: number[],
+      options?: {
+        limit?: number
+        itemsUpdatedAtByOrderId?: Record<number, string | null>
+      },
+    ) => {
+      const uniqueOrderIds = Array.from(
+        new Set(orderIds.filter((orderId) => Number.isFinite(orderId) && orderId > 0)),
+      )
+      if (uniqueOrderIds.length === 0) return
+
+      const limit = Math.max(options?.limit ?? ITEMS_BATCH_DEFAULT_LIMIT, 1)
+      setIsLoadingItems(true)
+
+      const collected: Item[] = []
+      try {
+        let afterId: number | undefined
+        for (let page = 0; page < ITEMS_BATCH_MAX_PAGES; page += 1) {
+          const response = await getItemsByOrderIds(uniqueOrderIds, {
+            limit,
+            after_id: afterId,
+          })
+          const payload = response.data
+          // `items` is an ItemMap spanning all requested orders; each entry
+          // carries its own order_id, so we flatten and bucket by that below.
+          const byClientId = payload?.items?.byClientId
+          if (byClientId) {
+            collected.push(...Object.values(byClientId))
+          }
+          const pagination = payload?.items_pagination
+          if (!pagination?.has_more || pagination.next_cursor == null) break
+          afterId = pagination.next_cursor.after_id
+        }
+      } catch (error) {
+        const message = error instanceof ApiError ? error.message : 'Unable to load items.'
+        const status = error instanceof ApiError ? error.status : 500
+        showMessage({ status, message })
+        return null
+      } finally {
+        setIsLoadingItems(false)
+      }
+
+      const itemsByOrderId = new Map<number, Item[]>()
+      for (const item of collected) {
+        const bucketOrderId = item.order_id
+        if (!Number.isFinite(bucketOrderId) || bucketOrderId <= 0) continue
+        const bucket = itemsByOrderId.get(bucketOrderId) ?? []
+        bucket.push(item)
+        itemsByOrderId.set(bucketOrderId, bucket)
+      }
+
+      const lastFetchedAt = Date.now()
+      for (const targetOrderId of uniqueOrderIds) {
+        const normalized = normalizeItemsForOrder(
+          buildItemMap(itemsByOrderId.get(targetOrderId) ?? []),
+          targetOrderId,
+        )
+        replaceItemsForOrder(targetOrderId, normalized)
+        setItemOrderSyncMeta(targetOrderId, {
+          itemsUpdatedAt: options?.itemsUpdatedAtByOrderId?.[targetOrderId] ?? null,
+          lastFetchedAt,
+        })
+      }
+
+      return itemsByOrderId
+    },
+    [getItemsByOrderIds, normalizeItemsForOrder, showMessage],
+  )
+
   return {
     items,
     item,
     isLoadingItems,
     loadItemsByOrderId,
+    loadItemsByOrderIds,
   }
 }

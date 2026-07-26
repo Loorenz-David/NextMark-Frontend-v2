@@ -14,6 +14,28 @@ export type ItemListResponse = {
   items: ItemMap;
 };
 
+export type ItemIdPagination = {
+  has_more: boolean;
+  next_cursor: { after_id: number } | null;
+  prev_cursor: { before_id: number } | null;
+};
+
+/**
+ * Response of `GET /items/` (the batched, cross-order list endpoint). `items`
+ * is an ItemMap keyed by client_id (same shape as the per-order endpoint), but
+ * spans multiple orders — every entry carries its own `order_id`, so callers
+ * bucket the items back per order themselves.
+ */
+export type ItemBatchListResponse = {
+  items: ItemMap;
+  items_pagination?: ItemIdPagination | null;
+};
+
+export type ItemBatchListQuery = {
+  limit?: number;
+  after_id?: number;
+};
+
 export type OrderTotalsEntry = {
   id: number;
   total_weight: number | null;
@@ -61,6 +83,23 @@ export const createItemsApi = (client: Pick<HttpApiClient, "request">) => ({
       path: `/orders/${orderId}/items/`,
       method: "GET",
       query,
+    }),
+
+  // Batched item fetch across many orders in a single request. The endpoint
+  // reads order_id as a comma-separated value, so ids are joined here. Pass an
+  // explicit `limit` sized to the expected total item count — it defaults to 50
+  // server-side. Cursor-paginated by item id via `items_pagination.next_cursor`.
+  getItemsByOrderIds: (
+    orderIds: Array<number | string>,
+    query?: ItemBatchListQuery,
+  ): Promise<ApiResult<ItemBatchListResponse>> =>
+    client.request<ItemBatchListResponse>({
+      path: "/items/",
+      method: "GET",
+      query: {
+        order_id: orderIds.join(","),
+        ...query,
+      },
     }),
 
   createItem: (

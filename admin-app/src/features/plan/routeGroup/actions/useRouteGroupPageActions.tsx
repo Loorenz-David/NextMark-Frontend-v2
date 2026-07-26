@@ -1,7 +1,11 @@
 import { useMemo, useRef } from "react";
 
 import { useOrderActions } from "@/features/order";
-import { shouldRefreshItemsForOrder, useItemFlow } from "@/features/order/item";
+import {
+  ITEMS_BATCH_DEFAULT_LIMIT,
+  shouldRefreshItemsForOrder,
+  useItemFlow,
+} from "@/features/order/item";
 import { resolveActiveTemplateByChannelAndEvent } from "@/features/templates/printDocument/domain/resolveActiveTemplate";
 import { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
 import { serializeRouteSolutionForTemplate } from "@/features/plan/routeGroup/domain/serializeRouteSolutionForTemplate";
@@ -64,7 +68,7 @@ export const useRouteGroupPageActions = ({
   const { updateRouteGroupSettings } = useRouteGroupSettingsMutations();
   const { showMessage } = useMessageHandler();
   const { downloadByEvent } = useDownloadTemplateByEventFlow();
-  const { loadItemsByOrderId } = useItemFlow();
+  const { loadItemsByOrderIds } = useItemFlow();
   const optimizationInFlightRef = useRef(0);
   const routeWarningActionRegistry = useMemo(
     () => createRouteWarningActionRegistry(),
@@ -128,24 +132,43 @@ export const useRouteGroupPageActions = ({
       ),
     );
 
-    await Promise.all(
-      orderIds.map(async (orderId) => {
+    // Only refetch orders whose cached items are missing or stale, then load
+    // them all in a single batched request instead of one call per order.
+    const ordersToRefresh = orderIds
+      .map((orderId) => {
         const order = selectOrderByServerId(orderId)(useOrderStore.getState());
-        if (
-          !shouldRefreshItemsForOrder({
-            orderId,
-            itemsUpdatedAt: order?.items_updated_at ?? null,
-            expectedItemCount: order?.total_items ?? null,
-          })
-        ) {
-          return;
-        }
-
-        await loadItemsByOrderId(orderId, {
+        return {
+          orderId,
           itemsUpdatedAt: order?.items_updated_at ?? null,
-        });
-      }),
-    );
+          expectedItemCount: order?.total_items ?? null,
+        };
+      })
+      .filter(({ orderId, itemsUpdatedAt, expectedItemCount }) =>
+        shouldRefreshItemsForOrder({
+          orderId,
+          itemsUpdatedAt,
+          expectedItemCount,
+        }),
+      );
+
+    if (ordersToRefresh.length > 0) {
+      const itemsUpdatedAtByOrderId: Record<number, string | null> = {};
+      let expectedItemTotal = 0;
+      for (const order of ordersToRefresh) {
+        itemsUpdatedAtByOrderId[order.orderId] = order.itemsUpdatedAt;
+        expectedItemTotal += order.expectedItemCount ?? 0;
+      }
+
+      await loadItemsByOrderIds(
+        ordersToRefresh.map((order) => order.orderId),
+        {
+          // Size the page to the expected item count so a route usually loads in
+          // one request; pagination is the safety net if it is under-sized.
+          limit: Math.max(expectedItemTotal + 50, ITEMS_BATCH_DEFAULT_LIMIT),
+          itemsUpdatedAtByOrderId,
+        },
+      );
+    }
 
     const payload = serializeRouteSolutionForTemplate(planId, routeGroupId);
     if (!payload) return;

@@ -7,7 +7,7 @@ export type {
 export { downloadItemLabels } from './flows/downloadItemLabels.flow'
 export { startItemLabelDownload } from './flows/startItemLabelDownload.flow'
 export { useOrderItemDraftController } from './hooks/useOrderItemDraftController'
-export { useItemFlow, shouldRefreshItemsForOrder } from './hooks/useItemFlow'
+export { useItemFlow, shouldRefreshItemsForOrder, ITEMS_BATCH_DEFAULT_LIMIT } from './hooks/useItemFlow'
 export { ItemForm } from './popups/ItemForm/ItemForm'
 export { ItemFormLayout } from './popups/ItemForm/ItemForm.layout'
 export { ItemFormProvider } from './popups/ItemForm/ItemForm.provider'
