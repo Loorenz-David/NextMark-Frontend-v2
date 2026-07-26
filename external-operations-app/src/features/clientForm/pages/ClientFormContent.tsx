@@ -1,6 +1,7 @@
 import {
   ClientFormFrame,
   ClientFormItemsList,
+  ClientFormScheduledDate,
   ClientFormSteps,
   getClientFormOrderTitle,
   useClientForm,
@@ -28,6 +29,7 @@ export const ClientFormContent = () => {
               <div className="h-px bg-[var(--rule-strong)]" />
               <div className="h-px bg-[var(--rule)]" />
             </div>
+            <ClientFormScheduledDate meta={meta} />
             <p className="text-sm italic leading-6 text-[var(--ink-soft)]">
               Complete all three steps to confirm your delivery details.
             </p>

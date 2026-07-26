@@ -25,6 +25,7 @@ export {
   ClientFormMediaLink,
 } from "./components/ClientFormMediaImage";
 export { ClientFormItemsList } from "./components/ClientFormItemsList";
+export { ClientFormScheduledDate } from "./components/ClientFormScheduledDate";
 export { ClientFormSheet } from "./components/ClientFormSheet";
 export { TermsDocumentView } from "./components/TermsDocumentView";
 export { StepButton } from "./components/StepButton";
@@ -41,6 +42,7 @@ export type {
   ClientFormData,
   ClientFormItem,
   ClientFormMeta,
+  ClientFormRoutePlanSchedule,
   ClientFormStep,
   ClientOrderNote,
   ClientOrderNoteType,
@@ -75,7 +77,10 @@ export {
 } from "./domain/clientForm.flow";
 export { isStepValid, validateStep } from "./domain/clientForm.validation";
 export type { ClientFormFieldErrors } from "./domain/clientForm.validation";
-export { getClientFormOrderTitle } from "./domain/clientFormOrderDisplay";
+export {
+  getClientFormOrderTitle,
+  getClientFormScheduledDelivery,
+} from "./domain/clientFormOrderDisplay";
 
 export { CheckMarkIcon } from "./icons/CheckMarkIcon";
 export { BackArrowIcon } from "./icons/BackArrowIcon";

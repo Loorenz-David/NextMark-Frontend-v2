@@ -36,6 +36,20 @@ export type ClientFormItem = {
 };
 
 /**
+ * The order's route-plan schedule date.
+ *
+ * `date_strategy` decides how the two dates read: `"single"` is one calendar day
+ * (the backend still populates `end_date` as end-of-day of the same date, so the
+ * display collapses it), `"range"` spans `start_date`→`end_date`. Both dates are
+ * nullable — an order may be assigned to a plan that has no date set yet.
+ */
+export type ClientFormRoutePlanSchedule = {
+  date_strategy?: "single" | "range" | string | null;
+  start_date: string | null;
+  end_date: string | null;
+};
+
+/**
  * What the form knows about the order it is collecting details for.
  *
  * Every field is optional: the in-store linked device opens the form before an
@@ -50,6 +64,8 @@ export type ClientFormMeta = {
   items?: ClientFormItem[] | null;
   expires_at?: string | null;
   order_notes?: ClientOrderNote[] | null;
+  /** `null` when the order has no route plan, or the plan has no scheduled date. */
+  route_plan_schedule?: ClientFormRoutePlanSchedule | null;
 };
 
 export const EMPTY_CLIENT_FORM_META: ClientFormMeta = {};

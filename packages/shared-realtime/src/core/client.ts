@@ -37,6 +37,14 @@ type SubscriptionRecord = {
 }
 
 const MAX_SUBSCRIPTIONS = 1000
+const MAX_PENDING_CRITICAL_EMITS = 20
+const DEFAULT_CRITICAL_EMIT_TTL_MS = 30_000
+
+type PendingCriticalEmit = {
+  event: string
+  payload: unknown
+  expiresAt: number
+}
 
 const stableStringify = (value: unknown): string => {
   if (Array.isArray(value)) {
@@ -83,9 +91,13 @@ export class SharedRealtimeClient {
   // otherwise a transient drop silently ejects the socket from the room while
   // the connection itself looks healthy.
   private readonly rejoinEmits = new Map<string, unknown>()
+  // Emits that must not be silently lost to a disconnected socket, held until
+  // the next successful connection and dropped once their TTL passes.
+  private readonly pendingCriticalEmits: PendingCriticalEmit[] = []
   private readonly diagnosticsHandlers = new Set<(diagnostics: RealtimeClientDiagnostics) => void>()
   private currentSocketToken: string | null = null
   private readonly removeSessionListener?: () => void
+  private readonly removeLifecycleListeners?: () => void
   private removeTransportDiagnosticsListener?: () => void
 
   constructor(config: RealtimeClientConfig) {
@@ -96,6 +108,8 @@ export class SharedRealtimeClient {
       if (connected) {
         this.resubscribeAll()
         this.replayRejoins()
+        // After rejoins, so a queued emit never races its own room membership.
+        this.flushCriticalEmits()
       } else {
         this.markSubscriptionsPending()
       }
@@ -129,6 +143,32 @@ export class SharedRealtimeClient {
         }
       })
     }
+
+    // Timers alone cannot be trusted to recover the connection: browsers
+    // throttle them in background tabs and freeze them during sleep. These
+    // events fire at exactly the moments the machine comes back — reconnect
+    // immediately with whatever token the session holds now (connect() also
+    // exits auth_failed by rebuilding), then actively verify the socket is not
+    // a zombie left over from the sleep.
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      const handleWake = () => {
+        this.connect()
+        this.transport.verifyHealth(true)
+      }
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === 'visible') {
+          handleWake()
+        }
+      }
+      window.addEventListener('online', handleWake)
+      window.addEventListener('focus', handleWake)
+      document.addEventListener('visibilitychange', handleVisibilityChange)
+      this.removeLifecycleListeners = () => {
+        window.removeEventListener('online', handleWake)
+        window.removeEventListener('focus', handleWake)
+        document.removeEventListener('visibilitychange', handleVisibilityChange)
+      }
+    }
   }
 
   connect(): boolean {
@@ -159,6 +199,7 @@ export class SharedRealtimeClient {
   destroy(): void {
     this.removeTransportDiagnosticsListener?.()
     this.removeSessionListener?.()
+    this.removeLifecycleListeners?.()
     this.diagnosticsHandlers.clear()
     this.disconnect()
   }
@@ -293,6 +334,61 @@ export class SharedRealtimeClient {
   publish<TPayload>(event: string, payload: TPayload): void {
     this.connect()
     this.transport.emit(event, payload)
+  }
+
+  /**
+   * Publishes an event that must not be silently lost to a disconnected socket.
+   *
+   * Connected: emits immediately, exactly like {@link publish}. Disconnected:
+   * holds the payload and replays it on the next successful connection (after
+   * room rejoins), dropping it once `ttlMs` passes — a form request delivered
+   * minutes late is worse than one the user visibly retried. Plain publish
+   * remains correct for best-effort traffic like progress frames, where the
+   * next snapshot supersedes a lost one.
+   */
+  publishCritical<TPayload>(
+    event: string,
+    payload: TPayload,
+    options: { ttlMs?: number } = {},
+  ): void {
+    this.connect()
+
+    if (this.transport.isConnected()) {
+      this.transport.emit(event, payload)
+      return
+    }
+
+    this.pendingCriticalEmits.push({
+      event,
+      payload,
+      expiresAt: Date.now() + (options.ttlMs ?? DEFAULT_CRITICAL_EMIT_TTL_MS),
+    })
+    while (this.pendingCriticalEmits.length > MAX_PENDING_CRITICAL_EMITS) {
+      const dropped = this.pendingCriticalEmits.shift()
+      console.warn(
+        '[shared-realtime] Pending critical emit dropped (queue full):',
+        dropped?.event,
+      )
+    }
+  }
+
+  private flushCriticalEmits(): void {
+    if (this.pendingCriticalEmits.length === 0) {
+      return
+    }
+
+    const now = Date.now()
+    const pending = this.pendingCriticalEmits.splice(0, this.pendingCriticalEmits.length)
+    pending.forEach((entry) => {
+      if (entry.expiresAt <= now) {
+        console.warn(
+          '[shared-realtime] Pending critical emit expired before reconnect:',
+          entry.event,
+        )
+        return
+      }
+      this.transport.emit(entry.event, entry.payload)
+    })
   }
 
   /**

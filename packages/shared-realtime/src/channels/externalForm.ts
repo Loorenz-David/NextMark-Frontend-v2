@@ -30,12 +30,19 @@ export const createExternalFormChannel = <TFormData>(client: SharedRealtimeClien
       return
     }
 
-    client.connect()
-    client.publish(REALTIME_CLIENT_EVENTS.externalFormSubmitUser, payload)
+    // A customer's answers must survive a dead socket: held across reconnects
+    // for up to five minutes rather than vanishing into a disconnected emit.
+    client.publishCritical(REALTIME_CLIENT_EVENTS.externalFormSubmitUser, payload, {
+      ttlMs: 5 * 60_000,
+    })
   },
   request: (payload: ExternalFormRequestPayload = {}) => {
-    client.connect()
-    client.publish(REALTIME_CLIENT_EVENTS.externalFormRequestUser, payload)
+    // Held briefly across a reconnect blip; any older than this and the staff
+    // member has already retried — a form popping up on the counter device
+    // minutes later would interrupt the wrong customer.
+    client.publishCritical(REALTIME_CLIENT_EVENTS.externalFormRequestUser, payload, {
+      ttlMs: 30_000,
+    })
   },
   // Fire-and-forget snapshot; deliberately not a rejoin — a frame lost across a
   // reconnect is replaced by the next one.

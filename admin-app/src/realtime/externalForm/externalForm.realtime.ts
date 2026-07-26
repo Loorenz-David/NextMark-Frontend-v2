@@ -1,4 +1,4 @@
-import type { ClientFormStep } from '@client-form-kit'
+import type { ClientFormRoutePlanSchedule, ClientFormStep } from '@client-form-kit'
 import type { ExternalFormData } from '@/features/externalForm/domain/externalForm.types'
 import {
   createExternalFormChannel,
@@ -10,8 +10,17 @@ export type ExternalFormSubmitPayload = {
   form_data: ExternalFormData
 }
 
+// What the till puts on the wire when it asks the counter device to open a
+// form. The backend relays this verbatim (no whitelist, no enrichment), so the
+// shape is owned end-to-end here: the till writes it, the device reads it.
+export type ExternalFormRequestData = {
+  reference_number?: string
+  order_id?: number
+  route_plan_schedule?: ClientFormRoutePlanSchedule | null
+}
+
 export type ExternalFormRequestPayload = {
-  request_data?: Record<string, unknown>
+  request_data?: ExternalFormRequestData
 }
 
 export type ExternalFormReceivedPayload = {
@@ -20,7 +29,7 @@ export type ExternalFormReceivedPayload = {
 }
 
 export type ExternalFormRequestedPayload = {
-  request_data?: Record<string, unknown>
+  request_data?: ExternalFormRequestData
   requested_by: number
 }
 

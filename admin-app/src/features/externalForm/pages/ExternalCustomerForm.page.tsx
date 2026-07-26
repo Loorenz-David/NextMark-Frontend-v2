@@ -4,14 +4,17 @@ import {
   CheckMarkIcon,
   ClientFormFrame,
   ClientFormProvider,
+  ClientFormScheduledDate,
   ClientFormSteps,
   EMPTY_CLIENT_FORM_CONFIG,
   EMPTY_CLIENT_FORM_META,
   type ClientFormConfig,
+  type ClientFormMeta,
   type ClientFormOptions,
 } from '@client-form-kit'
 
 import { useExternalFormRealtime } from '@/realtime/externalForm/useExternalFormRealtime'
+import type { ExternalFormRequestedPayload } from '@/realtime/externalForm/externalForm.realtime'
 
 import { fetchLinkedDeviceClientFormConfig } from '../api/linkedDeviceConfig.api'
 import { useExternalFormLiveProgressEmitter } from '../flows/externalFormLiveProgress.flow'
@@ -67,6 +70,10 @@ const Notice = ({
 export const ExternalCustomerFormPage = () => {
   const [screen, setScreen] = useState<Screen>('idle')
   const [config, setConfig] = useState<ClientFormConfig>(EMPTY_CLIENT_FORM_CONFIG)
+  // The order context carried on the request — currently the route-plan
+  // schedule date shown in the header. Reset per request so one customer's order
+  // never leaks into the next fill.
+  const [meta, setMeta] = useState<ClientFormMeta>(EMPTY_CLIENT_FORM_META)
   // Remounts the provider per request, which is how a fresh form gets blank
   // answers and a re-read of the team's terms.
   const [sessionKey, setSessionKey] = useState(0)
@@ -96,8 +103,11 @@ export const ExternalCustomerFormPage = () => {
     return () => window.clearTimeout(timeoutId)
   }, [screen])
 
-  const handleRequested = useCallback(() => {
+  const handleRequested = useCallback((payload: ExternalFormRequestedPayload) => {
     setSessionKey((current) => current + 1)
+    setMeta({
+      route_plan_schedule: payload.request_data?.route_plan_schedule ?? null,
+    })
     setScreen('preparing')
 
     // Read per request rather than once at mount: this page stays open for days
@@ -134,7 +144,7 @@ export const ExternalCustomerFormPage = () => {
           >
             <ClientFormProvider
               key={sessionKey}
-              meta={EMPTY_CLIENT_FORM_META}
+              meta={meta}
               config={config}
               ports={ports}
               options={OPTIONS}
@@ -153,6 +163,7 @@ export const ExternalCustomerFormPage = () => {
                     <div className="h-px bg-[var(--rule-strong)]" />
                     <div className="h-px bg-[var(--rule)]" />
                   </div>
+                  <ClientFormScheduledDate meta={meta} />
                   <p className="text-sm italic leading-6 text-[var(--ink-soft)]">
                     Complete all three steps to submit your details.
                   </p>

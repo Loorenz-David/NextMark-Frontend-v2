@@ -6,13 +6,8 @@ import {
 } from "@/shared/resource-manager/useResourceManager";
 import { useMessageHandler } from "@shared-message-handler";
 import type { Phone } from "@/types/phone";
-import { generateClientFormLink } from "../api/clientFormLink.api";
 import { useOrderStateController } from "../controllers/orderState.controller";
-import {
-  getClientFormLinkPreview,
-  setClientFormLinkPreview,
-} from "../store/clientFormLinkPreview.store";
-import { upsertOrder, updateOrderByClientId } from "../store/order.store";
+import { ensureOrderClientFormLink } from "./ensureOrderClientFormLink.action";
 
 export type OrderDetailOpenOrderFormPayload = {
   clientId?: string;
@@ -25,8 +20,6 @@ export type OrderDetailOpenCasesPayload = {
   orderId?: number;
   orderReference: string;
 };
-
-const GENERATED_CLIENT_FORM_TOKEN_PLACEHOLDER = "__generated_client_form_link__";
 
 export const useOrderDetailActions = ({
   onClose,
@@ -102,56 +95,31 @@ export const useOrderDetailActions = ({
       initialEmail?: string | null;
       initialPhone?: Phone | null;
     }) => {
-      let nextHasGeneratedLink = hasGeneratedLink;
-      const cachedPreview = getClientFormLinkPreview(orderId);
-      let formUrl: string | null = cachedPreview?.formUrl ?? null;
-      let expiresAt: string | null = cachedPreview?.expiresAt ?? null;
-
-      if (!hasGeneratedLink) {
-        try {
-          const response = await generateClientFormLink(orderId);
-          formUrl = response.form_url ?? null;
-          expiresAt = response.expires_at ?? null;
-          if (formUrl || expiresAt) {
-            setClientFormLinkPreview(orderId, {
-              formUrl,
-              expiresAt,
-            });
-          }
-
-          if (response.order) {
-            upsertOrder(response.order);
-          }
-
-          if (clientId) {
-            updateOrderByClientId(clientId, (order) => ({
-              ...order,
-              client_form_token_hash:
-                order.client_form_token_hash ??
-                GENERATED_CLIENT_FORM_TOKEN_PLACEHOLDER,
-            }));
-          }
-
-          nextHasGeneratedLink = true;
-        } catch (error) {
-          showMessage({
-            status: 500,
-            message:
-              error instanceof Error
-                ? error.message
-                : "Unable to generate client form link.",
-          });
-          return;
-        }
+      let linkResult;
+      try {
+        linkResult = await ensureOrderClientFormLink({
+          orderId,
+          orderClientId: clientId,
+          hasGeneratedLink,
+        });
+      } catch (error) {
+        showMessage({
+          status: 500,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Unable to generate client form link.",
+        });
+        return;
       }
 
       openSendClientFormLinkPopup({
         orderId,
-        hasGeneratedLink: nextHasGeneratedLink,
+        hasGeneratedLink: linkResult.hasGeneratedLink,
         initialEmail,
         initialPhone,
-        formUrl,
-        expiresAt,
+        formUrl: linkResult.formUrl,
+        expiresAt: linkResult.expiresAt,
       });
     },
     [openSendClientFormLinkPopup, showMessage],

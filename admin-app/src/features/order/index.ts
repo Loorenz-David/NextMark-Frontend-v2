@@ -4,6 +4,8 @@ export { useOrderPlanPatchController } from './controllers/orderPlanPatch.contro
 export { useOrderStateController } from './controllers/orderState.controller'
 export { useOrderImport } from './controllers/orderImport.controller'
 export { useOrderMutations } from './controllers/orderMutations.controller'
+export { useClientFormRecipientFieldsController } from './controllers/useClientFormRecipientFields.controller'
+export { useOrderClientFormHandoffController } from './controllers/useOrderClientFormHandoff.controller'
 export { useOrderForCase } from './controllers/orderForCase.controller'
 export { useOrderFlow } from './flows/order.flow'
 export { useOrderMapMarkersFlow } from './flows/orderMapMarkers.flow'
@@ -18,3 +20,7 @@ export { upsertOrders } from './store/order.store'
 export { ItemCard, useItemsByOrderIds, useItemsByOrderId } from './item'
 export { OrderManualMessageField } from './manualMessage'
 export type { Order } from './types/order'
+export type { ClientFormRecipients } from './domain/clientFormRecipients.domain'
+export type {
+  LinkedDeviceOrderFormAvailability,
+} from './flows/requestOrderClientFormOnLinkedDevice.flow'

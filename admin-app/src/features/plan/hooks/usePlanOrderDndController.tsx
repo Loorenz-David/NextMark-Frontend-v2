@@ -6,7 +6,11 @@ import type {
   DragOverEvent,
 } from "@dnd-kit/core";
 import { useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
-import type { Order } from "@/features/order/types/order";
+import {
+  useOrderClientFormHandoffController,
+  type LinkedDeviceOrderFormAvailability,
+  type Order,
+} from "@/features/order";
 import { useOrderSelectionStore } from "@/features/order/store/orderSelection.store";
 import {
   selectOrderByClientId,
@@ -39,6 +43,9 @@ import {
   useRouteSolutionStopStore,
 } from "@/features/plan/routeGroup/store/routeSolutionStop.store";
 import { runWithRouteMapRefresh } from "@/features/plan/routeGroup/flows/runWithRouteMapRefresh.flow";
+import { usePlanDndContactWarningController } from "@/features/plan/controllers/usePlanDndContactWarning.controller";
+import type { OrderAssignmentContactWarningDecision } from "@/features/plan/domain/orderAssignmentContactWarning.domain";
+import { runPlanDndMoveWithHandoff } from "@/features/plan/flows/runPlanDndMoveWithHandoff.flow";
 
 const MAX_BATCH_IDS = 200;
 
@@ -91,6 +98,9 @@ export const usePlanOrderDndController = () => {
   const { isMobile } = useMobile();
   const { showMessage } = useMessageHandler();
   const { execute } = useExecutePlanDndIntent();
+  const contactWarningController = usePlanDndContactWarningController();
+  const clientFormHandoffController =
+    useOrderClientFormHandoffController();
   const openCreatePlanForm = useOpenCreatePlanFormAction();
 
   const sensors = useSensors(
@@ -610,6 +620,45 @@ export const usePlanOrderDndController = () => {
       intent = resolved.intent;
     }
 
+    const contactWarningOrder =
+      intent.kind === "ASSIGN_ORDER_TO_PLAN"
+        ? selectOrderByClientId(intent.orderClientId)(
+            useOrderStore.getState(),
+          )
+        : null;
+    let contactWarningDecision: OrderAssignmentContactWarningDecision = {
+      kind: "move_anyway",
+    };
+
+    if (
+      contactWarningController.requiresConfirmation(
+        intent,
+        contactWarningOrder,
+      ) &&
+      contactWarningOrder
+    ) {
+      const linkedDeviceAvailability: LinkedDeviceOrderFormAvailability =
+        typeof contactWarningOrder.id === "number"
+          ? clientFormHandoffController.getLinkedDeviceAvailability(
+              contactWarningOrder.id,
+            )
+          : {
+              available: false,
+              message:
+                "The order must be synced before it can use a linked device.",
+            };
+
+      resetDragUi();
+      contactWarningDecision =
+        await contactWarningController.requestDecision({
+          order: contactWarningOrder,
+          linkedDeviceAvailability,
+        });
+      if (contactWarningDecision.kind === "cancel") {
+        return;
+      }
+    }
+
     const isAssignIntent =
       intent.kind === "ASSIGN_ORDER_TO_PLAN" ||
       intent.kind === "ASSIGN_ORDERS_TO_PLAN_BATCH";
@@ -647,9 +696,45 @@ export const usePlanOrderDndController = () => {
       intent,
       activeData as Record<string, unknown>,
     );
-    const result = await runWithRouteMapRefresh(routeMapRefreshPlanId, () =>
-      execute(intent),
-    );
+    let handoff:
+      | (() => ReturnType<
+          typeof clientFormHandoffController.executeHandoff
+        >)
+      | undefined;
+    if (
+      typeof contactWarningOrder?.id === "number" &&
+      contactWarningDecision.kind === "send_customer"
+    ) {
+      const recipients = contactWarningDecision.recipients;
+      const order = contactWarningOrder;
+      const orderId = contactWarningOrder.id;
+      handoff = () =>
+        clientFormHandoffController.executeHandoff({
+          kind: "customer",
+          orderId,
+          orderClientId: order.client_id,
+          hasGeneratedLink: Boolean(order.client_form_token_hash),
+          recipients,
+        });
+    } else if (
+      typeof contactWarningOrder?.id === "number" &&
+      contactWarningDecision.kind === "send_linked_device"
+    ) {
+      const order = contactWarningOrder;
+      const orderId = contactWarningOrder.id;
+      handoff = () =>
+        clientFormHandoffController.executeHandoff({
+          kind: "linked_device",
+          orderId,
+          referenceNumber: order.reference_number ?? "",
+        });
+    }
+
+    const { moveResult: result } = await runPlanDndMoveWithHandoff({
+      move: () =>
+        runWithRouteMapRefresh(routeMapRefreshPlanId, () => execute(intent)),
+      handoff,
+    });
     if (
       result?.success &&
       intent.kind === "ASSIGN_ORDER_TO_PLAN" &&

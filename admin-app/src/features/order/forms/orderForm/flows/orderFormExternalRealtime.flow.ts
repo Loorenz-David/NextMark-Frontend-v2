@@ -8,19 +8,16 @@ import { useExternalFormRealtime } from '@/realtime/externalForm/useExternalForm
 
 import { useOrderFormFormSlice } from '../context/OrderFormForm.context'
 import { getLinkedDeviceEmployeeUserId } from '../../../flows/linkedDeviceEmployeeUser.flow'
-import {
-  clearPendingLinkedDeviceForm,
-  getPendingLinkedDeviceForm,
-  registerPendingLinkedDeviceForm,
-} from '../../../store/orderLinkedDeviceForm.store'
+import { getPendingLinkedDeviceForm } from '../../../store/orderLinkedDeviceForm.store'
 import {
   clearLinkedDeviceLiveProgress,
-  registerLinkedDeviceLiveRequested,
   useOrderLinkedDeviceLiveProgressStore,
 } from '../../../store/orderLinkedDeviceLiveProgress.store'
 import { selectOrderByClientId, useOrderStore } from '../../../store/order.store'
 import { resolveLinkedDeviceSendDecision } from '../../../domain/orderLinkedDeviceForm.domain'
 import { shouldMergeLiveProgressIntoOrderForm } from '../../../domain/orderLinkedDeviceLiveProgress.domain'
+import { requestOrderClientFormOnLinkedDevice } from '../../../flows/requestOrderClientFormOnLinkedDevice.flow'
+import { resolveOrderRoutePlanSchedule } from '../../../flows/resolveOrderRoutePlanSchedule.flow'
 
 export type OrderFormLinkedDeviceSendTarget = {
   orderId: number
@@ -125,45 +122,40 @@ export const useOrderFormExternalRealtimeFlow = ({
       }
     }
 
-    // A resend must not surface the previous customer's snapshot.
-    clearLinkedDeviceLiveProgress(employeeUserId)
     lastMergedRef.current = null
 
     if (target) {
-      registerPendingLinkedDeviceForm({
+      const result = requestOrderClientFormOnLinkedDevice({
         employeeUserId,
         orderId: target.orderId,
+        referenceNumber,
       })
-      // The widget shows from the send, not from the customer's first
-      // keystroke — the first progress frame supersedes this placeholder.
-      registerLinkedDeviceLiveRequested({
-        employeeUserId,
-        orderId: target.orderId,
-      })
-    } else {
-      awaitingDraftResponseRef.current = true
+      if (result.status !== 'sent') {
+        return result
+      }
+      return { status: 'sent', closeAfterSend: true }
     }
+
+    // Draft requests are local to the open order form. Persisted-order
+    // requests use the reusable flow above so other entrypoints get the same
+    // pending/live tracking behavior.
+    clearLinkedDeviceLiveProgress(employeeUserId)
+    awaitingDraftResponseRef.current = true
 
     try {
       emitExternalFormRequest({
         request_data: {
           reference_number: referenceNumber,
-          order_id: target?.orderId,
+          route_plan_schedule: resolveOrderRoutePlanSchedule(formOrderServerId),
         },
       })
     } catch {
       awaitingDraftResponseRef.current = false
-      if (target) {
-        clearPendingLinkedDeviceForm(employeeUserId)
-        // The request never reached the device — a "waiting" widget for it
-        // would be a lie.
-        clearLinkedDeviceLiveProgress(employeeUserId)
-      }
       return { status: 'error', message: 'Unable to contact linked device.' }
     }
 
     return { status: 'sent', closeAfterSend: decision.closeAfterSend }
-  }, [employeeUserId, referenceNumber])
+  }, [employeeUserId, referenceNumber, formOrderServerId])
 
   return {
     handleSendForm,

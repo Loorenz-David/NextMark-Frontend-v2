@@ -21,6 +21,7 @@ Documentation index for the `admin-app` application.
 | Document                                                                                     | Description                                                                    |
 | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [features/ai/CONTEXT.md](../src/features/ai/CONTEXT.md)                                      | Admin AI panel feature — architecture, layer map, adapter, and block rendering |
+| [implemented/ORDER_PLAN_CONTACT_HANDOFF_WARNING_2026-07-26.md](./implemented/ORDER_PLAN_CONTACT_HANDOFF_WARNING_2026-07-26.md) | Missing-contact DnD warning and move-first client-form handoff |
 | [implemented/ZONE_ROUTEGROUP_ARCHITECTURE.md](./implemented/ZONE_ROUTEGROUP_ARCHITECTURE.md) | Current source of truth for zone-aware route planning architecture             |
 
 ## Under development
