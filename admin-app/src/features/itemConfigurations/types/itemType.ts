@@ -3,6 +3,7 @@ export type ItemType = {
   client_id: string
   name: string
   properties?: number[]
+  label_multiplier?: number | null
 }
 
 export type ItemTypeMap = {
@@ -14,4 +15,5 @@ export type ItemTypePayload = {
   client_id: string
   name: string
   properties?: number[]
+  label_multiplier?: number | null
 }

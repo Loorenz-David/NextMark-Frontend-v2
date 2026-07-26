@@ -1,7 +1,7 @@
 import type { RefObject } from "react";
 import { useCallback } from "react";
 
-import { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
+import { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument";
 import { useMessageHandler } from "@shared-message-handler";
 import {
   usePopupManager,
@@ -11,8 +11,7 @@ import {
 import type { useOrderItemDraftController } from "../../../item";
 import type { Item } from "../../../item";
 import {
-  itemsForDownloading,
-  resolveItemLabelFileName,
+  downloadItemLabels,
   startItemLabelDownload,
   useCreateItem,
   useDeleteItem,
@@ -148,16 +147,13 @@ export const useOrderFormActions = ({
             order_plan_objective: resolvedOrder.order_plan_objective,
           };
 
-          downloadByEvent({
-            channel: "item",
+          void downloadItemLabels({
+            downloadByEvent,
             event: "item_created",
-            data: itemsForDownloading(
-              createdItems,
-              labelIdentifierSource,
-              normalizedCurrent?.delivery_plan_id,
-              normalizedCurrent?.order_notes,
-            ),
-            fileName: resolveItemLabelFileName(labelIdentifierSource),
+            items: createdItems,
+            orderIdentifier: labelIdentifierSource,
+            routePlanId: normalizedCurrent?.delivery_plan_id,
+            orderNotes: normalizedCurrent?.order_notes,
           });
         },
         onItemMutationCommitted: ({ updatedItems: committedUpdatedItems }) => {

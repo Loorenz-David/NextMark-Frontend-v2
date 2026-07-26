@@ -8,7 +8,14 @@ export const useItemTypeFormValidation = ({
   formState: ItemTypeFormState
   warnings: ItemTypeFormWarnings
 }) => {
-  const validateForm = () => warnings.nameWarning.validate(formState.name)
+  const validateForm = () => {
+    const nameIsValid = warnings.nameWarning.validate(formState.name)
+    const labelMultiplierIsValid = warnings.labelMultiplierWarning.validate(
+      formState.label_multiplier,
+    )
+
+    return nameIsValid && labelMultiplierIsValid
+  }
 
   return { validateForm }
 }

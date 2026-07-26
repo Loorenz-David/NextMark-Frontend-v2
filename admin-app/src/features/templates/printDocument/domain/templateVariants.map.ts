@@ -2,7 +2,8 @@ import type { availableChannels, availableOrientations, availableVariants } from
 import type { PdfDrawFn } from '../controllers/renderPdfDocument.controller'
 import { drawClassicTemplateItem, classicTemplateItemSampleData } from '../components/templates/item/classicTemplateItem.pdf'
 import { drawSevenByTenTemplateItem, sevenByTenTemplateItemSampleData } from '../components/templates/item/sevenByTenTemplateItem.pdf'
-import { drawClassicTemplateRoute, classicTemplateRouteSampleData } from '../components/templates/route/classicTemplateRoute.pdf'
+import { drawDriversTemplateRoute, driversTemplateRouteSampleData } from '../components/templates/route/driversTemplateRoute.pdf'
+import { drawPackersTemplateRoute, packersTemplateRouteSampleData } from '../components/templates/route/packersTemplateRoute.pdf'
 
 const noopDraw: PdfDrawFn = () => undefined
 
@@ -57,15 +58,25 @@ const orderTemplateVariantsMap: TemplateVariantMap = {
 }
 
 const routeTemplateVariantsMap: TemplateVariantMap = {
-  classic: {
-    label: 'Classic A4',
-    previewTitle: 'Classic Variant A4',
+  drivers: {
+    label: 'Drivers A4',
+    previewTitle: 'Drivers Route Sheet A4',
     orientation: 'vertical',
-    previewBody: 'Balanced spacing and typography for standard print labels.',
+    previewBody: 'Stop-by-stop route sheet with each stop\'s items for the driver.',
     widthCm: 21,
     heightCm: 29.7,
-    drawFn: drawClassicTemplateRoute,
-    previewData: classicTemplateRouteSampleData,
+    drawFn: drawDriversTemplateRoute,
+    previewData: driversTemplateRouteSampleData,
+  },
+  packers: {
+    label: 'Packers A4',
+    previewTitle: 'Packers Picking List A4',
+    orientation: 'vertical',
+    previewBody: 'Items grouped by type so packers can pull and stage by type.',
+    widthCm: 21,
+    heightCm: 29.7,
+    drawFn: drawPackersTemplateRoute,
+    previewData: packersTemplateRouteSampleData,
   },
 }
 

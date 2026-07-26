@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import { Field } from '@/shared/inputs/FieldContainer'
+import { CustomCounter } from '@/shared/inputs/CustomCounter'
 import { InputField } from '@/shared/inputs/InputField'
 import { InputWarning } from '@/shared/inputs/InputWarning'
 import { PopupFooter } from '@/shared/popups/MainPopup/PopupFooter'
@@ -39,6 +40,18 @@ export const ItemTypeFormLayout = () => {
         </Field>
         {warnings.nameWarning.warning.isVisible && (
           <InputWarning {...warnings.nameWarning.warning} />
+        )}
+
+        <Field label="Label multiplier:" required={true}>
+          <CustomCounter
+            value={formState.label_multiplier}
+            onChange={setters.handleLabelMultiplier}
+            min={1}
+            step={1}
+          />
+        </Field>
+        {warnings.labelMultiplierWarning.warning.isVisible && (
+          <InputWarning {...warnings.labelMultiplierWarning.warning} />
         )}
 
         <Field label="Properties:">

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { makeInitialFormCopy } from '@shared-domain'
 
+import { normalizeItemTypeLabelMultiplier } from '../../domain/itemTypeLabelMultiplier'
 import { useItemTypeByClientId } from '../../hooks/useItemSelectors'
 import { useItemPropertyFlow } from '../../hooks/useItemPropertyFlow'
 
@@ -13,9 +14,14 @@ import { useItemTypeFormValidation } from './ItemTypeForm.validation'
 import { useItemTypeFormSubmit } from './useItemTypeFormSubmit'
 
 
-const buildInitialForm = ( name?: string, properties?: number[]) => ({
+const buildInitialForm = (
+  name?: string,
+  properties?: number[],
+  labelMultiplier?: number | null,
+) => ({
   name: name ?? '',
   properties: properties ?? [],
+  label_multiplier: normalizeItemTypeLabelMultiplier(labelMultiplier),
 })
 
 export const ItemTypeFormProvider = ({
@@ -28,13 +34,21 @@ export const ItemTypeFormProvider = ({
   const existing = useItemTypeByClientId(payload.clientId ?? null)
   useItemPropertyFlow()
   const [formState, setFormState] = useState<ItemTypeFormState>(() =>
-    buildInitialForm( existing?.name, existing?.properties),
+    buildInitialForm(
+      existing?.name,
+      existing?.properties,
+      existing?.label_multiplier,
+    ),
   )
   const initialFormRef = useRef<ItemTypeFormState | null>(null)
   const warnings = useItemTypeFormWarnings()
 
   useEffect(() => {
-    const initial = buildInitialForm(existing?.name, existing?.properties)
+    const initial = buildInitialForm(
+      existing?.name,
+      existing?.properties,
+      existing?.label_multiplier,
+    )
     setFormState(initial)
     makeInitialFormCopy(initialFormRef, initial)
   }, [existing, payload])

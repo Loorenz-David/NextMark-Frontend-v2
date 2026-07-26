@@ -1,3 +1,5 @@
+import { normalizeItemProperties } from '@shared-domain'
+
 import { buildClientId } from '@/lib/utils/clientId'
 
 import type { Item, ItemPopupPayload } from '../../../types'
@@ -23,12 +25,16 @@ export const buildInitialItemDraft = ({
   if (payload.mode === 'controlled' && payload.initialItem) {
     return {
       ...payload.initialItem,
+      properties: normalizeItemProperties(payload.initialItem.properties),
       order_id: payload.orderId,
     }
   }
 
   if (payload.mode === 'autonomous' && existingItem) {
-    return existingItem
+    return {
+      ...existingItem,
+      properties: normalizeItemProperties(existingItem.properties),
+    }
   }
 
   return buildDefaultItemDraft(payload.orderId)

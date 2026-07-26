@@ -6,12 +6,13 @@ import type { PopoverSelectOption } from '@/shared/inputs/OptionPopoverSelect'
 import { OptionPopoverSelect } from '@/shared/inputs/OptionPopoverSelect'
 import { Switch } from '@/shared/inputs/Switch'
 import type { selectedItemTypeProperties } from '../../popups/ItemForm/useItemConfigurations'
+import type { ItemProperty } from '../../types'
 
 type ItemPropertyInputValue = string | number | boolean | null
 
 type ItemPropertyInputFieldProps = {
   property: selectedItemTypeProperties[number]
-  propertyValues: Record<string, unknown> | null | undefined
+  propertyValues: ItemProperty[] | null | undefined
   onPropertyValueChange: (propertyName: string, value: ItemPropertyInputValue) => void
 }
 
@@ -65,7 +66,9 @@ const ItemPropertyInputField = ({
 }: ItemPropertyInputFieldProps) => {
 
 
-  const currentValue = propertyValues?.[property.name]
+  const currentValue = propertyValues?.find(
+    (entry) => entry.name === property.name,
+  )?.value
 
   if (property.field_type === 'text') {
     return (
@@ -122,7 +125,7 @@ const ItemPropertyInputField = ({
 
 export type ItemPropertiesInputsProps = {
   selectedItemTypeProperties: selectedItemTypeProperties
-  propertyValues: Record<string, unknown> | null | undefined
+  propertyValues: ItemProperty[] | null | undefined
   onPropertyValueChange: (propertyName: string, value: ItemPropertyInputValue) => void
 }
 

@@ -1,4 +1,6 @@
 import type { jsPDF } from 'jspdf'
+import type { ItemProperty } from '@shared-domain'
+import { normalizeItemProperties } from '@shared-domain'
 
 type ClassicItemData = {
   delivery_date?: string | null
@@ -7,7 +9,7 @@ type ClassicItemData = {
   reference_number?: string | null
   item_type?: string | null
   quantity?: number | null
-  properties?: Record<string, unknown> | null
+  properties?: ItemProperty[] | Record<string, unknown> | null
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -70,24 +72,11 @@ const fmtWeek = (dateInput?: string | null): string => {
   return `v ${weekNo}`
 }
 
-const fmtItemProps = (properties?: Record<string, unknown> | null): string => {
-  if (!properties) return '--'
-  const parts: string[] = []
-  for (const [k, v] of Object.entries(properties)) {
-    if (k.toLowerCase() === 'notes') continue
-    if (v == null) continue
-    if (typeof v === 'object') {
-      const rec = v as Record<string, unknown>
-      if ('name' in rec && 'value' in rec) {
-        parts.push(`${String(rec.name)}: ${String(rec.value)}`)
-      } else {
-        const nested = Object.values(rec).map(String).join(', ')
-        if (nested) parts.push(`${k}: ${nested}`)
-      }
-    } else {
-      parts.push(`${k}: ${String(v)}`)
-    }
-  }
+const fmtItemProps = (properties?: ClassicItemData['properties']): string => {
+  const entries = normalizeItemProperties(properties) ?? []
+  const parts = entries
+    .filter((entry) => entry.name.toLowerCase() !== 'notes' && entry.value != null)
+    .map((entry) => `${entry.name}: ${String(entry.value)}`)
   return parts.length ? parts.join(' · ') : '--'
 }
 

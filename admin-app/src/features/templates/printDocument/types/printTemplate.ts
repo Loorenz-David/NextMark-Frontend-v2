@@ -1,6 +1,6 @@
 export type availableChannels = "item" | "order" | "route";
 
-export type availableVariants = "classic" | "7cm - 10cm";
+export type availableVariants = "classic" | "7cm - 10cm" | "drivers" | "packers";
 
 export type availableEvents =
   | "item_created"

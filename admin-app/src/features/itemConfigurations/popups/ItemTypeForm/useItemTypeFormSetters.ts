@@ -15,6 +15,11 @@ export const useItemTypeFormSetters = ({
     setFormState((prev) => ({ ...prev, name: value }))
   }
 
+  const handleLabelMultiplier = (value: number) => {
+    warnings.labelMultiplierWarning.validate(value)
+    setFormState((prev) => ({ ...prev, label_multiplier: value }))
+  }
+
  
   const handleProperties = (value: number, action:'remove' |'add') =>
     setFormState((prev) => ({
@@ -27,5 +32,5 @@ export const useItemTypeFormSetters = ({
       : prev.properties.filter(p => p !== value )
     }))
 
-  return { handleName, handleProperties }
+  return { handleName, handleLabelMultiplier, handleProperties }
 }

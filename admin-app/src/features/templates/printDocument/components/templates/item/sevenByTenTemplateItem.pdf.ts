@@ -1,4 +1,6 @@
 import type { jsPDF } from "jspdf";
+import type { ItemProperty } from "@shared-domain";
+import { normalizeItemProperties } from "@shared-domain";
 import { HelpToCarryIconSrc } from "@/assets/icons";
 
 type SevenByTenItemData = {
@@ -8,7 +10,7 @@ type SevenByTenItemData = {
   reference_number?: string | null;
   item_type?: string | null;
   quantity?: number | null;
-  properties?: Record<string, unknown> | null;
+  properties?: ItemProperty[] | Record<string, unknown> | null;
   order_notes?: unknown;
   help_to_carry?: boolean | null;
   order_plan_objective?: string | null;
@@ -85,25 +87,25 @@ const fmtDateLabel = (dateInput?: string | null): string => {
     : `${shortYear}-${month}-${day}`;
 };
 
-const fmtItemProps = (properties?: Record<string, unknown> | null): string => {
-  if (!properties) return "--";
-  const parts: string[] = [];
-  for (const [k, v] of Object.entries(properties)) {
-    if (k.toLowerCase() === "notes") continue;
-    if (v == null) continue;
-    if (typeof v === "object") {
-      const rec = v as Record<string, unknown>;
-      if ("name" in rec && "value" in rec) {
-        parts.push(`${String(rec.name)}: ${String(rec.value)}`);
-      } else {
-        const nested = Object.values(rec).map(String).join(", ");
-        if (nested) parts.push(`${k}: ${nested}`);
-      }
-    } else {
-      parts.push(`${k}: ${String(v)}`);
-    }
-  }
-  return parts.length ? parts.join("   ·   ") : "--";
+// Keys are stored snake_case; only the first word is shown so a long key
+// cannot eat the line. A single word longer than the cap is still truncated
+// with ".." (Latin-1 safe for the built-in Helvetica font).
+const PROP_NAME_MAX_CHARS = 14;
+
+const capPropName = (name: string): string => {
+  const firstWord = name.split("_")[0] ?? name;
+  return firstWord.length > PROP_NAME_MAX_CHARS
+    ? `${firstWord.slice(0, PROP_NAME_MAX_CHARS - 2)}..`
+    : firstWord;
+};
+
+const fmtItemPropEntries = (
+  properties?: SevenByTenItemData["properties"],
+): Array<{ name: string; value: string }> => {
+  const entries = normalizeItemProperties(properties) ?? [];
+  return entries
+    .filter((entry) => entry.name.toLowerCase() !== "notes" && entry.value != null)
+    .map((entry) => ({ name: capPropName(entry.name), value: String(entry.value) }));
 };
 
 const fmtPlanObjective = (objective?: string | null): string => {
@@ -364,7 +366,10 @@ export const sevenByTenTemplateItemSampleData = {
     help_to_carry: true,
     order_plan_objective: "international_shipping",
     article_number: "A-1048",
-    properties: { set: "of 4", color: "Oak" },
+    properties: [
+      { name: "set", value: "of 4" },
+      { name: "color", value: "Oak" },
+    ],
     order_notes: [
       { type: "GENERAL", content: "Deliver through the side entrance." },
     ],
@@ -511,7 +516,53 @@ export const drawSevenByTenTemplateItem = (
     cursorY += lineH * Math.max(shown.length, 1) + sectionGap;
   };
 
-  const propsLabel = fmtItemProps(data.properties);
+  // Truncate a value with a trailing ".." so it never runs into the key.
+  // Assumes the caller has already selected the value font.
+  const clampToWidth = (text: string, maxW: number): string => {
+    if (pdf.getTextWidth(text) <= maxW) return text;
+    let clipped = text;
+    while (clipped.length > 1 && pdf.getTextWidth(`${clipped}..`) > maxW) {
+      clipped = clipped.slice(0, -1);
+    }
+    return `${clipped}..`;
+  };
+
+  // Props render as a two-column list: key left-aligned, value right-aligned
+  // to the column edge so the values line up in a tidy right rail.
+  const drawPropField = (
+    label: string,
+    entries: Array<{ name: string; value: string }>,
+    maxLines: number,
+  ) => {
+    const baseY = cursorY + capH(sf(FS.value));
+    const lineH = capH(sf(FS.value)) + lineExtra;
+
+    setFont(pdf, sf(FS.label), true, DARK);
+    pdf.text(`${label}:`, leftX, baseY);
+
+    setFont(pdf, sf(FS.value), false, MID);
+
+    if (!entries.length) {
+      pdf.text("--", valueColX, baseY);
+      cursorY += lineH + sectionGap;
+      return;
+    }
+
+    const rightEdge = valueColX + valueMaxW;
+    const shown = entries.slice(0, maxLines);
+    shown.forEach((entry, idx) => {
+      const y = baseY + idx * lineH;
+      const keyText = `${entry.name}:`;
+      pdf.text(keyText, valueColX, y);
+      const avail = valueMaxW - pdf.getTextWidth(`${keyText}  `);
+      pdf.text(clampToWidth(entry.value, avail), rightEdge, y, {
+        align: "right",
+      });
+    });
+    cursorY += lineH * shown.length + sectionGap;
+  };
+
+  const propEntries = fmtItemPropEntries(data.properties);
   const notesText = fmtOrderNotes(data.order_notes);
 
   // Type row carries the quantity in parentheses: "item_type (quantity)".
@@ -519,7 +570,7 @@ export const drawSevenByTenTemplateItem = (
   const typeWithQty =
     data.quantity == null ? typeValue : `${typeValue} (${data.quantity})`;
   drawField("Type", FS.label, typeWithQty, FS.value, 1);
-  drawField("Prop", FS.label, propsLabel, FS.value, 2);
+  drawPropField("Prop", propEntries, 3);
   drawField("Notes", FS.notesLabel, notesText, FS.notesValue, 2);
 
   // Week + date clamped to the bottom-left corner, at the SKU font size.

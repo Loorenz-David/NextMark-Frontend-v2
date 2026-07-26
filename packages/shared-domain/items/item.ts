@@ -1,3 +1,10 @@
+export type ItemPropertyValue = string | number | boolean | null
+
+export type ItemProperty = {
+  name: string
+  value: ItemPropertyValue
+}
+
 export type Item = {
   id?: number
   client_id: string
@@ -7,7 +14,7 @@ export type Item = {
   item_state_id?: number | null
   item_position?: string | null
   order_id: number
-  properties?: Record<string, unknown> | null
+  properties?: ItemProperty[] | null
   item_images?: string[] | null
   page_link?: string | null
   dimension_depth?: number | null

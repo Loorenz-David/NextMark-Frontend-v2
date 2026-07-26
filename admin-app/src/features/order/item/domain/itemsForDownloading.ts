@@ -7,6 +7,7 @@ import {
   toDateOnly,
   validateDateComparison,
 } from "@/shared/data-validation/timeValidation";
+import { expandItemsByLabelMultiplier } from "./itemLabelExpansion";
 
 type ExtraProps = {
   delivery_date?: string | null;
@@ -20,12 +21,16 @@ type ItemForDownloading = {
   itemPayload: Item & ExtraProps;
 };
 
-type OrderLabelIdentifierSource = {
+export type OrderLabelIdentifierSource = {
   order_scalar_id?: string | number | null;
   reference_number?: string | null;
   external_source?: string | null;
   help_to_carry?: boolean | null;
   order_plan_objective?: string | null;
+};
+
+export type ItemLabelExpansionOptions = {
+  resolveLabelMultiplier?: (itemTypeName: string) => number;
 };
 
 const formatItemLabelOrderIdentifier = (value: string | number | null | undefined) => {
@@ -86,6 +91,7 @@ export const itemsForDownloading = (
   orderIdentifier?: OrderLabelIdentifierSource | number | null,
   route_plan_id?: number | null,
   order_notes?: unknown,
+  options?: ItemLabelExpansionOptions,
 ) => {
   const order_scalar_id = resolveItemLabelOrderIdentifier(orderIdentifier);
   const orderSymbols =
@@ -113,21 +119,16 @@ export const itemsForDownloading = (
     }
   }
 
-  const expandedItems: ItemForDownloading[] = [];
-  for (const item of items) {
-    if (!item?.quantity) continue;
-    for (let i = 0; i < item.quantity; i++) {
-      expandedItems.push({
-        itemPayload: {
-          ...item,
-          order_scalar_id,
-          ...orderSymbols,
-          delivery_date: planDeliveryDate ?? "",
-          order_notes,
-        },
-      });
-    }
-  }
-
-  return expandedItems;
+  return expandItemsByLabelMultiplier(
+    items,
+    options?.resolveLabelMultiplier,
+  ).map<ItemForDownloading>((item) => ({
+    itemPayload: {
+      ...item,
+      order_scalar_id,
+      ...orderSymbols,
+      delivery_date: planDeliveryDate ?? "",
+      order_notes,
+    },
+  }));
 };

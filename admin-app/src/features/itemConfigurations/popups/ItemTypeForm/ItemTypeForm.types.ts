@@ -6,4 +6,5 @@ export type ItemTypeFormPayload = {
 export type ItemTypeFormState = {
   name: string
   properties: number[]
+  label_multiplier: number
 }

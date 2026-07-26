@@ -55,7 +55,10 @@ export const useItemTypeFormSubmit = ({
   const updateItemType = useUpdateItemType()
   const deleteItemType = useDeleteItemType()
 
-  const onSuccess = useCallback((saved: ItemType) => syncPropertiesToType(saved), [])
+  const onSuccess = useCallback((saved: ItemType) => {
+    upsertItemType(saved)
+    syncPropertiesToType(saved)
+  }, [])
   const onDelete = useCallback((deleted: ItemType) => cleanupDeletedType(deleted), [])
 
   return useItemConfigFormSubmit<ItemTypePayload, ItemTypeFormState, ItemType>({
@@ -69,6 +72,7 @@ export const useItemTypeFormSubmit = ({
       client_id: clientId,
       name: state.name,
       properties: state.properties,
+      label_multiplier: state.label_multiplier,
     }),
     createApi: createItemType,
     updateApi: (id, diff) => updateItemType(id, diff),
@@ -80,4 +84,3 @@ export const useItemTypeFormSubmit = ({
     onDelete,
   })
 }
-

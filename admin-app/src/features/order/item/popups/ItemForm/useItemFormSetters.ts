@@ -57,18 +57,28 @@ export const useItemFormSetters = ({
     value: string | number | boolean | null,
   ) => {
     setFormState((prev) => {
-      const nextProperties = { ...(prev.properties ?? {}) };
+      const currentProperties = prev.properties ?? [];
 
       if (value === null || value === "") {
-        delete nextProperties[propertyName];
-      } else {
-        nextProperties[propertyName] = value;
+        const nextProperties = currentProperties.filter(
+          (property) => property.name !== propertyName,
+        );
+        return {
+          ...prev,
+          properties: nextProperties.length ? nextProperties : null,
+        };
       }
 
-      return {
-        ...prev,
-        properties: Object.keys(nextProperties).length ? nextProperties : null,
-      };
+      const exists = currentProperties.some(
+        (property) => property.name === propertyName,
+      );
+      const nextProperties = exists
+        ? currentProperties.map((property) =>
+            property.name === propertyName ? { ...property, value } : property,
+          )
+        : [...currentProperties, { name: propertyName, value }];
+
+      return { ...prev, properties: nextProperties };
     });
   };
 

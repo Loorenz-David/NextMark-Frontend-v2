@@ -1,5 +1,10 @@
 export { useGetOrderItems, useCreateItem, useUpdateItem, useDeleteItem } from './api/item.api'
 export { itemsForDownloading, resolveItemLabelFileName } from './domain/itemsForDownloading'
+export type {
+  ItemLabelExpansionOptions,
+  OrderLabelIdentifierSource,
+} from './domain/itemsForDownloading'
+export { downloadItemLabels } from './flows/downloadItemLabels.flow'
 export { startItemLabelDownload } from './flows/startItemLabelDownload.flow'
 export { useOrderItemDraftController } from './hooks/useOrderItemDraftController'
 export { useItemFlow, shouldRefreshItemsForOrder } from './hooks/useItemFlow'

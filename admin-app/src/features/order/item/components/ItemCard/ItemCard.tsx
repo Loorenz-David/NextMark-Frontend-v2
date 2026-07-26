@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { normalizeItemProperties } from '@shared-domain'
 
 import { DeleteIcon, EditIcon } from '@/assets/icons'
 import { BasicButton } from '@/shared/buttons/BasicButton'
@@ -39,7 +40,7 @@ export const ItemCard = ({
     .map((value) => (typeof value === 'number' ? value : null))
   const hasDimensions = dimensions.some((value) => value !== null)
   const dimensionsValue = hasDimensions ? `W ${dimensions[0] ?? 0}  x  H ${dimensions[1] ?? 0}  x  D ${dimensions[2] ?? 0}` : '—'
-  const propertyEntries = Object.entries(item.properties ?? {})
+  const propertyEntries = normalizeItemProperties(item.properties) ?? []
   const itemState = useItemStateByServerId(item.item_state_id ?? null)
   const itemImages = (item.item_images ?? []).map((imageUrl) => imageUrl.trim()).filter(Boolean)
  
@@ -183,10 +184,12 @@ export const ItemCard = ({
             </div>
 
             {propertyEntries.length ? (
-              propertyEntries.map(([key, value]) => (
-                <div key={key} className="flex items-start justify-between gap-4">
-                  <span className="text-[var(--color-muted)]/90">{key}</span>
-                  <span className="text-right text-[var(--color-text)]">{String(value)}</span>
+              propertyEntries.map((property, index) => (
+                <div key={`${property.name}-${index}`} className="flex items-start justify-between gap-4">
+                  <span className="text-[var(--color-muted)]/90">{property.name}</span>
+                  <span className="text-right text-[var(--color-text)]">
+                    {property.value == null ? '—' : String(property.value)}
+                  </span>
                 </div>
               ))
             ) : (

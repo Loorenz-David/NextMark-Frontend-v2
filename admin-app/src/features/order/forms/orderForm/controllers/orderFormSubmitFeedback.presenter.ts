@@ -1,7 +1,7 @@
 import type { Item } from "../../../item";
-import { itemsForDownloading, resolveItemLabelFileName } from "../../../item";
+import { downloadItemLabels } from "../../../item";
 import { normalizeFormStateForSave } from "../../../api/mappers/orderForm.normalize";
-import type { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
+import type { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument";
 
 import type { OrderFormSubmitResult } from "./orderFormSubmit.controller";
 
@@ -82,16 +82,13 @@ export const presentOrderFormSubmitOutcome = ({
         normalizedCurrent?.order_plan_objective,
     };
 
-    downloadByEvent({
-      channel: "item",
+    void downloadItemLabels({
+      downloadByEvent,
       event: "item_created",
-      data: itemsForDownloading(
-        createdItems,
-        labelIdentifierSource,
-        normalizedCurrent?.delivery_plan_id,
-        normalizedCurrent?.order_notes,
-      ),
-      fileName: resolveItemLabelFileName(labelIdentifierSource),
+      items: createdItems,
+      orderIdentifier: labelIdentifierSource,
+      routePlanId: normalizedCurrent?.delivery_plan_id,
+      orderNotes: normalizedCurrent?.order_notes,
     });
   }
 

@@ -1,1 +1,1 @@
-export type { Item, ItemMap, ItemUpdateFields } from '@shared-domain'
+export type { Item, ItemMap, ItemProperty, ItemPropertyValue, ItemUpdateFields } from '@shared-domain'

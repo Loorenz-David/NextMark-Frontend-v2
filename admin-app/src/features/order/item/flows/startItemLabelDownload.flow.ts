@@ -1,4 +1,7 @@
-import type { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
+import type {
+  availableEvents,
+  useDownloadTemplateByEventFlow,
+} from "@/features/templates/printDocument";
 import { normalizeEntityMap } from "@/lib/utils/entities/normalizeEntityMap";
 import { planApi } from "@/features/plan/api/plan.api";
 import {
@@ -18,11 +21,7 @@ import {
   useOrderStore,
 } from "../../store/order.store";
 import type { Item } from "../types";
-import {
-  itemsForDownloading,
-  resolveItemLabelFileName,
-} from "../domain/itemsForDownloading";
-import type { availableEvents } from "@/features/templates/printDocument/types";
+import { downloadItemLabels } from "./downloadItemLabels.flow";
 
 type DownloadByEvent = ReturnType<
   typeof useDownloadTemplateByEventFlow
@@ -144,16 +143,13 @@ export const startItemLabelDownload = ({
       order_plan_objective: resolvedOrder?.order_plan_objective,
     };
 
-    await downloadByEvent({
-      channel: "item",
+    await downloadItemLabels({
+      downloadByEvent,
       event,
-      data: itemsForDownloading(
-        items,
-        labelIdentifierSource,
-        routePlanId,
-        resolvedOrder?.order_notes,
-      ),
-      fileName: resolveItemLabelFileName(labelIdentifierSource),
+      items,
+      orderIdentifier: labelIdentifierSource,
+      routePlanId,
+      orderNotes: resolvedOrder?.order_notes,
       onProgress,
     });
   })();
