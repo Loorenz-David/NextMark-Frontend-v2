@@ -78,4 +78,50 @@ export const runPlanDndMoveWithHandoffFlowTests = async () => {
     noHandoff.handoffResult === null,
     "a missing handoff yields a null handoff result",
   );
+
+  starts.length = 0;
+  const sequential = await runPlanDndMoveWithHandoff({
+    move: async () => {
+      starts.push("move");
+      await Promise.resolve();
+      starts.push("move_done");
+      return { success: true };
+    },
+    handoff: async () => {
+      starts.push("handoff");
+      return { status: "sent" };
+    },
+    handoffMode: "after_move_success",
+  });
+
+  assert(
+    starts.join(",") === "move,move_done,handoff",
+    "after-move handoff should run only after a successful move completes",
+  );
+  assert(
+    sequential.handoffResult?.status === "sent",
+    "after-move handoff results should be returned",
+  );
+
+  starts.length = 0;
+  const failedSequential = await runPlanDndMoveWithHandoff({
+    move: async () => {
+      starts.push("move");
+      return { success: false };
+    },
+    handoff: async () => {
+      starts.push("handoff");
+      return { status: "sent" };
+    },
+    handoffMode: "after_move_success",
+  });
+
+  assert(
+    starts.join(",") === "move",
+    "after-move handoff should not run when the move fails",
+  );
+  assert(
+    failedSequential.handoffResult === null,
+    "a skipped after-move handoff yields a null result",
+  );
 };

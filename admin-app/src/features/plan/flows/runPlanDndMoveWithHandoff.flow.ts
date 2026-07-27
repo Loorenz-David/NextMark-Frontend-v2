@@ -4,13 +4,24 @@ export const runPlanDndMoveWithHandoff = async <
 >({
   move,
   handoff,
+  handoffMode = "concurrent",
 }: {
   move: () => Promise<TMoveResult>;
   handoff?: () => Promise<THandoffResult>;
+  handoffMode?: "concurrent" | "after_move_success";
 }): Promise<{
   moveResult: TMoveResult;
   handoffResult: THandoffResult | null;
 }> => {
+  if (handoffMode === "after_move_success") {
+    // Plan creation cannot expose a route-plan schedule until the server has
+    // returned the new plan and the order link has been patched into the store.
+    const moveResult = await move();
+    const handoffResult =
+      moveResult.success && handoff ? await handoff() : null;
+    return { moveResult, handoffResult };
+  }
+
   // Start the move first, then the handoff, then await both together.
   //
   // The move's optimistic store update — the order's new delivery_plan_id — runs

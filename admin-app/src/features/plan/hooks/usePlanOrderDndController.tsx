@@ -14,6 +14,7 @@ import {
 import { useOrderSelectionStore } from "@/features/order/store/orderSelection.store";
 import {
   selectOrderByClientId,
+  selectOrderByServerId,
   useOrderStore,
 } from "@/features/order/store/order.store";
 import { buildBatchSelectionPayload } from "@/features/order/store/orderSelectionHooks.store";
@@ -633,7 +634,12 @@ export const usePlanOrderDndController = () => {
     const contactWarningOrder =
       intent.kind === "ASSIGN_ORDER_TO_PLAN"
         ? selectOrderByClientId(intent.orderClientId)(useOrderStore.getState())
-        : null;
+        : intent.kind === "CREATE_PLAN_FOR_DATE" &&
+            intent.orderServerIds.length === 1
+          ? selectOrderByServerId(intent.orderServerIds[0])(
+              useOrderStore.getState(),
+            )
+          : null;
     let contactWarningDecision: OrderAssignmentContactWarningDecision = {
       kind: "move_anyway",
     };
@@ -860,6 +866,10 @@ export const usePlanOrderDndController = () => {
       move: () =>
         runWithRouteMapRefresh(routeMapRefreshPlanId, () => execute(intent)),
       handoff,
+      handoffMode:
+        intent.kind === "CREATE_PLAN_FOR_DATE"
+          ? "after_move_success"
+          : "concurrent",
     });
     if (
       result?.success &&

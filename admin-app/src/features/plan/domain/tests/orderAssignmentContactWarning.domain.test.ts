@@ -23,6 +23,12 @@ const assignIntent = {
   planClientId: "plan-7",
 };
 
+const createPlanIntent = {
+  kind: "CREATE_PLAN_FOR_DATE" as const,
+  dateKey: "2026-07-28",
+  orderServerIds: [42],
+};
+
 export const runOrderAssignmentContactWarningDomainTests = () => {
   assert(
     shouldWarnForMissingOrderAssignmentContact({
@@ -41,6 +47,25 @@ export const runOrderAssignmentContactWarningDomainTests = () => {
       }),
     }),
     "whitespace-only contacts should be missing",
+  );
+
+  assert(
+    shouldWarnForMissingOrderAssignmentContact({
+      intent: createPlanIntent,
+      order: buildOrder(),
+    }),
+    "creating a plan for an unscheduled order without contacts should warn",
+  );
+
+  assert(
+    !shouldWarnForMissingOrderAssignmentContact({
+      intent: {
+        ...createPlanIntent,
+        orderServerIds: [42, 43],
+      },
+      order: buildOrder(),
+    }),
+    "multi-order plan creation remains outside this warning",
   );
 
   assert(

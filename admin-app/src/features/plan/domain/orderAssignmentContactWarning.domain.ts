@@ -24,7 +24,12 @@ export const shouldWarnForMissingOrderAssignmentContact = ({
   intent: PlanDndIntent;
   order: Order | null | undefined;
 }): boolean => {
-  if (intent?.kind !== "ASSIGN_ORDER_TO_PLAN" || !order) {
+  const isSingleOrderAssignment =
+    intent?.kind === "ASSIGN_ORDER_TO_PLAN" ||
+    (intent?.kind === "CREATE_PLAN_FOR_DATE" &&
+      intent.orderServerIds.length === 1);
+
+  if (!isSingleOrderAssignment || !order) {
     return false;
   }
 
