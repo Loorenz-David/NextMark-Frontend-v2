@@ -1,8 +1,9 @@
 import { useDndContext } from '@dnd-kit/core'
 
-import type { Order } from '@/features/order/types/order'
-import { RouteGroupOrderCard } from '@/features/plan/routeGroup/components'
+import { OrderDragOverlayCard, type Order } from '@/features/order'
 import type { RouteSolutionStop } from '@/features/plan/routeGroup/types/routeSolutionStop'
+
+import { StopOrderAvatar } from '../cards/StopOrderAvatar'
 
 type RouteStopDragOverlayProps = {
   routeStopClientId: string
@@ -11,7 +12,7 @@ type RouteStopDragOverlayProps = {
   planStartDate?: string | null
 }
 
-export const RouteStopDragOverlay = ({ routeStopClientId, order, stop, planStartDate }: RouteStopDragOverlayProps) => {
+export const RouteStopDragOverlay = ({ routeStopClientId, order, stop }: RouteStopDragOverlayProps) => {
   const { active, over } = useDndContext()
 
   let displayStopOrder: number | null = typeof stop?.stop_order === 'number' ? stop.stop_order : null
@@ -28,11 +29,11 @@ export const RouteStopDragOverlay = ({ routeStopClientId, order, stop, planStart
   }
 
   return (
-    <RouteGroupOrderCard
+    <OrderDragOverlayCard
       order={order}
-      stop={stop ?? null}
-      displayStopOrder={displayStopOrder}
-      planStartDate={planStartDate}
+      orderNumberAddon={
+        <StopOrderAvatar stopOrder={displayStopOrder} variant="small" />
+      }
     />
   )
 }

@@ -7,7 +7,7 @@ interface PlanAreaProps {
   isPlanVisible: boolean
   plan?: ReactNode
   buttonTogglePlan?: ReactNode
-  planColumnWidth: number
+  planColumnWidth: number | string
   planRowHeight: number
   viewMode: DesktopPlanViewMode
   onPlanLayoutChange?: () => void

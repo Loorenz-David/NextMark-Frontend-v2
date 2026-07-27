@@ -1,7 +1,10 @@
 import { useState } from "react";
 
+import { usePlanContainerView } from "@/features/plan";
+
 type HomeDesktopLayoutParams = {
   openSectionsCount?: number;
+  isOrderOverlayOpen?: boolean;
 };
 
 export type DesktopPlanViewMode = "rail" | "split";
@@ -25,6 +28,7 @@ const resolveInitialViewMode = (): DesktopPlanViewMode => {
 
 export function useHomeDesktopLayout({
   openSectionsCount = 0,
+  isOrderOverlayOpen = false,
 }: HomeDesktopLayoutParams) {
   const [isPlanOpen, setIsPlanOpen] = useState(true);
   const [viewMode, setViewModeState] = useState<DesktopPlanViewMode>(() =>
@@ -46,10 +50,21 @@ export function useHomeDesktopLayout({
   const BASE_WIDTH = 450;
   const ORDER_OVERLAY_WIDTH = 550;
   const OVERLAY_WIDTH = 450;
+  // The map keeps a fixed rail on the left; the Plans calendar takes the rest
+  // of the center. Folding the calendar hands the freed space back to the map.
+  const MAP_RAIL_WIDTH = 320;
 
   const hasOverlay = openSectionsCount > 0;
   const isRailView = viewMode === "rail";
-  const planColumnWidth = isRailView && isPlanVisible ? PLAN_WIDTH : 0;
+  const railColumnWidth = isOrderOverlayOpen ? ORDER_OVERLAY_WIDTH : BASE_WIDTH;
+  // The calendar claims the center (map shrinks to its rail); the list view
+  // keeps the classic narrow column so the map gets the space back.
+  const planContainerView = usePlanContainerView();
+  const planColumnWidth: string | number = !(isRailView && isPlanVisible)
+    ? 0
+    : planContainerView === "calendar"
+      ? `calc(100vw - ${MAP_RAIL_WIDTH}px - ${railColumnWidth}px)`
+      : PLAN_WIDTH;
   const mapRowHeight =
     viewMode === "split" ? (isPlanVisible ? SPLIT_RATIO : 100) : 100;
   const planRowHeight =

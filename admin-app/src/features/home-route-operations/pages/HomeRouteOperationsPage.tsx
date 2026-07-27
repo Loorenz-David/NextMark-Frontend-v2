@@ -42,7 +42,11 @@ const HomeRouteOperationsContent = () => {
         className="admin-shell-aurora admin-shell-aurora--three transition-opacity duration-200"
         style={{ opacity: disableAuroraBackground ? 0 : 1 }}
       />
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden">
+      <div
+        className={`relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden ${
+          isMobile ? "" : "admin-home-desktop-workspace"
+        }`}
+      >
         {isMobile ? <HomeMobileView /> : <HomeDesktopView />}
       </div>
     </div>

@@ -5,9 +5,9 @@ import type { RouteSolutionStop } from "@/features/plan/routeGroup/types/routeSo
 import { RouteStopWarnings } from "../warnings/RouteStopWarnings";
 import { formatRouteTime } from "@/features/plan/routeGroup/utils/formatRouteTime";
 import {
-  ItemTypeCountsPill,
+  OrderCardItemPreviews,
+  OrderCardMissingInfoBanner,
   OrderCardNotesTray,
-  OrderMissingInfoNotifier,
   OrderOperationTypeBadges,
   useOrderActions,
   type Order,
@@ -67,32 +67,26 @@ export const RouteGroupOrderCard = ({
   return (
     <div className="group relative" onClick={openOrder}>
       <div className="admin-glass-panel admin-surface-compact relative z-10 flex flex-col gap-2.5 overflow-visible rounded-lg border border-border p-4 pl-2 transition-all duration-200 group-hover:border-border-accent group-hover:bg-surface-hover group-hover:shadow-[var(--shadow-panel-card)]">
-        <OrderMissingInfoNotifier order={order} />
         <div className="admin-card-sheen [--card-sheen-stop:26%] pointer-events-none absolute inset-0 rounded-lg" />
 
         <div className="relative z-10 flex w-full gap-3">
           <StopOrderAvatar stopOrder={stopOrder} />
           <div className="flex min-w-0 flex-col gap-2 flex-1 pl-1">
-            <div className="flex justify-between">
-              <div className="flex min-w-0 gap-3">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-base font-semibold text-[var(--color-text)]">
-                    {orderLabel}
-                  </span>
-                  <OrderOperationTypeBadges
-                    operationType={order.operation_type}
-                  />
-                </div>
-                {order.external_source && (
-                  <div className="flex items-center justify-center">
-                    <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
-                      {order.external_source}
-                    </span>
-                  </div>
-                )}
+            <div className="flex justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="shrink-0 text-base font-semibold text-[var(--color-text)]">
+                  {orderLabel}
+                </span>
+                <OrderOperationTypeBadges
+                  operationType={order.operation_type}
+                />
+                <span className="shrink-0 text-[var(--color-muted)]/60">·</span>
+                <span className="min-w-0 truncate text-xs text-[var(--color-muted)]/95">
+                  {streetAddress}
+                </span>
               </div>
               {orderState && (
-                <div className="flex gap-3 items-center">
+                <div className="flex shrink-0 gap-3 items-center">
                   <RouteStopWarnings stop={stop} planStartDate={planStartDate} />
                   <StateCard
                     label={orderState.name}
@@ -101,15 +95,12 @@ export const RouteGroupOrderCard = ({
                 </div>
               )}
             </div>
-            <div className="flex w-full items-center justify-between">
-              <span className="truncate pr-1 text-xs text-[var(--color-muted)]/95">
-                {streetAddress}
-              </span>
+            <div className="flex w-full items-end justify-between gap-3">
+              <OrderCardItemPreviews
+                previews={order.item_previews}
+                totalItems={itemCount}
+              />
               <div className="flex items-center justify-end gap-3 text-xs text-[var(--color-muted)]">
-                <ItemTypeCountsPill
-                  itemCount={itemCount}
-                  itemTypeCounts={order.item_type_counts}
-                />
                 {expectedArrival ? (
                   <div className="flex min-w-[72px] items-center justify-center gap-2 rounded-full border border-border-subtle bg-surface-raised px-2 py-1">
                     <>
@@ -126,6 +117,11 @@ export const RouteGroupOrderCard = ({
             </div>
           </div>
         </div>
+
+        <OrderCardMissingInfoBanner
+          order={order}
+          className="-mb-4 -ml-2 -mr-4 mt-0.5"
+        />
       </div>
       <OrderCardNotesTray notes={order.order_notes} />
     </div>

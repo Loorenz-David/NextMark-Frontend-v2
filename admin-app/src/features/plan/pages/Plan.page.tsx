@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useVisibleRoutePlans } from "../store/useRoutePlan.selector";
 
@@ -13,6 +13,8 @@ import type { PlanQueryFilters } from "../types/planMeta";
 type RoutePlanPageProps = {
   onRequestClose?: () => void;
   showCloseButton?: boolean;
+  /** Optional control forwarded into the header (e.g. calendar/list toggle). */
+  headerAccessory?: ReactNode;
 };
 
 const mergePlanQuery = (
@@ -50,6 +52,7 @@ const queryEquals = (
 export const RoutePlanPage = ({
   onRequestClose,
   showCloseButton,
+  headerAccessory,
 }: RoutePlanPageProps) => {
   const [activeQuery, setActiveQuery] = useState<PlanQueryFilters | undefined>(
     undefined,
@@ -111,6 +114,7 @@ export const RoutePlanPage = ({
         applySearch={() => {}}
         applyFilters={handleFiltersChange}
         applyFilterSelection={handleFilterSelection}
+        headerAccessory={headerAccessory}
       />
       <div
         ref={scrollContainerRef}

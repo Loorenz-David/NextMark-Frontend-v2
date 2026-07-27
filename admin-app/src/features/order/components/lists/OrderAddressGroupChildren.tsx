@@ -55,6 +55,7 @@ export const OrderAddressGroupChildren = ({
               isSelectionMode={isSelectionMode}
               isSelected={isOrderSelected?.(order) ?? false}
               onToggleSelection={onToggleSelection}
+              collapseSourceOnDrag
             />
           </div>
         ))}

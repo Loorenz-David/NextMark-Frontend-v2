@@ -47,7 +47,7 @@ export const RouteGroupsPageContent = ({
   });
 
   return (
-    <div className="relative flex h-full w-full min-w-0 flex-col overflow-hidden bg-[var(--color-primary)]/5">
+    <div className="admin-route-groups-page-content relative flex h-full w-full min-w-0 flex-col overflow-hidden bg-[var(--color-primary)]/5">
       {hasActiveRouteGroup ? (
         <RouteGroupsActionBar
           useFloatingActionBar={isDesktopActionBarBehaviorEnabled}

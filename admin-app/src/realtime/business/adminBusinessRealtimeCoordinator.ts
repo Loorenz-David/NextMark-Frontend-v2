@@ -5,6 +5,7 @@ const inFlightOrderRefreshes = new Map<number, Promise<unknown>>()
 const inFlightOrderCaseRefreshes = new Map<number, Promise<void>>()
 const inFlightOrderRouteContextRefreshes = new Map<number, Promise<void>>()
 const inFlightPlanRefreshes = new Map<number, Promise<void>>()
+const inFlightRouteGroupRefreshes = new Map<number, Promise<unknown>>()
 let inFlightGlobalOrderCasesRefresh: Promise<void> | null = null
 
 export const markAdminBusinessEventHandled = (eventId: string): boolean => {
@@ -90,6 +91,23 @@ export const runDedupedPlanRefresh = (
   })
 
   inFlightPlanRefreshes.set(planId, request)
+  return request
+}
+
+export const runDedupedRouteGroupRefresh = (
+  planId: number,
+  refresh: () => Promise<unknown>,
+) => {
+  const existing = inFlightRouteGroupRefreshes.get(planId)
+  if (existing) {
+    return existing
+  }
+
+  const request = refresh().finally(() => {
+    inFlightRouteGroupRefreshes.delete(planId)
+  })
+
+  inFlightRouteGroupRefreshes.set(planId, request)
   return request
 }
 

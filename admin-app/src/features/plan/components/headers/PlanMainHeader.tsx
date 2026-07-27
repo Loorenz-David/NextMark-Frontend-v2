@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDndContext, useDroppable } from "@dnd-kit/core";
 
@@ -98,6 +99,8 @@ type PlanMainHeaderProps = {
   onRequestClose?: () => void;
   planStats?: PlanStats;
   showCloseButton?: boolean;
+  /** Optional control rendered at the end of the actions row (e.g. the calendar/list view toggle). */
+  headerAccessory?: ReactNode;
 };
 
 export const PlanMainHeader = ({
@@ -107,6 +110,7 @@ export const PlanMainHeader = ({
   onRequestClose,
   showCloseButton = true,
   planStats,
+  headerAccessory,
 }: PlanMainHeaderProps) => {
   const { active } = useDndContext();
   const { setNodeRef: setCreatePlanNodeRef, isOver: isCreatePlanOver } =
@@ -163,9 +167,12 @@ export const PlanMainHeader = ({
           />
         </div>
 
-        {shouldShowUnscheduleDropTarget ? (
-          <UnscheduleDropTarget dropFeedback={unscheduleDropFeedback} />
-        ) : null}
+        <div className="ml-auto flex items-center gap-3">
+          {shouldShowUnscheduleDropTarget ? (
+            <UnscheduleDropTarget dropFeedback={unscheduleDropFeedback} />
+          ) : null}
+          {headerAccessory}
+        </div>
       </div>
     </>
   );

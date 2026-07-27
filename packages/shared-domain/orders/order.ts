@@ -12,6 +12,15 @@ export type OrderDeliveryWindowType =
 
 export type OrderOperationTypes = "pickup" | "dropoff" | "pickup_dropoff";
 
+/** Lightweight line-item preview embedded in order list serializations (first items of the order, sorted by id). */
+export type OrderItemPreview = {
+  article_number: string;
+  item_position?: string | null;
+  item_type: string;
+  quantity: number;
+  image_urls: string[];
+};
+
 export type OrderDeliveryWindow = {
   id?: number;
   client_id?: string | null;
@@ -63,6 +72,7 @@ export type Order = {
   total_weight?: number | null;
   total_items?: number | null;
   item_type_counts?: Record<string, number> | null;
+  item_previews?: OrderItemPreview[] | null;
   total_volume?: number | null;
   open_order_cases?: number | null;
   archive_at?: ISODateTime | null;

@@ -1,6 +1,6 @@
 import type { RouteTemplateData } from '@/features/templates/printDocument/components/templates/route/routeTemplate.shared'
 
-import { toDateOnly, validateDateComparison } from '@/shared/data-validation/timeValidation'
+import { validateDateComparison } from '@/shared/data-validation/timeValidation'
 
 import type { address } from '@/types/address'
 
@@ -22,6 +22,11 @@ import { useOrderStore, selectOrderByServerId } from '@/features/order/store/ord
 import { useItemStore, selectItemsByOrderId } from '@/features/order/item/store/item.store'
 
 import { useTeamMemberStore, selectTeamMemberByServerId } from '@/features/team/members/store/teamMemberStore'
+
+import {
+  formatRoutePlanDate,
+  getRoutePlanIsoWeekNumber,
+} from './routePlanDate'
 
 type RouteTemplateOrderIdentitySource = {
   order_scalar_id?: number | null
@@ -138,7 +143,8 @@ export const serializeRouteSolutionForTemplate = (
 
   return {
     orientation: 'vertical',
-    plan_date: formatPlanDate(plan.start_date, plan.end_date),
+    plan_date: formatRoutePlanDate(plan.start_date, plan.end_date),
+    plan_week_number: getRoutePlanIsoWeekNumber(plan.start_date),
     stop_count: routeSolution.stop_count ?? orders.length,
     total_distance: metersToKm(routeSolution.total_distance_meters),
     total_travel_time:
@@ -184,20 +190,6 @@ const formatRouteTime = (
   iso: string | null | undefined,
   spansMultipleDays: boolean,
 ) => (spansMultipleDays ? toDateTime(iso) : toTimeOnly(iso))
-
-const formatPlanDate = (
-  startIso?: string | null,
-  endIso?: string | null,
-): string => {
-  const start = startIso ?? ''
-  const end = endIso ?? ''
-
-  if (validateDateComparison(start, end, 'are_equal_dates')) {
-    return toDateOnly(start)
-  }
-
-  return `${toDateOnly(start)}  --  ${toDateOnly(end)}`
-}
 
 const formatAddress = (addr?: address | null): string => {
   if (!addr?.street_address) return '--'

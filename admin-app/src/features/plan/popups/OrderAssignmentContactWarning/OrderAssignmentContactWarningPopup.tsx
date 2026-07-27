@@ -2,9 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ExclamationIcon } from "@/assets/icons";
 import {
+  OrderCardItemPreviews,
   useClientFormRecipientFieldsController,
   type LinkedDeviceOrderFormAvailability,
 } from "@/features/order";
+import type { OrderItemPreview } from "@shared-domain";
 import type { OrderAssignmentContactWarningDecision } from "@/features/plan/domain/orderAssignmentContactWarning.domain";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { fieldContainer } from "@/constants/classes";
@@ -20,6 +22,8 @@ import type { StackComponentProps } from "@/shared/stack-manager/types";
 
 export type OrderAssignmentContactWarningPopupPayload = {
   orderLabel: string;
+  itemPreviews?: OrderItemPreview[] | null;
+  totalItems?: number | null;
   initialEmail?: string | null;
   initialPhone?: {
     prefix: string;
@@ -99,7 +103,7 @@ export const OrderAssignmentContactWarningPopup = ({
         onClose={() => closeWithDecision({ kind: "cancel" })}
       />
 
-      <FeaturePopupBody className="flex flex-col bg-[var(--color-ligth-bg)]">
+      <FeaturePopupBody className="flex flex-col bg-surface-raised">
         {view === "options" ? (
           <>
             <div className="flex flex-col gap-4 px-4 py-5 md:px-5">
@@ -123,7 +127,7 @@ export const OrderAssignmentContactWarningPopup = ({
                   type="button"
                   disabled={!payload.canSendForm}
                   onClick={() => setView("customer")}
-                  className="rounded-2xl border border-border bg-[var(--color-page)] px-4 py-4 text-left transition hover:border-border-accent hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
+                  className="order-assignment-contact-warning-action rounded-2xl border border-border bg-[var(--color-page)] px-4 py-4 text-left shadow-sm transition hover:border-border-accent hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <span className="block text-sm font-semibold text-[var(--color-text)]">
                     Send form to customer
@@ -139,7 +143,7 @@ export const OrderAssignmentContactWarningPopup = ({
                   onClick={() =>
                     closeWithDecision({ kind: "send_linked_device" })
                   }
-                  className="rounded-2xl border border-border bg-[var(--color-page)] px-4 py-4 text-left transition hover:border-border-accent hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
+                  className="order-assignment-contact-warning-action rounded-2xl border border-border bg-[var(--color-page)] px-4 py-4 text-left shadow-sm transition hover:border-border-accent hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <span className="block text-sm font-semibold text-[var(--color-text)]">
                     Move &amp; send to linked device
@@ -149,6 +153,20 @@ export const OrderAssignmentContactWarningPopup = ({
                   </span>
                 </button>
               </div>
+
+              {payload.itemPreviews?.length ? (
+                <div className="rounded-2xl border border-border bg-surface-raised px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                    items
+                  </p>
+                  <div className="mt-3">
+                    <OrderCardItemPreviews
+                      previews={payload.itemPreviews}
+                      totalItems={payload.totalItems ?? 0}
+                    />
+                  </div>
+                </div>
+              ) : null}
 
               {linkedDeviceDisabled && sendDisabledMessage ? (
                 <p className="text-xs text-warning">{sendDisabledMessage}</p>
@@ -178,8 +196,8 @@ export const OrderAssignmentContactWarningPopup = ({
           <>
             <div className="flex flex-col gap-3 px-4 py-5 md:px-5">
               <p className="text-sm leading-6 text-[var(--color-muted)]">
-                Add at least one recipient. The order will move first; after
-                the move succeeds, the client form will be sent.
+                Add at least one recipient. The order will move first; after the
+                move succeeds, the client form will be sent.
               </p>
 
               <Field label="Email">

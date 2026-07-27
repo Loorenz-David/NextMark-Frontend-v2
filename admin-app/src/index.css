@@ -938,6 +938,99 @@ textarea:focus {
   background-image: none;
 }
 
+/* Desktop route-operations overlays use a restrained colour identity in light
+   mode so adjacent white panels remain visually distinct. The texture is
+   decorative and never participates in layout or pointer interaction. */
+.admin-context-header-texture {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.admin-context-header-texture--route {
+  --context-header-primary-r: var(--info-r);
+  --context-header-secondary-r: var(--color-light-blue-r);
+}
+
+.admin-context-header-texture--order {
+  --context-header-primary-r: var(--success-action-r);
+  --context-header-secondary-r: var(--success-vivid-r);
+}
+
+[data-theme="light"]
+  .admin-home-desktop-workspace
+  .admin-context-header-texture {
+  display: block;
+  background:
+    linear-gradient(
+      118deg,
+      rgba(var(--context-header-primary-r), 0.045),
+      rgba(255, 255, 255, 0.78) 48%,
+      rgba(var(--context-header-secondary-r), 0.035)
+    ),
+    var(--paper-raised);
+}
+
+[data-theme="light"]
+  .admin-home-desktop-workspace
+  .admin-context-header-texture::before,
+[data-theme="light"]
+  .admin-home-desktop-workspace
+  .admin-context-header-texture::after {
+  content: "";
+  position: absolute;
+  width: 68%;
+  height: 180%;
+  border-radius: 44% 56% 52% 48% / 45% 40% 60% 55%;
+  filter: blur(42px) saturate(104%);
+  opacity: 0.18;
+  will-change: transform;
+  animation: admin-context-header-lava 18s ease-in-out infinite alternate;
+}
+
+[data-theme="light"]
+  .admin-home-desktop-workspace
+  .admin-context-header-texture::before {
+  top: -76%;
+  left: -16%;
+  background: radial-gradient(
+    circle at 44% 48%,
+    rgba(var(--context-header-primary-r), 0.42) 0%,
+    rgba(var(--context-header-primary-r), 0.14) 48%,
+    transparent 74%
+  );
+}
+
+[data-theme="light"]
+  .admin-home-desktop-workspace
+  .admin-context-header-texture::after {
+  right: -18%;
+  bottom: -82%;
+  background: radial-gradient(
+    circle at 56% 46%,
+    rgba(var(--context-header-secondary-r), 0.36) 0%,
+    rgba(var(--context-header-secondary-r), 0.12) 50%,
+    transparent 76%
+  );
+  animation-delay: -9s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes admin-context-header-lava {
+  0% {
+    transform: translate3d(-6%, -4%, 0) scale(0.94, 1.06) rotate(0deg);
+  }
+  45% {
+    transform: translate3d(10%, 7%, 0) scale(1.08, 0.93) rotate(8deg);
+  }
+  100% {
+    transform: translate3d(-2%, 14%, 0) scale(0.98, 1.1) rotate(-6deg);
+  }
+}
+
 /* Vertical sheen on a card: a highlight bleeding down from the top edge and a
    faint shade at the bottom. On dark glass --glass-surface-weak is a 5% white
    film; in light it resolves to opaque #ffffff, which paints a solid band across
@@ -1104,8 +1197,24 @@ textarea:focus {
   border-color: var(--rule);
 }
 
+/* RouteGroupsPage already carries the same translucent page fill as the orders
+   page. Avoid stacking that fill again on its content pane in light mode. */
+[data-theme="light"] .admin-route-groups-page-content {
+  background: transparent;
+}
+
+[data-theme="light"] .order-assignment-contact-warning-action {
+  background: var(--paper-raised);
+  box-shadow: var(--shadow-button);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .layout-animate {
     transition: none !important;
+  }
+
+  .admin-context-header-texture::before,
+  .admin-context-header-texture::after {
+    animation: none;
   }
 }

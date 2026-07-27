@@ -119,8 +119,12 @@ export const RouteGroupsPageHeader = ({
   const PlanTypeIcon = planIconTypeMap.local_delivery;
 
   return (
-    <header className="flex w-full min-w-0 flex-col bg-[var(--surface-page-header)] shadow-[var(--shadow-panel-section)]">
-      <div className="admin-glass-divider flex min-w-0 items-center justify-between gap-3 border-b px-4 py-3 transition-colors duration-200">
+    <header className="relative isolate flex w-full min-w-0 flex-col overflow-hidden bg-[var(--surface-page-header)] shadow-[var(--shadow-panel-section)]">
+      <div
+        aria-hidden="true"
+        className="admin-context-header-texture admin-context-header-texture--route"
+      />
+      <div className="admin-glass-divider relative z-10 flex min-w-0 items-center justify-between gap-3 border-b px-4 py-3 transition-colors duration-200">
         <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
           <div className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-hover px-3 py-3 shadow-[inset_0_1px_0_var(--color-ligth-bg)]">
             <PlanTypeIcon className="h-6 w-6 text-[var(--color-muted)]" />

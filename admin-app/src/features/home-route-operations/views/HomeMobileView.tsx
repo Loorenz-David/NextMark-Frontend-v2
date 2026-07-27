@@ -1,10 +1,9 @@
-import { OrderPage } from "@/features/order/pages/order.page";
 import { RouteGroupsPage } from "@/features/plan/routeGroup/pages/RouteGroups.page";
 import { useBaseControlls } from "@/shared/resource-manager/useResourceManager";
 import { SectionPanel } from "@/shared/section-panel/SectionPanel";
 import { SectionManagerHost } from "../components/SectionManagerHost";
 import { AnimatePresence, motion } from "framer-motion";
-import { PlanDesktopShell } from "@/features/plan/views/PlanDesktopShell";
+import { RoutePlanPage } from "@/features/plan/pages/Plan.page";
 import type { PayloadBase } from "../types/types";
 
 export const HomeMobileView = () => {
@@ -23,9 +22,7 @@ export const HomeMobileView = () => {
         <div className="relative flex min-w-0 flex-1 overflow-hidden">
             
 
-                <PlanDesktopShell showCloseButton={false} 
-                    viewMode="rail"
-                />
+                <RoutePlanPage showCloseButton={false} />
 
 
             

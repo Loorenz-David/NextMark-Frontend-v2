@@ -30,6 +30,13 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   title: string;
   description?: string;
+  /** Optional content aligned to the right of the title row. */
+  headerAside?: ReactNode;
+  /**
+   * Optional full-width boundary rendered at the bottom of the header. When
+   * present, it replaces the header's standard hairline border.
+   */
+  headerBoundary?: ReactNode;
   footer?: ReactNode;
   /**
    * `pinned` keeps the action visible at all times. `inline` places it at the end
@@ -47,6 +54,8 @@ type Props = {
   backLabel?: string;
   /** Rules must be acknowledged, so that gate opts out of backdrop/Escape dismissal. */
   dismissible?: boolean;
+  /** Softens the page behind the overlay without affecting the sheet itself. */
+  blurBackdrop?: boolean;
   variant?: ClientFormSheetVariant;
   children: ReactNode;
 };
@@ -75,12 +84,15 @@ export const ClientFormSheet = ({
   onOpenChange,
   title,
   description,
+  headerAside,
+  headerBoundary,
   footer,
   footerPlacement = "pinned",
   headerPlacement = "pinned",
   onBack,
   backLabel = "Go back",
   dismissible = true,
+  blurBackdrop = false,
   variant = "sheet",
   children,
 }: Props) => {
@@ -102,7 +114,9 @@ export const ClientFormSheet = ({
 
   const headerNode = (
     <header
-      className={`border-b border-[var(--rule)] px-5 pb-4 sm:px-6 sm:pt-5 ${
+      className={`px-5 pb-4 sm:px-6 sm:pt-5 ${
+        headerBoundary ? "" : "border-b border-[var(--rule)]"
+      } ${
         isHeaderInline ? "" : "shrink-0"
       } ${
         // Full screen means the header sits under the status bar / notch.
@@ -132,15 +146,25 @@ export const ClientFormSheet = ({
           </button>
         ) : null}
 
-        <div className="min-w-0">
-          <h2 className="text-xl font-normal tracking-[0.01em] text-[var(--ink)]">
-            {title}
-          </h2>
-          {description ? (
-            <p className="mt-1 text-xs text-[var(--ink-soft)]">{description}</p>
+        <div className="flex min-w-0 flex-1 items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h2 className="text-xl font-normal tracking-[0.01em] text-[var(--ink)]">
+              {title}
+            </h2>
+            {description ? (
+              <p className="mt-1 text-xs text-[var(--ink-soft)]">{description}</p>
+            ) : null}
+          </div>
+
+          {headerAside ? (
+            <div className="shrink-0 pt-1">{headerAside}</div>
           ) : null}
         </div>
       </div>
+
+      {headerBoundary ? (
+        <div className="-mx-5 -mb-4 mt-4 sm:-mx-6">{headerBoundary}</div>
+      ) : null}
     </header>
   );
 
@@ -150,7 +174,9 @@ export const ClientFormSheet = ({
         {open ? (
           <MotionFloatingOverlay
             lockScroll
-            className="client-form-portal z-[200] bg-[rgba(46,42,36,0.45)]"
+            className={`client-form-portal z-[200] bg-[rgba(46,42,36,0.45)] ${
+              blurBackdrop ? "backdrop-blur-sm" : ""
+            }`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

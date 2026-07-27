@@ -4,7 +4,6 @@ import {
   createRouteLayout,
   drawItemSummary,
   drawKpiSummary,
-  drawOrderNotes,
   drawPackByType,
   drawRouteHeader,
   routeTemplateSampleData,
@@ -27,7 +26,6 @@ export const drawPackersTemplateRoute = (
   drawKpiSummary(pdf, layout, data)
   drawItemSummary(pdf, layout, data)
   drawPackByType(pdf, layout, data)
-  drawOrderNotes(pdf, layout, data)
 }
 
 export const packersTemplateRouteSampleData = routeTemplateSampleData

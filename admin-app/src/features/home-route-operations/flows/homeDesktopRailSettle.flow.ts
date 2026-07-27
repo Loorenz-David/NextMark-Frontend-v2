@@ -4,7 +4,7 @@ import type { DesktopPlanViewMode } from '../hooks/useHomeDesktopLayout'
 
 type RailLayoutDeps = {
   viewMode: DesktopPlanViewMode
-  planColumnWidth: number
+  planColumnWidth: number | string
   mapRowHeight: number
   planRowHeight: number
   hasOverlay: boolean

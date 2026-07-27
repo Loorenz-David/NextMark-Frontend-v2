@@ -1,5 +1,5 @@
 import type { ActiveDrag } from "@/features/plan/hooks/usePlanOrderDndController";
-import { OrderCard } from "@/features/order/components/cards/OrderCard";
+import { OrderDragOverlayCard } from "@/features/order";
 import { OrderBatchDragOverlayCard } from "@/features/order/components/cards/OrderBatchDragOverlayCard";
 import { OrderGroupDragOverlayCard } from "@/features/order/components/cards/OrderGroupDragOverlayCard";
 import { RouteStopDragOverlay } from "@/features/plan/routeGroup/components/overlays/RouteStopDragOverlay";
@@ -18,7 +18,7 @@ export const RouteOperationsDragOverlay = ({
 
   if (activeDrag.type === "route_stop") {
     return (
-      <div className="pointer-events-none cursor-grabbing">
+      <div className="pointer-events-none w-fit cursor-grabbing">
         <RouteStopDragOverlay
           routeStopClientId={activeDrag.routeStopClientId}
           order={activeDrag.order}
@@ -44,8 +44,8 @@ export const RouteOperationsDragOverlay = ({
 
   if (activeDrag.type === "order") {
     return (
-      <div className="pointer-events-none cursor-grabbing min-w-[260px]">
-        <OrderCard order={activeDrag.order} />
+      <div className="pointer-events-none w-fit cursor-grabbing">
+        <OrderDragOverlayCard order={activeDrag.order} />
       </div>
     );
   }

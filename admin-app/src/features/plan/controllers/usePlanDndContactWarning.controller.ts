@@ -40,6 +40,8 @@ export const usePlanDndContactWarningController = () => {
           key: POPUP_KEY,
           payload: {
             orderLabel: reference || scalar || "Unscheduled order",
+            itemPreviews: order.item_previews,
+            totalItems: order.total_items,
             initialEmail: order.client_email,
             initialPhone: order.client_primary_phone,
             canSendForm: typeof order.id === "number",

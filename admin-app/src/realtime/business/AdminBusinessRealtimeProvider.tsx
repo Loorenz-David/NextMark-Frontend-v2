@@ -51,6 +51,10 @@ import {
   patchRoutePlanTotals,
 } from "@/features/plan/store/routePlan.slice";
 import {
+  resolveLoadedRouteProgressPlanId,
+  useRouteGroupOverviewFlow,
+} from "@/features/plan/routeGroup";
+import {
   normalizeEntityMap,
   type EntityMap,
 } from "@/lib/utils/entities/normalizeEntityMap";
@@ -61,6 +65,7 @@ import {
   runDedupedOrderRefresh,
   runDedupedOrderRouteContextRefresh,
   runDedupedPlanRefresh,
+  runDedupedRouteGroupRefresh,
 } from "./adminBusinessRealtimeCoordinator";
 
 type BusinessPayload = Record<string, unknown>;
@@ -155,6 +160,7 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
   const { normalizeOrderCaseEntity, normalizeOrderCaseMap } =
     useOrderCaseModel();
   const { loadAllCases } = useOrderCaseFlow();
+  const { fetchRouteGroupOverview } = useRouteGroupOverviewFlow();
 
   useOrderEventHistoryRealtime();
 
@@ -401,18 +407,41 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
     const handleRouteSolutionEvent = (
       event: BusinessEventEnvelope<BusinessPayload>,
     ) => {
-      if (event.event_name !== "route_solution.created") {
+      if (event.event_name === "route_solution.created") {
+        const payload = event.payload ?? {};
+        const deliveryPlanId = getPayloadNumber(payload, "delivery_plan_id");
+        if (!deliveryPlanId) {
+          return;
+        }
+
+        void runDedupedPlanRefresh(deliveryPlanId, () =>
+          refreshPlanById(deliveryPlanId),
+        );
+        return;
+      }
+
+      if (
+        event.event_name !== "route_solution.updated"
+        && event.event_name !== "route_solution_stop.updated"
+      ) {
         return;
       }
 
       const payload = event.payload ?? {};
-      const deliveryPlanId = getPayloadNumber(payload, "delivery_plan_id");
-      if (!deliveryPlanId) {
+      const loadedPlanId = resolveLoadedRouteProgressPlanId({
+        eventName: event.event_name,
+        entityId: event.entity_id,
+        payloadRouteSolutionId: getPayloadNumber(payload, "route_solution_id"),
+      });
+      if (loadedPlanId == null) {
         return;
       }
 
-      void runDedupedPlanRefresh(deliveryPlanId, () =>
-        refreshPlanById(deliveryPlanId),
+      void runDedupedRouteGroupRefresh(loadedPlanId, () =>
+        fetchRouteGroupOverview(loadedPlanId, {
+          activateRouteGroup: false,
+          notifyOnError: false,
+        }),
       );
     };
 
@@ -457,6 +486,7 @@ export function AdminBusinessRealtimeProvider({ children }: PropsWithChildren) {
   }, [
     adminBusinessChannel,
     fetchOrderRouteContext,
+    fetchRouteGroupOverview,
     loadAllCases,
     loadItemsByOrderId,
     normalizeOrderCaseEntity,

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 
+import { useOrderStateRegistry } from '@/features/order'
 import type { Order } from '@/features/order/types/order'
 import type { RouteSolutionStop } from '@/features/plan/routeGroup/types/routeSolutionStop'
 import type { RouteSolution } from '@/features/plan/routeGroup/types/routeSolution'
@@ -11,6 +12,10 @@ import {
   resolveOrderGroupOperationBadgeDirections,
   resolveOrderOperationBadgeDirections,
 } from '@/features/order/domain/orderOperationBadgeDirections'
+import {
+  buildAdminRouteProgressSegments,
+  serializeRouteProgressSegments,
+} from '@/features/plan/routeGroup/domain/buildRouteProgressSegments'
 import {
   useRouteGroupMapInteractionActions,
 } from '@/features/plan/routeGroup/store/routeGroupMapInteractionHooks.store'
@@ -100,6 +105,7 @@ export const useRouteGroupMapFlow = ({
 }: RouteGroupMapParams) => {
   const mapManager = useMapManager()
   const sectionManager = useSectionManager()
+  const orderStateRegistry = useOrderStateRegistry()
   const lookupSignatureRef = useRef<string>('')
   const routeSignatureRef = useRef<string>('')
   const routeScopeRef = useRef<string>('')
@@ -289,7 +295,13 @@ export const useRouteGroupMapFlow = ({
     mapManager.setMarkerLayerVisibility(MAP_MARKER_LAYERS.routeGroup, isActive)
     mapManager.setMarkerLayerVisibility(MAP_MARKER_LAYERS.routeGroupBoundary, isActive)
 
-    const routeSegments = buildRouteSegments(orders, stopByOrderId, selectedRouteSolution)
+    const routeSegments = buildAdminRouteProgressSegments({
+      orders,
+      stopByOrderId,
+      selectedRouteSolution,
+      completedOrderStateId: orderStateRegistry.getStateIdByName('Completed'),
+      failedOrderStateId: orderStateRegistry.getStateIdByName('Fail'),
+    })
     const nextRouteScope = selectedRouteSolution?.id != null
       ? String(selectedRouteSolution.id)
       : selectedRouteSolution?.client_id ?? ''
@@ -299,13 +311,13 @@ export const useRouteGroupMapFlow = ({
     }
 
     const nextRouteSignature = isActive && routeSegments.length
-      ? routeSegments.join('::')
+      ? serializeRouteProgressSegments(routeSegments)
       : ''
     if (nextRouteSignature) {
       if (routeSignatureRef.current !== nextRouteSignature) {
         const shouldFitBounds = routeSignatureRef.current === ''
         routeSignatureRef.current = nextRouteSignature
-        mapManager.showRoute({ path: routeSegments, fitBounds: shouldFitBounds })
+        mapManager.showRoute({ segments: routeSegments, fitBounds: shouldFitBounds })
       }
     } else if (routeSignatureRef.current) {
       routeSignatureRef.current = ''
@@ -317,6 +329,7 @@ export const useRouteGroupMapFlow = ({
     isActive,
     mapManager,
     openGroupOverlay,
+    orderStateRegistry,
     orders,
     selectedRouteSolution,
     setMarkerLookup,
@@ -460,32 +473,4 @@ export const buildCombinedStartEndMarker = ({
     status: 'start_end',
     onClick,
   }
-}
-
-
-const buildRouteSegments = (
-  orders: Order[],
-  stopByOrderId: Map<number, RouteSolutionStop>,
-  selectedRouteSolution: RouteSolution | null,
-): string[] => {
-  if (!selectedRouteSolution) return []
-
-  const orderedStops = orders
-    .map((order) => (order.id != null ? stopByOrderId.get(order.id) : undefined))
-    .filter((stop): stop is RouteSolutionStop => !!stop && stop.stop_order != null)
-    .sort((a, b) => (a.stop_order ?? Number.POSITIVE_INFINITY) - (b.stop_order ?? Number.POSITIVE_INFINITY))
-
-  const path: string[] = []
-  if (selectedRouteSolution.start_leg_polyline) {
-    path.push(selectedRouteSolution.start_leg_polyline)
-  }
-  orderedStops.forEach((stop) => {
-    if (stop.to_next_polyline) {
-      path.push(stop.to_next_polyline)
-    }
-  })
-  if (selectedRouteSolution.end_leg_polyline) {
-    path.push(selectedRouteSolution.end_leg_polyline)
-  }
-  return path
 }

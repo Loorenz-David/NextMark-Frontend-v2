@@ -26,6 +26,11 @@ type ApplyRouteGroupPayloadOptions = {
   planId?: number | string | null
 }
 
+type FetchRouteGroupOverviewOptions = {
+  activateRouteGroup?: boolean
+  notifyOnError?: boolean
+}
+
 const toNumberId = (value: number | string | null | undefined) => {
   if (typeof value === 'number' && Number.isFinite(value)) return value
   if (typeof value !== 'string' || value.trim().length === 0) return null
@@ -100,12 +105,13 @@ export function useRouteGroupOverviewFlow() {
 
   const fetchRouteGroupOverview = useCallback(async (
     planId: number | string,
+    options?: FetchRouteGroupOverviewOptions,
   ) => {
     try {
       const response = await planOverviewApi.getRouteGroupOverview(planId)
 
       applyRouteGroupPayload(response.data, {
-        activateRouteGroup: true,
+        activateRouteGroup: options?.activateRouteGroup ?? true,
         planId,
       })
       
@@ -115,8 +121,10 @@ export function useRouteGroupOverviewFlow() {
       const message = error instanceof ApiError ? error.message : 'Unable to load route group overview.'
       const status = error instanceof ApiError ? error.status : 500
       console.error('Failed to fetch route group overview', error)
-      setOrderListError(message)
-      showMessage({ status, message })
+      if (options?.notifyOnError ?? true) {
+        setOrderListError(message)
+        showMessage({ status, message })
+      }
       return null
     }
   }, [showMessage])

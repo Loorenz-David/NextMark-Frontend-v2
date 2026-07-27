@@ -17,7 +17,6 @@ import {
   useRouteGroupSelectionMode,
   useSelectedRouteGroupOrdersSummary,
 } from "../../store/routeGroupSelectionHooks.store";
-import { RouteGroupStatsOverlay } from "./RouteGroupStatsOverlay/RouteGroupStatsOverlay";
 import { RouteGroupMarkerGroupOverlay } from "./RouteGroupMarkerGroupOverlay";
 import { ZonePolygonOverlay } from "./ZonePolygonOverlay";
 
@@ -63,7 +62,6 @@ export const RouteGroupMapOverlay = () => {
 
   return (
     <>
-      <RouteGroupStatsOverlay />
       <MapMultiSelectOverlay
         isSelectionMode={isSelectionMode}
         enableSelectionMode={enableSelectionMode}

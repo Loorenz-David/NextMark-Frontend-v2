@@ -11,6 +11,7 @@ export { default as DragHandleIcon } from "./DragHandleIcon.svg?react";
 export { default as EditIcon } from "./EditIcon.svg?react";
 export { default as FilteredIcon } from "./FilteredIcon.svg?react";
 export { default as GridIcon } from "./GridIcon.svg?react";
+export { default as ImageIcon } from "./ImageIcon.svg?react";
 export { default as InfoIcon } from "./InfoIcon.svg?react";
 export { default as ItemIcon } from "./ItemIcon.svg?react";
 export { default as LabelIcon } from "./LabelIcon.svg?react";

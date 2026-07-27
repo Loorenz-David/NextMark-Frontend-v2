@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useCallback, useEffect } from "react";
 
-import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { DndContext, DragOverlay, MeasuringStrategy } from "@dnd-kit/core";
 
 import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext";
 import { preloadMapExtras, useMap } from "@/shared/map";
@@ -110,6 +110,10 @@ export function HomeRouteOperationsManagersProvider({
       <DndContext
         sensors={sensors}
         collisionDetection={homeCollisionDetection}
+        // Droppables can mount mid-drag (the calendar day overlay opens while
+        // hovering with an order); measure continuously so they become live
+        // drop targets immediately instead of being invisible to collisions.
+        measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
         autoScroll={{
           enabled: true,
           threshold: { x: 0.1, y: 0.2 },

@@ -18,7 +18,7 @@ interface HomeDesktopLayoutProps {
   isPlanVisible: boolean
   viewMode: DesktopPlanViewMode
   splitMode: boolean
-  planColumnWidth: number
+  planColumnWidth: number | string
   mapRowHeight: number
   planRowHeight: number
   orderOverlayWidth: number
@@ -51,13 +51,17 @@ export function HomeDesktopLayout({
   onRailTransitionEnd,
 }: HomeDesktopLayoutProps) {
   const planColumnGridWidth = splitMode ? 0 : planColumnWidth
+  const planColumnGridCss =
+    typeof planColumnGridWidth === 'number'
+      ? `${planColumnGridWidth}px`
+      : planColumnGridWidth
   const railColumnWidth = isOrderOverlayOpen ? orderOverlayWidth : baseWidth
 
   return (
     <main
       className="grid h-full min-h-0 flex-1 overflow-hidden layout-animate"
       style={{
-        gridTemplateColumns: `minmax(0, 1fr) ${planColumnGridWidth}px ${railColumnWidth}px`,
+        gridTemplateColumns: `minmax(0, 1fr) ${planColumnGridCss} ${railColumnWidth}px`,
         willChange: 'grid-template-columns',
         transition: 'grid-template-columns 220ms cubic-bezier(0.22, 1, 0.36, 1)',
       }}

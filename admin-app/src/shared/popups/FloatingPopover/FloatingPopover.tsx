@@ -30,6 +30,13 @@ type PropsConfrimPopup = {
   renderInPortal?: boolean;
   strategy?: "absolute" | "fixed";
   placement?: Placement;
+  /**
+   * Position the floating element with top/left instead of a CSS transform.
+   * Needed when the popover hosts dnd-kit droppables: dnd-kit measures
+   * droppable rects transform-agnostically, so a transform-positioned
+   * popover's drop targets would register at the viewport origin.
+   */
+  positionWithoutTransform?: boolean;
 };
 
 export const FloatingPopover = ({
@@ -49,6 +56,7 @@ export const FloatingPopover = ({
   renderInPortal,
   strategy,
   placement,
+  positionWithoutTransform,
 }: PropsConfrimPopup) => {
   const isElementNode = (value: unknown): value is Element => value instanceof Element
 
@@ -57,6 +65,7 @@ export const FloatingPopover = ({
     onOpenChange: onOpenChange,
     placement: placement ?? "bottom-start",
     strategy: strategy ?? (renderInPortal ? "fixed" : "absolute"),
+    transform: !positionWithoutTransform,
     middleware: [
       offset({
         mainAxis: typeof offSetNum == "number" ? offSetNum : 8,

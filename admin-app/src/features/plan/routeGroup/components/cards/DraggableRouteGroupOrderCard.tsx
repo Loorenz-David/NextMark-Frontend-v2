@@ -49,7 +49,7 @@ export const DraggableRouteGroupOrderCard = ({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.4 : 1,
+    visibility: isDragging ? 'hidden' as const : 'visible' as const,
     cursor: 'grab',
   }
 

@@ -70,6 +70,7 @@ export const OrderList = ({
               isSelectionMode={isSelectionMode}
               isSelected={isOrderSelected?.(order) ?? false}
               onToggleSelection={onToggleSelection}
+              collapseSourceOnDrag
             />
           )
         },

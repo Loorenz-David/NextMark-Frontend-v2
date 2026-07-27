@@ -13,6 +13,7 @@ import { DriverLiveRealtimeProvider } from "@/realtime/driverLive/DriverLiveReal
 import { AdminNotificationsProvider } from "@/realtime/notifications/AdminNotificationsProvider";
 import { ensureRealtimeConnected } from "@/realtime/client";
 import { OrderLinkedDeviceFormProvider } from "@/features/order";
+import { StepSequenceProvider } from "@/shared/overlays/stepSequence";
 
 const DeferredAdminNotificationsPushProvider = lazy(() =>
   import("@/realtime/notifications/AdminNotificationsPushProvider").then(
@@ -112,9 +113,11 @@ export function AppProviders({ children }: PropsWithChildren) {
                   <OrderLinkedDeviceFormProvider
                     employeeUserId={employeeUserId}
                   >
-                    <ApiAuthBridge />
-                    {children}
-                    <DeferredAppEnhancers />
+                    <StepSequenceProvider>
+                      <ApiAuthBridge />
+                      {children}
+                      <DeferredAppEnhancers />
+                    </StepSequenceProvider>
                   </OrderLinkedDeviceFormProvider>
                 </DriverLiveRealtimeProvider>
               </AdminBusinessRealtimeProvider>

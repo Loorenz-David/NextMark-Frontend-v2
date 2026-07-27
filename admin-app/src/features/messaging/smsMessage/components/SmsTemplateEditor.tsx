@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import type { Descendant } from 'slate'
-import { createEditor } from 'slate'
+import { createEditor, Transforms } from 'slate'
 import { withReact } from 'slate-react'
 
 import { createRenderElement } from '@/shared/inputs/TemplateEditor/renderElement'
@@ -30,7 +30,7 @@ export const SmsTemplateEditor = ({ value, onChange }: SmsTemplateEditorProps) =
         </p>
         <p className="text-sm text-[var(--color-muted)]">
           Write the real message inside the phone preview. Use labels from the side panel to insert
-          dynamic client and delivery details.
+          dynamic client and delivery details. Press Enter for a new line or Tab to indent text.
         </p>
       </div>
 
@@ -63,8 +63,9 @@ export const SmsTemplateEditor = ({ value, onChange }: SmsTemplateEditorProps) =
           renderElement={renderElement}
           placeholder="Write your SMS template..."
           onKeyDown={(event) => {
-            if (event.key === 'Enter') {
+            if (event.key === 'Tab') {
               event.preventDefault()
+              Transforms.insertText(editor, '\t')
             }
           }}
         />

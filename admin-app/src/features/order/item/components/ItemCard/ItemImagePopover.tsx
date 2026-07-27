@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { FloatingPopover } from "@/shared/popups/FloatingPopover/FloatingPopover";
+import { RemoteImage } from "@/shared/media/RemoteImage";
 
-import {
-  buildItemCardImageThumbnail,
-  buildItemImagePreview,
-} from "../../domain/itemImageThumbnail";
+const ITEM_CARD_IMAGE_WIDTHS = [56, 112, 168];
+const ITEM_CARD_IMAGE_SIZES = "56px";
+const ITEM_IMAGE_PREVIEW_WIDTHS = [400, 800];
+const ITEM_IMAGE_PREVIEW_SIZES = "400px";
 
 type ItemImagePopoverProps = {
   imageUrls: string[];
@@ -24,10 +25,6 @@ export const ItemImagePopover = ({
     [imageUrls],
   );
   const activeImage = images[activeIndex] ?? images[0];
-  const thumbnail = activeImage
-    ? buildItemCardImageThumbnail(activeImage)
-    : null;
-  const preview = activeImage ? buildItemImagePreview(activeImage) : null;
   const hasMultipleImages = images.length > 1;
 
   useEffect(() => {
@@ -35,7 +32,7 @@ export const ItemImagePopover = ({
     setActiveIndex(0);
   }, [activeIndex, images.length]);
 
-  if (!activeImage || !thumbnail || !preview) return null;
+  if (!activeImage) return null;
 
   const showNextImage = () => {
     if (!hasMultipleImages) return;
@@ -73,16 +70,12 @@ export const ItemImagePopover = ({
             event.stopPropagation();
           }}
         >
-          <img
-            src={thumbnail.src}
-            srcSet={thumbnail.srcSet}
-            sizes={thumbnail.sizes}
+          <RemoteImage
+            imageUrl={activeImage}
             alt={itemType ? `${itemType} item` : "Item image"}
-            className="h-full w-full object-cover"
-            width={56}
-            height={56}
-            loading="lazy"
-            decoding="async"
+            widths={ITEM_CARD_IMAGE_WIDTHS}
+            sizes={ITEM_CARD_IMAGE_SIZES}
+            className="h-full w-full"
           />
         </button>
       }
@@ -97,15 +90,14 @@ export const ItemImagePopover = ({
           onClick={showNextImage}
           aria-label={hasMultipleImages ? "Show next item image" : "Item image"}
         >
-          <img
-            src={preview.src}
-            srcSet={preview.srcSet}
-            sizes={preview.sizes}
+          <RemoteImage
+            imageUrl={activeImage}
             alt={itemType ? `${itemType} preview` : "Item image preview"}
-            className="h-[400px] w-full max-w-[400px] object-contain"
-            width={400}
-            height={400}
-            decoding="async"
+            widths={ITEM_IMAGE_PREVIEW_WIDTHS}
+            sizes={ITEM_IMAGE_PREVIEW_SIZES}
+            className="h-[400px] w-full max-w-[400px]"
+            imgClassName="object-contain"
+            loading="eager"
           />
         </button>
 

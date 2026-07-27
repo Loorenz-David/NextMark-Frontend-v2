@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import type { ReactNode } from "react";
 import { hasFormChanges, makeInitialFormCopy } from "@shared-domain";
+import { formatIsoDateFriendly } from "@/shared/utils/formatIsoDate";
 import { PlanFormContextProvider } from "./PlanForm.context";
 import { usePlanFormSetters } from "./planForm.setters";
 import { usePlanFormWarnings } from "./PlanForm.warnings";
@@ -23,7 +24,17 @@ export const PlanFormProvider = ({
   onSuccessClose,
   onUnsavedChangesChange,
 }: PlanFormProvider) => {
-  const { initialPlanForm } = usePlanFormBootstrapFlow();
+  const { initialPlanForm: bootstrapPlanForm } = usePlanFormBootstrapFlow();
+  const initialStartDate = payload?.initialStartDate;
+  const initialPlanForm = useMemo<DeliveryPlan>(() => {
+    if (!initialStartDate) return bootstrapPlanForm;
+    return {
+      ...bootstrapPlanForm,
+      label: `Plan for ${formatIsoDateFriendly(initialStartDate)}`,
+      start_date: initialStartDate,
+      end_date: initialStartDate,
+    };
+  }, [bootstrapPlanForm, initialStartDate]);
 
   const [planForm, setPlanForm] = useState<DeliveryPlan>(initialPlanForm);
   const [selectedZoneIds, setSelectedZoneIds] = useState<number[]>([]);

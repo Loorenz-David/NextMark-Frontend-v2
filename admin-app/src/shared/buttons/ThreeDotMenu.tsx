@@ -1,12 +1,21 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { FloatingPopover } from '@/shared/popups/FloatingPopover/FloatingPopover'
+import { ConfirmActionButton } from '@/shared/buttons/DeleteButton'
+
+export type ThreeDotMenuOptionConfirmation = {
+  confirmContent: ReactNode
+  confirmClassName?: string
+  confirmOverLay?: string
+  duration?: number
+}
 
 export type ThreeDotMenuOption = {
   label: string
   action: () => void
   icon?: ReactNode
   disabled?: boolean
+  confirmation?: ThreeDotMenuOptionConfirmation
 }
 
 type Props = {
@@ -17,10 +26,11 @@ type Props = {
   dotWidth?: number
   dotHeight?: number
   dotClassName?: string
+  renderInPortal?: boolean
 }
 
 type TriggerProps = {
-  onClick?: () => void
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
   triggerClassName?: string
   dotWidth: number
   dotHeight: number
@@ -38,6 +48,7 @@ const ThreeDotTrigger = ({
     <div
       role="button"
       onClick={onClick}
+      onPointerDown={(event) => event.stopPropagation()}
       aria-label="Open menu"
       className={`
         flex items-center justify-center
@@ -68,18 +79,45 @@ export const ThreeDotMenu = ({
   dotWidth = 4,
   dotHeight = 4,
   dotClassName,
+  renderInPortal = false,
 }: Props) => {
   const [open, setOpen] = useState(false)
+
+  const renderOptionContent = (option: ThreeDotMenuOption) => (
+    <div
+      aria-disabled={option.disabled}
+      className={`
+        flex w-full items-center gap-3
+        rounded-lg px-3 py-2
+        text-left text-[var(--color-text)]
+        transition-colors
+        ${
+          option.disabled
+            ? 'cursor-not-allowed opacity-50'
+            : 'cursor-pointer hover:bg-surface-hover'
+        }
+      `}
+    >
+      <div className="flex h-5 w-5 items-center justify-center">
+        {option.icon ?? null}
+      </div>
+
+      <span className="flex-1 text-sm">{option.label}</span>
+    </div>
+  )
 
   return (
     <FloatingPopover
       open={open}
       onOpenChange={setOpen}
       offSetNum={6}
-      closeOnInsideClick
+      renderInPortal={renderInPortal}
       reference={
         <ThreeDotTrigger
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={(event) => {
+            event.stopPropagation()
+            setOpen((prev) => !prev)
+          }}
           dotWidth={dotWidth}
           dotHeight={dotHeight}
           dotClassName={dotClassName}
@@ -90,36 +128,43 @@ export const ThreeDotMenu = ({
       <div
         style={{ width: `${width}px`}}
         className="admin-glass-popover rounded-lg border border-[var(--color-border-accent)] py-1 px-1 shadow-md"
+        onClick={(event) => event.stopPropagation()}
+        onPointerDown={(event) => event.stopPropagation()}
       >
-        {options.map((option) => (
-          <div
-            key={option.label}
-            role="button"
-            data-popover-close
+        {options.map((option) => {
+          if (option.confirmation && !option.disabled) {
+            return (
+              <ConfirmActionButton
+                key={option.label}
+                onConfirm={() => {
+                  option.action()
+                  setOpen(false)
+                }}
+                deleteContent={renderOptionContent(option)}
+                deleteClassName="w-full"
+                confirmContent={option.confirmation.confirmContent}
+                confirmClassName={option.confirmation.confirmClassName}
+                confirmOverLay={option.confirmation.confirmOverLay}
+                duration={option.confirmation.duration}
+              />
+            )
+          }
 
-            onClick={() => {
-              if (option.disabled) return
-              option.action()
-              setOpen(false)
-            }}
-            className="
-              flex w-full items-center gap-3
-              px-3 py-2
-              text-left
-              text-[var(--color-text)]
-              hover:bg-surface-hover
-              disabled:cursor-not-allowed
-              disabled:opacity-50
-              cursor-pointer
-              rounded-lg
-              transition-colors
-            "
-          >
-            <div className="flex h-5 w-5 items-center justify-center">{option.icon ?? null}</div>
-
-            <span className="flex-1 text-sm">{option.label}</span>
-          </div>
-        ))}
+          return (
+            <div
+              key={option.label}
+              role="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                if (option.disabled) return
+                option.action()
+                setOpen(false)
+              }}
+            >
+              {renderOptionContent(option)}
+            </div>
+          )
+        })}
       </div>
     </FloatingPopover>
   )

@@ -7,6 +7,7 @@ export type {
   OrderDeleteResponse,
   OrderDeliveryWindow,
   OrderDeliveryWindowType,
+  OrderItemPreview,
   OrderMap,
   OrderOperationTypes,
   OrderPlanUpdateBundle,

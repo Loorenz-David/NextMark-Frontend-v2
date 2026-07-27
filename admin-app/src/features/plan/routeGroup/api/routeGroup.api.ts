@@ -48,6 +48,18 @@ export type RouteGroupDetailsResponse = {
   route_solution_stops?: RouteSolutionStop[] | RouteSolutionStopMap | null;
 };
 
+export type RouteGroupAssignmentSummary = {
+  id: number;
+  active_route_solution?: {
+    vehicle_id?: number | null;
+  } | null;
+};
+
+export type RoutePlanRouteGroupsResponse = {
+  route_plan_id: number;
+  route_groups: RouteGroupAssignmentSummary[];
+};
+
 type RoutePlanTargetResponse = {
   id: number;
   state_id?: number | null;
@@ -70,6 +82,15 @@ export type MoveOrderToRouteGroupResponse = OrderBatchMoveResponse & {
 };
 
 export const routeGroupApi = {
+  listRouteGroups: (
+    planId: number | string,
+    signal?: AbortSignal,
+  ): Promise<ApiResult<RoutePlanRouteGroupsResponse>> =>
+    apiClient.request<RoutePlanRouteGroupsResponse>({
+      path: `/route_plans/${planId}/route-groups/`,
+      method: "GET",
+      signal,
+    }),
   getRouteGroupDetails: (
     planId: number | string,
     routeGroupId: number | string,

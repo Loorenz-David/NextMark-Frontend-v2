@@ -1,6 +1,6 @@
-import type { Coordinates } from '../types'
+import type { RouteProgressSegment } from '@shared-domain'
 
 export type Route = {
-  path: string | Coordinates[] | string[] 
+  segments: RouteProgressSegment[]
   fitBounds?: boolean
 }

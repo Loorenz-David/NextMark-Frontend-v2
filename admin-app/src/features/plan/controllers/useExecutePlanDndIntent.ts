@@ -1,4 +1,4 @@
-import { useOrderMutations } from "@/features/order";
+import { useOrderMutations, type Order } from "@/features/order";
 import { useOrderBatchDeliveryPlanController } from "@/features/order/controllers/orderBatchDeliveryPlan.controller";
 import { useOrderModel } from "@/features/order/domain/useOrderModel";
 import { getOrderItems } from "@/features/order/item/api/item.api";
@@ -11,7 +11,6 @@ import {
   useItemStore,
 } from "@/features/order/item/store/item.store";
 import {
-  selectOrderByClientId,
   selectOrderByServerId,
   useOrderStore,
 } from "@/features/order/store/order.store";
@@ -22,7 +21,11 @@ import {
   useRoutePlanStore,
 } from "@/features/plan/store/routePlan.slice";
 import type { PlanDndIntent } from "@/features/plan/domain/planDndIntent";
+import { usePlanController } from "@/features/plan/controllers/plan.controller";
+import { usePlanStateRegistryFlow } from "@/features/plan/flows/planStateRegistry.flow";
+import { buildCalendarPlanDefaults } from "@/features/plan/calendar/domain/buildCalendarPlanDefaults";
 import { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
+import { resolveActiveTemplateByChannelAndEvent } from "@/features/templates/printDocument";
 
 export const useExecutePlanDndIntent = () => {
   const { updateOrderDeliveryPlan } = useOrderMutations();
@@ -36,6 +39,8 @@ export const useExecutePlanDndIntent = () => {
   const { downloadByEvent } = useDownloadTemplateByEventFlow();
   const { normalizeOrderPayload } = useOrderModel();
   const { normalizeItemsForOrder } = useItemModel();
+  const { createPlan } = usePlanController();
+  const planStateRegistry = usePlanStateRegistryFlow();
 
   const loadOrderItemsForLabel = async (orderId: number) => {
     const stored = selectItemsByOrderId(orderId)(useItemStore.getState());
@@ -55,6 +60,37 @@ export const useExecutePlanDndIntent = () => {
     } catch {
       return [];
     }
+  };
+
+  /**
+   * True when a print template is enabled for the item-rescheduled event, i.e.
+   * dropping the order onto a plan should produce label PDFs. Callers use this
+   * to decide whether the label download is worth showing as its own step.
+   */
+  const hasActiveItemLabelTemplate = (): boolean =>
+    Boolean(
+      resolveActiveTemplateByChannelAndEvent("item", "item_rescheduled"),
+    );
+
+  /**
+   * Loads the order's items and renders their label PDFs. Awaitable so the
+   * caller can surface it as a paced step rather than fire-and-forget.
+   */
+  const downloadItemLabelsForOrder = async (
+    order: Order,
+    orderId: number,
+    targetDeliveryPlanId: number,
+  ): Promise<void> => {
+    const items = await loadOrderItemsForLabel(orderId);
+    await startItemLabelDownload({
+      downloadByEvent,
+      event: "item_rescheduled",
+      items,
+      normalizeOrderPayload,
+      order,
+      orderId,
+      targetDeliveryPlanId,
+    });
   };
 
   const execute = async (intent: PlanDndIntent) => {
@@ -84,25 +120,9 @@ export const useExecutePlanDndIntent = () => {
         return { droppedPlanClientId: null as string | null, success: false };
       }
 
-      const order = selectOrderByClientId(intent.orderClientId)(
-        useOrderStore.getState(),
-      );
-
-      if (order?.id) {
-        const orderId = order.id;
-        loadOrderItemsForLabel(orderId).then((items) => {
-          startItemLabelDownload({
-            downloadByEvent,
-            event: "item_rescheduled",
-            items,
-            normalizeOrderPayload,
-            order,
-            orderId,
-            targetDeliveryPlanId: deliveryPlan.id,
-          });
-        });
-      }
-
+      // The item-label download is no longer fired here. For single-order
+      // assignments it is orchestrated as its own paced step by the DnD
+      // controller (see usePlanOrderDndController) so the user can see it run.
       const success = await updateOrderDeliveryPlan(
         intent.orderClientId,
         deliveryPlan.id,
@@ -156,6 +176,20 @@ export const useExecutePlanDndIntent = () => {
         showIncomingRouteGroupPlaceholders: false,
       });
       return { droppedPlanClientId: null as string | null, success };
+    } else if (intent.kind === "CREATE_PLAN_FOR_DATE") {
+      const openPlanStateId = planStateRegistry.getByName("Open")?.id ?? null;
+      const planDefaults = buildCalendarPlanDefaults(
+        intent.dateKey,
+        openPlanStateId,
+      );
+      const created = await createPlan(planDefaults, {
+        newOrderLinks: intent.orderServerIds,
+      });
+      return {
+        droppedPlanClientId:
+          created?.created?.[0]?.delivery_plan?.client_id ?? null,
+        success: created != null,
+      };
     } else if (intent.kind === "MOVE_ORDER_TO_ROUTE_GROUP") {
       const result = await moveOrderToRouteGroup({
         planId: intent.planId,
@@ -172,5 +206,5 @@ export const useExecutePlanDndIntent = () => {
     return { droppedPlanClientId: null as string | null, success: false };
   };
 
-  return { execute };
+  return { execute, hasActiveItemLabelTemplate, downloadItemLabelsForOrder };
 };

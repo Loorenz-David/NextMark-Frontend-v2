@@ -96,6 +96,7 @@ export function HomeDesktopView() {
   previousOpenSectionsCountRef.current = derivedState.openSectionsCount;
   const layout = useHomeDesktopLayout({
     openSectionsCount: derivedState.openSectionsCount,
+    isOrderOverlayOpen,
   });
   reframeBlockersRef.current = {
     hasOverlay: layout.hasOverlay,

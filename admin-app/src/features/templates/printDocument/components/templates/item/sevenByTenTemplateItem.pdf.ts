@@ -35,6 +35,8 @@ const FS = {
   identity: 20.45,
   objective: 16,
   article: 21,
+  weekDate: 21 * 1.3,
+  weekDateWithoutNotes: 21 * 1.6,
   // Item qualities — enlarged (with wider row spacing) to fill the body.
   // Notes stays compact per design.
   label: 10.5,
@@ -73,18 +75,20 @@ const fmtWeek = (dateInput?: string | null): string => {
 const fmtDateLabel = (dateInput?: string | null): string => {
   if (!dateInput) return "missing date";
 
+  const dateOnlyMatch = dateInput
+    .trim()
+    .match(/^(\d{4})-(\d{2})-(\d{2})(?:T|$)/);
+  if (dateOnlyMatch) {
+    return `${dateOnlyMatch[3]}-${dateOnlyMatch[2]}`;
+  }
+
   const date = new Date(dateInput);
   if (Number.isNaN(date.getTime())) return "missing date";
 
-  const year = date.getFullYear();
-  const shortYear = String(year).slice(-2);
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-  const currentYear = new Date().getFullYear();
 
-  return year === currentYear
-    ? `${month}-${day}`
-    : `${shortYear}-${month}-${day}`;
+  return `${day}-${month}`;
 };
 
 // Keys are stored snake_case; only the first word is shown so a long key
@@ -133,7 +137,7 @@ const fmtOrderNotes = (notes: unknown): string => {
       return typeof typed.content === "string" ? typed.content.trim() : "";
     })
     .filter(Boolean);
-  return general.length ? general.join(" ") : "--";
+  return general.join(" ");
 };
 
 const HELP_TO_CARRY_ICON_PATH =
@@ -527,6 +531,18 @@ export const drawSevenByTenTemplateItem = (
     return `${clipped}..`;
   };
 
+  const drawInlineNotes = (value: string) => {
+    const baseY = cursorY + capH(sf(FS.notesValue));
+    const lineH = capH(sf(FS.notesValue)) + lineExtra;
+
+    setFont(pdf, sf(FS.notesLabel), true, DARK);
+    pdf.text("Notes:", leftX, baseY);
+
+    setFont(pdf, sf(FS.notesValue), false, MID);
+    pdf.text(clampToWidth(value, valueMaxW), valueColX, baseY);
+    cursorY += lineH + sectionGap;
+  };
+
   // Props render as a two-column list: key left-aligned, value right-aligned
   // to the column edge so the values line up in a tidy right rail.
   const drawPropField = (
@@ -571,17 +587,22 @@ export const drawSevenByTenTemplateItem = (
     data.quantity == null ? typeValue : `${typeValue} (${data.quantity})`;
   drawField("Type", FS.label, typeWithQty, FS.value, 1);
   drawPropField("Prop", propEntries, 3);
-  drawField("Notes", FS.notesLabel, notesText, FS.notesValue, 2);
+  const hasNotes = notesText.length > 0;
+  if (hasNotes) {
+    drawInlineNotes(notesText);
+  }
 
-  // Week + date clamped to the bottom-left corner, at the SKU font size.
+  // Week + date expands into the space released by the compact notes row.
   const weekText = fmtWeek(data.delivery_date);
   const dateText = fmtDateLabel(data.delivery_date);
   const weekDateBaseY = bodyBottom;
-  setFont(pdf, sf(FS.article), true, DARK);
+  const weekDateFs = hasNotes ? FS.weekDate : FS.weekDateWithoutNotes;
+  const responsiveWeekDateGap = weekDateGap * (weekDateFs / FS.article);
+  setFont(pdf, sf(weekDateFs), true, DARK);
   pdf.text(weekText, leftX, weekDateBaseY);
   const weekW = pdf.getTextWidth(weekText);
-  setFont(pdf, sf(FS.article), false, MID);
-  pdf.text(dateText, leftX + weekW + weekDateGap, weekDateBaseY);
+  setFont(pdf, sf(weekDateFs), false, MID);
+  pdf.text(dateText, leftX + weekW + responsiveWeekDateGap, weekDateBaseY);
 
   pdf.setDrawColor(17, 17, 17);
   pdf.setLineWidth(lineW);

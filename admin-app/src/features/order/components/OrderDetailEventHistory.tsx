@@ -137,10 +137,7 @@ export const OrderDetailEventHistory = ({
   };
 
   return (
-    <div
-      className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-3xl border-border"
-      style={{ boxShadow: "none" }}
-    >
+    <div className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
       <div className="admin-glass-divider flex items-center justify-between gap-3 border-b px-5 py-4">
         <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
           Event History

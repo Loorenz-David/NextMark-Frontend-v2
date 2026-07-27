@@ -13,6 +13,8 @@ export type PopupPayload = {
   mode: PlanFormMode;
   selectedOrderServerIds?: number[];
   source?: "order_multi_select";
+  /** Pre-fills the create form's plan date (YYYY-MM-DD). */
+  initialStartDate?: string;
 };
 
 export type PlanTypeState = RouteGroupInput;

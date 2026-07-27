@@ -40,6 +40,12 @@ export type PlanDndIntent =
       selection: OrderBatchSelectionPayload;
       origin?: "order_list" | "route_group";
     }
+  | {
+      /** Drop on an empty calendar day: create the plan and link the orders in one call. */
+      kind: "CREATE_PLAN_FOR_DATE";
+      dateKey: string;
+      orderServerIds: number[];
+    }
   | null;
 
 export function derivePlanDndIntent(params: {

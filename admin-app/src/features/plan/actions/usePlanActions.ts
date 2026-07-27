@@ -9,6 +9,8 @@ import type { DeliveryPlan } from "../types/plan";
 export type CreatePlanOptions = {
   selectedOrderServerIds?: number[];
   source?: "order_multi_select";
+  /** Pre-fills the plan form's date, e.g. from a calendar day's + action. */
+  initialStartDate?: string;
 };
 
 export const useOpenCreatePlanFormAction = () => {

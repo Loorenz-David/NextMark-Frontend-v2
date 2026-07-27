@@ -1,9 +1,10 @@
-export type MapRouteSegmentState = 'completed' | 'pending'
+import type {
+  RouteProgressSegment,
+  RouteProgressSegmentState,
+} from '@shared-domain'
 
-export type MapRouteSegment = {
-  path: string
-  state: MapRouteSegmentState
-}
+export type MapRouteSegmentState = RouteProgressSegmentState
+export type MapRouteSegment = RouteProgressSegment
 
 export type MapRoute = {
   segments: MapRouteSegment[]

@@ -37,7 +37,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
   });
 
   return (
-    <div className="relative flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-[var(--color-page)]">
+    <div className="relative flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-[var(--color-primary)]/5 [[data-theme=light]_&]:bg-surface-raised">
       <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-px bg-[var(--color-primary)]/30" />
       <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto scroll-thin">
         <OrderDetailHeader
@@ -50,7 +50,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
           contextRouteGroupId={payload?.routeGroupId ?? null}
         />
 
-        <div className="flex w-full flex-col gap-6 bg-[var(--color-page)] pb-6 pt-3">
+        <div className="flex w-full flex-col gap-6 bg-[var(--color-page)] pb-6 pt-3 [[data-theme=light]_&]:bg-transparent">
           <div className="flex flex-col gap-4 px-5 ">
             <SlideCarousel
               key={`${order?.client_id ?? "empty"}:${initialCarouselIndex}`}
@@ -93,7 +93,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
           ) : null}
 
           {orderServerId !== null ? (
-            <div className="flex w-full flex-col bg-[var(--color-muted)]/10">
+            <div className="flex w-full flex-col bg-[var(--color-muted)]/10 [[data-theme=light]_&]:bg-transparent">
               <ItemsOrderPreview
                 orderId={orderServerId}
                 expectedItemCount={order?.total_items ?? null}

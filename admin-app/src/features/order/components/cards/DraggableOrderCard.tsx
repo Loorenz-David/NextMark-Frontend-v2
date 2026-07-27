@@ -1,3 +1,10 @@
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 
@@ -17,6 +24,14 @@ type DraggableOrderCardProps = {
   isHovered?: boolean
   onMouseEnter?: (order: Order) => void
   onMouseLeave?: () => void
+  collapseSourceOnDrag?: boolean
+}
+
+type DragSourceRect = {
+  top: number
+  left: number
+  width: number
+  height: number
 }
 
 export const DraggableOrderCard = ({
@@ -30,7 +45,10 @@ export const DraggableOrderCard = ({
   isHovered = false,
   onMouseEnter,
   onMouseLeave,
+  collapseSourceOnDrag = false,
 }: DraggableOrderCardProps) => {
+  const draggableNodeRef = useRef<HTMLDivElement | null>(null)
+  const [dragSourceRect, setDragSourceRect] = useState<DragSourceRect | null>(null)
   const {
     attributes,
     listeners,
@@ -46,19 +64,49 @@ export const DraggableOrderCard = ({
     },
   })
 
-  const style: {
-    transform: string | undefined
-    visibility: 'hidden' | 'visible'
-    cursor: string
-  } = {
+  const handleNodeRef = useCallback((node: HTMLDivElement | null) => {
+    draggableNodeRef.current = node
+    setNodeRef(node)
+  }, [setNodeRef])
+
+  useLayoutEffect(() => {
+    if (!isDragging || !collapseSourceOnDrag) {
+      setDragSourceRect(null)
+      return
+    }
+
+    const rect = draggableNodeRef.current?.getBoundingClientRect()
+    if (!rect) return
+
+    setDragSourceRect({
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    })
+  }, [collapseSourceOnDrag, isDragging])
+
+  const collapseStyle: CSSProperties =
+    isDragging && collapseSourceOnDrag && dragSourceRect
+      ? {
+          position: 'fixed',
+          top: dragSourceRect.top,
+          left: dragSourceRect.left,
+          width: dragSourceRect.width,
+          height: dragSourceRect.height,
+        }
+      : {}
+
+  const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     visibility: isDragging ? 'hidden' : 'visible',
     cursor: isSelectionMode ? 'pointer' : 'grab',
+    ...collapseStyle,
   }
 
   return (
     <div
-      ref={setNodeRef}
+      ref={handleNodeRef}
       style={style}
       className="relative"
       onClick={isSelectionMode ? () => onToggleSelection?.(order) : undefined}

@@ -7,3 +7,4 @@ export { useOrderDetailHeaderPlanMeta } from "./hooks/useOrderDetailHeaderPlanMe
 export { planPopupRegistry } from './registry/planPopups.registry'
 export { handlePlanOrderCreation } from './bridges/orderCreation.bridge'
 export { useIsRouteMapRefreshing } from './routeGroup/store/routeMapRefresh.store'
+export { usePlanContainerView } from './calendar/store/planCalendar.store'

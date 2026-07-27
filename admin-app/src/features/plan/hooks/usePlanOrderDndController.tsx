@@ -46,6 +46,14 @@ import { runWithRouteMapRefresh } from "@/features/plan/routeGroup/flows/runWith
 import { usePlanDndContactWarningController } from "@/features/plan/controllers/usePlanDndContactWarning.controller";
 import type { OrderAssignmentContactWarningDecision } from "@/features/plan/domain/orderAssignmentContactWarning.domain";
 import { runPlanDndMoveWithHandoff } from "@/features/plan/flows/runPlanDndMoveWithHandoff.flow";
+import {
+  selectRoutePlanByClientId,
+  useRoutePlanStore,
+} from "@/features/plan/store/routePlan.slice";
+import {
+  useStepSequence,
+  type SequenceStep,
+} from "@/shared/overlays/stepSequence";
 
 const MAX_BATCH_IDS = 200;
 
@@ -97,10 +105,11 @@ export const usePlanOrderDndController = () => {
   > | null>(null);
   const { isMobile } = useMobile();
   const { showMessage } = useMessageHandler();
-  const { execute } = useExecutePlanDndIntent();
+  const { execute, hasActiveItemLabelTemplate, downloadItemLabelsForOrder } =
+    useExecutePlanDndIntent();
+  const { run: runStepSequence } = useStepSequence();
   const contactWarningController = usePlanDndContactWarningController();
-  const clientFormHandoffController =
-    useOrderClientFormHandoffController();
+  const clientFormHandoffController = useOrderClientFormHandoffController();
   const openCreatePlanForm = useOpenCreatePlanFormAction();
 
   const sensors = useSensors(
@@ -514,7 +523,8 @@ export const usePlanOrderDndController = () => {
       const selectionState = useOrderSelectionStore.getState();
       const activeOrder = (activeData.order as Order | undefined) ?? null;
       const selectionModeEnabled =
-        (selectionState.isSelectionMode && hasSelectionIntent(selectionState)) ||
+        (selectionState.isSelectionMode &&
+          hasSelectionIntent(selectionState)) ||
         activeData.type === "order_batch";
       const isActiveOrderSelected = isOrderSelectedForBatch(
         activeOrder,
@@ -622,9 +632,7 @@ export const usePlanOrderDndController = () => {
 
     const contactWarningOrder =
       intent.kind === "ASSIGN_ORDER_TO_PLAN"
-        ? selectOrderByClientId(intent.orderClientId)(
-            useOrderStore.getState(),
-          )
+        ? selectOrderByClientId(intent.orderClientId)(useOrderStore.getState())
         : null;
     let contactWarningDecision: OrderAssignmentContactWarningDecision = {
       kind: "move_anyway",
@@ -649,11 +657,10 @@ export const usePlanOrderDndController = () => {
             };
 
       resetDragUi();
-      contactWarningDecision =
-        await contactWarningController.requestDecision({
-          order: contactWarningOrder,
-          linkedDeviceAvailability,
-        });
+      contactWarningDecision = await contactWarningController.requestDecision({
+        order: contactWarningOrder,
+        linkedDeviceAvailability,
+      });
       if (contactWarningDecision.kind === "cancel") {
         return;
       }
@@ -697,9 +704,7 @@ export const usePlanOrderDndController = () => {
       activeData as Record<string, unknown>,
     );
     let handoff:
-      | (() => ReturnType<
-          typeof clientFormHandoffController.executeHandoff
-        >)
+      | (() => ReturnType<typeof clientFormHandoffController.executeHandoff>)
       | undefined;
     if (
       typeof contactWarningOrder?.id === "number" &&
@@ -728,6 +733,127 @@ export const usePlanOrderDndController = () => {
           orderId,
           referenceNumber: order.reference_number ?? "",
         });
+    }
+
+    // Single-order assignment can fan out into several side-effects (move,
+    // client-form handoff, item-label download). When more than the move is in
+    // play, replay them as a paced, non-dismissible step sequence so the user
+    // can follow each one instead of everything happening at once.
+    if (intent.kind === "ASSIGN_ORDER_TO_PLAN") {
+      const assignPlanClientId = intent.planClientId;
+      const deliveryPlan = selectRoutePlanByClientId(assignPlanClientId)(
+        useRoutePlanStore.getState(),
+      );
+      const labelOrder = contactWarningOrder;
+      const wantsLabels =
+        hasActiveItemLabelTemplate() &&
+        typeof deliveryPlan?.id === "number" &&
+        typeof labelOrder?.id === "number";
+
+      if (handoff || wantsLabels) {
+        // Start the move eagerly so its synchronous optimistic assignment lands
+        // before the label and form steps run — the linked-device form streams
+        // the order's route-plan schedule and needs the plan already applied.
+        // Its confirmation is still surfaced as the final, awaited step below.
+        let moveSucceeded = false;
+        const movePromise = (async () => {
+          const moveResult = await runWithRouteMapRefresh(
+            routeMapRefreshPlanId,
+            () => execute(intent),
+          );
+          if (!moveResult.success) {
+            throw new Error("move_failed");
+          }
+          moveSucceeded = true;
+          return moveResult;
+        })();
+        // Keep the eventual rejection handled by the move step (below); this
+        // no-op guard only silences the unhandled-rejection warning until then.
+        movePromise.catch(() => {});
+
+        const steps: SequenceStep[] = [];
+
+        // 1. Item labels — reads the explicit target plan id, so it is safe to
+        //    run before the move server round-trip completes.
+        if (wantsLabels && labelOrder && typeof deliveryPlan?.id === "number") {
+          const targetOrder = labelOrder;
+          const targetOrderId = labelOrder.id as number;
+          const targetPlanId = deliveryPlan.id;
+          steps.push({
+            id: "item_labels",
+            runningLabel: "Preparing item labels…",
+            successLabel: "Item labels downloaded",
+            errorLabel: "Couldn't generate item labels",
+            optional: true,
+            run: () =>
+              downloadItemLabelsForOrder(
+                targetOrder,
+                targetOrderId,
+                targetPlanId,
+              ),
+          });
+        }
+
+        // 2. Client form handoff.
+        if (handoff) {
+          const isLinkedDevice =
+            contactWarningDecision.kind === "send_linked_device";
+          const stepHandoff = handoff;
+          steps.push({
+            id: "client_form",
+            runningLabel: isLinkedDevice
+              ? "Sending form to linked device…"
+              : "Sending client form…",
+            successLabel: isLinkedDevice
+              ? "Form sent to linked device"
+              : "Client form sent",
+            errorLabel: "Couldn't send the client form",
+            minRunMs: 1000,
+            holdMs: 1200,
+            optional: true,
+            run: () => stepHandoff(),
+          });
+        }
+
+        // 3. Move confirmation — awaits the eagerly-started move. Kept optional
+        //    so a failed move never traps the overlay: the sequence always
+        //    completes and auto-closes, and the failure is surfaced by the red
+        //    step state plus the plan-drop error feedback below.
+        steps.push({
+          id: "move",
+          runningLabel: "Moving order to route plan…",
+          successLabel: "Order added to route plan",
+          errorLabel: "Couldn't move the order",
+          minRunMs: 1200,
+          holdMs: 1200,
+          optional: true,
+          run: () => movePromise,
+        });
+
+        await runStepSequence({ title: "Assigning order", steps });
+
+        if (!moveSucceeded) {
+          setPlanDropFeedbackWithTimeout(
+            {
+              planClientId: assignPlanClientId,
+              movedCount: resolveOptimisticMovedCount(intent, selectionState),
+              status: "error",
+              token:
+                optimisticToken ||
+                `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            },
+            1200,
+          );
+        } else if (
+          activeData?.type === "order" &&
+          activeData?.dragSource === "order_detail_header"
+        ) {
+          emitOrderDetailHeaderSweep(intent.orderClientId);
+        }
+
+        resetDragUi();
+        return;
+      }
     }
 
     const { moveResult: result } = await runPlanDndMoveWithHandoff({

@@ -8,6 +8,7 @@ import {
   resolvePointerClientY,
 } from "@/features/plan/dnd/domain/resolveGroupPlacement";
 import { resolveMovePosition } from "@/features/plan/dnd/domain/resolveMovePosition";
+import { resolveCalendarDayDropIntent } from "./resolveCalendarDayDropIntent";
 
 export type RouteReorderPreview =
   | {
@@ -44,6 +45,8 @@ type ResolveDropIntentParams = {
   isActiveOrderSelected: boolean;
   maxBatchIds: number;
   confirmLargeBatch: (count: number) => boolean;
+  // The selection-store state flows through opaquely; the callback owns its typing.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   buildSelectionBatchPayload: (state: any) => OrderBatchSelectionPayload;
   buildManualBatchSelection: (orderIds: number[]) => OrderBatchSelectionPayload;
   resolvePlanClientIdByRouteSolutionId: (
@@ -250,6 +253,20 @@ export const resolveDropIntent = ({
 
   if (!activeType || !overType) {
     return { type: "noop" };
+  }
+
+  if (overType === "calendar-day") {
+    return resolveCalendarDayDropIntent({
+      event,
+      activeOrderClientId,
+      selectionState,
+      selectionModeEnabled,
+      isActiveOrderSelected,
+      maxBatchIds,
+      confirmLargeBatch,
+      buildSelectionBatchPayload,
+      buildManualBatchSelection,
+    });
   }
 
   if (activeType === "order") {

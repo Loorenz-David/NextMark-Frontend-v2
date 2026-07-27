@@ -41,6 +41,7 @@ export type RouteSummaryEntry = {
 export type RouteTemplateData = {
   orientation?: availableOrientations | null
   plan_date?: string | null
+  plan_week_number?: number | null
   stop_count?: number | null
   total_distance?: number | null
   total_travel_time?: string | null
@@ -336,7 +337,8 @@ const _deriveItemTypeSummary = (orders: RouteOrder[]) => {
 }
 
 export const routeTemplateSampleData: RouteTemplateData = {
-  plan_date: '2026-02-18',
+  plan_date: '18-02-2026',
+  plan_week_number: 8,
   stop_count: _sampleOrders.length,
   total_distance: 34.6,
   total_travel_time: '04:15',
@@ -411,7 +413,12 @@ export const drawRouteHeader = (
   pdf.text(title, M, L.y + capH(FS.title))
 
   setFont(pdf, FS.date, true, DARK)
-  pdf.text(`Plan date: ${safe(data.plan_date)}`, L.widthCm - M, L.y + capH(FS.date) + 0.06, { align: 'right' })
+  pdf.text(
+    `Plan date: ${safe(data.plan_date)}  |  Week: ${safe(data.plan_week_number)}`,
+    L.widthCm - M,
+    L.y + capH(FS.date) + 0.06,
+    { align: 'right' },
+  )
 
   L.y += capH(FS.title) + 0.18
   drawHLine(pdf, M, L.y, L.widthCm - M, 0.03, 31, 31, 31)
@@ -672,12 +679,15 @@ export const drawPackByType = (
   // Packer-oriented view: every order-item grouped under its item type so items
   // can be pulled and staged type-by-type instead of scanning each stop card.
   type PackRow = {
+    sequence: string
     article: string
     qty: string
     qtyNum: number
     position: string
-    dest: string
+    orderKey: string
+    orderIdentity: string
     properties: string
+    notes: RouteNote[]
   }
 
   const packGroups = new Map<string, { label: string; rows: PackRow[] }>()
@@ -687,12 +697,17 @@ export const drawPackByType = (
       const key = normalizeItemType(rawType)
       const group = packGroups.get(key) ?? { label: rawType, rows: [] }
       group.rows.push({
+        sequence: safe(order.stop_order),
         article: safe(item.article_number),
         qty: safe(item.quantity),
         qtyNum: typeof item.quantity === 'number' ? item.quantity : 0,
         position: safe(item.item_position),
-        dest: `${safe(order.stop_order)} · ${formatRouteOrderIdentity(order)}`,
+        orderKey: order.order_scalar_id != null
+          ? `id:${order.order_scalar_id}`
+          : `stop:${safe(order.stop_order)}|identity:${formatRouteOrderIdentity(order)}`,
+        orderIdentity: formatRouteOrderIdentity(order),
         properties: fmtProps(item.properties),
+        notes: extractOrderNotes(order),
       })
       packGroups.set(key, group)
     }
@@ -717,10 +732,11 @@ export const drawPackByType = (
     }
   }
 
-  const kc1 = M + CARD_PAD_H              // Article
+  const kc1 = M + CARD_PAD_H              // Sequence badge
+  const articleX = kc1 + 0.85             // Article
   const kc2 = M + CARD_PAD_H + CW * 0.22  // Qty
   const kc3 = M + CARD_PAD_H + CW * 0.30  // Position
-  const kc4 = M + CARD_PAD_H + CW * 0.44  // Destination (stop · order)
+  const kc4 = M + CARD_PAD_H + CW * 0.44  // Order identity
   const kc5 = M + CARD_PAD_H + CW * 0.62  // Properties
   const kMaxPropsW = M + CW - CARD_PAD_H - kc5
 
@@ -735,6 +751,65 @@ export const drawPackByType = (
   const PACK_HDR_FS = FS.stopHdr * PACK_SCALE  // group bar label
   const PACK_ROW_H = TBL_ROW_H * PACK_SCALE    // base single-line row height
   const PACK_PROP_LINE_H = PROP_LINE_H * PACK_SCALE // extra height per wrapped prop line
+  const PACK_NOTE_FS = 8.25
+  const PACK_NOTE_LINE_H = capH(PACK_NOTE_FS) + 0.17
+  const PACK_NOTE_TOP_GAP = 0.18
+  const PACK_NOTE_PAD_V = 0.20
+  const PACK_NOTE_GAP = 0.12
+  const notesX = articleX
+  const notesRight = M + CW - CARD_PAD_H
+  const notesMaxW = notesRight - notesX
+
+  type PreparedPackNote = {
+    labelText: string
+    labelW: number
+    lines: string[]
+  }
+
+  const preparePackRow = (row: PackRow) => {
+    setFont(pdf, PACK_VALUE_FS, false, DARK)
+    const propsLines = pdf.splitTextToSize(row.properties, kMaxPropsW) as string[]
+    const itemH = PACK_ROW_H + Math.max(0, propsLines.length - 1) * PACK_PROP_LINE_H
+
+    const preparedNotes: PreparedPackNote[] = row.notes.map((note) => {
+      const labelText = `${note.label}: `
+      setFont(pdf, PACK_NOTE_FS, true, MID)
+      const labelW = pdf.getTextWidth(labelText)
+      setFont(pdf, PACK_NOTE_FS, false, DARK)
+      const lines = pdf.splitTextToSize(
+        note.content,
+        Math.max(1, notesMaxW - labelW),
+      ) as string[]
+
+      return {
+        labelText,
+        labelW,
+        lines: lines.length ? lines : ['--'],
+      }
+    })
+
+    const notesContentH = preparedNotes.reduce(
+      (sum, note, index) =>
+        sum +
+        note.lines.length * PACK_NOTE_LINE_H +
+        (index < preparedNotes.length - 1 ? PACK_NOTE_GAP : 0),
+      0,
+    )
+    const notesH = preparedNotes.length > 0
+      ? PACK_NOTE_PAD_V * 2 + notesContentH
+      : 0
+    const noteTopGap = preparedNotes.length > 0 ? PACK_NOTE_TOP_GAP : 0
+
+    return {
+      row,
+      propsLines,
+      itemH,
+      preparedNotes,
+      notesH,
+      noteTopGap,
+      totalH: itemH + noteTopGap + notesH,
+    }
+  }
 
   // Section title
   L.ensureSpace(capH(FS.title) + 0.4 + GAP + PACK_BAR_H)
@@ -745,7 +820,12 @@ export const drawPackByType = (
   L.y += GAP
 
   // Draws a type header bar + column header row, advancing y below the divider.
-  const drawPackTypeHeader = (label: string, totalQty: number, cont: boolean) => {
+  const drawPackTypeHeader = (
+    label: string,
+    totalQty: number,
+    totalOrders: number,
+    cont: boolean,
+  ) => {
     pdf.setFillColor(244, 245, 247)
     pdf.setDrawColor(206, 206, 206)
     pdf.setLineWidth(0.02)
@@ -756,7 +836,8 @@ export const drawPackByType = (
     pdf.text(cont ? `${label} (cont.)` : label, M + CARD_PAD_H, barBaseY)
     setFont(pdf, PACK_VALUE_FS, true, MID)
     pdf.text(
-      `${totalQty} item${totalQty === 1 ? '' : 's'}`,
+      `${totalQty} item${totalQty === 1 ? '' : 's'} · ` +
+        `${totalOrders} order${totalOrders === 1 ? '' : 's'}`,
       M + CW - CARD_PAD_H,
       barBaseY,
       { align: 'right' },
@@ -765,7 +846,8 @@ export const drawPackByType = (
 
     const colBaseY = L.y + CONT_PAD_V + capH(PACK_VALUE_FS)
     setFont(pdf, PACK_VALUE_FS, true, MID)
-    pdf.text('Article', kc1, colBaseY)
+    pdf.text('Seq.', kc1, colBaseY)
+    pdf.text('Article', articleX, colBaseY)
     pdf.text('Qty', kc2, colBaseY)
     pdf.text('Position', kc3, colBaseY)
     pdf.text('Order', kc4, colBaseY)
@@ -778,34 +860,93 @@ export const drawPackByType = (
     const group = packGroups.get(key)
     if (!group) continue
     const totalQty = group.rows.reduce((sum, r) => sum + r.qtyNum, 0)
+    const totalOrders = new Set(group.rows.map((row) => row.orderKey)).size
+    const preparedRows = group.rows.map(preparePackRow)
+    const firstRowH = preparedRows[0]?.totalH ?? PACK_ROW_H
 
     // Keep the type header attached to at least its first row.
     L.ensureSpace(
-      PACK_BAR_H + CONT_PAD_V + capH(PACK_VALUE_FS) + 0.06 + PACK_ROW_H + 0.2,
+      PACK_BAR_H + CONT_PAD_V + capH(PACK_VALUE_FS) + 0.06 + firstRowH + 0.2,
     )
-    drawPackTypeHeader(group.label, totalQty, false)
+    drawPackTypeHeader(group.label, totalQty, totalOrders, false)
 
-    for (const row of group.rows) {
-      setFont(pdf, PACK_VALUE_FS, false, DARK)
-      const propsLines = pdf.splitTextToSize(row.properties, kMaxPropsW) as string[]
-      const rowH = PACK_ROW_H + Math.max(0, propsLines.length - 1) * PACK_PROP_LINE_H
-
-      if (L.y + rowH + PACK_ROW_GAP + 0.14 > L.BOTTOM) {
+    for (const prepared of preparedRows) {
+      const {
+        row,
+        propsLines,
+        itemH,
+        preparedNotes,
+        notesH,
+        noteTopGap,
+        totalH,
+      } = prepared
+      if (L.y + totalH + PACK_ROW_GAP + 0.14 > L.BOTTOM) {
         L.newPage()
-        drawPackTypeHeader(group.label, totalQty, true)
+        drawPackTypeHeader(group.label, totalQty, totalOrders, true)
       }
 
       const textY = L.y + PACK_ROW_H
+      const badgeW = 0.54
+      const badgeH = 0.42
+      const badgeY = textY - badgeH + 0.05
+      pdf.setFillColor(52, 58, 64)
+      pdf.roundedRect(kc1, badgeY, badgeW, badgeH, 0.11, 0.11, 'F')
+      setFont(pdf, PACK_KEY_FS, true, [255, 255, 255])
+      pdf.text(
+        row.sequence,
+        kc1 + badgeW / 2,
+        badgeY + badgeH / 2 + capH(PACK_KEY_FS) / 2,
+        { align: 'center' },
+      )
+
       setFont(pdf, PACK_VALUE_FS, false, DARK)
-      pdf.text(row.article, kc1, textY)
+      pdf.text(row.article, articleX, textY)
       pdf.text(row.qty, kc2, textY)
       pdf.text(row.position, kc3, textY)
-      pdf.text(row.dest, kc4, textY)
+      pdf.text(row.orderIdentity, kc4, textY)
       propsLines.forEach((line, idx) => {
         renderPropsLine(pdf, String(line), kc5, textY + idx * PACK_PROP_LINE_H, PACK_VALUE_FS, PACK_KEY_FS)
       })
-      drawHLine(pdf, kc1, L.y + rowH + 0.1, M + CW - CARD_PAD_H, 0.01, 236, 236, 236)
-      L.y += rowH + PACK_ROW_GAP
+
+      if (preparedNotes.length > 0) {
+        const noteTop = L.y + itemH + noteTopGap
+        pdf.setFillColor(247, 248, 250)
+        pdf.roundedRect(
+          kc1,
+          noteTop,
+          notesRight - kc1,
+          notesH,
+          0.08,
+          0.08,
+          'F',
+        )
+        pdf.setDrawColor(52, 58, 64)
+        pdf.setLineWidth(0.035)
+        pdf.line(
+          kc1 + 0.07,
+          noteTop + 0.1,
+          kc1 + 0.07,
+          noteTop + notesH - 0.1,
+        )
+
+        let noteY = noteTop + PACK_NOTE_PAD_V + capH(PACK_NOTE_FS)
+        for (const note of preparedNotes) {
+          setFont(pdf, PACK_NOTE_FS, true, MID)
+          pdf.text(note.labelText, notesX, noteY)
+          setFont(pdf, PACK_NOTE_FS, false, DARK)
+          note.lines.forEach((line, index) => {
+            pdf.text(
+              line,
+              notesX + note.labelW,
+              noteY + index * PACK_NOTE_LINE_H,
+            )
+          })
+          noteY += note.lines.length * PACK_NOTE_LINE_H + PACK_NOTE_GAP
+        }
+      }
+
+      drawHLine(pdf, kc1, L.y + totalH + 0.1, M + CW - CARD_PAD_H, 0.01, 236, 236, 236)
+      L.y += totalH + PACK_ROW_GAP
     }
 
     L.y += GAP

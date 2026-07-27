@@ -57,10 +57,14 @@ export const OrderDetailHeader = ({
 
   return (
     <div className="px-5 pt-4">
-      <div className="admin-glass-panel-strong relative overflow-hidden rounded-3xl">
+      <div className="admin-glass-panel-strong relative isolate overflow-hidden rounded-3xl shadow-md!">
+        <div
+          aria-hidden="true"
+          className="admin-context-header-texture admin-context-header-texture--order"
+        />
         <div className="admin-header-wash pointer-events-none absolute inset-x-0 top-0 h-44" />
 
-        <div className="relative flex items-start justify-between gap-4 px-5 py-4">
+        <div className="relative z-10 flex items-start justify-between gap-4 px-5 py-4">
           <div className="flex flex-col">
             <div className="flex min-w-0 items-center gap-3.5">
               {order ? (
@@ -107,7 +111,7 @@ export const OrderDetailHeader = ({
           </div>
         </div>
 
-        <div className="admin-glass-divider flex flex-wrap items-center gap-3 border-t px-5 py-3">
+        <div className="admin-glass-divider relative z-10 flex flex-wrap items-center gap-3 border-t px-5 py-3">
           <div className="flex min-w-[220px] flex-1 max-w-[270px]">
             <DropdownButton
               label={nextState ? `Mark as ${nextState}` : currentStateName}

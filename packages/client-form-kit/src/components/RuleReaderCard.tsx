@@ -1,25 +1,29 @@
-import { useState } from "react";
+import { useState, type Ref } from "react";
 import type { ClientFormRule } from "../domain/clientFormConfig.types";
 
 type Props = {
   rule: ClientFormRule;
+  headingRef?: Ref<HTMLHeadingElement>;
 };
 
 /**
- * Reads top to bottom: title, description, then the image that illustrates it.
- *
- * The title is the only heading — no step number is added, so whoever writes the
- * rules owns how they are labelled. Order comes from the list itself.
- * Separation between rules comes from the list's hairline dividers rather than
- * from a card border, so the sequence reads as one flow.
+ * One stage in the rules reader: title, description, then its illustration.
+ * The heading is programmatically focusable so a stage change can announce the
+ * new content without adding another stop to normal keyboard navigation.
  */
-export const RuleReaderCard = ({ rule }: Props) => {
+export const RuleReaderCard = ({ rule, headingRef }: Props) => {
   const [hasImageFailed, setHasImageFailed] = useState(false);
+  const titleId = `client-form-rule-${rule.id}-title`;
 
   return (
-    <article className="space-y-4 py-6 first:pt-0 last:pb-0">
+    <article aria-labelledby={titleId} className="space-y-5">
       <div className="space-y-1.5">
-        <h3 className="text-base font-semibold tracking-[-0.01em] text-[var(--ink)]">
+        <h3
+          ref={headingRef}
+          id={titleId}
+          tabIndex={-1}
+          className="text-lg font-semibold tracking-[-0.01em] text-[var(--ink)]"
+        >
           {rule.title}
         </h3>
         {rule.body ? (
