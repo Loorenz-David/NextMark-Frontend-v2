@@ -4,7 +4,7 @@ import { hasFormChanges } from "@shared-domain";
 import { isDateOnOrAfterToday } from "@/shared/data-validation/timeValidation";
 
 import type { DeliveryPlan } from "../../types/plan";
-import type { PlanWarningsControllers, PlanTypeState } from "./PlanForm.types";
+import type { PlanWarningsControllers } from "./PlanForm.types";
 
 type Props = {
   planFormWarnings: PlanWarningsControllers;

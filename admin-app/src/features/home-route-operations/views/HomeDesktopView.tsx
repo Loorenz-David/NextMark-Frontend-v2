@@ -16,13 +16,14 @@ import { useBaseControlls } from "@/shared/resource-manager/useResourceManager";
 import { useMapSelectionModeGuardFlow } from "@/features/home-route-operations/flows/mapSelectionModeGuard.flow";
 import { useHomeDesktopRailSettleFlow } from "@/features/home-route-operations/flows/homeDesktopRailSettle.flow";
 import { useHomeDesktopDerivedStateFlow } from "@/features/home-route-operations/flows/homeDesktopDerivedState.flow";
-import { RouteGroupsPage } from "@/features/plan/routeGroup/pages/RouteGroups.page";
+import { useActivePlanWorkspace } from "@/features/home-route-operations/flows/useActivePlanWorkspace.flow";
 import { useOrderSelectionMode } from "@/features/order/store/orderSelectionHooks.store";
 import { useResourceManager } from "@/shared/resource-manager/useResourceManager";
 
 import { HomeDesktopLayout } from "../layout/HomeDesktopLayout";
 import { useHomeDesktopLayout } from "../hooks/useHomeDesktopLayout";
 import { SectionManagerHost } from "../components/SectionManagerHost";
+import { PlanWorkspacePanel } from "../components/PlanWorkspacePanel";
 import type { PayloadBase } from "../types/types";
 
 import { SectionPanel } from "../../../shared/section-panel/SectionPanel";
@@ -90,6 +91,9 @@ export function HomeDesktopView() {
     sectionManager,
     baseControlls,
   });
+  // Which workspace the open plan belongs to. Route map surfaces below are
+  // mounted only for local delivery; container plans have nothing to draw.
+  const planWorkspace = useActivePlanWorkspace(baseControlls);
   const previousOpenSectionsCountRef = useRef(derivedState.openSectionsCount);
   const isDynamicSectionClosing =
     previousOpenSectionsCountRef.current > derivedState.openSectionsCount;
@@ -180,7 +184,7 @@ export function HomeDesktopView() {
   const splitMode = layout.viewMode === "split";
   return (
     <>
-      {derivedState.isRouteOperationsOverlayActive ? (
+      {planWorkspace.isLocalDeliveryWorkspace ? (
         <RouteGroupWorkspaceRuntime
           planId={activeRoutePlanId}
           isActive={derivedState.isRouteOperationsOverlayActive}
@@ -205,7 +209,7 @@ export function HomeDesktopView() {
           />
         }
         mapOverlay={
-          derivedState.isRouteOperationsOverlayActive ? (
+          planWorkspace.isLocalDeliveryWorkspace ? (
             <RouteGroupMapOverlay />
           ) : (
             <>
@@ -242,15 +246,11 @@ export function HomeDesktopView() {
               onRequestClose={baseControlls.closeBase}
               style={{ width: layout.orderOverlayWidth }}
             >
-              {baseControlls.payload ? (
-                <RouteGroupsPage
-                  payload={{
-                    ...baseControlls.payload,
-                    planId: baseControlls.payload.planId ?? undefined,
-                  }}
-                  onRequestClose={baseControlls.closeBase}
-                />
-              ) : null}
+              <PlanWorkspacePanel
+                workspace={planWorkspace}
+                payload={baseControlls.payload}
+                onRequestClose={baseControlls.closeBase}
+              />
             </SectionPanel>
           ) : null
         }

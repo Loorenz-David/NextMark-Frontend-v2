@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { ChevronDownIcon, PlanIcon, PlusIcon } from "@/assets/icons";
 
+import { UnscheduleDropSlot } from "../../components/UnscheduleDropTarget";
 import type { CalendarRangeStats } from "../domain/planCalendar.domain";
 
 type PlanCalendarHeaderProps = {
@@ -42,6 +43,10 @@ export const PlanCalendarHeader = ({
       </div>
 
       <div className="ml-auto flex shrink-0 items-center gap-2.5">
+        {/* Only mounts while an order is being dragged, so it does not compete
+            with the month stepper for header space the rest of the time. */}
+        <UnscheduleDropSlot />
+
         <div className="flex items-center gap-0.5 rounded-full border border-border px-1.5 py-[5px]">
           <button
             type="button"

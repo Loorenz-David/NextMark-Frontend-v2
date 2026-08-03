@@ -20,6 +20,8 @@ import {
 } from "@/assets/icons";
 import { useRoutePlanStateByServerId } from "../../store/useRoutePlanState.selector";
 import { planIconTypeMap } from "../../utils/planIconTypeMap";
+import { PLAN_TYPE_SHORT_LABELS, resolvePlanType } from "../../domain/planType";
+import { useIsPlanOrderMutating } from "../../store/planOrderMutation.store";
 import { PlusIcon } from "@/assets/icons/index";
 import { coerceUtcFromOffset } from "@/shared/data-validation/timeValidation";
 import { usePlanHeaderAction } from "../../actions/usePlanActions";
@@ -41,7 +43,13 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
     baseControlls.payload?.planId != null &&
     baseControlls.payload.planId === plan.id;
 
-  const PlanTypeIcon = planIconTypeMap.local_delivery;
+  const planType = resolvePlanType(plan);
+  const PlanTypeIcon = planIconTypeMap[planType];
+  // Orders moving in or out of this plan keep the server busy — local delivery
+  // re-optimizes its routes — so the card reports it rather than looking idle.
+  const isBusy = useIsPlanOrderMutating(plan.id);
+  // Route groups are a route-operations concept; container plans always report 0.
+  const showZoneCount = planType === "local_delivery";
   const planDateLabel = formatPlanDateLabel(plan.start_date, plan.end_date);
   const orderCount = plan.total_orders ?? 0;
   const itemCount = plan.total_items ?? 0;
@@ -161,6 +169,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
                 }
                 bgColor={"#7a7a7a"}
                 isOver={isOver}
+                isBusy={isBusy}
               />
             )}
           </AnimatePresence>
@@ -210,10 +219,19 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
       <div className="flex  flex-col gap-2 text-xs text-[var(--color-muted)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-[12px]">
-            <LayersIcon className="h-3 w-3 app-icon" />
-            <span>
-              {routeGroupCount} {routeGroupCount === 1 ? "zone" : "zones"}
-            </span>
+            {showZoneCount ? (
+              <>
+                <LayersIcon className="h-3 w-3 app-icon" />
+                <span>
+                  {routeGroupCount} {routeGroupCount === 1 ? "zone" : "zones"}
+                </span>
+              </>
+            ) : (
+              <>
+                <PlanTypeIcon className="h-3 w-3 app-icon" />
+                <span>{PLAN_TYPE_SHORT_LABELS[planType]}</span>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-2 text-[12px]">
             <OrderIcon className="h-3 w-3 app-icon" />
@@ -286,6 +304,8 @@ type PropsRoundAvatar = {
   Icon: ReactNode;
   bgColor?: string | null;
   isOver?: boolean;
+  /** Draws a spinning ring around the avatar while the plan has work in flight. */
+  isBusy?: boolean;
 };
 
 const avatarVariants = {
@@ -299,7 +319,12 @@ const avatarVariants = {
   },
 };
 
-export const RoundAvatar = ({ Icon, bgColor, isOver }: PropsRoundAvatar) => {
+export const RoundAvatar = ({
+  Icon,
+  bgColor,
+  isOver,
+  isBusy,
+}: PropsRoundAvatar) => {
   let variant = isOver ? "over" : "idle";
 
   return (
@@ -311,7 +336,7 @@ export const RoundAvatar = ({ Icon, bgColor, isOver }: PropsRoundAvatar) => {
         duration: 0.3,
         ease: "easeOut",
       }}
-      className="flex h-10 w-10 items-center justify-center rounded-full border-[0.5px]"
+      className="relative flex h-10 w-10 items-center justify-center rounded-full border-[0.5px]"
       style={
         bgColor
           ? {
@@ -324,6 +349,12 @@ export const RoundAvatar = ({ Icon, bgColor, isOver }: PropsRoundAvatar) => {
             }
       }
     >
+      {isBusy ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -inset-[3px] animate-spin rounded-full border-2 border-[rgb(var(--color-light-blue-r))]/25 border-t-[rgb(var(--color-light-blue-r))]"
+        />
+      ) : null}
       <motion.div
         animate={{ scale: isOver ? 1.1 : 1 }}
         transition={{ type: "spring", stiffness: 500, damping: 30 }}

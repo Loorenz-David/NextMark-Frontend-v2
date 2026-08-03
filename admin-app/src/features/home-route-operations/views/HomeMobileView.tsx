@@ -1,7 +1,8 @@
-import { RouteGroupsPage } from "@/features/plan/routeGroup/pages/RouteGroups.page";
 import { useBaseControlls } from "@/shared/resource-manager/useResourceManager";
 import { SectionPanel } from "@/shared/section-panel/SectionPanel";
 import { SectionManagerHost } from "../components/SectionManagerHost";
+import { PlanWorkspacePanel } from "../components/PlanWorkspacePanel";
+import { useActivePlanWorkspace } from "../flows/useActivePlanWorkspace.flow";
 import { AnimatePresence, motion } from "framer-motion";
 import { RoutePlanPage } from "@/features/plan/pages/Plan.page";
 import type { PayloadBase } from "../types/types";
@@ -9,14 +10,7 @@ import type { PayloadBase } from "../types/types";
 export const HomeMobileView = () => {
 
     const baseControlls = useBaseControlls<PayloadBase>()
-    const routeGroupPayload = (
-        baseControlls.payload && typeof baseControlls.payload.planId === 'number'
-    )
-        ? {
-            ...baseControlls.payload,
-            planId: baseControlls.payload.planId,
-        }
-        : null
+    const planWorkspace = useActivePlanWorkspace(baseControlls)
     const windowWidth = window.innerWidth
     return ( 
         <div className="relative flex min-w-0 flex-1 overflow-hidden">
@@ -42,10 +36,11 @@ export const HomeMobileView = () => {
                         onRequestClose={ baseControlls.closeBase }
                         style={{ width: '100%', minWidth: 0, maxWidth: '100%' }}
                         >
-                        {
-                        routeGroupPayload &&
-                        <RouteGroupsPage payload={routeGroupPayload} onRequestClose={baseControlls.closeBase} />
-                        }
+                        <PlanWorkspacePanel
+                            workspace={planWorkspace}
+                            payload={baseControlls.payload}
+                            onRequestClose={baseControlls.closeBase}
+                        />
                     </SectionPanel>
                 </motion.div>
                 ) : null

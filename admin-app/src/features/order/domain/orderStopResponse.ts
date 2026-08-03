@@ -40,3 +40,35 @@ export const normalizeOrderStopResponse = (
 
   return { byClientId, allIds }
 }
+
+/**
+ * Narrows a stop map to the stops a caller still considers current.
+ *
+ * A move's response carries the resequenced stops of every route it touched, so
+ * it can include stops belonging to orders the caller has no authority over
+ * anymore. Returns null when nothing survives, matching the shape callers
+ * already handle for an empty response.
+ */
+export const filterOrderStopsByOrder = (
+  stops: RouteSolutionStopMap | null | undefined,
+  shouldKeep: (orderId: number | null | undefined) => boolean,
+): RouteSolutionStopMap | null => {
+  if (!stops) {
+    return null
+  }
+
+  const byClientId: RouteSolutionStopMap['byClientId'] = {}
+  const allIds: string[] = []
+
+  stops.allIds.forEach((clientId) => {
+    const stop = stops.byClientId[clientId]
+    if (!stop || !shouldKeep(stop.order_id)) {
+      return
+    }
+
+    byClientId[clientId] = stop
+    allIds.push(clientId)
+  })
+
+  return allIds.length ? { byClientId, allIds } : null
+}

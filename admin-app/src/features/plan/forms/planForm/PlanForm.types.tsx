@@ -1,6 +1,5 @@
-import type { DeliveryPlan } from "../../types/plan";
+import type { DeliveryPlan, RoutePlanObjective } from "../../types/plan";
 
-import type { RouteGroupInput } from "../../routeGroup/types/routeGroup";
 import { usePlanFormWarnings } from "./PlanForm.warnings";
 import { usePlanFormActions } from "./planForm.actions";
 import type { usePlanFormSetters } from "./planForm.setters";
@@ -15,9 +14,9 @@ export type PopupPayload = {
   source?: "order_multi_select";
   /** Pre-fills the create form's plan date (YYYY-MM-DD). */
   initialStartDate?: string;
+  /** Pre-selects the plan type; the form defaults to local delivery without it. */
+  initialPlanType?: RoutePlanObjective;
 };
-
-export type PlanTypeState = RouteGroupInput;
 
 export type PropsPlanFormContext = {
   planForm: DeliveryPlan;

@@ -13,8 +13,13 @@ import {
 } from '@/features/plan/routeGroup/store/routeSolution.store'
 import {
   replaceRouteSolutionStopsForSolution,
+  selectRouteSolutionStopsBySolutionId,
   upsertRouteSolutionStops,
+  useRouteSolutionStopStore,
 } from '@/features/plan/routeGroup/store/routeSolutionStop.store'
+import { mergeServerRouteStops } from '@/features/plan/routeGroup/domain/mergeServerRouteStops'
+import { filterOrderStopsByOrder } from '@/features/order/domain/orderStopResponse'
+import { hasPendingOrderMutation } from '@/features/order/store/orderMutationSequence.store'
 import { upsertRouteGroups } from '@/features/plan/routeGroup/store/routeGroup.slice'
 import {
   rememberRouteGroupForPlan,
@@ -80,11 +85,29 @@ export const applyRouteGroupPayload = (
         .find(Boolean)
     if (selected?.id) {
       setSelectedRouteSolution(selected.id, selected.route_group_id ?? null)
-      replaceRouteSolutionStopsForSolution(selected.id, payload.route_solution_stop ?? null)
+      // A move marks the plan stale, so this refetch can land while another move
+      // is still in flight and hand back a route that predates it. Orders being
+      // moved keep their local state rather than being replaced.
+      replaceRouteSolutionStopsForSolution(
+        selected.id,
+        mergeServerRouteStops({
+          incoming: payload.route_solution_stop,
+          existing: selectRouteSolutionStopsBySolutionId(selected.id)(
+            useRouteSolutionStopStore.getState(),
+          ),
+          isOrderPending: hasPendingOrderMutation,
+        }),
+      )
     }
   }
   if (payload.route_solution_stop && !payload.route_solution) {
-    upsertRouteSolutionStops(payload.route_solution_stop)
+    const applicableStops = filterOrderStopsByOrder(
+      payload.route_solution_stop,
+      (orderId) => !hasPendingOrderMutation(orderId),
+    )
+    if (applicableStops) {
+      upsertRouteSolutionStops(applicableStops)
+    }
   }
 
   if (options?.activateRouteGroup) {

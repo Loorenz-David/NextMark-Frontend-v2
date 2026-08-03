@@ -6,7 +6,6 @@ import {
   type CSSProperties,
 } from 'react'
 import { useDraggable } from '@dnd-kit/core'
-import { CSS } from '@dnd-kit/utilities'
 
 import type { Order } from '@/features/order/types/order'
 
@@ -53,7 +52,6 @@ export const DraggableOrderCard = ({
     attributes,
     listeners,
     setNodeRef,
-    transform,
     isDragging,
   } = useDraggable({
     id: order.client_id,
@@ -97,9 +95,19 @@ export const DraggableOrderCard = ({
         }
       : {}
 
+  // The pointer is tracked by the DragOverlay, never by the source card. The
+  // card body transitions `visibility` (inherited via its `transition-all`
+  // panel class), so during that transition it is still visible — applying the
+  // drag transform here would send a full-size mirror of the card along the
+  // pointer track for the duration. The source only hides in place.
+  // Hidden via wrapper `opacity`, not `visibility` alone: visibility inherits,
+  // and the card body's `transition-all` animates the inherited flip — leaving
+  // the card visible for the transition's duration. Opacity is a compositing
+  // property on this wrapper alone, so the hide lands on the same frame.
   const style: CSSProperties = {
-    transform: CSS.Transform.toString(transform),
+    opacity: isDragging ? 0 : 1,
     visibility: isDragging ? 'hidden' : 'visible',
+    pointerEvents: isDragging ? 'none' : undefined,
     cursor: isSelectionMode ? 'pointer' : 'grab',
     ...collapseStyle,
   }

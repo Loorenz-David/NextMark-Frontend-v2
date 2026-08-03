@@ -32,8 +32,12 @@ export const DraggableRouteGroupOrderGroupCard = ({
     transform,
     transition,
     isDragging,
+    isSorting,
   } = useSortable({
     id: rowId,
+    // See DraggableRouteGroupOrderCard: the store commits the order instantly,
+    // so post-drop layout animation reads as a jump.
+    animateLayoutChanges: () => false,
     data: {
       type: "route_stop_group",
       id: rowId,
@@ -61,9 +65,14 @@ export const DraggableRouteGroupOrderGroupCard = ({
     },
   });
 
+  // The DragOverlay tracks the pointer. Sibling rows keep their transform so
+  // the list reflows around the drag, but the active row must not apply it —
+  // at 45% opacity it would otherwise ride along the pointer as a full-size
+  // mirror of the card for the whole drag. It stays dimmed in place instead.
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: isDragging ? undefined : CSS.Transform.toString(transform),
+    // Transition only while sorting; see DraggableRouteGroupOrderCard.
+    transition: isSorting ? transition : undefined,
     opacity: isDragging ? 0.45 : 1,
     cursor: "grab",
   };

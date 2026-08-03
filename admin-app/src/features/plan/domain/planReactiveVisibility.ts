@@ -1,6 +1,8 @@
 import type { DeliveryPlan } from '@/features/plan/types/plan'
 import type { PlanQueryFilters } from '@/features/plan/types/planMeta'
 
+import { resolvePlanType } from './planType'
+
 const toDayTimestamp = (value?: string | null): number | null => {
   if (!value) {
     return null
@@ -39,8 +41,19 @@ export const reactivePlanVisibility = (
 ): boolean => {
   const filters = resolvePlanQueryFilters(query)
 
-  if (filters.plan_type && filters.plan_type !== 'local_delivery') {
-    return false
+  // The backend accepts plan_type as a single value or a list; a plan stays
+  // visible when its own type is among the requested ones.
+  if (filters.plan_type) {
+    const requestedPlanTypes = Array.isArray(filters.plan_type)
+      ? filters.plan_type
+      : [filters.plan_type]
+
+    if (
+      requestedPlanTypes.length > 0 &&
+      !requestedPlanTypes.includes(resolvePlanType(plan))
+    ) {
+      return false
+    }
   }
 
   if (typeof filters.plan_state_id === 'number' && (plan.state_id ?? null) !== filters.plan_state_id) {

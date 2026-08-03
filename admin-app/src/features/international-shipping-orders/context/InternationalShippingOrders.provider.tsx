@@ -1,25 +1,29 @@
 import { createContext } from 'react'
 import type { ReactNode } from 'react'
 
-type InternationalShippingOrdersContextType = {
-  planId: number | null
-}
+import type { useInternationalShippingPageController } from '../controllers/useInternationalShippingPageController'
 
-export const InternationalShippingOrdersContext = createContext<InternationalShippingOrdersContextType | null>(null)
+type InternationalShippingPageModel = ReturnType<
+  typeof useInternationalShippingPageController
+>
+
+export type InternationalShippingOrdersContextType =
+  InternationalShippingPageModel & {
+    planId: number
+  }
+
+export const InternationalShippingOrdersContext =
+  createContext<InternationalShippingOrdersContextType | null>(null)
 
 type InternationalShippingOrdersProviderProps = {
-  planId: number
+  value: InternationalShippingOrdersContextType
   children: ReactNode
 }
 
 export const InternationalShippingOrdersProvider = ({
-  planId,
+  value,
   children,
 }: InternationalShippingOrdersProviderProps) => {
-  const value: InternationalShippingOrdersContextType = {
-    planId,
-  }
-
   return (
     <InternationalShippingOrdersContext.Provider value={value}>
       {children}

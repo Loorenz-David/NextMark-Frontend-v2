@@ -26,15 +26,20 @@ export const PlanFormProvider = ({
 }: PlanFormProvider) => {
   const { initialPlanForm: bootstrapPlanForm } = usePlanFormBootstrapFlow();
   const initialStartDate = payload?.initialStartDate;
+  const initialPlanType = payload?.initialPlanType;
   const initialPlanForm = useMemo<DeliveryPlan>(() => {
-    if (!initialStartDate) return bootstrapPlanForm;
+    const seeded: DeliveryPlan = initialPlanType
+      ? { ...bootstrapPlanForm, plan_type: initialPlanType }
+      : bootstrapPlanForm;
+
+    if (!initialStartDate) return seeded;
     return {
-      ...bootstrapPlanForm,
+      ...seeded,
       label: `Plan for ${formatIsoDateFriendly(initialStartDate)}`,
       start_date: initialStartDate,
       end_date: initialStartDate,
     };
-  }, [bootstrapPlanForm, initialStartDate]);
+  }, [bootstrapPlanForm, initialPlanType, initialStartDate]);
 
   const [planForm, setPlanForm] = useState<DeliveryPlan>(initialPlanForm);
   const [selectedZoneIds, setSelectedZoneIds] = useState<number[]>([]);

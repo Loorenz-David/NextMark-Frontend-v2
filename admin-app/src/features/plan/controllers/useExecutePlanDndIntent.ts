@@ -21,6 +21,11 @@ import {
   useRoutePlanStore,
 } from "@/features/plan/store/routePlan.slice";
 import type { PlanDndIntent } from "@/features/plan/domain/planDndIntent";
+import { normalizePlanCreateBundle } from "@/features/plan/api/mappers/planCreateResponse.mapper";
+import {
+  DEFAULT_PLAN_TYPE,
+  resolvePlanType,
+} from "@/features/plan/domain/planType";
 import { usePlanController } from "@/features/plan/controllers/plan.controller";
 import { usePlanStateRegistryFlow } from "@/features/plan/flows/planStateRegistry.flow";
 import { buildCalendarPlanDefaults } from "@/features/plan/calendar/domain/buildCalendarPlanDefaults";
@@ -160,7 +165,9 @@ export const useExecutePlanDndIntent = () => {
 
       const success = await updateOrdersDeliveryPlanBatch({
         planId: deliveryPlan.id,
-        planType: "local_delivery",
+        // Orders adopt the destination plan's type; the backend does the same,
+        // so the optimistic value matches what comes back.
+        planType: resolvePlanType(deliveryPlan),
         selection: intent.selection,
         showIncomingRouteGroupPlaceholders: intent.origin === "route_group",
       });
@@ -178,16 +185,19 @@ export const useExecutePlanDndIntent = () => {
       return { droppedPlanClientId: null as string | null, success };
     } else if (intent.kind === "CREATE_PLAN_FOR_DATE") {
       const openPlanStateId = planStateRegistry.getByName("Open")?.id ?? null;
+      const planType = intent.planType ?? DEFAULT_PLAN_TYPE;
       const planDefaults = buildCalendarPlanDefaults(
         intent.dateKey,
         openPlanStateId,
+        planType,
       );
       const created = await createPlan(planDefaults, {
         newOrderLinks: intent.orderServerIds,
+        planType,
       });
+      const createdBundle = normalizePlanCreateBundle(created?.created?.[0]);
       return {
-        droppedPlanClientId:
-          created?.created?.[0]?.delivery_plan?.client_id ?? null,
+        droppedPlanClientId: createdBundle?.plan.client_id ?? null,
         success: created != null,
       };
     } else if (intent.kind === "MOVE_ORDER_TO_ROUTE_GROUP") {

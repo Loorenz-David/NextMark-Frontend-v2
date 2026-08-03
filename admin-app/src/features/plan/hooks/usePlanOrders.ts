@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useMessageHandler } from '@shared-message-handler'
 import { ApiError } from '@/lib/api/ApiClient'
+import { normalizeOrderMapResponseForStore } from '@/features/order/api/mappers/orderResponse.normalize'
 import { upsertOrders } from '@/features/order/store/order.store'
 import {
   setOrderListError,
@@ -18,7 +19,11 @@ export function usePlanOrders() {
         setOrderListError('Missing orders response.')
         return null
       }
-      upsertOrders(payload.order)
+      // The API names the plan link `route_plan_id`; the store keys it as
+      // `delivery_plan_id`, which is what `selectOrdersByPlanId` filters on.
+      // Writing the response raw leaves that field unset, so a plan's orders
+      // land in the store but never match their own plan.
+      upsertOrders(normalizeOrderMapResponseForStore(payload.order) ?? payload.order)
 
       return payload
 

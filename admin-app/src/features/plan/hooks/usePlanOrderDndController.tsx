@@ -45,6 +45,10 @@ import {
 } from "@/features/plan/routeGroup/store/routeSolutionStop.store";
 import { runWithRouteMapRefresh } from "@/features/plan/routeGroup/flows/runWithRouteMapRefresh.flow";
 import { usePlanDndContactWarningController } from "@/features/plan/controllers/usePlanDndContactWarning.controller";
+import { usePlanObjectiveMismatchController } from "@/features/plan/controllers/usePlanObjectiveMismatchController";
+import { resolveAutoCreatePlanType } from "@/features/plan/domain/planObjectiveMismatch.domain";
+import { resolvePlanType } from "@/features/plan/domain/planType";
+import { resolveBatchTargetOrderIds } from "@/features/order/domain/orderBatchTargetIds";
 import type { OrderAssignmentContactWarningDecision } from "@/features/plan/domain/orderAssignmentContactWarning.domain";
 import { runPlanDndMoveWithHandoff } from "@/features/plan/flows/runPlanDndMoveWithHandoff.flow";
 import {
@@ -110,6 +114,7 @@ export const usePlanOrderDndController = () => {
     useExecutePlanDndIntent();
   const { run: runStepSequence } = useStepSequence();
   const contactWarningController = usePlanDndContactWarningController();
+  const objectiveMismatchController = usePlanObjectiveMismatchController();
   const clientFormHandoffController = useOrderClientFormHandoffController();
   const openCreatePlanForm = useOpenCreatePlanFormAction();
 
@@ -505,6 +510,63 @@ export const usePlanOrderDndController = () => {
     resetDragUi();
   };
 
+  /**
+   * An order assigned to a plan adopts that plan's type, so a drop can silently
+   * rewrite the objective the order was created with. This confirms that first,
+   * and for an empty-day drop also decides which plan type to create.
+   *
+   * Returns the intent to run — augmented with the resolved plan type for
+   * `CREATE_PLAN_FOR_DATE` — or null when the user declined.
+   *
+   * Selection-authority batches ("select all matching these filters") are only
+   * inspected for the orders currently in the store; rows outside the loaded
+   * page are moved without a prompt. The backend still performs the transition
+   * correctly, so this is a missing warning, not a wrong move.
+   */
+  const confirmPlanTypeForIntent = async (
+    intent: NonNullable<PlanDndIntent>,
+    selectionState: ReturnType<typeof useOrderSelectionStore.getState>,
+  ): Promise<PlanDndIntent | null> => {
+    const orderState = useOrderStore.getState();
+
+    if (intent.kind === "CREATE_PLAN_FOR_DATE") {
+      const orders = intent.orderServerIds.map((orderId) =>
+        selectOrderByServerId(orderId)(orderState),
+      );
+      const planType = resolveAutoCreatePlanType(orders);
+      const confirmed = await objectiveMismatchController.confirmObjectiveChange(
+        { orders, targetPlanType: planType },
+      );
+      return confirmed ? { ...intent, planType } : null;
+    }
+
+    if (
+      intent.kind !== "ASSIGN_ORDER_TO_PLAN" &&
+      intent.kind !== "ASSIGN_ORDERS_TO_PLAN_BATCH"
+    ) {
+      return intent;
+    }
+
+    const destinationPlan = selectRoutePlanByClientId(intent.planClientId)(
+      useRoutePlanStore.getState(),
+    );
+    if (!destinationPlan) return intent;
+
+    const orders =
+      intent.kind === "ASSIGN_ORDER_TO_PLAN"
+        ? [selectOrderByClientId(intent.orderClientId)(orderState)]
+        : resolveBatchTargetOrderIds(intent.selection, selectionState).map(
+            (orderId) => selectOrderByServerId(orderId)(orderState),
+          );
+
+    const confirmed = await objectiveMismatchController.confirmObjectiveChange({
+      orders,
+      targetPlanType: resolvePlanType(destinationPlan),
+      targetPlanLabel: destinationPlan.label ?? null,
+    });
+    return confirmed ? intent : null;
+  };
+
   const onDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -630,6 +692,18 @@ export const usePlanOrderDndController = () => {
 
       intent = resolved.intent;
     }
+
+    // Confirm the objective change before anything else asks the user a
+    // question — declining here means the drop never happened.
+    const planTypeConfirmedIntent = await confirmPlanTypeForIntent(
+      intent,
+      selectionState,
+    );
+    if (!planTypeConfirmedIntent) {
+      resetDragUi();
+      return;
+    }
+    intent = planTypeConfirmedIntent;
 
     const contactWarningOrder =
       intent.kind === "ASSIGN_ORDER_TO_PLAN"

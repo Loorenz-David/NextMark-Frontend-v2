@@ -32,6 +32,7 @@ export const {
   archiveOrder,
   unarchiveOrder,
   updateOrderDeliveryPlan,
+  unassignOrderPlan,
   resolveOrderBatchSelection,
   updateOrdersDeliveryPlanBatch,
   listOrderMapMarkers,
@@ -63,6 +64,7 @@ export const useUpdateOrderNote = () => updateOrderNote;
 export const useDeleteOrderNote = () => deleteOrderNote;
 export const useDeleteOrder = () => deleteOrder;
 export const useUpdateOrderDeliveryPlan = () => updateOrderDeliveryPlan;
+export const useUnassignOrderPlan = () => unassignOrderPlan;
 export const useResolveOrderBatchSelection = () => resolveOrderBatchSelection;
 export const useUpdateOrdersDeliveryPlanBatch = () =>
   updateOrdersDeliveryPlanBatch;

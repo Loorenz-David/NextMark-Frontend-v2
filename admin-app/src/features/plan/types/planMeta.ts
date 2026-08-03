@@ -33,7 +33,8 @@ export type PlanQueryFilters = {
   mode?: 'month' | 'date' | 'range'
   team_id?: number | string
   label?: string
-  plan_type?: RoutePlanObjective
+  /** Single value or list; omitting it returns every plan type. */
+  plan_type?: RoutePlanObjective | RoutePlanObjective[]
   start_date?: string
   end_date?: string
   created_at_from?: string

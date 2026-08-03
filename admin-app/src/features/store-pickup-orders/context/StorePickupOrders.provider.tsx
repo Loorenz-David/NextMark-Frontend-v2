@@ -1,25 +1,26 @@
 import { createContext } from 'react'
 import type { ReactNode } from 'react'
 
-type StorePickupOrdersContextType = {
-  planId: number | null
+import type { useStorePickupPageController } from '../controllers/useStorePickupPageController'
+
+type StorePickupPageModel = ReturnType<typeof useStorePickupPageController>
+
+export type StorePickupOrdersContextType = StorePickupPageModel & {
+  planId: number
 }
 
-export const StorePickupOrdersContext = createContext<StorePickupOrdersContextType | null>(null)
+export const StorePickupOrdersContext =
+  createContext<StorePickupOrdersContextType | null>(null)
 
 type StorePickupOrdersProviderProps = {
-  planId: number
+  value: StorePickupOrdersContextType
   children: ReactNode
 }
 
 export const StorePickupOrdersProvider = ({
-  planId,
+  value,
   children,
 }: StorePickupOrdersProviderProps) => {
-  const value: StorePickupOrdersContextType = {
-    planId,
-  }
-
   return (
     <StorePickupOrdersContext.Provider value={value}>
       {children}

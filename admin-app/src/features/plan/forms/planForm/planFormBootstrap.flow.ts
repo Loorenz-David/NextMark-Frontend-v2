@@ -4,6 +4,7 @@ import { buildClientId } from "@/lib/utils/clientId";
 
 import type { DeliveryPlan } from "../../types/plan";
 
+import { DEFAULT_PLAN_TYPE } from "../../domain/planType";
 import { usePlanStateRegistryFlow } from "../../flows/planStateRegistry.flow";
 import {
   formatDateOnlyInTimeZone,
@@ -19,6 +20,7 @@ const createInitialPlanForm = (
   return {
     client_id: buildClientId("delivery_plan"),
     label: planLabel,
+    plan_type: DEFAULT_PLAN_TYPE,
     start_date: nowIso,
     end_date: nowIso,
     state_id: planStateId ?? null,

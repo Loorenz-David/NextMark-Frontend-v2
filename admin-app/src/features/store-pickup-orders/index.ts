@@ -8,5 +8,5 @@ export { StorePickupOrdersPageContent } from './pages/StorePickupOrdersContent.p
 export { StorePickupOrdersProvider } from './context/StorePickupOrders.provider'
 export { useStorePickupOrdersContext } from './context/useStorePickupOrdersContext'
 
-// Store
-export { useStorePickupOrdersStore } from './store/storePickupOrders.store'
+// Controller
+export { useStorePickupPageController } from './controllers/useStorePickupPageController'

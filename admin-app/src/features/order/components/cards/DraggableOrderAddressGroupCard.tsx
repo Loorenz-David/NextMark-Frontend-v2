@@ -1,5 +1,4 @@
 import { useDraggable } from '@dnd-kit/core'
-import { CSS } from '@dnd-kit/utilities'
 
 import type { Order } from '../../types/order'
 import type { OrderAddressGroup } from '../../domain/orderAddressGroup.flow'
@@ -44,7 +43,6 @@ export const DraggableOrderAddressGroupCard = ({
     attributes,
     listeners,
     setNodeRef,
-    transform,
     isDragging,
   } = useDraggable({
     id: `order_group:${group.key}`,
@@ -59,13 +57,14 @@ export const DraggableOrderAddressGroupCard = ({
     },
   })
 
-  const style: {
-    transform: string | undefined
-    visibility: 'hidden' | 'visible'
-    cursor: string
-  } = {
-    transform: CSS.Transform.toString(transform),
+  // The DragOverlay tracks the pointer; the source only hides in place. See
+  // DraggableOrderCard for why applying the transform here paints a mirror.
+  // Wrapper `opacity` hides on the same frame; `visibility` alone would be
+  // animated by the card body's `transition-all` (see DraggableOrderCard).
+  const style: React.CSSProperties = {
+    opacity: isDragging ? 0 : 1,
     visibility: isDragging ? 'hidden' : 'visible',
+    pointerEvents: isDragging ? 'none' : undefined,
     cursor: 'grab',
   }
 

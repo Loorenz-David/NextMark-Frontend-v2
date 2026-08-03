@@ -1,9 +1,10 @@
 import { apiClient } from "@/lib/api/ApiClient";
 import type { ApiResult } from "@/lib/api/types";
 import type {
+  ContainerPlanCreatePayload,
   DeliveryPlan,
   DeliveryPlanMap,
-  PlanCreatePayload,
+  LocalDeliveryPlanCreatePayload,
   PlanCreateResponse,
   PlanUpdateFields,
 } from "@/features/plan/types/plan";
@@ -68,10 +69,28 @@ export const planApi = {
     }),
 
   createPlan: (
-    payload: PlanCreatePayload | PlanCreatePayload[],
+    payload: LocalDeliveryPlanCreatePayload | LocalDeliveryPlanCreatePayload[],
   ): Promise<ApiResult<PlanCreateResponse>> =>
     apiClient.request<PlanCreateResponse>({
       path: "/route_plans/",
+      method: "POST",
+      data: { fields: payload },
+    }),
+
+  createInternationalShippingPlan: (
+    payload: ContainerPlanCreatePayload | ContainerPlanCreatePayload[],
+  ): Promise<ApiResult<PlanCreateResponse>> =>
+    apiClient.request<PlanCreateResponse>({
+      path: "/international_shipping_plans/",
+      method: "POST",
+      data: { fields: payload },
+    }),
+
+  createStorePickupPlan: (
+    payload: ContainerPlanCreatePayload | ContainerPlanCreatePayload[],
+  ): Promise<ApiResult<PlanCreateResponse>> =>
+    apiClient.request<PlanCreateResponse>({
+      path: "/store_pickup_plans/",
       method: "POST",
       data: { fields: payload },
     }),

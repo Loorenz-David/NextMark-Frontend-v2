@@ -11,8 +11,11 @@ import { BasicButton } from "@/shared/buttons/BasicButton";
 import { ConfirmActionButton } from "@/shared/buttons/DeleteButton";
 import { FeaturePopupFooter } from "@/shared/popups/featurePopup";
 
+import { OptionPopoverSelect } from "@/shared/inputs/OptionPopoverSelect";
+
+import { PlanTypeDescription } from "../../components/PlanTypeDescription";
+import { PLAN_TYPE_OPTIONS, resolvePlanType } from "../../domain/planType";
 import { usePlanForm } from "./PlanForm.context";
-import { Cell } from "@/shared/layout/cells";
 
 export const PlanFormLayout = () => {
   const {
@@ -23,6 +26,10 @@ export const PlanFormLayout = () => {
     planActions,
     planFormWarnings,
   } = usePlanForm();
+  const planType = resolvePlanType(planForm);
+  const isLocalDelivery = planType === "local_delivery";
+  // Plan type is immutable server-side, so it is a create-time choice only.
+  const canChoosePlanType = mode === "create";
 
   return (
     <>
@@ -65,13 +72,34 @@ export const PlanFormLayout = () => {
             />
           </Field>
 
-          <Field label="Zones:">
-            <ZoneSelector
-              mode="multi"
-              selectedZoneIds={selectedZoneIds}
-              onSelectionChange={planSetters.handleZoneSelectionChange}
-            />
-          </Field>
+          {canChoosePlanType ? (
+            <Field label="Plan type:" required={true}>
+              <div className="flex flex-col">
+                <OptionPopoverSelect
+                  options={PLAN_TYPE_OPTIONS}
+                  value={planType}
+                  onChange={(value) => {
+                    // A plan always has a type; clearing it is not offered.
+                    if (value) planSetters.handlePlanType(value);
+                  }}
+                  allowEmpty={false}
+                  placeholder="Select plan type"
+                  inputFieldClassName="flex w-full items-center justify-between px-2 pb-2 pr-4"
+                />
+                <PlanTypeDescription planType={planType} />
+              </div>
+            </Field>
+          ) : null}
+
+          {isLocalDelivery ? (
+            <Field label="Zones:">
+              <ZoneSelector
+                mode="multi"
+                selectedZoneIds={selectedZoneIds}
+                onSelectionChange={planSetters.handleZoneSelectionChange}
+              />
+            </Field>
+          ) : null}
         </div>
         {planFormWarnings.planStartDateWarning?.warning && (
           <InputWarning {...planFormWarnings.planStartDateWarning.warning} />

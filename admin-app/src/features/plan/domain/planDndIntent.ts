@@ -1,4 +1,5 @@
 import type { OrderBatchSelectionPayload } from "@/features/order/types/orderBatchSelection";
+import type { RoutePlanObjective } from "@/features/plan/types/plan";
 
 export type PlanDndIntent =
   | {
@@ -45,6 +46,12 @@ export type PlanDndIntent =
       kind: "CREATE_PLAN_FOR_DATE";
       dateKey: string;
       orderServerIds: number[];
+      /**
+       * Which plan type to create, derived from the dragged orders' objectives.
+       * Filled in by the DnD controller, which can read the order store; the
+       * pure drop resolver cannot.
+       */
+      planType?: RoutePlanObjective;
     }
   | null;
 

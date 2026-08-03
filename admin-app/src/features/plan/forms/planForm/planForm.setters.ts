@@ -1,6 +1,10 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { ChangeEvent } from "react";
-import type { DeliveryPlan, PlanDateStrategy } from "../../types/plan";
+import type {
+  DeliveryPlan,
+  PlanDateStrategy,
+  RoutePlanObjective,
+} from "../../types/plan";
 import type { PlanWarningsControllers } from "./PlanForm.types";
 import type { CustomDatePickerIsoRange } from "@/shared/inputs/CustomDatePicker";
 import {
@@ -20,7 +24,18 @@ export const usePlanFormSetters = ({
   setSelectedZoneIds,
   planFormWarnings,
 }: PropsUsePlanFormSetters) => {
-  const handlePlanType = () => undefined;
+  /**
+   * Zones only exist for local delivery, and the container endpoints reject a
+   * payload carrying them, so leaving local delivery drops any zone selection
+   * rather than letting it reach the request.
+   */
+  const handlePlanType = (planType: RoutePlanObjective) => {
+    setPlanForm((prev) => ({ ...prev, plan_type: planType }));
+    if (planType !== "local_delivery") {
+      setSelectedZoneIds([]);
+    }
+  };
+
   const handlePlanName = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setPlanForm((prev) => {

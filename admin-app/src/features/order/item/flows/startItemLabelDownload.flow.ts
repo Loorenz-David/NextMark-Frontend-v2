@@ -12,6 +12,8 @@ import {
 } from "@/features/plan/store/routePlan.slice";
 import type { DeliveryPlan, DeliveryPlanMap } from "@/features/plan/types/plan";
 
+import { resolveItemLabelPlanObjective } from "../domain/labelPlanObjective";
+
 import { getOrder, getOrderRouteContext } from "../../api/orderApi";
 import { useOrderModel } from "../../domain/useOrderModel";
 import type { Order } from "../../types/order";
@@ -135,12 +137,22 @@ export const startItemLabelDownload = ({
     }
     onProgress?.(0.07);
 
+    // The destination plan was hydrated just above, so it is the accurate
+    // source for the objective the label should print.
+    const labelPlanObjective = resolveItemLabelPlanObjective({
+      routePlan:
+        typeof routePlanId === "number"
+          ? selectRoutePlanByServerId(routePlanId)(useRoutePlanStore.getState())
+          : null,
+      orderPlanObjective: resolvedOrder?.order_plan_objective,
+    });
+
     const labelIdentifierSource = {
       order_scalar_id: resolvedOrder?.order_scalar_id,
       reference_number: resolvedOrder?.reference_number,
       external_source: resolvedOrder?.external_source,
       help_to_carry: resolvedOrder?.help_to_carry,
-      order_plan_objective: resolvedOrder?.order_plan_objective,
+      order_plan_objective: labelPlanObjective,
     };
 
     await downloadItemLabels({

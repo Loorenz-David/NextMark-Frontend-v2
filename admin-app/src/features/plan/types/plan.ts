@@ -1,11 +1,16 @@
-import type {
-  RouteGroup,
-  RouteGroupInput,
-} from "@/features/plan/routeGroup/types/routeGroup";
+import type { RouteGroup } from "@/features/plan/routeGroup/types/routeGroup";
 import type { ServiceTime } from "@/features/plan/routeGroup/types/serviceTime";
 import type { address } from "@/types/address";
 
-export type RoutePlanObjective = "local_delivery";
+/**
+ * The planning domain a route plan belongs to. Shares its value space with an
+ * order's `order_plan_objective`: an order assigned to a plan adopts the plan's
+ * type, which is how the backend keeps the two in sync.
+ */
+export type RoutePlanObjective =
+  | "local_delivery"
+  | "international_shipping"
+  | "store_pickup";
 
 export type PlanDateStrategy = "single" | "range";
 
@@ -13,6 +18,8 @@ export type DeliveryPlan = {
   id?: number;
   client_id: string;
   label: string;
+  /** Set at creation and immutable afterwards. Absent on plans served before the backend added it. */
+  plan_type?: RoutePlanObjective | null;
   date_strategy?: PlanDateStrategy | null;
   start_date?: string | null;
   end_date?: string | null;
@@ -47,14 +54,6 @@ export type DeliveryPlanFields = {
   total_weight?: number | null;
 };
 
-export type PlanTypeFields = {
-  local_delivery?: RouteGroupInput;
-};
-
-export type PlanTypeStoreFields = {
-  local_delivery_plan?: RouteGroupInput;
-};
-
 export type RouteGroupDefaults = {
   route_solution?: {
     start_location?: address | null;
@@ -78,21 +77,37 @@ export type PlanTypeDefaults = {
 };
 export type RouteGroupPlanTypeDefaults = RouteGroupDefaults;
 
-export type PlanCreatePayload = {
+/** Fields every plan create payload shares, whatever the destination endpoint. */
+export type PlanCreateShellPayload = {
   client_id?: string;
   label: string;
   date_strategy?: PlanDateStrategy;
   start_date: string;
   end_date?: string | null;
   order_ids?: number[];
-  zone_ids?: number[];
-  plan_type_defaults?: PlanTypeDefaults;
 };
 
+/**
+ * `POST /route_plans/`. Zones and route-group defaults are route-operations
+ * concepts and are rejected by the container-plan endpoints.
+ */
+export type LocalDeliveryPlanCreatePayload = PlanCreateShellPayload & {
+  zone_ids?: number[];
+  route_group_defaults?: RouteGroupDefaults;
+};
+
+/**
+ * `POST /international_shipping_plans/` and `POST /store_pickup_plans/`.
+ * Their domain-specific fields (carrier_name, pickup_location, assigned_user_id)
+ * are optional server-side and deliberately not sent by the frontend yet.
+ *
+ * Neither endpoint accepts `plan_type` (implied by the route) or `state_id`
+ * (new plans always start OPEN).
+ */
+export type ContainerPlanCreatePayload = PlanCreateShellPayload;
+
 export type PlanUpdateFields = Partial<
-  DeliveryPlanFields &
-    PlanTypeFields &
-    PlanTypeStoreFields & { order_ids?: number[] }
+  DeliveryPlanFields & { order_ids?: number[] }
 >;
 
 export type ClientIdMap = Record<string, number> & {
@@ -110,8 +125,14 @@ export type RoutePlanRouteGroupSummary = {
   } | null;
 };
 
+/**
+ * `POST /route_plans/` keys the created plan as `delivery_plan`; the container
+ * endpoints key it as `route_plan`. Both shapes are normalized by
+ * `normalizePlanCreateBundle` so callers never branch on the key.
+ */
 export type PlanCreateResultBundle = {
-  delivery_plan: DeliveryPlan;
+  delivery_plan?: DeliveryPlan;
+  route_plan?: DeliveryPlan;
   route_groups?: RouteGroup[];
 };
 

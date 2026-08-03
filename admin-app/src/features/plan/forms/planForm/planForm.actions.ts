@@ -4,6 +4,12 @@ import type { DeliveryPlan } from "../../types/plan";
 import { usePlanController } from "../../controllers/plan.controller";
 import { useOptionalBaseControlls } from "@/shared/resource-manager/useResourceManager";
 import { useOrderSelectionStore } from "@/features/order/store/orderSelection.store";
+import {
+  selectOrderByServerId,
+  useOrderStore,
+} from "@/features/order/store/order.store";
+import { usePlanObjectiveMismatchController } from "../../controllers/usePlanObjectiveMismatchController";
+import { resolvePlanType } from "../../domain/planType";
 
 type Props = {
   planForm: DeliveryPlan;
@@ -22,6 +28,7 @@ export const usePlanFormActions = ({
 }: Props) => {
   const { showMessage } = useMessageHandler();
   const { createPlan, deletePlan } = usePlanController();
+  const { confirmObjectiveChange } = usePlanObjectiveMismatchController();
   const baseControlls = useOptionalBaseControlls();
 
   const handleCreatePlan = useCallback(async (): Promise<boolean> => {
@@ -35,9 +42,25 @@ export const usePlanFormActions = ({
       return false;
     }
 
+    // Creating a plan from a multi-select carries those orders onto it, so the
+    // same objective-change confirmation applies as when they are dragged.
+    const planType = resolvePlanType(planForm);
+    if (selectedOrderServerIds.length > 0) {
+      const orderState = useOrderStore.getState();
+      const confirmed = await confirmObjectiveChange({
+        orders: selectedOrderServerIds.map((orderId) =>
+          selectOrderByServerId(orderId)(orderState),
+        ),
+        targetPlanType: planType,
+        targetPlanLabel: planForm.label ?? null,
+      });
+      if (!confirmed) return false;
+    }
+
     const response = await createPlan(planForm, {
       newOrderLinks: selectedOrderServerIds,
       zoneIds: selectedZoneIds,
+      planType,
     });
 
     if (response !== null) {
@@ -48,6 +71,7 @@ export const usePlanFormActions = ({
     }
     return false;
   }, [
+    confirmObjectiveChange,
     createPlan,
     planForm,
     planValidateForm,

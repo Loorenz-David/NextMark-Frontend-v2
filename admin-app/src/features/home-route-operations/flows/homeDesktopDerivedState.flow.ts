@@ -18,6 +18,9 @@ export const useHomeDesktopDerivedStateFlow = ({
 
   return useMemo(() => {
     const openSectionsCount = sectionEntries.filter((entry) => !entry.isClosing).length
+    // "A plan panel is open", for layout and background purposes — true for every
+    // plan type. Route-specific surfaces key off `useActivePlanWorkspace`'s
+    // `isLocalDeliveryWorkspace` instead.
     const isRouteOperationsOverlayActive = baseControlls.isBaseOpen
 
     return {

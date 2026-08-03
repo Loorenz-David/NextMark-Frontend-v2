@@ -5,6 +5,12 @@ import { formatMetric } from "@shared-utils";
 import { useResourceManager } from "@/shared/resource-manager/useResourceManager";
 import type { DeliveryPlan } from "@/features/plan/types/plan";
 import { useRoutePlanStateByServerId } from "@/features/plan/store/useRoutePlanState.selector";
+import {
+  PLAN_TYPE_LABELS,
+  resolvePlanType,
+} from "@/features/plan/domain/planType";
+import { planIconTypeMap } from "@/features/plan/utils/planIconTypeMap";
+import { useIsPlanOrderMutating } from "@/features/plan/store/planOrderMutation.store";
 
 import { getCalendarVolumeLoadPercent } from "../domain/planCalendar.domain";
 
@@ -41,9 +47,11 @@ export const PlanCalendarPlanChip = ({
   });
 
   const stateColor = planState?.color || FALLBACK_STATE_COLOR;
+  const planType = resolvePlanType(plan);
+  const PlanTypeIcon = planIconTypeMap[planType];
+  const isBusy = useIsPlanOrderMutating(plan.id);
   const orderCount = plan.total_orders ?? 0;
   const itemCount = plan.total_items ?? 0;
-  const zoneCount = plan.route_groups_count ?? 0;
   const loadPercent = getCalendarVolumeLoadPercent(
     plan.total_volume,
     assignedVehicleCapacityCm3,
@@ -66,9 +74,7 @@ export const PlanCalendarPlanChip = ({
       ref={setNodeRef}
       onClick={handleClick}
       className={`flex shrink-0 cursor-pointer flex-col gap-1 rounded-[10px] border px-2 py-1.5 transition-all duration-150 ${
-        isOver
-          ? "scale-[1.02] shadow-[0_0_0_2px_rgba(var(--info-r),0.35)]"
-          : ""
+        isOver ? "scale-[1.02] shadow-[0_0_0_2px_rgba(var(--info-r),0.35)]" : ""
       }`}
       style={{
         backgroundColor: `color-mix(in srgb, ${stateColor} 11%, transparent)`,
@@ -79,12 +85,26 @@ export const PlanCalendarPlanChip = ({
       title={plan.label}
     >
       <div className="flex items-center gap-1.5">
+        {/* The chip's fill and border already carry the plan state, so the only
+            mark this row needs is the plan type — which doubles as the spot
+            where in-flight order moves report progress. */}
+        <span className="relative flex h-3 w-3 shrink-0 items-center justify-center">
+          {isBusy ? (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-[3px] animate-spin rounded-full border-[1.5px] border-[rgb(var(--color-light-blue-r))]/25 border-t-[rgb(var(--color-light-blue-r))]"
+            />
+          ) : null}
+          <PlanTypeIcon
+            className="h-3 w-3 app-icon"
+            aria-label={PLAN_TYPE_LABELS[planType]}
+          />
+        </span>
         <span
-          className="h-1.5 w-1.5 shrink-0 rounded-full"
-          style={{ backgroundColor: stateColor }}
-        />
-        <span className="min-w-0 truncate text-[12px] font-semibold text-[var(--color-text)]">
-          {orderCount} {orderCount === 1 ? "order" : "orders"}
+          className="min-w-0 truncate text-[12px] font-semibold text-[var(--color-text)]"
+          title={`${orderCount} ${orderCount === 1 ? "order" : "orders"}`}
+        >
+          {orderCount} ord
         </span>
         {dropFeedback ? (
           <span
@@ -100,9 +120,6 @@ export const PlanCalendarPlanChip = ({
               : `+${dropFeedback.movedCount}`}
           </span>
         ) : null}
-        <span className="ml-auto shrink-0 font-mono text-[10px] text-[var(--color-muted)]">
-          {zoneCount}z
-        </span>
       </div>
 
       <div className="flex items-center gap-1.5">
@@ -120,8 +137,8 @@ export const PlanCalendarPlanChip = ({
         </span>
       </div>
 
-      <span className="text-[10.5px] leading-[1.35] text-[var(--color-muted)]">
-        {itemCount} {itemCount === 1 ? "item" : "items"} ·{" "}
+      <span className="text-[9px] leading-[1.35] text-[var(--color-muted)]">
+        {itemCount} {itemCount === 1 ? "pc" : "pcs"} ·{" "}
         {formatMetric(plan.total_weight ?? 0, "kg")}
       </span>
     </div>

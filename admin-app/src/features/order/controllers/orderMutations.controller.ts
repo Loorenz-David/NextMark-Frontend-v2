@@ -10,8 +10,19 @@ import {
 } from "@/features/plan/routeGroup/store/routeSolutionStop.store";
 import { upsertRouteSolution } from "@/features/plan/routeGroup/store/routeSolution.store";
 
-import { useUpdateOrderDeliveryPlan as useUpdateOrderDeliveryPlanApi } from "../api/orderApi";
-import { normalizeOrderStopResponse } from "../domain/orderStopResponse";
+import {
+  useUnassignOrderPlan as useUnassignOrderPlanApi,
+  useUpdateOrderDeliveryPlan as useUpdateOrderDeliveryPlanApi,
+} from "../api/orderApi";
+import {
+  filterOrderStopsByOrder,
+  normalizeOrderStopResponse,
+} from "../domain/orderStopResponse";
+import {
+  claimOrderMutation,
+  isOrderMutationSuperseded,
+  releaseOrderMutation,
+} from "../store/orderMutationSequence.store";
 import type { RouteSolutionStop } from "@/features/plan/routeGroup/types/routeSolutionStop";
 import {
   setOrder,
@@ -26,6 +37,7 @@ import {
 } from "@/features/plan/store/routePlan.slice";
 import { syncRouteGroupSummaries } from "@/features/plan/routeGroup/flows/syncRouteGroupSummaries.flow";
 import { markRouteGroupOverviewFreshAfter } from "@/features/plan/routeGroup/store/routeGroupOverviewFreshness.store";
+import { resolvePlanType } from "@/features/plan/domain/planType";
 import {
   removeRouteSolutionStopsByOrderIds,
   restoreCollectedRouteSolutionStops,
@@ -35,9 +47,12 @@ import {
   collectOptimisticOrderPlanAssignmentEntries,
   restoreOptimisticOrderPlanAssignment,
 } from "../utils/orderPlanAssignmentOptimistic";
+import { syncOrdersIntoVisibleList } from "../actions/syncOrdersIntoVisibleList.action";
+import { runWithPlanOrderMutation } from "@/features/plan/flows/runWithPlanOrderMutation.flow";
 
 export const useOrderMutations = () => {
   const updateOrderDeliveryPlanApi = useUpdateOrderDeliveryPlanApi();
+  const unassignOrderPlanApi = useUnassignOrderPlanApi();
   const { showMessage } = useMessageHandler();
 
   const updateOrderDeliveryPlan = useCallback(
@@ -74,8 +89,17 @@ export const useOrderMutations = () => {
         showMessage({ status: 400, message: "Invalid delivery plan id." });
         return false;
       }
+      // An order adopts its plan's type on assignment — the backend sets
+      // `order_plan_objective` from `plan.plan_type` — so the optimistic value
+      // reads the destination plan rather than assuming route operations.
       const targetPlanObjective =
-        targetPlanId == null ? null : "local_delivery";
+        targetPlanId == null
+          ? null
+          : resolvePlanType(
+              selectRoutePlanByServerId(targetPlanId)(
+                useRoutePlanStore.getState(),
+              ),
+            );
 
       // Capture plan total snapshots before the optimistic transaction so both
       // snapshot() and mutate() share the same pre-mutation baseline.
@@ -153,8 +177,15 @@ export const useOrderMutations = () => {
       const assignmentEntries = collectOptimisticOrderPlanAssignmentEntries([
         orderServerId,
       ]);
+      // Claimed before the request goes out so a move started while this one is
+      // still in flight supersedes it, and this response cannot undo it.
+      const mutationClaim = claimOrderMutation([orderServerId]);
 
-      return optimisticTransaction({
+      // Both ends of the move show progress on their cards until the server
+      // settles — local delivery re-optimizes its routes, so the gap between the
+      // optimistic patch and the response is visible.
+      return runWithPlanOrderMutation([oldPlanId, targetPlanId], () =>
+      optimisticTransaction({
         snapshot: () => ({
           assignmentEntries,
           previousStops: selectRouteSolutionStopsByOrderId(orderServerId)(
@@ -171,6 +202,12 @@ export const useOrderMutations = () => {
             planType: targetPlanObjective,
             clearRouteGroup: true,
           });
+          // Leaving a plan can make the order match the list's active query
+          // (unscheduled being the default), and the list can only filter ids it
+          // already holds — so it has to be added back explicitly.
+          syncOrdersIntoVisibleList(
+            assignmentEntries.map((entry) => entry.clientId),
+          );
           removeRouteSolutionStopsByOrderIds([orderServerId]);
 
           // Optimistic: subtract this order's weight/volume/items from the old plan
@@ -222,7 +259,12 @@ export const useOrderMutations = () => {
             });
           }
         },
-        request: () => updateOrderDeliveryPlanApi(orderServerId, targetPlanId),
+        // Unscheduling has its own endpoint: the destination-based route expects
+        // a plan to move to, so detaching goes through unassign-plan instead.
+        request: () =>
+          targetPlanId == null
+            ? unassignOrderPlanApi(orderServerId)
+            : updateOrderDeliveryPlanApi(orderServerId, targetPlanId),
         commit: (response) => {
           const updatedBundles = Array.isArray(response.data?.updated)
             ? response.data.updated
@@ -236,6 +278,10 @@ export const useOrderMutations = () => {
           updatedBundles.forEach((bundle) => {
             const updatedOrder = bundle?.order;
             if (!updatedOrder?.id) return;
+            // A newer move already owns this order; its own response settles it.
+            if (isOrderMutationSuperseded(updatedOrder.id, mutationClaim)) {
+              return;
+            }
 
             if (typeof updatedOrder.route_group_id === "number") {
               affectedRouteGroupIds.add(updatedOrder.route_group_id);
@@ -243,8 +289,11 @@ export const useOrderMutations = () => {
             setOrder(updatedOrder);
             removeRouteSolutionStopsByOrderIds([updatedOrder.id]);
 
-            const normalizedStops = normalizeOrderStopResponse(
-              bundle.order_stops,
+            // The response resequences whole routes, so it can carry stops for
+            // orders a later move has already pulled off them.
+            const normalizedStops = filterOrderStopsByOrder(
+              normalizeOrderStopResponse(bundle.order_stops),
+              (orderId) => !isOrderMutationSuperseded(orderId, mutationClaim),
             );
             if (normalizedStops) {
               upsertRouteSolutionStops(normalizedStops);
@@ -294,9 +343,18 @@ export const useOrderMutations = () => {
             newPlanId: number | null;
             newPlanTotals: PlanTotalsSnapshot | null;
           };
-          restoreOptimisticOrderPlanAssignment(snapshotAssignmentEntries ?? []);
-          if (previousStops.length) {
-            restoreCollectedRouteSolutionStops(previousStops);
+          // Undoing this move must not undo a newer one layered on top of it.
+          restoreOptimisticOrderPlanAssignment(
+            (snapshotAssignmentEntries ?? []).filter(
+              (entry) =>
+                !isOrderMutationSuperseded(entry.serverId, mutationClaim),
+            ),
+          );
+          const restorableStops = previousStops.filter(
+            (stop) => !isOrderMutationSuperseded(stop.order_id, mutationClaim),
+          );
+          if (restorableStops.length) {
+            restoreCollectedRouteSolutionStops(restorableStops);
           }
 
           // Restore plan total snapshots
@@ -316,9 +374,10 @@ export const useOrderMutations = () => {
           const status = error instanceof ApiError ? error.status : 500;
           showMessage({ status, message });
         },
-      });
+      }),
+      ).finally(() => releaseOrderMutation([orderServerId]));
     },
-    [showMessage, updateOrderDeliveryPlanApi],
+    [showMessage, unassignOrderPlanApi, updateOrderDeliveryPlanApi],
   );
 
   return {

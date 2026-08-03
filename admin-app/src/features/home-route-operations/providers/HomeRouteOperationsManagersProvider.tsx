@@ -127,7 +127,11 @@ export function HomeRouteOperationsManagersProvider({
       >
         {children}
 
-        <DragOverlay>
+        {/* No drop animation: every drop commits optimistically, so the real
+            card is already in its final slot the moment the drag ends. The
+            default animation would fly the overlay back to the source's
+            measured rect — the hidden card at the drag's origin. */}
+        <DragOverlay dropAnimation={null}>
           <RouteOperationsDragOverlay activeDrag={activeDrag} />
         </DragOverlay>
       </DndContext>

@@ -1,95 +1,17 @@
 import type { ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useDndContext, useDroppable } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 
 import { ChevronDownIcon, PlanIcon, PlusIcon } from "@/assets/icons";
 import { BasicButton } from "@/shared/buttons/BasicButton";
-import { useResourceManager } from "@/shared/resource-manager/useResourceManager";
-import type {
-  KnownResourceRegistry,
-  UnscheduleDropFeedback,
-} from "@/shared/resource-manager/ResourceManagerContext";
 import type { PlanQueryFilters, PlanStats } from "../../types/planMeta";
+import { UnscheduleDropSlot } from "../UnscheduleDropTarget";
 import { pluralLabel } from "@shared-utils";
 import { InfoHover } from "@/shared/layout/InfoHover";
 import { PLAN_MAIN_HEADER_INFO } from "../../info/planMainHeader.info";
 import { PlanDateFilterBar } from "../planDateFilter";
 import type { PlanDateFilterPayload } from "../planDateFilter";
 
-const isOrderDragActive = (activeDrag: unknown) => {
-  if (!activeDrag || typeof activeDrag !== "object") return false;
-  const dragType = String((activeDrag as { type?: unknown }).type ?? "");
-  return (
-    dragType === "order" ||
-    dragType === "order_batch" ||
-    dragType === "order_group" ||
-    dragType === "route_stop" ||
-    dragType === "route_stop_group"
-  );
-};
-
 const CREATE_PLAN_DROP_TARGET_ID = "create-plan-drop-target";
-
-const UnscheduleDropTarget = ({
-  dropFeedback,
-}: {
-  dropFeedback?: UnscheduleDropFeedback | null;
-}) => {
-  const { setNodeRef, isOver } = useDroppable({
-    id: "unschedule-drop-target",
-    data: {
-      type: "unschedule",
-      id: "unschedule",
-    },
-  });
-
-  const isSuccessFeedback = dropFeedback?.status === "success";
-  const isErrorFeedback = dropFeedback?.status === "error";
-  const hasFeedback = Boolean(dropFeedback);
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={`min-w-[132px] rounded-xl border px-3 py-2 text-center transition-all duration-200 ${
-        isOver || isSuccessFeedback
-          ? "border-[rgb(var(--success-deep-r))]/50 bg-[rgb(var(--success-deep-r))]/12 shadow-[0_0_0_1px_rgba(var(--success-deep-r),0.2),0_0_16px_rgba(var(--success-deep-r),0.15)]"
-          : isErrorFeedback
-            ? "border-[rgb(var(--danger-state-r))]/35 bg-[rgb(var(--danger-state-r))]/10"
-            : "border-[var(--color-border)] bg-[var(--color-muted)]/8"
-      }`}
-    >
-      <AnimatePresence mode="wait" initial={false}>
-        {hasFeedback ? (
-          <motion.span
-            key={dropFeedback?.token}
-            initial={{ y: 7, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -7, opacity: 0 }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            className={`inline-flex text-xs font-semibold uppercase tracking-[0.18em] ${
-              isErrorFeedback ? "text-[rgb(var(--danger-state-r))]" : "text-[rgb(var(--success-deep-r))]"
-            }`}
-          >
-            {isErrorFeedback
-              ? "Move failed"
-              : `${dropFeedback?.movedCount ?? 0} moved`}
-          </motion.span>
-        ) : (
-          <motion.span
-            key="unschedule-label"
-            initial={{ y: 7, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -7, opacity: 0 }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            className="inline-flex text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]"
-          >
-            Unschedule
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
 
 type PlanMainHeaderProps = {
   onCreate: () => void;
@@ -112,7 +34,6 @@ export const PlanMainHeader = ({
   planStats,
   headerAccessory,
 }: PlanMainHeaderProps) => {
-  const { active } = useDndContext();
   const { setNodeRef: setCreatePlanNodeRef, isOver: isCreatePlanOver } =
     useDroppable({
       id: CREATE_PLAN_DROP_TARGET_ID,
@@ -121,10 +42,6 @@ export const PlanMainHeader = ({
         id: CREATE_PLAN_DROP_TARGET_ID,
       },
     });
-  const { unscheduleDropFeedback } =
-    useResourceManager<KnownResourceRegistry>();
-  const shouldShowUnscheduleDropTarget =
-    isOrderDragActive(active?.data.current) || Boolean(unscheduleDropFeedback);
 
   return (
     <>
@@ -168,9 +85,7 @@ export const PlanMainHeader = ({
         </div>
 
         <div className="ml-auto flex items-center gap-3">
-          {shouldShowUnscheduleDropTarget ? (
-            <UnscheduleDropTarget dropFeedback={unscheduleDropFeedback} />
-          ) : null}
+          <UnscheduleDropSlot />
           {headerAccessory}
         </div>
       </div>

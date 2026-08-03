@@ -15,8 +15,12 @@ import {
 import type {
   DeliveryPlan,
   DeliveryPlanFields,
-  PlanCreatePayload,
+  PlanCreateShellPayload,
+  RouteGroupDefaults,
+  RoutePlanObjective,
 } from "@/features/plan/types/plan";
+import { normalizePlanCreateBundle } from "@/features/plan/api/mappers/planCreateResponse.mapper";
+import { resolvePlanType } from "@/features/plan/domain/planType";
 import type { RouteGroup } from "@/features/plan/routeGroup/types/routeGroup";
 import {
   addVisibleRoutePlan,
@@ -45,6 +49,37 @@ const resolveError = (error: unknown, fallback: string) => ({
   message: error instanceof ApiError ? error.message : fallback,
   status: error instanceof ApiError ? error.status : 500,
 });
+
+/**
+ * Each plan type has its own create endpoint, and the two container endpoints
+ * reject route-operations fields outright, so zones and route-group defaults are
+ * only ever attached to the local delivery payload.
+ */
+const createPlanByType = ({
+  planType,
+  shellPayload,
+  zoneIds,
+  routeGroupDefaults,
+}: {
+  planType: RoutePlanObjective;
+  shellPayload: PlanCreateShellPayload;
+  zoneIds: number[];
+  routeGroupDefaults?: RouteGroupDefaults;
+}) => {
+  if (planType === "international_shipping") {
+    return planApi.createInternationalShippingPlan(shellPayload);
+  }
+
+  if (planType === "store_pickup") {
+    return planApi.createStorePickupPlan(shellPayload);
+  }
+
+  return planApi.createPlan({
+    ...shellPayload,
+    ...(zoneIds.length > 0 ? { zone_ids: zoneIds } : {}),
+    ...(routeGroupDefaults ? { route_group_defaults: routeGroupDefaults } : {}),
+  });
+};
 
 const canInsertCreatedPlanIntoCurrentList = (plan: DeliveryPlan) => {
   const { visibleIds } = useRoutePlanStore.getState();
@@ -88,27 +123,38 @@ export function usePlanController() {
 
   const createPlan = useCallback(
     async (
-      payload: DeliveryPlanFields,
-      options?: { newOrderLinks?: number[]; zoneIds?: number[] },
+      payload: DeliveryPlanFields & { plan_type?: RoutePlanObjective | null },
+      options?: {
+        newOrderLinks?: number[];
+        zoneIds?: number[];
+        planType?: RoutePlanObjective;
+      },
     ) => {
+      const planType = options?.planType ?? resolvePlanType(payload);
+      const isLocalDelivery = planType === "local_delivery";
       const sanitizedNewOrderLinks = Array.isArray(options?.newOrderLinks)
         ? options.newOrderLinks.filter((id) => Number.isFinite(id))
         : [];
-      const sanitizedZoneIds = Array.isArray(options?.zoneIds)
-        ? Array.from(
-            new Set(
-              options.zoneIds.filter(
-                (id): id is number => Number.isInteger(id) && id > 0,
+      // Zones are a route-operations concept; the container endpoints reject them.
+      const sanitizedZoneIds =
+        isLocalDelivery && Array.isArray(options?.zoneIds)
+          ? Array.from(
+              new Set(
+                options.zoneIds.filter(
+                  (id): id is number => Number.isInteger(id) && id > 0,
+                ),
               ),
-            ),
-          )
-        : [];
+            )
+          : [];
 
       const planClientId = payload.client_id || buildClientId("delivery_plan");
 
       const normalizedPlanFields: DeliveryPlan = {
         ...payload,
         client_id: planClientId,
+        // Carried on the optimistic row so the card and calendar chip show the
+        // right icon before the server responds.
+        plan_type: planType,
       };
 
       insertRoutePlan(normalizedPlanFields);
@@ -119,16 +165,24 @@ export function usePlanController() {
           throw new Error("start_date is required to create a plan.");
         }
 
-        const planTypeDefaults = await resolvePlanTypeDefaults({
-          planStartDate: normalizedPlanFields.start_date ?? null,
-          getCurrentLocationAddress: resolveUserCurrentLocation,
-        }).catch(() => undefined);
-        const routeGroupDefaults =
-          sanitizedZoneIds.length === 0
-            ? planTypeDefaults?.route_group_defaults
-            : undefined;
+        // Route-solution defaults only mean something for local delivery, and
+        // resolving them can prompt for the browser's location — so container
+        // plans skip the whole step rather than asking for a location they will
+        // never use.
+        const routeGroupDefaults = isLocalDelivery
+          ? await resolvePlanTypeDefaults({
+              planStartDate: normalizedPlanFields.start_date ?? null,
+              getCurrentLocationAddress: resolveUserCurrentLocation,
+            })
+              .then((planTypeDefaults) =>
+                sanitizedZoneIds.length === 0
+                  ? planTypeDefaults?.route_group_defaults
+                  : undefined,
+              )
+              .catch(() => undefined)
+          : undefined;
 
-        const planPayloadApi: PlanCreatePayload = {
+        const shellPayload: PlanCreateShellPayload = {
           client_id: planClientId,
           label: normalizedPlanFields.label,
           start_date: normalizedStartDate,
@@ -140,22 +194,23 @@ export function usePlanController() {
           ...(sanitizedNewOrderLinks.length > 0
             ? { order_ids: sanitizedNewOrderLinks }
             : {}),
-          ...(sanitizedZoneIds.length > 0
-            ? { zone_ids: sanitizedZoneIds }
-            : {}),
-          ...(routeGroupDefaults ? { route_group_defaults: routeGroupDefaults } : {}),
         };
 
-        const response = await planApi.createPlan(planPayloadApi);
-        const created = response.data?.created?.[0];
+        const response = await createPlanByType({
+          planType,
+          shellPayload,
+          zoneIds: sanitizedZoneIds,
+          routeGroupDefaults,
+        });
+        const createdBundle = normalizePlanCreateBundle(
+          response.data?.created?.[0],
+        );
 
-        if (!created?.delivery_plan) {
-          throw new Error(
-            "Plan create response is missing created delivery_plan.",
-          );
+        if (!createdBundle) {
+          throw new Error("Plan create response is missing the created plan.");
         }
 
-        const createdPlan = created.delivery_plan;
+        const createdPlan = createdBundle.plan;
         const createdPlanId = createdPlan.id;
 
         if (createdPlan.client_id === planClientId) {
@@ -170,10 +225,7 @@ export function usePlanController() {
 
         syncCreatedPlanIntoVisibleList(createdPlan);
 
-        const createdRouteGroups = Array.isArray(created.route_groups)
-          ? created.route_groups
-          : [];
-        createdRouteGroups.forEach((routeGroup) => {
+        createdBundle.routeGroups.forEach((routeGroup) => {
           upsertRouteGroup(routeGroup);
         });
 
@@ -184,7 +236,8 @@ export function usePlanController() {
           patchOrdersPlanByServerIds({
             orderServerIds: sanitizedNewOrderLinks,
             planId: createdPlanId,
-            planType: "local_delivery",
+            // Orders adopt the plan's type on assignment, server-side included.
+            planType: resolvePlanType(createdPlan),
           });
         }
 

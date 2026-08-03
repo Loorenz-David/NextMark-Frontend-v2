@@ -14,9 +14,14 @@ import {
 } from "@/features/plan/routeGroup/store/routeSolution.store";
 import {
   replaceRouteSolutionStopsForSolution,
+  selectRouteSolutionStopsBySolutionId,
   upsertRouteSolutionStop,
   upsertRouteSolutionStops,
+  useRouteSolutionStopStore,
 } from "@/features/plan/routeGroup/store/routeSolutionStop.store";
+import { mergeServerRouteStops } from "@/features/plan/routeGroup/domain/mergeServerRouteStops";
+import { filterOrderStopsByOrder } from "@/features/order/domain/orderStopResponse";
+import { hasPendingOrderMutation } from "@/features/order/store/orderMutationSequence.store";
 
 export const applyRouteSolutionGetPayload = (
   payload?: RouteSolutionGetResponse | null,
@@ -53,12 +58,24 @@ export const applyRouteSolutionGetPayload = (
     if (selectedSolutionId != null) {
       replaceRouteSolutionStopsForSolution(
         selectedSolutionId,
-        payload.route_solution_stop,
+        mergeServerRouteStops({
+          incoming: payload.route_solution_stop,
+          existing: selectRouteSolutionStopsBySolutionId(selectedSolutionId)(
+            useRouteSolutionStopStore.getState(),
+          ),
+          isOrderPending: hasPendingOrderMutation,
+        }),
       );
       return;
     }
 
-    upsertRouteSolutionStops(payload.route_solution_stop);
+    const applicableStops = filterOrderStopsByOrder(
+      payload.route_solution_stop,
+      (orderId) => !hasPendingOrderMutation(orderId),
+    );
+    if (applicableStops) {
+      upsertRouteSolutionStops(applicableStops);
+    }
     return;
   }
 
@@ -75,12 +92,21 @@ export const applyRouteSolutionGetPayload = (
         .filter((clientId): clientId is string => typeof clientId === "string"),
     };
 
-    replaceRouteSolutionStopsForSolution(selectedSolutionId, normalizedStops);
+    replaceRouteSolutionStopsForSolution(
+      selectedSolutionId,
+      mergeServerRouteStops({
+        incoming: normalizedStops,
+        existing: selectRouteSolutionStopsBySolutionId(selectedSolutionId)(
+          useRouteSolutionStopStore.getState(),
+        ),
+        isOrderPending: hasPendingOrderMutation,
+      }),
+    );
     return;
   }
 
   stops.forEach((stop) => {
-    if (stop?.client_id) {
+    if (stop?.client_id && !hasPendingOrderMutation(stop.order_id)) {
       upsertRouteSolutionStop(stop);
     }
   });

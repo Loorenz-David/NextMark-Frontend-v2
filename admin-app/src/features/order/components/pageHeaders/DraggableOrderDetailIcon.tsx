@@ -1,5 +1,4 @@
 import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 
 import { DocumentIcon } from "@/assets/icons";
 import type { Order } from "@/features/order/types/order";
@@ -11,20 +10,22 @@ type DraggableOrderDetailIconProps = {
 export const DraggableOrderDetailIcon = ({
   order,
 }: DraggableOrderDetailIconProps) => {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: `order-detail-header-${order.client_id}`,
-      data: {
-        type: "order",
-        id: order.client_id,
-        dragSource: "order_detail_header",
-        order,
-      },
-    });
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `order-detail-header-${order.client_id}`,
+    data: {
+      type: "order",
+      id: order.client_id,
+      dragSource: "order_detail_header",
+      order,
+    },
+  });
 
+  // The DragOverlay tracks the pointer; the source hides in place — via
+  // wrapper `opacity` so no descendant `transition-all` can delay the flip.
   const style = {
-    transform: CSS.Transform.toString(transform),
+    opacity: isDragging ? 0 : 1,
     visibility: isDragging ? "hidden" : "visible",
+    pointerEvents: isDragging ? "none" : undefined,
     cursor: "grab",
   } as React.CSSProperties;
 

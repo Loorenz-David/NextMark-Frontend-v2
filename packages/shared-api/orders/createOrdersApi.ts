@@ -223,6 +223,19 @@ export const createOrdersApi = (client: Pick<HttpApiClient, "request">) => ({
       data: payload,
     }),
 
+  /**
+   * Detaches an order from whatever plan it is on. Distinct from
+   * `updateOrderDeliveryPlan(orderId, null)`: the destination-based route
+   * expects a plan to move to, while this one only ever tears down.
+   */
+  unassignOrderPlan: (
+    orderId: number | string,
+  ): Promise<ApiResult<OrderPlanUpdateResponse>> =>
+    client.request<OrderPlanUpdateResponse>({
+      path: `/order_assignments/orders/${orderId}/unassign-plan`,
+      method: "PATCH",
+    }),
+
   resolveOrderBatchSelection: (
     selection: OrderBatchSelectionPayload,
   ): Promise<ApiResult<OrderBatchSelectionResolveResponse>> =>

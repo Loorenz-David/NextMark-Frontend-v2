@@ -8,5 +8,5 @@ export { InternationalShippingOrdersPageContent } from './pages/InternationalShi
 export { InternationalShippingOrdersProvider } from './context/InternationalShippingOrders.provider'
 export { useInternationalShippingOrdersContext } from './context/useInternationalShippingOrdersContext'
 
-// Store
-export { useInternationalShippingOrdersStore } from './store/internationalShippingOrders.store'
+// Controller
+export { useInternationalShippingPageController } from './controllers/useInternationalShippingPageController'
