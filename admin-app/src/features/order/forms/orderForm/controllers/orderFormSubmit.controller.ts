@@ -20,6 +20,7 @@ import {
   stripImmutableItemFields,
 } from "../../../api/mappers/orderForm.normalize";
 import type { Costumer } from "@/features/costumer";
+import { applyOrderFormClientFieldsToCostumer } from "../flows/orderFormCostumerApply.flow";
 import {
   patchOrderTotals,
   selectOrderByServerId,
@@ -269,6 +270,7 @@ export type OrderFormSubmitCommand = {
   formState: OrderFormState;
   selectedCostumer?: Costumer | null;
   updateCostumer?: boolean;
+  applyOptimisticCostumerPreview?: (costumer: Costumer) => void;
   validateForm: () => boolean;
   validateRequiredFields?: boolean;
   validatePayloadFields?: boolean;
@@ -323,6 +325,7 @@ export const executeOrderFormSubmit = async (
     formState,
     selectedCostumer,
     updateCostumer = false,
+    applyOptimisticCostumerPreview,
     validateForm,
     validateRequiredFields = true,
     validatePayloadFields = true,
@@ -511,6 +514,15 @@ export const executeOrderFormSubmit = async (
           status: "validation_error",
           message: "Please check the form inputs.",
         };
+      }
+
+      if (shouldUpdateCostumer && selectedCostumer) {
+        applyOptimisticCostumerPreview?.(
+          applyOrderFormClientFieldsToCostumer({
+            formState,
+            baseCostumer: selectedCostumer,
+          }),
+        );
       }
 
       void saveOrder({

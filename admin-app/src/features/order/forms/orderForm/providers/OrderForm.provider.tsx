@@ -358,6 +358,7 @@ export const OrderFormProvider = ({
     itemInitialByClientId,
     selectedCostumer,
     updateCostumer,
+    setSelectedCostumer,
     onPromoteCreatedOrderToEdit: (clientId) => {
       setActiveClientId(clientId);
       setMode("edit");

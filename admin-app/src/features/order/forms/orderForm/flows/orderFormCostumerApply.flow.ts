@@ -40,6 +40,32 @@ export const applySelectedCostumerToOrderForm = ({
   }
 }
 
+export const applyOrderFormClientFieldsToCostumer = ({
+  formState,
+  baseCostumer,
+}: {
+  formState: OrderFormState
+  baseCostumer: Costumer
+}): Costumer => ({
+  ...baseCostumer,
+  first_name: formState.client_first_name,
+  last_name: formState.client_last_name,
+  email: formState.client_email,
+  default_primary_phone: {
+    ...baseCostumer.default_primary_phone,
+    phone: formState.client_primary_phone,
+  },
+  default_secondary_phone: {
+    ...baseCostumer.default_secondary_phone,
+    phone: formState.client_secondary_phone,
+  },
+  default_address: {
+    ...baseCostumer.default_address,
+    address: formState.client_address ?? baseCostumer.default_address?.address ?? null,
+  },
+  __optimistic: true,
+})
+
 export const useApplySelectedCostumerFlow = ({
   selectedCostumer,
   setFormState,

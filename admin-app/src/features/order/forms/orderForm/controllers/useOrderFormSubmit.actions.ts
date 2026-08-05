@@ -1,4 +1,4 @@
-import type { RefObject } from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 import { useCallback } from "react";
 
 import { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument";
@@ -79,6 +79,7 @@ export const useOrderFormActions = ({
   itemInitialByClientId,
   selectedCostumer,
   updateCostumer,
+  setSelectedCostumer,
   onPromoteCreatedOrderToEdit,
 }: {
   mode: OrderFormMode;
@@ -91,6 +92,7 @@ export const useOrderFormActions = ({
   itemInitialByClientId: Record<string, Item>;
   selectedCostumer: Costumer | null;
   updateCostumer: boolean;
+  setSelectedCostumer: Dispatch<SetStateAction<Costumer | null>>;
   onPromoteCreatedOrderToEdit?: (clientId: string) => void;
 }) => {
   const { showMessage } = useMessageHandler();
@@ -129,6 +131,7 @@ export const useOrderFormActions = ({
         itemInitialByClientId,
         selectedCostumer,
         updateCostumer,
+        applyOptimisticCostumerPreview: setSelectedCostumer,
         createCommitMode: "defer",
         itemCommitMode: "defer",
         onCreateCommitted: ({ resolvedOrder }) => {
@@ -206,6 +209,7 @@ export const useOrderFormActions = ({
     popupManager,
     saveOrder,
     selectedCostumer,
+    setSelectedCostumer,
     showMessage,
     updateCostumer,
     updateItemApi,
