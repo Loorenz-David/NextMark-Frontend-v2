@@ -75,20 +75,24 @@ const fmtWeek = (dateInput?: string | null): string => {
 const fmtDateLabel = (dateInput?: string | null): string => {
   if (!dateInput) return "missing date";
 
+  const currentYear = new Date().getFullYear();
+
   const dateOnlyMatch = dateInput
     .trim()
     .match(/^(\d{4})-(\d{2})-(\d{2})(?:T|$)/);
   if (dateOnlyMatch) {
-    return `${dateOnlyMatch[3]}-${dateOnlyMatch[2]}`;
+    const [, year, month, day] = dateOnlyMatch;
+    return Number(year) === currentYear ? `${month}-${day}` : `${year}-${month}-${day}`;
   }
 
   const date = new Date(dateInput);
   if (Number.isNaN(date.getTime())) return "missing date";
 
+  const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
 
-  return `${day}-${month}`;
+  return year === currentYear ? `${month}-${day}` : `${year}-${month}-${day}`;
 };
 
 // Keys are stored snake_case; only the first word is shown so a long key
@@ -483,39 +487,25 @@ export const drawSevenByTenTemplateItem = (
   const drawBoxX = rightX + rightW - drawBoxW;
   const drawBoxY = bodyBottom - drawBoxH;
 
-  // Shared value column so every quality's value aligns under the same x.
+  // "Notes:" is the only remaining row label — Type and Prop are self-evident
+  // from their position and content, so their values print without a label.
   setFont(pdf, sf(FS.label), true, DARK);
-  const valueColX =
-    leftX +
-    Math.max(
-      pdf.getTextWidth("Type:"),
-      pdf.getTextWidth("Prop:"),
-      pdf.getTextWidth("Notes:"),
-    ) +
-    labelGap;
+  const valueColX = leftX + pdf.getTextWidth("Notes:") + labelGap;
   // Values wrap into the free space up to the (now smaller) draw box.
   const valueMaxW = drawBoxX - colGap - valueColX;
+  const typeValueMaxW = drawBoxX - colGap - leftX;
 
   let cursorY = bodyY;
 
-  const drawField = (
-    label: string,
-    labelFontSize: number,
-    value: string,
-    valueFontSize: number,
-    maxLines: number,
-  ) => {
+  const drawTypeValue = (value: string, valueFontSize: number, maxLines: number) => {
     const baseY = cursorY + capH(sf(valueFontSize));
 
-    setFont(pdf, sf(labelFontSize), true, DARK);
-    pdf.text(`${label}:`, leftX, baseY);
-
     setFont(pdf, sf(valueFontSize), false, MID);
-    const lines = pdf.splitTextToSize(value, valueMaxW) as string[];
+    const lines = pdf.splitTextToSize(value, typeValueMaxW) as string[];
     const shown = lines.slice(0, maxLines);
     const lineH = capH(sf(valueFontSize)) + lineExtra;
     shown.forEach((line, idx) => {
-      pdf.text(String(line), valueColX, baseY + idx * lineH);
+      pdf.text(String(line), leftX, baseY + idx * lineH);
     });
     cursorY += lineH * Math.max(shown.length, 1) + sectionGap;
   };
@@ -544,33 +534,31 @@ export const drawSevenByTenTemplateItem = (
   };
 
   // Props render as a two-column list: key left-aligned, value right-aligned
-  // to the column edge so the values line up in a tidy right rail.
+  // to the column edge so the values line up in a tidy right rail. Each
+  // entry carries its own name, so no outer "Prop:" label is needed — the
+  // list starts flush at leftX, same column as the item type above it.
   const drawPropField = (
-    label: string,
     entries: Array<{ name: string; value: string }>,
     maxLines: number,
   ) => {
     const baseY = cursorY + capH(sf(FS.value));
     const lineH = capH(sf(FS.value)) + lineExtra;
 
-    setFont(pdf, sf(FS.label), true, DARK);
-    pdf.text(`${label}:`, leftX, baseY);
-
     setFont(pdf, sf(FS.value), false, MID);
 
     if (!entries.length) {
-      pdf.text("--", valueColX, baseY);
+      pdf.text("--", leftX, baseY);
       cursorY += lineH + sectionGap;
       return;
     }
 
-    const rightEdge = valueColX + valueMaxW;
+    const rightEdge = leftX + typeValueMaxW;
     const shown = entries.slice(0, maxLines);
     shown.forEach((entry, idx) => {
       const y = baseY + idx * lineH;
       const keyText = `${entry.name}:`;
-      pdf.text(keyText, valueColX, y);
-      const avail = valueMaxW - pdf.getTextWidth(`${keyText}  `);
+      pdf.text(keyText, leftX, y);
+      const avail = typeValueMaxW - pdf.getTextWidth(`${keyText}  `);
       pdf.text(clampToWidth(entry.value, avail), rightEdge, y, {
         align: "right",
       });
@@ -585,8 +573,8 @@ export const drawSevenByTenTemplateItem = (
   const typeValue = safe(data.item_type);
   const typeWithQty =
     data.quantity == null ? typeValue : `${typeValue} (${data.quantity})`;
-  drawField("Type", FS.label, typeWithQty, FS.value, 1);
-  drawPropField("Prop", propEntries, 3);
+  drawTypeValue(typeWithQty, FS.value, 1);
+  drawPropField(propEntries, 3);
   const hasNotes = notesText.length > 0;
   if (hasNotes) {
     drawInlineNotes(notesText);

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 
 import type { DeliveryPlan } from "@/features/plan/types/plan";
 import { getRoutePlanIsoWeekNumber } from "@/features/plan/routeGroup/domain/routePlanDate";
@@ -38,8 +38,15 @@ export const PlanCalendarBody = ({
     return rows;
   }, [cells]);
 
+  // Day overlays are portaled to the body; this is the box they must stay
+  // inside so they never spill over the column to the calendar's right.
+  const overlayBoundaryRef = useRef<HTMLDivElement | null>(null);
+
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-2 px-4 pb-4 pt-3">
+    <div
+      ref={overlayBoundaryRef}
+      className="flex min-h-0 flex-1 flex-col gap-2 px-4 pb-4 pt-3"
+    >
       <div
         className="grid shrink-0 gap-2"
         style={{ gridTemplateColumns: GRID_TEMPLATE_COLUMNS }}
@@ -80,6 +87,7 @@ export const PlanCalendarBody = ({
                 volumeCapacityByPlanId={volumeCapacityByPlanId}
                 onOpenPlan={onOpenPlan}
                 onCreateForDate={onCreateForDate}
+                overlayBoundaryRef={overlayBoundaryRef}
               />
             )),
           ];

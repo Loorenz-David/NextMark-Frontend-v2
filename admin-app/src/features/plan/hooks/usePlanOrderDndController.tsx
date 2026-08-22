@@ -61,6 +61,7 @@ import {
 } from "@/shared/overlays/stepSequence";
 
 const MAX_BATCH_IDS = 200;
+const DEV = import.meta.env.DEV;
 
 export type ActiveDrag =
   | { type: "order"; order: Order }
@@ -498,10 +499,23 @@ export const usePlanOrderDndController = () => {
     });
 
     if (resolved.type !== "intent" || !resolved.intent) {
+      if (DEV) {
+        console.debug("[plan-dnd] onDragOver:not-an-intent", {
+          resolvedType: resolved.type,
+          activeType: activeData.type,
+          overType: overData?.type,
+        });
+      }
       clearPendingDrop();
       return;
     }
 
+    if (DEV) {
+      console.debug("[plan-dnd] onDragOver:intent", {
+        intentKind: resolved.intent.kind,
+        intent: resolved.intent,
+      });
+    }
     pendingIntentRef.current = resolved.intent;
     setRouteReorderPreview(resolved.preview ?? null);
   };
@@ -677,6 +691,12 @@ export const usePlanOrderDndController = () => {
       });
 
       if (resolved.type === "warning") {
+        if (DEV) {
+          console.debug("[plan-dnd] onDragEnd:warning", {
+            status: resolved.status,
+            message: resolved.message,
+          });
+        }
         showMessage({
           status: resolved.status ?? "warning",
           message: resolved.message,
@@ -686,11 +706,26 @@ export const usePlanOrderDndController = () => {
       }
 
       if (resolved.type === "noop" || !resolved.intent) {
+        if (DEV) {
+          console.debug("[plan-dnd] onDragEnd:noop", {
+            resolvedType: resolved.type,
+            activeType: activeData.type,
+            overType: overData?.type,
+          });
+        }
         resetDragUi();
         return;
       }
 
       intent = resolved.intent;
+    }
+
+    if (DEV) {
+      console.debug("[plan-dnd] onDragEnd:intent", {
+        intentKind: intent?.kind,
+        intent,
+        fromPendingRef: Boolean(pendingIntentRef.current),
+      });
     }
 
     // Confirm the objective change before anything else asks the user a
@@ -700,6 +735,12 @@ export const usePlanOrderDndController = () => {
       selectionState,
     );
     if (!planTypeConfirmedIntent) {
+      if (DEV) {
+        console.debug(
+          "[plan-dnd] onDragEnd:aborted - confirmPlanTypeForIntent declined/cancelled",
+          { intentKind: intent?.kind },
+        );
+      }
       resetDragUi();
       return;
     }
@@ -741,7 +782,19 @@ export const usePlanOrderDndController = () => {
         order: contactWarningOrder,
         linkedDeviceAvailability,
       });
+      if (DEV) {
+        console.debug("[plan-dnd] onDragEnd:contactWarningDecision", {
+          intentKind: intent?.kind,
+          decisionKind: contactWarningDecision.kind,
+        });
+      }
       if (contactWarningDecision.kind === "cancel") {
+        if (DEV) {
+          console.debug(
+            "[plan-dnd] onDragEnd:aborted - contact warning cancelled",
+            { intentKind: intent?.kind },
+          );
+        }
         return;
       }
     }
@@ -912,6 +965,13 @@ export const usePlanOrderDndController = () => {
 
         await runStepSequence({ title: "Assigning order", steps });
 
+        if (DEV) {
+          console.debug("[plan-dnd] onDragEnd:stepSequence:result", {
+            intentKind: intent.kind,
+            moveSucceeded,
+          });
+        }
+
         if (!moveSucceeded) {
           setPlanDropFeedbackWithTimeout(
             {
@@ -945,6 +1005,12 @@ export const usePlanOrderDndController = () => {
           ? "after_move_success"
           : "concurrent",
     });
+    if (DEV) {
+      console.debug("[plan-dnd] onDragEnd:moveWithHandoff:result", {
+        intentKind: intent.kind,
+        result,
+      });
+    }
     if (
       result?.success &&
       intent.kind === "ASSIGN_ORDER_TO_PLAN" &&

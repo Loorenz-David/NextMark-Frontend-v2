@@ -75,6 +75,11 @@ export const resolveCalendarDayDropIntent = ({
   let batchSelection: OrderBatchSelectionPayload | undefined;
   let orderServerIds: number[] = [];
 
+  // Orders already placed on a route (route_stop/route_stop_group) are
+  // assignable to a plan exactly like plain orders — they just never carry a
+  // selection-mode batch, since selection applies to the order list only.
+  let origin: "order_list" | "route_group" = "order_list";
+
   if (activeType === "order" && selectionModeEnabled) {
     if (!isActiveOrderSelected) {
       return {
@@ -90,10 +95,11 @@ export const resolveCalendarDayDropIntent = ({
       selectionModeEnabled,
       isActiveOrderSelected,
     });
-  } else if (activeType === "order") {
+  } else if (activeType === "order" || activeType === "route_stop") {
     if (!activeOrderClientId) return { type: "noop" };
     singleOrderClientId = activeOrderClientId;
     orderServerIds = resolveCreatePlanOrderIds({ activeData });
+    if (activeType === "route_stop") origin = "route_group";
   } else if (activeType === "order_batch") {
     if (!selectionModeEnabled) return { type: "noop" };
     batchSelection = buildSelectionBatchPayload(selectionState);
@@ -103,7 +109,7 @@ export const resolveCalendarDayDropIntent = ({
       selectionModeEnabled: true,
       isActiveOrderSelected: true,
     });
-  } else if (activeType === "order_group") {
+  } else if (activeType === "order_group" || activeType === "route_stop_group") {
     const manualIds = toPositiveIntArray(activeData.orderIds);
     if (!manualIds.length) return { type: "noop" };
     if (manualIds.length > maxBatchIds && !confirmLargeBatch(manualIds.length)) {
@@ -111,6 +117,7 @@ export const resolveCalendarDayDropIntent = ({
     }
     batchSelection = buildManualBatchSelection(manualIds);
     orderServerIds = manualIds;
+    if (activeType === "route_stop_group") origin = "route_group";
   } else {
     return { type: "noop" };
   }
@@ -134,7 +141,7 @@ export const resolveCalendarDayDropIntent = ({
           kind: "ASSIGN_ORDERS_TO_PLAN_BATCH",
           planClientId,
           selection: batchSelection,
-          origin: "order_list",
+          origin,
         },
       };
     }

@@ -1,20 +1,19 @@
-import { useEffect, useState, type MouseEvent } from "react";
+import { useState, type MouseEvent, type RefObject } from "react";
 import { useDroppable } from "@dnd-kit/core";
+import type { Placement } from "@floating-ui/react";
 
 import { PlusIcon } from "@/assets/icons";
 import { FloatingPopover } from "@/shared/popups/FloatingPopover/FloatingPopover";
-import { useResourceManager } from "@/shared/resource-manager/useResourceManager";
+import { buildCalendarDayDroppableId } from "@/features/plan/dnd/domain/droppableIds";
 import type { DeliveryPlan } from "@/features/plan/types/plan";
 
+import { useCalendarDayDragOverlayController } from "../controllers/useCalendarDayDragOverlay.controller";
 import type {
   CalendarDayCellModel,
   CalendarDayKey,
 } from "../domain/planCalendar.domain";
-import { usePlanCalendarStore } from "../store/planCalendar.store";
 import { PlanCalendarPlanChip } from "./PlanCalendarPlanChip";
 import { PlanCalendarDayPlansOverlay } from "./PlanCalendarDayPlansOverlay";
-
-const ORDER_DRAG_TYPES = new Set(["order", "order_batch", "order_group"]);
 
 type PlanCalendarDayCellProps = {
   cell: CalendarDayCellModel;
@@ -22,7 +21,17 @@ type PlanCalendarDayCellProps = {
   volumeCapacityByPlanId: Record<number, number | null>;
   onOpenPlan: (plan: DeliveryPlan) => void;
   onCreateForDate: (dateKey: CalendarDayKey) => void;
+  /** The calendar box the multi-plan overlay must stay within. */
+  overlayBoundaryRef?: RefObject<Element | null>;
 };
+
+// Prefer opening below to the right; when that would leave the calendar,
+// mirror to the left before resorting to opening above.
+const OVERLAY_FALLBACK_PLACEMENTS: Placement[] = [
+  "bottom-end",
+  "top-start",
+  "top-end",
+];
 
 export const PlanCalendarDayCell = ({
   cell,
@@ -30,25 +39,20 @@ export const PlanCalendarDayCell = ({
   volumeCapacityByPlanId,
   onOpenPlan,
   onCreateForDate,
+  overlayBoundaryRef,
 }: PlanCalendarDayCellProps) => {
   const [isTapOverlayOpen, setIsTapOverlayOpen] = useState(false);
-  const dragOverlayDateKey = usePlanCalendarStore(
-    (state) => state.dragOverlayDateKey,
-  );
-  const setDragOverlayDateKey = usePlanCalendarStore(
-    (state) => state.setDragOverlayDateKey,
-  );
-  const { routeOperationsActiveDrag } = useResourceManager();
+  const planClientIds = plans.map((plan) => plan.client_id);
 
   const { setNodeRef, isOver } = useDroppable({
-    id: `calendar-day-${cell.dateKey}`,
+    id: buildCalendarDayDroppableId(cell.dateKey),
     disabled: cell.isPast,
     data: {
       type: "calendar-day",
       id: cell.dateKey,
       dateKey: cell.dateKey,
       isPast: cell.isPast,
-      planClientIds: plans.map((plan) => plan.client_id),
+      planClientIds,
     },
   });
 
@@ -58,35 +62,17 @@ export const PlanCalendarDayCell = ({
   const canCreate = !cell.isPast;
   const isDropTarget = isOver && !cell.isPast;
 
-  // Hovering the day with a dragged order opens (or hands off) the plans
-  // overlay so multi-plan drops can land on the cards inside it. The
-  // registry exposes the active drag as unknown, so narrow before reading.
-  const activeDragType =
-    routeOperationsActiveDrag &&
-    typeof routeOperationsActiveDrag === "object" &&
-    "type" in routeOperationsActiveDrag
-      ? String((routeOperationsActiveDrag as { type?: unknown }).type ?? "")
-      : "";
-  const isOrderDrag = ORDER_DRAG_TYPES.has(activeDragType);
-  useEffect(() => {
-    if (!isOver || !isOrderDrag) return;
-    if (!hasMultiplePlans || cell.isPast) return;
-    // Hand the overlay off between multi-plan days only. Brushing across
-    // other cells on the way into the floating panel must not close it —
-    // the page clears the overlay when the drag ends.
-    setDragOverlayDateKey(cell.dateKey);
-  }, [
-    isOver,
-    isOrderDrag,
-    hasMultiplePlans,
-    cell.isPast,
-    cell.dateKey,
-    setDragOverlayDateKey,
-  ]);
+  const { isDragOverlayOpen, remeasureOverlayDroppables } =
+    useCalendarDayDragOverlayController({
+      dateKey: cell.dateKey,
+      planClientIds,
+      hasMultiplePlans,
+      isPast: cell.isPast,
+      isOverCell: isOver,
+    });
 
   const isPlansOverlayOpen =
-    hasMultiplePlans &&
-    (isTapOverlayOpen || dragOverlayDateKey === cell.dateKey);
+    hasMultiplePlans && (isTapOverlayOpen || isDragOverlayOpen);
 
   const openPlansOverlay = () => setIsTapOverlayOpen(true);
 
@@ -160,7 +146,6 @@ export const PlanCalendarDayCell = ({
                 : null
             }
             onOpen={handleChipOpen}
-            isDropDisabled={hasMultiplePlans}
           />
           {hasMultiplePlans ? (
             <FloatingPopover
@@ -169,10 +154,13 @@ export const PlanCalendarDayCell = ({
               renderInPortal
               strategy="fixed"
               placement="bottom-start"
+              fallbackPlacements={OVERLAY_FALLBACK_PLACEMENTS}
+              boundaryRef={overlayBoundaryRef}
               closeOnInsideClick
               offSetNum={6}
               floatingClassName="z-[230]"
               positionWithoutTransform
+              onPositioned={remeasureOverlayDroppables}
               reference={
                 <button
                   type="button"
@@ -190,6 +178,7 @@ export const PlanCalendarDayCell = ({
               <PlanCalendarDayPlansOverlay
                 dateKey={cell.dateKey}
                 plans={plans}
+                onEntered={remeasureOverlayDroppables}
               />
             </FloatingPopover>
           ) : null}

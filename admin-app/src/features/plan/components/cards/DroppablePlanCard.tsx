@@ -2,6 +2,7 @@ import { useDroppable } from '@dnd-kit/core'
 
 import { useResourceManager } from '@/shared/resource-manager/useResourceManager'
 import { useDroppablePlanTargetHighlight } from '@/features/plan/dnd/controllers/useDroppableTargetHighlight.controller'
+import { buildPlanDroppableId } from '@/features/plan/dnd/domain/droppableIds'
 
 import { PlanCard } from './PlanCard'
 import type { DeliveryPlan } from '../../types/plan'
@@ -11,7 +12,7 @@ type PropsPlanCard = {
 }
 export const DroppablePlanCard = ({ plan }: PropsPlanCard) => {
      const { setNodeRef, isOver } = useDroppable({
-        id: `plan-${plan.client_id}`,
+        id: buildPlanDroppableId(plan.client_id),
         data:{
             label:plan.label,
             type:'plan',

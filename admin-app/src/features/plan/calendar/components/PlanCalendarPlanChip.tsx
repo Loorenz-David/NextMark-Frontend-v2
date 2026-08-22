@@ -1,5 +1,4 @@
 import type { MouseEvent } from "react";
-import { useDroppable } from "@dnd-kit/core";
 import { formatMetric } from "@shared-utils";
 
 import { useResourceManager } from "@/shared/resource-manager/useResourceManager";
@@ -20,15 +19,18 @@ type PlanCalendarPlanChipProps = {
   plan: DeliveryPlan;
   assignedVehicleCapacityCm3: number | null;
   onOpen: (plan: DeliveryPlan) => void;
-  /** On multi-plan days drops go to the overlay cards, not the pill chip. */
-  isDropDisabled?: boolean;
 };
 
+/**
+ * The chip is not a drop target of its own: the day cell is the single
+ * droppable for the whole day and routes a drop to its one plan (or, with
+ * several plans, to the floating overlay's cards). The chip only reports the
+ * outcome — drop feedback and in-flight mutation progress.
+ */
 export const PlanCalendarPlanChip = ({
   plan,
   assignedVehicleCapacityCm3,
   onOpen,
-  isDropDisabled = false,
 }: PlanCalendarPlanChipProps) => {
   const planState = useRoutePlanStateByServerId(plan.state_id ?? 1);
   const { planDropFeedback } = useResourceManager();
@@ -36,15 +38,6 @@ export const PlanCalendarPlanChip = ({
     planDropFeedback && planDropFeedback.planClientId === plan.client_id
       ? planDropFeedback
       : null;
-
-  // Container id differs from DroppablePlanCard's `plan-*` so both can be
-  // mounted at once (chip in the cell, card in the day overlay); intents key
-  // off data.id, which stays the plan client id.
-  const { setNodeRef, isOver } = useDroppable({
-    id: `calendar-chip-${plan.client_id}`,
-    disabled: isDropDisabled,
-    data: { type: "plan", id: plan.client_id, label: plan.label },
-  });
 
   const stateColor = planState?.color || FALLBACK_STATE_COLOR;
   const planType = resolvePlanType(plan);
@@ -71,16 +64,11 @@ export const PlanCalendarPlanChip = ({
 
   return (
     <div
-      ref={setNodeRef}
       onClick={handleClick}
-      className={`flex shrink-0 cursor-pointer flex-col gap-1 rounded-[10px] border px-2 py-1.5 transition-all duration-150 ${
-        isOver ? "scale-[1.02] shadow-[0_0_0_2px_rgba(var(--info-r),0.35)]" : ""
-      }`}
+      className="flex shrink-0 cursor-pointer flex-col gap-1 rounded-[10px] border px-2 py-1.5 transition-all duration-150"
       style={{
         backgroundColor: `color-mix(in srgb, ${stateColor} 11%, transparent)`,
-        borderColor: isOver
-          ? "var(--color-light-blue)"
-          : `color-mix(in srgb, ${stateColor} 32%, transparent)`,
+        borderColor: `color-mix(in srgb, ${stateColor} 32%, transparent)`,
       }}
       title={plan.label}
     >

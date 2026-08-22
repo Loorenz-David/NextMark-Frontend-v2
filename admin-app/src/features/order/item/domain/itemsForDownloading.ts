@@ -3,10 +3,7 @@ import {
   useRoutePlanStore,
 } from "@/features/plan/store/routePlan.slice";
 import type { Item } from "../types";
-import {
-  toDateOnly,
-  validateDateComparison,
-} from "@/shared/data-validation/timeValidation";
+import { toDateOnly } from "@/shared/data-validation/timeValidation";
 import { expandItemsByLabelMultiplier } from "./itemLabelExpansion";
 
 type ExtraProps = {
@@ -111,12 +108,9 @@ export const itemsForDownloading = (
     );
 
     const startDate = plan?.start_date ?? "";
-    const endDate = plan?.end_date ?? "";
-    if (validateDateComparison(startDate, endDate, "are_equal_dates")) {
-      planDeliveryDate = toDateOnly(startDate);
-    } else {
-      planDeliveryDate = toDateOnly(startDate) + "  --  " + toDateOnly(endDate);
-    }
+    // Labels always print the plan's start date, even for date-range plans,
+    // so week/date rendering stays consistent regardless of date_strategy.
+    planDeliveryDate = toDateOnly(startDate);
   }
 
   return expandItemsByLabelMultiplier(

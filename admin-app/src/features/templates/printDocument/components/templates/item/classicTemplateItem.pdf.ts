@@ -72,6 +72,26 @@ const fmtWeek = (dateInput?: string | null): string => {
   return `v ${weekNo}`
 }
 
+const fmtDateLabel = (dateInput?: string | null): string => {
+  if (!dateInput) return 'missing date'
+
+  const currentYear = new Date().getFullYear()
+
+  const dateOnlyMatch = dateInput.trim().match(/^(\d{4})-(\d{2})-(\d{2})(?:T|$)/)
+  if (dateOnlyMatch) {
+    const [, year, month, day] = dateOnlyMatch
+    return Number(year) === currentYear ? `${month}-${day}` : `${year}-${month}-${day}`
+  }
+
+  const date = new Date(dateInput)
+  if (Number.isNaN(date.getTime())) return 'missing date'
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return year === currentYear ? `${month}-${day}` : `${year}-${month}-${day}`
+}
+
 const fmtItemProps = (properties?: ClassicItemData['properties']): string => {
   const entries = normalizeItemProperties(properties) ?? []
   const parts = entries
@@ -129,7 +149,7 @@ export const drawClassicTemplateItem = (
   pdf.rect(0, 0, W, H, 'S')
 
   // ─── Row 1: Date / Week ───────────────────────────────────────────────────
-  const dateLabel = data.delivery_date ?? 'missing date'
+  const dateLabel = fmtDateLabel(data.delivery_date)
   const weekLabel = fmtWeek(data.delivery_date)
   const r1BaseY = ROW1_H / 2 + capH(FS.date) / 2
 

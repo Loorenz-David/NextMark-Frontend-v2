@@ -32,6 +32,8 @@ import { buildCalendarPlanDefaults } from "@/features/plan/calendar/domain/build
 import { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
 import { resolveActiveTemplateByChannelAndEvent } from "@/features/templates/printDocument";
 
+const DEV = import.meta.env.DEV;
+
 export const useExecutePlanDndIntent = () => {
   const { updateOrderDeliveryPlan } = useOrderMutations();
   const { updateOrdersDeliveryPlanBatch } =
@@ -99,6 +101,9 @@ export const useExecutePlanDndIntent = () => {
   };
 
   const execute = async (intent: PlanDndIntent) => {
+    if (DEV) {
+      console.debug("[plan-dnd] execute:start", { intent });
+    }
     if (!intent) {
       return { droppedPlanClientId: null as string | null, success: false };
     }
@@ -121,7 +126,22 @@ export const useExecutePlanDndIntent = () => {
       const deliveryPlan = selectRoutePlanByClientId(intent.planClientId)(
         useRoutePlanStore.getState(),
       );
+      if (DEV) {
+        console.debug("[plan-dnd] ASSIGN_ORDER_TO_PLAN:resolvedPlan", {
+          orderClientId: intent.orderClientId,
+          planClientId: intent.planClientId,
+          deliveryPlanId: deliveryPlan?.id ?? null,
+          deliveryPlanState: deliveryPlan?.state_id ?? null,
+          deliveryPlanStartDate: deliveryPlan?.start_date ?? null,
+          deliveryPlanEndDate: deliveryPlan?.end_date ?? null,
+        });
+      }
       if (!deliveryPlan?.id) {
+        if (DEV) {
+          console.debug(
+            "[plan-dnd] ASSIGN_ORDER_TO_PLAN:aborted - no deliveryPlan.id resolved from store",
+          );
+        }
         return { droppedPlanClientId: null as string | null, success: false };
       }
 
@@ -132,12 +152,31 @@ export const useExecutePlanDndIntent = () => {
         intent.orderClientId,
         deliveryPlan.id,
       );
+      if (DEV) {
+        console.debug("[plan-dnd] ASSIGN_ORDER_TO_PLAN:result", { success });
+      }
       return { droppedPlanClientId: intent.planClientId, success };
     } else if (intent.kind === "ASSIGN_ORDERS_TO_PLAN_BATCH") {
       const deliveryPlan = selectRoutePlanByClientId(intent.planClientId)(
         useRoutePlanStore.getState(),
       );
+      if (DEV) {
+        console.debug("[plan-dnd] ASSIGN_ORDERS_TO_PLAN_BATCH:resolvedPlan", {
+          planClientId: intent.planClientId,
+          deliveryPlanId: deliveryPlan?.id ?? null,
+          deliveryPlanState: deliveryPlan?.state_id ?? null,
+          deliveryPlanStartDate: deliveryPlan?.start_date ?? null,
+          deliveryPlanEndDate: deliveryPlan?.end_date ?? null,
+          origin: intent.origin,
+          selection: intent.selection,
+        });
+      }
       if (!deliveryPlan?.id) {
+        if (DEV) {
+          console.debug(
+            "[plan-dnd] ASSIGN_ORDERS_TO_PLAN_BATCH:aborted - no deliveryPlan.id resolved from store",
+          );
+        }
         return { droppedPlanClientId: null as string | null, success: false };
       }
 
@@ -171,6 +210,11 @@ export const useExecutePlanDndIntent = () => {
         selection: intent.selection,
         showIncomingRouteGroupPlaceholders: intent.origin === "route_group",
       });
+      if (DEV) {
+        console.debug("[plan-dnd] ASSIGN_ORDERS_TO_PLAN_BATCH:result", {
+          success,
+        });
+      }
       return { droppedPlanClientId: intent.planClientId, success };
     } else if (intent.kind === "UNSCHEDULE_ORDER") {
       const success = await updateOrderDeliveryPlan(intent.orderClientId, null);
