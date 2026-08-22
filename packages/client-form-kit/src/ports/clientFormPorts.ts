@@ -52,6 +52,20 @@ export type ClientFormOptions = {
   storageNamespace: string
   savedLocationsIntentKey: string
   /**
+   * Pins the phone field's initial prefix, bypassing the remembered-preference
+   * and timezone-guess defaulting. Set this where the device's customer base is
+   * known in advance — a shared counter tablet at a specific store — rather
+   * than relying on whichever prefix the previous customer last picked.
+   */
+  defaultPhonePrefix?: string
+  /**
+   * Restricts the delivery address autocomplete to the given country or
+   * countries (ISO 3166-1 alpha-2, e.g. `'se'`). Set this where the device's
+   * delivery area is known in advance, the same way `defaultPhonePrefix` is —
+   * otherwise the field suggests addresses worldwide.
+   */
+  addressCountryRestriction?: string | string[]
+  /**
    * Offer previously used delivery addresses.
    *
    * Off for any device used by more than one customer: the suggestions are read

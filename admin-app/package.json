@@ -9,6 +9,7 @@
     "lint": "eslint . && eslint --no-warn-ignored $(find ../packages/shared-domain ../packages/shared-utils/src ../packages/shared-api ../packages/shared-google-maps ../packages/shared-store/src ../packages/shared-optimistic/src ../packages/shared-message-handler/src ../packages/shared-realtime/src ../packages/ai-panel/src \\( -name '*.ts' -o -name '*.tsx' \\) -print)",
     "lint:packages": "eslint --no-warn-ignored $(find ../packages/shared-domain ../packages/shared-utils/src ../packages/shared-api ../packages/shared-google-maps ../packages/shared-store/src ../packages/shared-optimistic/src ../packages/shared-message-handler/src ../packages/shared-realtime/src ../packages/ai-panel/src \\( -name '*.ts' -o -name '*.tsx' \\) -print)",
     "check:popup-contract": "node scripts/check-feature-popup-architecture.mjs",
+    "check:external-form-pwa": "node scripts/check-external-form-pwa.mjs",
     "theme:regression": "node scripts/theme-codemod.mjs --check && node scripts/theme-arbitrary-hex-codemod.mjs --check && node scripts/theme-shadow-codemod.mjs --check && node scripts/theme-functional-color-guard.mjs",
     "preview": "vite preview"
   },

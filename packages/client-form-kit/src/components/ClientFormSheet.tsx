@@ -60,11 +60,13 @@ type Props = {
   children: ReactNode;
 };
 
+// Held to the same column width as the form, so the terms and the rules are
+// read at the width they were filled in at.
 const DESKTOP_PANEL =
-  "sm:h-auto sm:max-h-[80dvh] sm:max-w-lg sm:rounded-[var(--radius-lg)] sm:shadow-[0_10px_30px_rgba(46,42,36,0.18)]";
+  "sm:h-auto sm:max-h-[80dvh] sm:max-w-[var(--cf-column)] sm:rounded-[var(--radius-lg)] sm:shadow-[0_10px_30px_rgba(46,42,36,0.18)]";
 
 const PANEL_BY_VARIANT: Record<ClientFormSheetVariant, string> = {
-  sheet: `max-h-[88dvh] w-full max-w-lg rounded-t-[var(--radius-lg)] border border-[var(--rule-strong)] shadow-[0_-10px_30px_rgba(46,42,36,0.18)] ${DESKTOP_PANEL} sm:border sm:border-[var(--rule-strong)]`,
+  sheet: `max-h-[88dvh] w-full max-w-[var(--cf-column)] rounded-t-[var(--radius-lg)] border border-[var(--rule-strong)] shadow-[0_-10px_30px_rgba(46,42,36,0.18)] ${DESKTOP_PANEL} sm:border sm:border-[var(--rule-strong)]`,
   // Borderless at every breakpoint — the backdrop already separates it from the page.
   fullscreen: `h-full w-full border-0 shadow-none ${DESKTOP_PANEL}`,
 };
@@ -138,7 +140,7 @@ export const ClientFormSheet = ({
             type="button"
             onClick={onBack}
             aria-label={backLabel}
-            className={`-ml-1.5 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-[var(--ink-soft)] transition-colors hover:bg-[var(--paper-sunken)] hover:text-[var(--ink)] ${
+            className={`-ml-1.5 flex h-9 w-9 min-h-[var(--cf-tap)] min-w-[var(--cf-tap)] shrink-0 cursor-pointer items-center justify-center rounded-full text-[var(--ink-soft)] transition-colors hover:bg-[var(--paper-sunken)] hover:text-[var(--ink)] ${
               description ? "mt-0.5" : ""
             }`}
           >
@@ -148,11 +150,13 @@ export const ClientFormSheet = ({
 
         <div className="flex min-w-0 flex-1 items-start justify-between gap-4">
           <div className="min-w-0">
-            <h2 className="text-xl font-normal tracking-[0.01em] text-[var(--ink)]">
+            <h2 className="text-[length:var(--cf-heading)] font-normal tracking-[0.01em] text-[var(--ink)]">
               {title}
             </h2>
             {description ? (
-              <p className="mt-1 text-xs text-[var(--ink-soft)]">{description}</p>
+              <p className="mt-1 text-[length:var(--cf-caption)] text-[var(--ink-soft)]">
+                {description}
+              </p>
             ) : null}
           </div>
 

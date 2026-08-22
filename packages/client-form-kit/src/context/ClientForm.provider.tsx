@@ -65,10 +65,11 @@ export const ClientFormProvider = ({
   onStateChange,
   children,
 }: Props) => {
-  const defaultPrefix = useDefaultPhonePrefix(
+  const guessedDefaultPrefix = useDefaultPhonePrefix(
     meta.team_timezone,
     options.storageNamespace,
   );
+  const defaultPrefix = options.defaultPhonePrefix ?? guessedDefaultPrefix;
 
   const emptyData = useMemo<ClientFormData>(
     () => ({

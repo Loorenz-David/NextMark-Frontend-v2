@@ -8,35 +8,36 @@ const LoadingValue = ({ className }: { className: string }) => {
 export const DeliveryAddressLoadingField = () => {
   return (
     <>
-      <div className="grid grid-cols-2 gap-3">
+      {/* Mirrors the resolved read-back grid, which stacks on a phone. */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+          <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
             City
           </span>
           <div
-            className={`relative rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-2 ${shimmerClassName}`}
+            className={`relative rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] ${shimmerClassName}`}
           >
             <LoadingValue className="h-4 w-24" />
           </div>
         </div>
 
         <div className="flex flex-col gap-1">
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+          <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
             Postal code
           </span>
           <div
-            className={`relative rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-2 ${shimmerClassName}`}
+            className={`relative rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] ${shimmerClassName}`}
           >
             <LoadingValue className="h-4 w-20" />
           </div>
         </div>
 
-        <div className="col-span-2 flex flex-col gap-1">
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+        <div className="flex flex-col gap-1 sm:col-span-2">
+          <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
             Country
           </span>
           <div
-            className={`relative rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-2 ${shimmerClassName}`}
+            className={`relative rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] ${shimmerClassName}`}
           >
             <LoadingValue className="h-4 w-32" />
           </div>

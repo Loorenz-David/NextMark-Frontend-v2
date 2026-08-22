@@ -32,7 +32,7 @@ export const ContactInfoStep = () => {
       <div className="space-y-4">
         {/* Email */}
         <label className="flex w-full flex-col gap-1.5">
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+          <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
             Email <span className="text-[var(--danger)]">*</span>
           </span>
           <div
@@ -51,13 +51,15 @@ export const ContactInfoStep = () => {
             />
           </div>
           {errors.email && (
-            <span className="text-xs text-[var(--danger)]">{errors.email}</span>
+            <span className="text-[length:var(--cf-body)] text-[var(--danger)]">
+              {errors.email}
+            </span>
           )}
         </label>
 
         {/* Primary phone */}
         <label className="flex w-full flex-col gap-1.5">
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+          <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
             Primary Phone <span className="text-[var(--danger)]">*</span>
           </span>
           <div
@@ -75,13 +77,15 @@ export const ContactInfoStep = () => {
             />
           </div>
           {errors.phone && (
-            <span className="text-xs text-[var(--danger)]">{errors.phone}</span>
+            <span className="text-[length:var(--cf-body)] text-[var(--danger)]">
+              {errors.phone}
+            </span>
           )}
         </label>
 
         {/* Secondary phone */}
         <label className="flex w-full flex-col gap-1.5">
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+          <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
             Secondary Phone <span className="text-[var(--ink-faint)]">(optional)</span>
           </span>
           <div className="custom-field-container">

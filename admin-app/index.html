@@ -2,7 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- `viewport-fit=cover` lets a standalone install paint into the iPad's
+         rounded corners and under the home indicator. It changes nothing on its
+         own: only layouts that read `env(safe-area-inset-*)` react to it, and
+         the external form is the only one that does. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>delivery app</title>
     <script>
       (function () {

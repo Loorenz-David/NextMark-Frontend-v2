@@ -40,7 +40,7 @@ export const TermsDocumentView = ({ document }: { document: TermsDocument }) => 
   return (
     // `whitespace-pre-wrap` keeps runs of spaces the author typed; without it the
     // rendered text quietly differs from what was accepted.
-    <div className="space-y-3 whitespace-pre-wrap text-sm leading-6 text-[var(--ink-soft)]">
+    <div className="space-y-3 whitespace-pre-wrap text-[length:var(--cf-body)] leading-relaxed text-[var(--ink-soft)]">
       {nodes.map((node, nodeIndex) => {
         if (node.kind === "list") {
           return (
@@ -58,7 +58,7 @@ export const TermsDocumentView = ({ document }: { document: TermsDocument }) => 
           return (
             <h3
               key={nodeIndex}
-              className="pt-2 text-[0.95rem] font-semibold text-[var(--ink)] first:pt-0"
+              className="pt-2 text-[length:var(--cf-input)] font-semibold text-[var(--ink)] first:pt-0"
             >
               {renderSpans(block)}
             </h3>

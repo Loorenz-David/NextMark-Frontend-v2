@@ -38,12 +38,31 @@ const OPTIONS: ClientFormOptions = {
   enableSavedLocations: false,
   collectOrderNotes: false,
   collectMarketingConsent: true,
+  // This counter tablet only ever serves Swedish customers, so the phone
+  // field opens on +46 rather than the previous customer's remembered prefix,
+  // and the delivery address field is restricted to Sweden.
+  defaultPhonePrefix: '+46',
+  addressCountryRestriction: 'se',
 }
 
 type Screen = 'idle' | 'preparing' | 'collecting' | 'submitted' | 'unavailable'
 
+/**
+ * The safe-area padding is for the installed iPad app, which draws edge to edge:
+ * without it the form's own margins are all that keep it off the rounded corners
+ * and the home indicator, and in landscape that is not enough. The insets are
+ * zero in a browser tab, so this is the same layout it has always been there.
+ */
 const PageLayout = ({ children }: { children: ReactNode }) => (
-  <div className="client-form-theme relative min-h-dvh overflow-hidden bg-[var(--paper)]">
+  <div
+    className="client-form-theme relative min-h-dvh overflow-hidden bg-[var(--paper)]"
+    style={{
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingRight: 'env(safe-area-inset-right)',
+      paddingBottom: 'env(safe-area-inset-bottom)',
+      paddingLeft: 'env(safe-area-inset-left)',
+    }}
+  >
     <main className="relative z-10">{children}</main>
   </div>
 )
@@ -153,10 +172,10 @@ export const ExternalCustomerFormPage = () => {
             >
               <div className="flex flex-col gap-6">
                 <header className="space-y-3 pb-2 text-center">
-                  <p className="text-[0.62rem] font-semibold uppercase tracking-[0.34em] text-[var(--ink-faint)]">
+                  <p className="text-[length:var(--cf-eyebrow)] font-semibold uppercase tracking-[0.34em] text-[var(--ink-faint)]">
                     Delivery Details
                   </p>
-                  <h1 className="text-[2rem] font-normal leading-tight tracking-[0.01em] text-[var(--ink)]">
+                  <h1 className="text-[length:var(--cf-title)] font-normal leading-tight tracking-[0.01em] text-[var(--ink)]">
                     Confirm delivery details
                   </h1>
                   <div aria-hidden="true" className="mx-auto w-24 space-y-[3px] pt-1">
@@ -164,7 +183,7 @@ export const ExternalCustomerFormPage = () => {
                     <div className="h-px bg-[var(--rule)]" />
                   </div>
                   <ClientFormScheduledDate meta={meta} />
-                  <p className="text-sm italic leading-6 text-[var(--ink-soft)]">
+                  <p className="text-[length:var(--cf-body)] italic leading-relaxed text-[var(--ink-soft)]">
                     Complete all three steps to submit your details.
                   </p>
                 </header>
@@ -175,13 +194,13 @@ export const ExternalCustomerFormPage = () => {
           </motion.div>
         ) : screen === 'preparing' ? (
           <Notice motionKey="external-form-preparing">
-            <p className="py-10 text-sm italic text-[var(--ink-soft)]">
+            <p className="py-10 text-[length:var(--cf-body)] italic text-[var(--ink-soft)]">
               Preparing form…
             </p>
           </Notice>
         ) : screen === 'unavailable' ? (
           <Notice motionKey="external-form-unavailable">
-            <p className="py-10 text-sm text-[var(--danger)]">
+            <p className="py-10 text-[length:var(--cf-body)] text-[var(--danger)]">
               Could not load the form. Ask a member of staff to send it again.
             </p>
           </Notice>
@@ -191,15 +210,15 @@ export const ExternalCustomerFormPage = () => {
               <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)]">
                 <CheckMarkIcon className="h-8 w-8" />
               </div>
-              <p className="text-xl text-[var(--ink)]">Form submitted</p>
-              <p className="text-sm text-[var(--ink-soft)]">
+              <p className="text-[length:var(--cf-heading)] text-[var(--ink)]">Form submitted</p>
+              <p className="text-[length:var(--cf-body)] text-[var(--ink-soft)]">
                 Waiting for a new form request…
               </p>
             </div>
           </Notice>
         ) : (
           <Notice motionKey="external-form-idle">
-            <p className="py-10 text-sm italic text-[var(--ink-soft)]">
+            <p className="py-10 text-[length:var(--cf-body)] italic text-[var(--ink-soft)]">
               Waiting for form request…
             </p>
           </Notice>

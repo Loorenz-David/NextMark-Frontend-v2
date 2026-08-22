@@ -31,7 +31,7 @@ export const ConsentSection = () => {
   const hasConsentToGive = Boolean(terms) || options.collectMarketingConsent;
   if (!hasConsentToGive) {
     return submitError ? (
-      <p className="text-sm text-[var(--danger)]">{submitError}</p>
+      <p className="text-[length:var(--cf-body)] text-[var(--danger)]">{submitError}</p>
     ) : null;
   }
 
@@ -71,10 +71,10 @@ export const ConsentSection = () => {
       ) : null}
 
       {showTermsError ? (
-        <p className="text-sm text-[var(--danger)]">{termsError}</p>
+        <p className="text-[length:var(--cf-body)] text-[var(--danger)]">{termsError}</p>
       ) : null}
 
-      {submitError ? <p className="text-sm text-[var(--danger)]">{submitError}</p> : null}
+      {submitError ? <p className="text-[length:var(--cf-body)] text-[var(--danger)]">{submitError}</p> : null}
 
       {terms ? (
         <ClientFormSheet
@@ -94,7 +94,7 @@ export const ConsentSection = () => {
                 handleTermsChange(true);
                 setIsTermsOpen(false);
               }}
-              className="w-full cursor-pointer rounded-[var(--radius)] border border-[var(--accent)] bg-[var(--accent)] px-6 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-[var(--accent-ink)] transition-colors hover:border-[var(--accent-soft)] hover:bg-[var(--accent-soft)]"
+              className="w-full min-h-[var(--cf-tap)] cursor-pointer rounded-[var(--radius)] border border-[var(--accent)] bg-[var(--accent)] px-6 py-3 text-[length:var(--cf-action)] font-semibold uppercase tracking-[0.18em] text-[var(--accent-ink)] transition-colors hover:border-[var(--accent-soft)] hover:bg-[var(--accent-soft)]"
             >
               Done
             </button>

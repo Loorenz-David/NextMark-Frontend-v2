@@ -49,7 +49,12 @@ export const DeliveryAddressStep = () => {
     try {
       const result = await getPlacePredictionsQuery(
         { ensureServices: servicesRef.current.ensureServices },
-        { input: typed },
+        {
+          input: typed,
+          componentRestrictions: options.addressCountryRestriction
+            ? { country: options.addressCountryRestriction }
+            : undefined,
+        },
       );
 
       if (!result.suggestions.length) {
@@ -93,7 +98,7 @@ export const DeliveryAddressStep = () => {
       <div className="space-y-8">
         <div className="space-y-5">
           <label className="flex flex-col gap-1.5">
-            <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+            <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
               Street address
             </span>
             <AddressAutocomplete
@@ -104,6 +109,11 @@ export const DeliveryAddressStep = () => {
               }}
               onCurrentLocationLoadingChange={setIsResolvingCurrentLocation}
               enableCurrentLocation
+              componentRestrictions={
+                options.addressCountryRestriction
+                  ? { country: options.addressCountryRestriction }
+                  : undefined
+              }
               enableSavedLocations={options.enableSavedLocations}
               intentKey={options.savedLocationsIntentKey}
               placeholder="Search address..."
@@ -120,28 +130,31 @@ export const DeliveryAddressStep = () => {
           ) : null}
 
           {selectedAddress && !isResolvingCurrentLocation ? (
-            <div className="grid grid-cols-2 gap-3">
+            // The labels are tracked-out uppercase, so at the touch scale two
+            // of these columns no longer fit a phone — they stack until there
+            // is room for both.
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1">
-                <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+                <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
                   City
                 </span>
-                <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-2 text-sm text-[var(--ink)]">
+                <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] text-[length:var(--cf-input)] text-[var(--ink)]">
                   {selectedAddress.city || "—"}
                 </p>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+                <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
                   Postal code
                 </span>
-                <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-2 text-sm text-[var(--ink)]">
+                <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] text-[length:var(--cf-input)] text-[var(--ink)]">
                   {selectedAddress.postal_code || "—"}
                 </p>
               </div>
-              <div className="col-span-2 flex flex-col gap-1">
-                <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+              <div className="flex flex-col gap-1 sm:col-span-2">
+                <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
                   Country
                 </span>
-                <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-2 text-sm text-[var(--ink)]">
+                <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] text-[length:var(--cf-input)] text-[var(--ink)]">
                   {selectedAddress.country || "—"}
                 </p>
               </div>
@@ -151,7 +164,7 @@ export const DeliveryAddressStep = () => {
 
         {options.collectOrderNotes ? (
           <label className="flex flex-col gap-1.5">
-            <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+            <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
               Delivery notes{" "}
               <span className="normal-case text-[var(--ink-faint)]">(optional)</span>
             </span>
@@ -167,7 +180,7 @@ export const DeliveryAddressStep = () => {
         ) : null}
 
         {geocodeError && (
-          <p className="text-sm text-[var(--danger)]">{geocodeError}</p>
+          <p className="text-[length:var(--cf-body)] text-[var(--danger)]">{geocodeError}</p>
         )}
 
         <ConsentSection />

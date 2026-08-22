@@ -101,6 +101,12 @@ Two things are easy to miss and both fail quietly:
 - **The theme class.** Tokens are scoped to `.client-form-theme` rather than
   `:root`, because the admin app is dark everywhere except this route. Without
   a wrapping element carrying the class the form renders unstyled.
+- **The sizing scale.** Every size in the kit reads a `--cf-*` token rather than
+  a literal, and `client-form.css` redefines the whole set under
+  `@media (pointer: coarse), (max-width: 900px)` — the counter tablet and the
+  phone. A host rendering its own masthead or notice must read the tokens too
+  (`text-[length:var(--cf-title)]`, `var(--cf-body)`, …); a literal there is a
+  block of text that stays desktop-sized while the form around it grows.
 - **The Tailwind source.** Each host must scan this package —
   `@source "../../packages/client-form-kit/src";` under Tailwind v4, or a
   `content` glob under v3 — or every utility class here is purged.

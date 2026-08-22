@@ -22,12 +22,12 @@ export const RuleReaderCard = ({ rule, headingRef }: Props) => {
           ref={headingRef}
           id={titleId}
           tabIndex={-1}
-          className="text-lg font-semibold tracking-[-0.01em] text-[var(--ink)]"
+          className="text-[length:var(--cf-subheading)] font-semibold tracking-[-0.01em] text-[var(--ink)]"
         >
           {rule.title}
         </h3>
         {rule.body ? (
-          <p className="whitespace-pre-wrap text-sm leading-6 text-[var(--ink-soft)]">
+          <p className="whitespace-pre-wrap text-[length:var(--cf-body)] leading-relaxed text-[var(--ink-soft)]">
             {rule.body}
           </p>
         ) : null}

@@ -8,7 +8,7 @@ export const ClientInfoStep = () => {
     <div className="space-y-10 mt-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+          <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
             First name
           </span>
           <div className="custom-field-container">
@@ -21,7 +21,7 @@ export const ClientInfoStep = () => {
           </div>
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+          <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
             Last name
           </span>
           <div className="custom-field-container">

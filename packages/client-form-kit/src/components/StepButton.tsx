@@ -17,7 +17,9 @@ export const StepButton = ({ label, onClick, disabled, variant = 'primary' }: Pr
       onClick={onClick}
       disabled={isDisabled}
       className={[
-        'rounded-[var(--radius)] border px-6 py-2.5 text-[0.7rem] font-semibold uppercase tracking-[0.18em] transition-colors',
+        'rounded-[var(--radius)] border px-6 py-[var(--cf-action-py)] text-[length:var(--cf-action)] font-semibold uppercase tracking-[0.18em] transition-colors',
+        // Zero on a mouse, a full touch target on a finger.
+        'min-h-[var(--cf-tap)]',
         isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
         variant === 'primary'
           ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-ink)] hover:bg-[var(--accent-soft)] hover:border-[var(--accent-soft)]'

@@ -18,10 +18,10 @@ export const ClientFormContent = () => {
       <main className="relative z-10">
         <ClientFormFrame config={config}>
           <header className="space-y-3 pb-2 text-center">
-            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.34em] text-[var(--ink-faint)]">
+            <p className="text-[length:var(--cf-eyebrow)] font-semibold uppercase tracking-[0.34em] text-[var(--ink-faint)]">
               Delivery Details
             </p>
-            <h1 className="text-[2rem] font-normal leading-tight tracking-[0.01em] text-[var(--ink)]">
+            <h1 className="text-[length:var(--cf-title)] font-normal leading-tight tracking-[0.01em] text-[var(--ink)]">
               {getClientFormOrderTitle(meta) ?? "Delivery details"}
             </h1>
             {/* Double rule — the printed-form convention for a masthead. */}
@@ -30,7 +30,7 @@ export const ClientFormContent = () => {
               <div className="h-px bg-[var(--rule)]" />
             </div>
             <ClientFormScheduledDate meta={meta} />
-            <p className="text-sm italic leading-6 text-[var(--ink-soft)]">
+            <p className="text-[length:var(--cf-body)] italic leading-relaxed text-[var(--ink-soft)]">
               Complete all three steps to confirm your delivery details.
             </p>
           </header>

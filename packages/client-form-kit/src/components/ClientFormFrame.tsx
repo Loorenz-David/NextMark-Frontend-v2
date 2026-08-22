@@ -39,7 +39,7 @@ export const ClientFormFrame = ({ config, children }: Props) => {
       <div className="flex items-start justify-center gap-6 lg:gap-14 xl:gap-20">
         <ClientFormMediaRail items={leftRail} />
 
-        <div className="flex w-full max-w-lg flex-col gap-6 py-10">
+        <div className="flex w-full max-w-[var(--cf-column)] flex-col gap-6 py-10">
           {children}
         </div>
 
@@ -49,7 +49,7 @@ export const ClientFormFrame = ({ config, children }: Props) => {
       {carousel.length ? (
         // Held to the column's width so it stays visually anchored to the form
         // even when it has been pushed to the foot of a much wider page.
-        <div className="mx-auto w-full max-w-lg pb-14">
+        <div className="mx-auto w-full max-w-[var(--cf-column)] pb-14">
           <ClientFormMediaCarousel items={carousel} />
         </div>
       ) : null}

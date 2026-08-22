@@ -12,7 +12,9 @@ export const StepIndicator = () => {
   const currentIdx = STEPS.findIndex((s) => s.id === currentStep)
 
   return (
-    <div className="flex items-center justify-center gap-2">
+    // Wrapping rather than overflowing: the labels are text, and a long one in
+    // a future translation must not push the row off the column.
+    <div className="flex flex-wrap items-center justify-center gap-2">
       {STEPS.map((step, idx) => {
         const isDone = idx < currentIdx
         const isActive = step.id === currentStep
@@ -25,7 +27,7 @@ export const StepIndicator = () => {
               disabled={!isClickable}
               onClick={() => isClickable && goToStep(step.id)}
               className={[
-                'flex h-7 w-7 items-center justify-center rounded-full border text-[0.7rem] font-semibold transition-colors',
+                'flex h-[var(--cf-step-dot)] w-[var(--cf-step-dot)] shrink-0 items-center justify-center rounded-full border text-[length:var(--cf-action)] font-semibold transition-colors',
                 isActive
                   ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-ink)]'
                   : isDone
@@ -37,7 +39,7 @@ export const StepIndicator = () => {
             </button>
             <span
               className={[
-                'hidden text-[0.68rem] font-semibold uppercase tracking-[0.16em] sm:block transition-colors',
+                'hidden text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.16em] sm:block transition-colors',
                 isActive
                   ? 'text-[var(--ink)]'
                   : isDone

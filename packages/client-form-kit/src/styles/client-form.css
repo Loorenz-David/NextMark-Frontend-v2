@@ -36,6 +36,38 @@
   --radius:       6px;   /* buttons, fields, containers */
   --radius-lg:    10px;  /* sheet panels */
 
+  /* ── Sizing scale ──────────────────────────────────────────────────────────
+     Every type size and control dimension in the kit reads one of these rather
+     than a literal, so the whole form scales from one place.
+
+     The values here are the desktop form exactly as it was. The coarse-pointer
+     block below is the other reading distance this form is used at: a counter
+     tablet held at arm's length and a phone in one hand, where the 0.62rem
+     ruled labels and 28px controls are too small to read or hit reliably. */
+  --cf-eyebrow:      0.62rem;  /* uppercase micro-labels, masthead kicker */
+  --cf-label:        0.62rem;  /* field labels */
+  --cf-caption:      0.75rem;  /* sheet subtitle, step counter */
+  --cf-action:       0.7rem;   /* button caps */
+  --cf-body:         0.875rem; /* body copy, terms, errors */
+  --cf-dropdown:     0.75rem;  /* rows in the shared inputs package's popovers */
+  /* One notch above body: what the customer typed, what is read back to them,
+     and the headings inside the terms document. */
+  --cf-input:        0.95rem;
+  --cf-subheading:   1.125rem; /* rule title */
+  --cf-heading:      1.25rem;  /* sheet title */
+  --cf-title:        2rem;     /* form masthead */
+
+  --cf-field-py:     0.5rem;   /* ruled-line field height */
+  --cf-action-py:    0.625rem;
+  --cf-tap:          0rem;     /* min height for an action; touch only */
+  --cf-step-dot:     1.75rem;
+  --cf-checkbox:     1.5rem;
+  --cf-checkmark:    0.875rem;
+
+  /* The form column. A cap, not a width — a phone narrower than this still
+     fills the screen. */
+  --cf-column:       32rem;
+
   /* Read by the shared inputs package, which knows these names and not ours. */
   --color-text:          var(--ink);
   --color-muted:         var(--ink-soft);
@@ -47,6 +79,48 @@
   --color-primary:       var(--accent);
   --color-primary-text:  var(--accent-ink);
   --color-page:          var(--paper);
+}
+
+/* ── Touch scale ────────────────────────────────────────────────────────────
+   Both hosts put this form in front of a customer on a device they are holding:
+   the counter tablet in the store and the phone the link was texted to. The
+   width test is there because the pointer test alone is not enough — a narrow
+   window is read at the same distance whatever is driving it — and the pointer
+   test is there because an iPad in landscape is 1024pt wide and would otherwise
+   miss the width test entirely.
+
+   Only the tokens move, so a desktop browser at a desktop width renders the
+   form it has always rendered.
+
+   `--cf-input` clearing 16px is not a rounding accident: below that, Safari on
+   iOS zooms the page in when a field takes focus, and the customer is left
+   panning a form they have not finished filling. */
+@media (pointer: coarse), (max-width: 900px) {
+  .client-form-theme,
+  .client-form-portal {
+    --cf-eyebrow:      0.78rem;
+    --cf-label:        0.78rem;
+    --cf-caption:      0.9rem;
+    --cf-action:       0.85rem;
+    --cf-body:         1.0625rem;
+    --cf-dropdown:     1.0625rem;
+    --cf-input:        1.125rem;
+    --cf-subheading:   1.375rem;
+    --cf-heading:      1.5rem;
+    --cf-title:        2.375rem;
+
+    --cf-field-py:     0.85rem;
+    --cf-action-py:    0.9rem;
+    /* 48px — comfortably past the 44px Apple and WCAG both ask for. */
+    --cf-tap:          3rem;
+    --cf-step-dot:     2.375rem;
+    --cf-checkbox:     2rem;
+    --cf-checkmark:    1.125rem;
+
+    /* Room for the larger type. On a tablet this is the difference between the
+       step indicator's three labelled dots fitting on one line and wrapping. */
+    --cf-column:       36rem;
+  }
 }
 
 .client-form-theme {
@@ -83,7 +157,7 @@
   border: none;
   background: transparent;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: var(--cf-input);
   box-shadow: none;
   color: var(--ink);
 }
@@ -115,7 +189,7 @@
      off the page with a drop shadow, and an undeclared shadow here is that
      shadow. */
   box-shadow: none;
-  padding: 0.5rem 0.125rem;
+  padding: var(--cf-field-py) 0.125rem;
   transition: border-color 0.15s;
   color: var(--ink);
 }
@@ -175,6 +249,27 @@
   border-radius: var(--radius) !important;
   box-shadow: 0 6px 18px rgba(46, 42, 36, 0.14) !important;
   color: var(--ink);
+}
+
+/* The rows inside are the shared inputs package's own, sized for the dense admin
+   tables it was built for — 0.75rem text in a list a customer picks a delivery
+   address from with a fingertip. The kit cannot restyle that package without
+   changing every other screen that uses it, so it is scoped and overridden here:
+   the descendant selector outranks the utility class the rows carry.
+
+   The `*` is deliberate. The rows have no size hierarchy of their own — the
+   address line and its locality are both 0.75rem today — so there is none to
+   flatten, and a row added later is covered without this rule being revisited. */
+.client-form-theme .address-ac-dropdown,
+.client-form-portal .address-ac-dropdown,
+.address-ac-dropdown.client-form-portal {
+  font-size: var(--cf-dropdown);
+}
+
+.client-form-theme .address-ac-dropdown *,
+.client-form-portal .address-ac-dropdown *,
+.address-ac-dropdown.client-form-portal * {
+  font-size: inherit;
 }
 
 /* ── Carousel track ─────────────────────────────────────────────────────────

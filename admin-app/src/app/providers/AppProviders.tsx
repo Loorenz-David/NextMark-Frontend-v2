@@ -5,6 +5,7 @@ import { apiClient } from "@/lib/api/ApiClient";
 import { MessageHandlerProvider, useMessageHandler } from "@shared-message-handler";
 import { MobileProvider } from "@/app/providers/MobileProvider";
 import { ThemeProvider } from "@/app/theme";
+import { ExternalFormPwaProvider } from "@/app/pwa";
 import { useBootstrap } from "@/features/bootstrap/bootstrap.hook";
 import { useAuthSessionStore } from "@/features/auth/login/store/authSessionStore";
 import { consumeAuthNotice } from "@/features/auth/login/store/authNotice";
@@ -115,6 +116,7 @@ export function AppProviders({ children }: PropsWithChildren) {
                   >
                     <StepSequenceProvider>
                       <ApiAuthBridge />
+                      <ExternalFormPwaProvider />
                       {children}
                       <DeferredAppEnhancers />
                     </StepSequenceProvider>

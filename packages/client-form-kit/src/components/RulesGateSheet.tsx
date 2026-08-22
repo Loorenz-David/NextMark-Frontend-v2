@@ -100,7 +100,7 @@ export const RulesGateSheet = () => {
       headerAside={
         <p
           aria-live="polite"
-          className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-soft)]"
+          className="text-[length:var(--cf-caption)] font-semibold uppercase tracking-[0.18em] text-[var(--ink-soft)]"
         >
           {currentPosition} of {ruleCount}
         </p>

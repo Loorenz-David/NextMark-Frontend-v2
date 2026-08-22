@@ -30,7 +30,7 @@ export const ConsentCheckbox = ({
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={[
-        "mt-0.5 flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] border transition-colors",
+        "mt-0.5 flex h-[var(--cf-checkbox)] w-[var(--cf-checkbox)] shrink-0 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] border transition-colors",
         checked
           ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-ink)]"
           : invalid
@@ -38,9 +38,13 @@ export const ConsentCheckbox = ({
             : "border-[var(--rule-strong)] bg-[var(--paper-sunken)] hover:border-[var(--ink-faint)]",
       ].join(" ")}
     >
-      {checked ? <CheckMarkIcon className="h-3.5 w-3.5" /> : null}
+      {checked ? (
+        <CheckMarkIcon className="h-[var(--cf-checkmark)] w-[var(--cf-checkmark)]" />
+      ) : null}
     </button>
 
-    <div className="pt-0.5 text-sm leading-6 text-[var(--ink-soft)]">{label}</div>
+    <div className="pt-0.5 text-[length:var(--cf-body)] leading-relaxed text-[var(--ink-soft)]">
+      {label}
+    </div>
   </div>
 );

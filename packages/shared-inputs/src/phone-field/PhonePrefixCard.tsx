@@ -18,8 +18,8 @@ export const PhonePrefixCard = ({
         type="button"
         className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition ${
           isSelected
-            ? 'bg-[#83ccb9]/12 text-white'
-            : 'text-white/88 hover:bg-white/10'
+            ? 'bg-[#83ccb9]/12 text-[var(--ink)]'
+            : 'text-[var(--ink-soft)] hover:bg-white/10'
         }`}
         onMouseDown={(event) => event.preventDefault()}
         onClick={() => onSelectPrefix(prefixOption)}
