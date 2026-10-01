@@ -33,6 +33,7 @@ const MID: [number, number, number] = [55, 55, 55];
 
 const FS = {
   identity: 20.45,
+  reference: 10,
   objective: 16,
   article: 21,
   weekDate: 21 * 1.3,
@@ -374,6 +375,7 @@ export const sevenByTenTemplateItemSampleData = {
     help_to_carry: true,
     order_plan_objective: "international_shipping",
     article_number: "A-1048",
+    reference_number: "REF-1048-CHAIR",
     properties: [
       { name: "set", value: "of 4" },
       { name: "color", value: "Oak" },
@@ -453,13 +455,20 @@ export const drawSevenByTenTemplateItem = (
   pdf.setLineWidth(lineW);
   pdf.rect(0, 0, widthCm, heightCm, "S");
 
-  // ─── Top row: identity / plan objective ────────────────────────────────────
+  // ─── Top row: identity / item reference / plan objective ───────────────────
   const idText = safe(data.order_scalar_id);
+  const referenceText = data.reference_number?.trim().slice(0, 7);
   const objectiveText = fmtPlanObjective(data.order_plan_objective);
   const topBaseY = topY + topRowH / 2 + capH(sf(FS.identity)) / 2;
 
   setFont(pdf, sf(FS.identity), true, DARK);
   pdf.text(idText, leftX, topBaseY);
+
+  if (referenceText) {
+    setFont(pdf, sf(FS.reference), false, MID);
+    const referenceBaseY = topY + topRowH / 2 + capH(sf(FS.reference)) / 2;
+    pdf.text(referenceText, midX, referenceBaseY, { align: "center" });
+  }
 
   if (objectiveText) {
     setFont(pdf, sf(FS.objective), true, DARK);
