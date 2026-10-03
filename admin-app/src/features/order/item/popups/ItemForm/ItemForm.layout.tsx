@@ -169,6 +169,13 @@ export const ItemFormLayout = () => {
           />
         </Field>
 
+        <Field label="Reference number:">
+          <InputField
+            value={formState.reference_number ?? ""}
+            onChange={setters.handleReferenceNumber}
+          />
+        </Field>
+
         <Field label="Image URLs:">
           <InputField
             value={formatItemImagesInput(formState.item_images)}

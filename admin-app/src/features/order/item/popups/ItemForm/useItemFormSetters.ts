@@ -32,6 +32,11 @@ export const useItemFormSetters = ({
     setFormState((prev) => ({ ...prev, item_position: value }));
   };
 
+  const handleReferenceNumber = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setFormState((prev) => ({ ...prev, reference_number: value || null }));
+  };
+
   const handleItemImages = (event: ChangeEvent<HTMLInputElement>) => {
     setFormState((prev) => ({
       ...prev,
@@ -106,6 +111,7 @@ export const useItemFormSetters = ({
     handleItemTypeValue,
     handleItemTypeSelection,
     handleItemPositionInput,
+    handleReferenceNumber,
     handleItemImages,
     handlePageLink,
     commitItemPositionValue,

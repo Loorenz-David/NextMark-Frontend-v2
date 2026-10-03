@@ -31,11 +31,13 @@ const capH = (pt: number) => pt * 0.026;
 const DARK: [number, number, number] = [17, 17, 17];
 const MID: [number, number, number] = [55, 55, 55];
 
+const ARTICLE_FONT_SIZE = 21;
+
 const FS = {
   identity: 20.45,
-  reference: 10,
   objective: 16,
-  article: 21,
+  article: ARTICLE_FONT_SIZE,
+  reference: ARTICLE_FONT_SIZE * 0.8,
   weekDate: 21 * 1.3,
   weekDateWithoutNotes: 21 * 1.6,
   // Item qualities — enlarged (with wider row spacing) to fill the body.
@@ -459,20 +461,24 @@ export const drawSevenByTenTemplateItem = (
   const idText = safe(data.order_scalar_id);
   const referenceText = data.reference_number?.trim().slice(0, 7);
   const objectiveText = fmtPlanObjective(data.order_plan_objective);
-  const topBaseY = topY + topRowH / 2 + capH(sf(FS.identity)) / 2;
+  const topRowBaseline = (fontSize: number) =>
+    topY + topRowH / 2 + capH(sf(fontSize)) / 2;
 
   setFont(pdf, sf(FS.identity), true, DARK);
-  pdf.text(idText, leftX, topBaseY);
+  pdf.text(idText, leftX, topRowBaseline(FS.identity));
 
   if (referenceText) {
     setFont(pdf, sf(FS.reference), false, MID);
-    const referenceBaseY = topY + topRowH / 2 + capH(sf(FS.reference)) / 2;
-    pdf.text(referenceText, midX, referenceBaseY, { align: "center" });
+    pdf.text(referenceText, midX, topRowBaseline(FS.reference), {
+      align: "center",
+    });
   }
 
   if (objectiveText) {
     setFont(pdf, sf(FS.objective), true, DARK);
-    pdf.text(objectiveText, right - pad, topBaseY, { align: "right" });
+    pdf.text(objectiveText, right - pad, topRowBaseline(FS.objective), {
+      align: "right",
+    });
   }
 
   // ─── Article row ───────────────────────────────────────────────────────────
