@@ -6,6 +6,8 @@ import { OrderLoadingList } from "@/shared/loadingCards/order";
 type RouteGroupsPageContentProps = {
   showOptimizeRow: boolean;
   hasActiveRouteGroup: boolean;
+  /** Phone layout: the parent scrolls, so this content flows instead of filling the height. */
+  scrollsWithParent?: boolean;
 };
 
 const ACTION_BAR_HEIGHT_WITH_OPTIMIZE = 138;
@@ -14,6 +16,7 @@ const ACTION_BAR_HEIGHT_WITHOUT_OPTIMIZE = 82;
 export const RouteGroupsPageContent = ({
   showOptimizeRow,
   hasActiveRouteGroup,
+  scrollsWithParent = false,
 }: RouteGroupsPageContentProps) => {
   const { orderCount, routeGroup, routeSolutionStops, selectedRouteSolution } =
     useRouteGroupPageContext();
@@ -47,7 +50,11 @@ export const RouteGroupsPageContent = ({
   });
 
   return (
-    <div className="admin-route-groups-page-content relative flex h-full w-full min-w-0 flex-col overflow-hidden bg-[var(--color-primary)]/5">
+    <div
+      className={`admin-route-groups-page-content relative flex w-full min-w-0 flex-col bg-[var(--color-primary)]/5 ${
+        scrollsWithParent ? "" : "h-full overflow-hidden"
+      }`}
+    >
       {hasActiveRouteGroup ? (
         <RouteGroupsActionBar
           useFloatingActionBar={isDesktopActionBarBehaviorEnabled}
@@ -68,7 +75,11 @@ export const RouteGroupsPageContent = ({
           </div>
         </div>
       ) : !isLoading || isLoading === "isOptimizing" ? (
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div
+          className={`relative flex flex-col ${
+            scrollsWithParent ? "" : "min-h-0 flex-1 overflow-hidden"
+          }`}
+        >
           {isLoading === "isOptimizing" ? (
             <div className="pt-35">
               <OrderLoadingList
@@ -94,6 +105,7 @@ export const RouteGroupsPageContent = ({
               topReservedOffset={
                 isDesktopActionBarBehaviorEnabled ? actionBarReservedHeight : 0
               }
+              scrollsWithParent={scrollsWithParent}
             />
           )}
         </div>

@@ -26,12 +26,19 @@ type RouteGroupOrderListProps = {
   onScrollContainer?: (event: UIEvent<HTMLDivElement>) => void;
   topReservedOffset?: number;
   bottomReservedOffset?: number;
+  /**
+   * Render as flowing content instead of owning a scroll container. The
+   * phone layout puts the rail, action bar and this list in one scroll
+   * column so the chrome scrolls away with the stops.
+   */
+  scrollsWithParent?: boolean;
 };
 
 export const RouteGroupOrderList = ({
   onScrollContainer,
   topReservedOffset = 0,
   bottomReservedOffset = 0,
+  scrollsWithParent = false,
 }: RouteGroupOrderListProps) => {
   const { routeReorderPreview } = useResourceManager<{
     routeReorderPreview?: RouteReorderPreview | null;
@@ -101,10 +108,20 @@ export const RouteGroupOrderList = ({
   const endLocationLabel = `${strategyLabel} · ${boundaryLocations.end.label}`;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-x-hidden">
+    <div
+      className={
+        scrollsWithParent
+          ? "flex flex-col overflow-x-hidden"
+          : "flex min-h-0 flex-1 flex-col overflow-x-hidden"
+      }
+    >
       <div
-        className="flex-1 min-h-0 overflow-y-auto scroll-thin px-4"
-        onScroll={onScrollContainer}
+        className={
+          scrollsWithParent
+            ? "px-4"
+            : "flex-1 min-h-0 overflow-y-auto scroll-thin px-4"
+        }
+        onScroll={scrollsWithParent ? undefined : onScrollContainer}
       >
         <div
           className="flex min-h-full flex-col gap-4"

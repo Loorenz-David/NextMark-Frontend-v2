@@ -1,3 +1,4 @@
+import { useMobile } from "@/app/viewport";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import {
   RouteGroupRail,
@@ -38,6 +39,35 @@ export const RouteGroupsPageLayout = ({
   showOptimizeRow,
   hasActiveRouteGroup,
 }: RouteGroupsPageLayoutProps) => {
+  const { isMobile } = useMobile();
+
+  if (isMobile) {
+    // One scroll column: the zone rail and the action bar scroll away with
+    // the stops instead of pinning above a short list.
+    return (
+      <div className="flex h-full w-full min-w-0 flex-col overflow-hidden bg-[var(--color-primary)]/5">
+        <RouteGroupsPageHeader
+          summary={headerSummary}
+          onRequestClose={onRequestClose}
+        />
+        <div className="scroll-thin flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden">
+          <div className="shrink-0 border-b border-border-subtle">
+            <RouteGroupRail
+              items={routeGroups}
+              onClick={onRouteGroupClick}
+              onCreate={onCreateRouteGroup}
+            />
+          </div>
+          <RouteGroupsPageContent
+            showOptimizeRow={showOptimizeRow}
+            hasActiveRouteGroup={hasActiveRouteGroup}
+            scrollsWithParent
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full w-full min-w-0 flex-col overflow-hidden bg-[var(--color-primary)]/5 md:flex-row">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
