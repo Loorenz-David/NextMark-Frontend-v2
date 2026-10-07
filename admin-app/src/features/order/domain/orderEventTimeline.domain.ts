@@ -10,6 +10,11 @@ import type {
   OrderEventActionStatus,
 } from "../types/orderEvent";
 import {
+  mapOrderEventChangeToViewModel,
+  summarizeOrderEventChanges,
+  type OrderEventChangeViewModel,
+} from "./orderEventChange.domain";
+import {
   mapOrderEventActorToViewModel,
   type OrderEventActorViewModel,
 } from "./orderEventActor.domain";
@@ -40,6 +45,8 @@ export type OrderEventTimelineItemViewModel = {
   time: string;
   tone: OrderEventTone;
   actor: OrderEventActorViewModel;
+  changes: OrderEventChangeViewModel[];
+  changeCountLabel: string | null;
   actions: OrderEventActionViewModel[];
   actionSummary: OrderEventActionSummaryViewModel | null;
   hasPendingAction: boolean;
@@ -50,6 +57,8 @@ export type OrderEventTimelineGroupViewModel = {
   label: string;
   items: OrderEventTimelineItemViewModel[];
 };
+
+const CLIENT_FORM_SUBMITTED_EVENT = "client_form_submitted";
 
 const NON_TEMPLATE_EVENT_LABELS: Record<string, string> = {
   order_edited: "Order edited",
@@ -239,19 +248,41 @@ const mapEventToTimelineItem = (
   const actions = sortActionsNewestFirst(event.actions ?? []).map(
     mapActionToViewModel,
   );
+  const allChanges = (event.changes ?? []).map(mapOrderEventChangeToViewModel);
+  // A customer's submission lists what they corrected; fields they filled for
+  // the first time stay in the audit log but are not the story of the event.
+  const changes =
+    event.event_name === CLIENT_FORM_SUBMITTED_EVENT
+      ? allChanges.filter((change) => change.replacesValue)
+      : allChanges;
 
   return {
     clientId: event.client_id,
     label: resolveEventLabel(event.event_name),
-    detail: resolveEventDetail(event),
+    detail: summarizeOrderEventChanges(changes) ?? resolveEventDetail(event),
     time: formatIsoTime(event.occurred_at) ?? "--:--",
     tone: EVENT_TONE_BY_KEY[event.event_name] ?? "neutral",
-    actor: mapOrderEventActorToViewModel(event.actor),
+    actor: mapOrderEventActorToViewModel(event),
+    changes,
+    changeCountLabel:
+      changes.length > 0
+        ? `${changes.length} ${changes.length === 1 ? "change" : "changes"}`
+        : null,
     actions,
     actionSummary: resolveActionSummary(actions),
     hasPendingAction: actions.some((action) => action.status === "PENDING"),
   };
 };
+
+/**
+ * A client-form submission also emits an `order_edited` event so open admin
+ * and driver views refresh; its changes live on the submission. On its own it
+ * would only repeat the submission as an empty "Order edited" row.
+ */
+const isClientSubmissionCompanionEdit = (event: OrderEvent) =>
+  event.event_name === "order_edited" &&
+  event.origin === "client" &&
+  (event.changes ?? []).length === 0;
 
 export const mapOrderEventsToTimelineViewModel = (
   events: OrderEvent[],
@@ -260,6 +291,8 @@ export const mapOrderEventsToTimelineViewModel = (
   const groupByKey = new Map<string, OrderEventTimelineGroupViewModel>();
 
   events.forEach((event) => {
+    if (isClientSubmissionCompanionEdit(event)) return;
+
     const dayKey = formatDateOnlyInTimeZone(event.occurred_at) ?? "unknown";
     let group = groupByKey.get(dayKey);
     if (!group) {

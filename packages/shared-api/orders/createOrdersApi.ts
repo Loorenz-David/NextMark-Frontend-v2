@@ -71,6 +71,25 @@ export type OrderEventActor = {
   base_role: string | null;
 };
 
+export type OrderEventChange = {
+  id: number;
+  field_name: string;
+  entity_type: string | null;
+  entity_id: string | null;
+  entity_label: string | null;
+  from_value: unknown;
+  to_value: unknown;
+  from_label: string | null;
+  to_label: string | null;
+};
+
+export type OrderEventOrigin = "user" | "client" | "system";
+
+export type OrderEventRelayUser = {
+  id: number;
+  username: string;
+};
+
 export type OrderEventItem = {
   id: number;
   event_id: string;
@@ -78,6 +97,8 @@ export type OrderEventItem = {
   team_id: number;
   actor_id: number | null;
   actor: OrderEventActor | null;
+  origin: OrderEventOrigin;
+  relayed_by: OrderEventRelayUser | null;
   event_name: string;
   payload: Record<string, unknown> | null;
   occurred_at: string;
@@ -92,6 +113,7 @@ export type OrderEventItem = {
   last_error: string | null;
   relayed_at: string | null;
   actions: OrderEventAction[];
+  changes: OrderEventChange[];
 };
 
 export type OrderEventsResponse = {

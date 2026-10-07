@@ -95,6 +95,12 @@ export type OrderMap = {
   allIds: string[];
 };
 
+/**
+ * The customer filled the client form on a staff member's linked device; the
+ * staff app relays it, and the backend records it as the customer's submission.
+ */
+export type OrderClientFormSubmissionSource = "linked_device";
+
 export type OrderUpdateFields = Partial<Order>;
 export type OrderCreatePayload = Order | Order[];
 

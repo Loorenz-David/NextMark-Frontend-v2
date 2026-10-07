@@ -1,5 +1,6 @@
 import type { RefObject } from "react";
 
+import type { OrderClientFormSubmissionSource } from "@shared-domain";
 import { getObjectDiff } from "@shared-utils";
 
 import type { useOrderItemDraftController } from "../../../item";
@@ -408,6 +409,13 @@ export const executeOrderFormSubmit = async (
 
   const costumerPayload =
     nextCostumerId !== null ? { costumer_id: nextCostumerId } : null;
+  // Request-only flag, kept out of the normalized state so it never shows up
+  // as a field change in the edit diff.
+  const submissionSourcePayload: {
+    submission_source?: OrderClientFormSubmissionSource;
+  } = formState.client_form_submission_source
+    ? { submission_source: formState.client_form_submission_source }
+    : {};
 
   try {
     if (mode === "create") {
@@ -426,6 +434,7 @@ export const executeOrderFormSubmit = async (
         ...orderChanges,
         items: createItemsPayload,
         ...(costumerPayload ? { costumer: costumerPayload } : {}),
+        ...submissionSourcePayload,
       } as OrderUpdateFields;
 
       if (validatePayloadFields && !validateOrderFields(createPayload)) {
@@ -506,6 +515,7 @@ export const executeOrderFormSubmit = async (
       ...(hasCostumerAssociationChange ? { costumer: costumerPayload } : {}),
       // The backend only reads this flag from inside a target's `fields`.
       ...(shouldUpdateCostumer ? { update_costumer: true } : {}),
+      ...(Object.keys(orderChanges).length > 0 ? submissionSourcePayload : {}),
     } as OrderUpdateFields;
 
     if (Object.keys(editPayload).length > 0) {

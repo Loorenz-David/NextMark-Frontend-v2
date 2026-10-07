@@ -29,6 +29,10 @@ export const OrderDetailEventHistory = ({
     () => mapOrderEventsToTimelineViewModel(orderEvents),
     [orderEvents],
   );
+  const visibleEventCount = timelineGroups.reduce(
+    (count, group) => count + group.items.length,
+    0,
+  );
 
   const toggleExpanded = (clientId: string) => {
     setExpandedByClientId((prev) => ({
@@ -83,7 +87,7 @@ export const OrderDetailEventHistory = ({
 
           {typeof orderId === "number" && loaded ? (
             <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              {orderEvents.length} events
+              {visibleEventCount} events
             </span>
           ) : null}
         </div>

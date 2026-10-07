@@ -1,5 +1,7 @@
 import type { RefObject } from "react";
 
+import type { OrderClientFormSubmissionSource } from "@shared-domain";
+
 import type { address } from "@/types/address";
 import type { Phone } from "@/types/phone";
 
@@ -40,6 +42,12 @@ export type OrderFormState = {
    * form themselves are not accepting anything on the customer's behalf.
    */
   accepted_terms_version_id: number | null;
+  /**
+   * Set when customer data from the linked device was merged into this form,
+   * so saving it records the customer's own client-form submission. `null`
+   * while the form holds only what staff typed.
+   */
+  client_form_submission_source: OrderClientFormSubmissionSource | null;
   /** The customer's marketing opt-in, as given on the form they filled in. */
   marketing_messages: boolean;
   delivery_windows: OrderDeliveryWindow[];

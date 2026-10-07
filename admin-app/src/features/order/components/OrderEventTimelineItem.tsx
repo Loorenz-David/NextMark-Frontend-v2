@@ -1,6 +1,13 @@
 import { ChevronDownIcon } from "@/assets/icons";
 
-import type { OrderEventActorViewModel } from "../domain/orderEventActor.domain";
+import type {
+  OrderEventActorKind,
+  OrderEventActorViewModel,
+} from "../domain/orderEventActor.domain";
+import type {
+  OrderEventChangeKind,
+  OrderEventChangeViewModel,
+} from "../domain/orderEventChange.domain";
 import {
   formatOrderEventActionStatus,
   type OrderEventActionViewModel,
@@ -46,13 +53,76 @@ const STATUS_DOT_CLASS: Record<OrderEventActionStatus, string> = {
   SKIPPED: "bg-border-accent",
 };
 
+const CHANGE_DOT_CLASS: Record<OrderEventChangeKind, string> = {
+  changed: "bg-border-accent",
+  added: "bg-success",
+  removed: "bg-danger",
+};
+
+const DrawerSectionHeading = ({ children }: { children: string }) => (
+  <p className="px-3 pt-2.5 pb-1 text-[0.6rem] font-medium uppercase tracking-[0.16em] text-faint">
+    {children}
+  </p>
+);
+
+const OrderEventChangeRow = ({
+  change,
+}: {
+  change: OrderEventChangeViewModel;
+}) => (
+  <li className="flex flex-col gap-1 px-3 py-2">
+    <div className="flex min-w-0 items-center gap-2">
+      <span
+        aria-hidden="true"
+        className={`h-1.5 w-1.5 shrink-0 rounded-full ${CHANGE_DOT_CLASS[change.kind]}`}
+      />
+      <span className="shrink-0 text-xs font-medium text-text">
+        {change.label}
+      </span>
+      {change.scope ? (
+        <span className="min-w-0 truncate rounded-md bg-surface-hover px-1.5 py-px text-[0.6rem] font-medium text-muted">
+          {change.scope}
+        </span>
+      ) : null}
+    </div>
+
+    {change.from || change.to ? (
+      <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 pl-3.5 text-xs [overflow-wrap:anywhere]">
+        {change.from ? (
+          <span className="text-muted line-through decoration-[var(--color-faint)]">
+            <span className="sr-only">from </span>
+            {change.from}
+          </span>
+        ) : null}
+        {change.from && change.to ? (
+          <span aria-hidden="true" className="text-faint">
+            →
+          </span>
+        ) : null}
+        {change.to ? (
+          <span className="text-text">
+            <span className="sr-only">to </span>
+            {change.to}
+          </span>
+        ) : null}
+      </p>
+    ) : null}
+  </li>
+);
+
+const ACTOR_AVATAR_CLASS: Record<OrderEventActorKind, string> = {
+  user: "bg-surface-hover text-text",
+  client: "bg-info-bg text-info",
+  system: "",
+};
+
 const OrderEventActorChip = ({
   actor,
 }: {
   actor: OrderEventActorViewModel;
 }) => (
   <span className="inline-flex min-w-0 items-center gap-1.5 text-xs">
-    {actor.isSystem ? (
+    {actor.kind === "system" ? (
       <span
         aria-hidden="true"
         className="h-4 w-4 shrink-0 rounded-full border border-dashed border-border-accent"
@@ -60,13 +130,13 @@ const OrderEventActorChip = ({
     ) : (
       <span
         aria-hidden="true"
-        className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-surface-hover text-[0.55rem] font-semibold text-text"
+        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[0.55rem] font-semibold ${ACTOR_AVATAR_CLASS[actor.kind]}`}
       >
         {actor.initial}
       </span>
     )}
     <span
-      className={`truncate ${actor.isSystem ? "text-muted" : "font-medium text-text"}`}
+      className={`truncate ${actor.kind === "system" ? "text-muted" : "font-medium text-text"}`}
     >
       {actor.name}
     </span>
@@ -162,7 +232,7 @@ export const OrderEventTimelineItem = ({
           <OrderEventActorChip actor={item.actor} />
         </div>
 
-        {item.actionSummary ? (
+        {item.changeCountLabel || item.actionSummary ? (
           <div className="mt-2.5 overflow-hidden rounded-xl border border-border-subtle bg-surface-subtle">
             <button
               type="button"
@@ -171,19 +241,33 @@ export const OrderEventTimelineItem = ({
               aria-controls={drawerId}
               className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors hover:bg-surface-hover"
             >
-              <span className="text-muted">{item.actionSummary.countLabel}</span>
-              <span aria-hidden="true" className="text-faint">
-                ·
-              </span>
-              <span
-                className={`inline-flex items-center gap-1.5 font-medium ${STATUS_TEXT_CLASS[item.actionSummary.status]}`}
-              >
-                <span
-                  aria-hidden="true"
-                  className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT_CLASS[item.actionSummary.status]}`}
-                />
-                {item.actionSummary.statusLabel}
-              </span>
+              {item.changeCountLabel ? (
+                <span className="text-muted">{item.changeCountLabel}</span>
+              ) : null}
+              {item.changeCountLabel && item.actionSummary ? (
+                <span aria-hidden="true" className="text-faint">
+                  ·
+                </span>
+              ) : null}
+              {item.actionSummary ? (
+                <>
+                  <span className="text-muted">
+                    {item.actionSummary.countLabel}
+                  </span>
+                  <span aria-hidden="true" className="text-faint">
+                    ·
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-1.5 font-medium ${STATUS_TEXT_CLASS[item.actionSummary.status]}`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT_CLASS[item.actionSummary.status]}`}
+                    />
+                    {item.actionSummary.statusLabel}
+                  </span>
+                </>
+              ) : null}
               <ChevronDownIcon
                 aria-hidden="true"
                 className={`ml-auto h-3 w-3 shrink-0 text-muted transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
@@ -196,11 +280,28 @@ export const OrderEventTimelineItem = ({
               className={`grid transition-[grid-template-rows] duration-200 ease-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
             >
               <div className="min-h-0 overflow-hidden">
-                <ul className="divide-y divide-border-subtle border-t border-border-subtle">
-                  {item.actions.map((action) => (
-                    <OrderEventActionRow key={action.id} action={action} />
-                  ))}
-                </ul>
+                {item.changes.length > 0 ? (
+                  <section className="border-t border-border-subtle pb-1">
+                    <DrawerSectionHeading>Changes</DrawerSectionHeading>
+                    <ul>
+                      {item.changes.map((change) => (
+                        <OrderEventChangeRow key={change.id} change={change} />
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+                {item.actions.length > 0 ? (
+                  <section className="border-t border-border-subtle">
+                    {item.changes.length > 0 ? (
+                      <DrawerSectionHeading>Actions</DrawerSectionHeading>
+                    ) : null}
+                    <ul className="divide-y divide-border-subtle">
+                      {item.actions.map((action) => (
+                        <OrderEventActionRow key={action.id} action={action} />
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
               </div>
             </div>
           </div>

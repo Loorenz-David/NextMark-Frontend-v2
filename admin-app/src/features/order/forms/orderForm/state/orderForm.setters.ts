@@ -32,6 +32,7 @@ export const mergeExternalClientDataIntoFormState = (
   accepted_terms_version_id:
     data.accepted_terms_version_id ?? prev.accepted_terms_version_id,
   marketing_messages: data.marketing_messages,
+  client_form_submission_source: "linked_device",
 });
 
 const normalizeOperationType = (
