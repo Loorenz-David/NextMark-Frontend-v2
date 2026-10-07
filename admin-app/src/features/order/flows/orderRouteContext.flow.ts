@@ -39,7 +39,9 @@ export function useOrderRouteContextFlow() {
         applyOrderRouteContextPayload(response.data);
         return response.data;
       } catch (error) {
-        if (error instanceof ApiError && error.status === 404) {
+        // Statuses are offset by +10 (not found arrives as 414), so the code is
+        // the reliable signal. An order outside a selected route has no context.
+        if (error instanceof ApiError && error.payload?.code === "not_found") {
           return null;
         }
 
