@@ -46,7 +46,7 @@ export const RouteGroupOrderGroupCard = ({
     <div className="flex flex-col border-y border-dashed  border-y-[var(--color-muted)]/80 my-4">
       <div className=" py-4 pr-4 pl-3">
         <div
-          className="flex cursor-pointer items-stretch gap-3 h-full"
+          className="dnd-touch-source flex cursor-pointer items-stretch gap-3 h-full"
           onClick={onToggleExpanded}
           {...dragAttributes}
           {...dragListeners}

@@ -25,7 +25,7 @@ export const OrderBatchPlanDragButton = ({
   return (
     <div
       ref={setNodeRef}
-      className={isDragging ? "opacity-60" : undefined}
+      className={`dnd-touch-source${isDragging ? " opacity-60" : ""}`}
       style={{ cursor: isDisabled ? "not-allowed" : "grab" }}
       {...attributes}
       {...listeners}

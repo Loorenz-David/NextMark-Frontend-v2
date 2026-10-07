@@ -70,7 +70,13 @@ export const DraggableRouteGroupOrderCard = ({
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="dnd-touch-source"
+      {...attributes}
+      {...listeners}
+    >
       <RouteGroupOrderCard
         order={order}
         stop={stop}

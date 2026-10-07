@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { useMobile } from "@/app/contexts/MobileContext";
 import type {
   DragStartEvent,
   DragEndEvent,
   DragOverEvent,
 } from "@dnd-kit/core";
-import { useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
+import { useSensor, useSensors, MouseSensor, TouchSensor } from "@dnd-kit/core";
 import {
   useOrderClientFormHandoffController,
   type LinkedDeviceOrderFormAvailability,
@@ -109,7 +108,6 @@ export const usePlanOrderDndController = () => {
   const unscheduleDropFeedbackTimeoutRef = useRef<ReturnType<
     typeof setTimeout
   > | null>(null);
-  const { isMobile } = useMobile();
   const { showMessage } = useMessageHandler();
   const { execute, hasActiveItemLabelTemplate, downloadItemLabelsForOrder } =
     useExecutePlanDndIntent();
@@ -120,8 +118,12 @@ export const usePlanOrderDndController = () => {
   const openCreatePlanForm = useOpenCreatePlanFormAction();
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: isMobile ? { distance: 10 } : { distance: 6 },
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    // Touch: hold ~250ms to pick up; moving >8px before that aborts so the
+    // list keeps scrolling. TouchSensor cancels native panning once active,
+    // which PointerSensor cannot (iOS fires pointercancel and the drag dies).
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 8 },
     }),
   );
 

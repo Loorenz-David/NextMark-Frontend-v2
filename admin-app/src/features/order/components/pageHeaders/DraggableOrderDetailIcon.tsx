@@ -33,7 +33,7 @@ export const DraggableOrderDetailIcon = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[var(--shadow-button-accent-subtle)]"
+      className="dnd-touch-source inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[var(--shadow-button-accent-subtle)]"
       {...attributes}
       {...listeners}
     >

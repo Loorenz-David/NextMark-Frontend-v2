@@ -116,7 +116,7 @@ export const DraggableOrderCard = ({
     <div
       ref={handleNodeRef}
       style={style}
-      className="relative"
+      className="dnd-touch-source relative"
       onClick={isSelectionMode ? () => onToggleSelection?.(order) : undefined}
       onMouseEnter={() => onMouseEnter?.(order)}
       onMouseLeave={() => onMouseLeave?.()}

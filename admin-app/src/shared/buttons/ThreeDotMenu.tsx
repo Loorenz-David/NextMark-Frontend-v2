@@ -48,7 +48,11 @@ const ThreeDotTrigger = ({
     <div
       role="button"
       onClick={onClick}
+      // The order DnD sensors activate on mousedown / touchstart, which React
+      // dispatches independently of pointerdown — guard all three.
       onPointerDown={(event) => event.stopPropagation()}
+      onMouseDown={(event) => event.stopPropagation()}
+      onTouchStart={(event) => event.stopPropagation()}
       aria-label="Open menu"
       className={`
         flex items-center justify-center
@@ -130,6 +134,8 @@ export const ThreeDotMenu = ({
         className="admin-glass-popover rounded-lg border border-[var(--color-border-accent)] py-1 px-1 shadow-md"
         onClick={(event) => event.stopPropagation()}
         onPointerDown={(event) => event.stopPropagation()}
+        onMouseDown={(event) => event.stopPropagation()}
+        onTouchStart={(event) => event.stopPropagation()}
       >
         {options.map((option) => {
           if (option.confirmation && !option.disabled) {

@@ -64,7 +64,7 @@ export const OrderAddressGroupCard = ({
     >
       <div className="py-4 pr-4 pl-2 z-2">
         <div
-          className="flex cursor-pointer items-center gap-3"
+          className="dnd-touch-source flex cursor-pointer items-center gap-3"
           onClick={onToggleExpanded}
           {...dragAttributes}
           {...dragListeners}

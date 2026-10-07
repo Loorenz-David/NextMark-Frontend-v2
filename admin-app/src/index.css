@@ -682,6 +682,17 @@ select:focus {
   backdrop-filter: blur(14px) saturate(120%);
 }
 
+/* Element that carries dnd-kit drag listeners. Long-press activation on iOS
+   must not pop the text-selection magnifier or the link/image callout, and
+   `manipulation` drops the double-tap delay while still allowing panning
+   so a quick swipe scrolls the list. */
+.dnd-touch-source {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
 /* Firefox */
 .scroll-thin {
   scrollbar-width: thin;
