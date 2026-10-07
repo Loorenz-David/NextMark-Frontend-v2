@@ -9,6 +9,8 @@ export type PhoneFieldProps = {
   containerStyle?: CSSProperties
   prefixPopoverClassName?: string
   storageNamespace?: string
+  /** Defaults to "Phone number"; a surface in another language passes its own. */
+  numberPlaceholder?: string
 }
 
 export type PhoneFieldContextValue = {

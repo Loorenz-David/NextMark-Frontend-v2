@@ -9,11 +9,15 @@ const hasValue = (value: string | null | undefined): value is string =>
  */
 export const getClientFormOrderTitle = (meta: ClientFormMeta): string | null => {
   if (hasValue(meta.external_source) && hasValue(meta.reference_number)) {
-    return `Order ${meta.reference_number}`;
+    return `Beställning ${meta.reference_number}`;
   }
 
-  return meta.order_scalar_id ? `Order # ${meta.order_scalar_id}` : null;
+  return meta.order_scalar_id ? `Beställning nr ${meta.order_scalar_id}` : null;
 };
+
+// The form only serves Swedish customers, so the date follows Swedish
+// conventions rather than whatever locale the device happens to report.
+const SCHEDULE_DATE_LOCALE = "sv-SE";
 
 const SCHEDULE_DATE_FORMAT: Intl.DateTimeFormatOptions = {
   weekday: "long",
@@ -37,12 +41,12 @@ const formatScheduleDay = (
   }
 
   try {
-    return new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat(SCHEDULE_DATE_LOCALE, {
       ...SCHEDULE_DATE_FORMAT,
       ...(hasValue(timeZone) ? { timeZone } : {}),
     }).format(date);
   } catch {
-    return new Intl.DateTimeFormat(undefined, SCHEDULE_DATE_FORMAT).format(date);
+    return new Intl.DateTimeFormat(SCHEDULE_DATE_LOCALE, SCHEDULE_DATE_FORMAT).format(date);
   }
 };
 

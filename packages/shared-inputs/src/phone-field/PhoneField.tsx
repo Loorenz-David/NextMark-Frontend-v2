@@ -9,6 +9,7 @@ export const PhoneField = ({
   containerStyle,
   prefixPopoverClassName,
   storageNamespace,
+  numberPlaceholder,
 }: PhoneFieldProps) => {
   return (
     <PhoneFieldProvider
@@ -20,6 +21,7 @@ export const PhoneField = ({
         containerClassName={containerClassName}
         containerStyle={containerStyle}
         prefixPopoverClassName={prefixPopoverClassName}
+        numberPlaceholder={numberPlaceholder}
       />
     </PhoneFieldProvider>
   )

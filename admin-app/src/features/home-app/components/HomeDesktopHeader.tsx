@@ -1,10 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { SettingIcon } from "@/assets/icons";
-import {
-  AdminNotificationsAlertToggle,
-  AdminNotificationsTrigger,
-} from "@/realtime/notifications";
+import { AdminNotificationsTrigger } from "@/realtime/notifications";
 import { ActingUserButton } from "@/features/auth/trusted-device";
 import { ThemeToggle } from "@/app/theme";
 
@@ -21,8 +18,7 @@ export function HomeDesktopHeader() {
 
       {/* Right — actions */}
       <div className="flex shrink-0 items-center gap-2 rounded-2xl">
-        <div className="flex items-center gap-1.5 pr-2">
-          <AdminNotificationsAlertToggle />
+        <div className="pr-2">
           <AdminNotificationsTrigger />
         </div>
         <BasicButton

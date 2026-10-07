@@ -1,12 +1,12 @@
 import { CurrentLocationIcon } from '@shared-icons'
-import { CURRENT_LOCATION_SUGGESTION } from '../constants/currentLocationSuggestion'
 
 type CurrentLocationCardProps = {
+  label: string
   onSelect: () => void
   iconClassName?: string
 }
 
-export const CurrentLocationCard = ({ onSelect, iconClassName }: CurrentLocationCardProps) => {
+export const CurrentLocationCard = ({ label, onSelect, iconClassName }: CurrentLocationCardProps) => {
   return (
     <li>
       <button
@@ -18,7 +18,7 @@ export const CurrentLocationCard = ({ onSelect, iconClassName }: CurrentLocation
         }}
       >
         <CurrentLocationIcon className={`h-4 w-4 ${iconClassName ?? 'text-black'}`} />
-        <span className="font-medium text-[var(--color-text)]">{CURRENT_LOCATION_SUGGESTION.label}</span>
+        <span className="font-medium text-[var(--color-text)]">{label}</span>
       </button>
     </li>
   )

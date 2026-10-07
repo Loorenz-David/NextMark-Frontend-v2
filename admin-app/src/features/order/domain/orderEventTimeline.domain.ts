@@ -10,6 +10,7 @@ import type {
   OrderEventActionStatus,
 } from "../types/orderEvent";
 import {
+  formatPlanDates,
   mapOrderEventChangeToViewModel,
   summarizeOrderEventChanges,
   type OrderEventChangeViewModel,
@@ -67,6 +68,7 @@ const NON_TEMPLATE_EVENT_LABELS: Record<string, string> = {
   order_status_changed: "Status changed",
   order_delivery_window_changed_by_user: "Delivery window changed",
   order_manual_message: "Manual message sent",
+  order_arrival_changed: "Arrival time changed",
 };
 
 const EVENT_LABEL_BY_KEY = new Map<string, string>([
@@ -85,6 +87,7 @@ const EVENT_TONE_BY_KEY: Record<string, OrderEventTone> = {
   order_completed: "success",
   client_form_submitted: "success",
   order_rescheduled: "warning",
+  order_arrival_changed: "warning",
   order_delivery_plan_changed: "warning",
   order_delivery_window_changed_by_user: "warning",
   order_failed: "danger",
@@ -117,8 +120,75 @@ const toTimestamp = (value?: string | null) => {
 const resolveEventLabel = (eventName: string) =>
   EVENT_LABEL_BY_KEY.get(eventName) ?? humanize(eventName);
 
+const readPayloadString = (payload: Record<string, unknown>, key: string) => {
+  const value = payload[key];
+  return typeof value === "string" && value.trim() ? value : null;
+};
+
+/** "08:30 → 09:10", or with the day when the arrival moved to another day. */
+const formatArrivalMove = (
+  from: string | null,
+  to: string | null,
+): string | null => {
+  const fromTime = formatIsoTime(from);
+  const toTime = formatIsoTime(to);
+  if (!fromTime || !toTime || !from || !to) return null;
+
+  const fromDay = formatDateOnlyInTimeZone(from);
+  const toDay = formatDateOnlyInTimeZone(to);
+  if (fromDay === toDay) return `${fromTime} → ${toTime}`;
+  return `${formatShortTeamDay(from)} ${fromTime} → ${formatShortTeamDay(to)} ${toTime}`;
+};
+
+const formatShortTeamDay = (iso: string) =>
+  new Intl.DateTimeFormat("en", {
+    timeZone: getTeamTimeZone(),
+    month: "short",
+    day: "numeric",
+  }).format(new Date(iso));
+
 const resolveEventDetail = (event: OrderEvent): string | null => {
   const payload = event.payload ?? {};
+
+  if (event.event_name === "order_arrival_changed") {
+    return formatArrivalMove(
+      readPayloadString(payload, "old_expected_arrival"),
+      readPayloadString(payload, "new_expected_arrival"),
+    );
+  }
+
+  if (event.event_name === "order_rescheduled") {
+    // A Ready order's arrival moved within its route (reason "eta_changed"),
+    // or was set for the first time.
+    const newArrival = readPayloadString(payload, "new_expected_arrival");
+    const arrivalMove = formatArrivalMove(
+      readPayloadString(payload, "old_expected_arrival"),
+      newArrival,
+    );
+    if (arrivalMove) return `Arrival ${arrivalMove}`;
+    const firstArrival = formatIsoTime(newArrival);
+    if (firstArrival) return `Arrival ${firstArrival}`;
+
+    const from = formatPlanDates(
+      readPayloadString(payload, "old_plan_start"),
+      readPayloadString(payload, "old_plan_end"),
+    );
+    const to = formatPlanDates(
+      readPayloadString(payload, "new_plan_start"),
+      readPayloadString(payload, "new_plan_end"),
+    );
+    if (from && to && from !== to) return `${from} → ${to}`;
+    return to ? `Delivery on ${to}` : null;
+  }
+
+  if (event.event_name === "order_delivery_plan_changed") {
+    // Entries recorded before plan moves had audit rows.
+    const hadPlan = payload.old_route_plan_id != null;
+    const hasPlan = payload.new_route_plan_id != null;
+    if (hasPlan && !hadPlan) return "Scheduled on a plan";
+    if (hadPlan && !hasPlan) return "Removed from its plan";
+    return hasPlan ? "Moved to another plan" : null;
+  }
 
   if (event.event_name === "order_status_changed") {
     const stateName = payload.new_order_state_name;

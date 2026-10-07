@@ -18,7 +18,7 @@ export const ClientFormScheduledDate = ({ meta }: Props) => {
 
   return (
     <p className="text-[length:var(--cf-eyebrow)] font-semibold uppercase tracking-[0.24em] text-[var(--ink-faint)]">
-      Scheduled delivery
+      Planerad leverans
       <span className="mt-1 block text-[length:var(--cf-input)] font-normal normal-case tracking-normal text-[var(--ink)]">
         {label}
       </span>

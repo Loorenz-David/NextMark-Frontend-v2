@@ -45,13 +45,13 @@ export const ConsentSection = () => {
           invalid={showTermsError}
           label={
             <>
-              I accept the{" "}
+              Jag godkänner{" "}
               <button
                 type="button"
                 onClick={() => setIsTermsOpen(true)}
                 className="cursor-pointer font-semibold text-[var(--accent)] underline decoration-[var(--accent)]/40 underline-offset-4 hover:decoration-[var(--accent)]"
               >
-                terms and conditions
+                villkoren
               </button>
               {requiresAcceptance ? (
                 <span className="ml-1 text-[var(--danger)]">*</span>
@@ -66,7 +66,7 @@ export const ConsentSection = () => {
           id="client-form-marketing"
           checked={data.marketing_messages}
           onChange={(checked) => setField("marketing_messages", checked)}
-          label="Send me offers and delivery updates by email"
+          label="Jag vill få erbjudanden och leveransbesked via e-post"
         />
       ) : null}
 
@@ -80,12 +80,12 @@ export const ConsentSection = () => {
         <ClientFormSheet
           open={isTermsOpen}
           onOpenChange={setIsTermsOpen}
-          title="Terms and conditions"
+          title="Villkor"
           variant="fullscreen"
           // Leaving by the arrow reads the terms without accepting them; only
           // "Done" at the end of the text ticks the box.
           onBack={() => setIsTermsOpen(false)}
-          backLabel="Back to the form"
+          backLabel="Tillbaka till formuläret"
           footerPlacement="inline"
           footer={
             <button
@@ -96,7 +96,7 @@ export const ConsentSection = () => {
               }}
               className="w-full min-h-[var(--cf-tap)] cursor-pointer rounded-[var(--radius)] border border-[var(--accent)] bg-[var(--accent)] px-6 py-3 text-[length:var(--cf-action)] font-semibold uppercase tracking-[0.18em] text-[var(--accent-ink)] transition-colors hover:border-[var(--accent-soft)] hover:bg-[var(--accent-soft)]"
             >
-              Done
+              Godkänn villkoren
             </button>
           }
         >

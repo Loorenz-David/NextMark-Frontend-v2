@@ -224,6 +224,7 @@ export type NotificationTarget = {
     orderCaseId?: number
     orderCaseClientId?: string
     routeId?: number
+    routeGroupId?: number
     /** The order history entry the notification is about. */
     orderEventId?: string
   }
@@ -261,6 +262,10 @@ export type NotificationItem = {
   /** Up to three labels of what changed; `change_count` is the full total. */
   change_labels?: string[]
   change_count?: number
+  /** Headline verb when more specific than the kind's, e.g. "scheduled". */
+  action_label?: string
+  /** Short in-app line under the headline; `description` is the full sentence. */
+  detail?: string
   title: string
   description: string
   occurred_at: string

@@ -4,6 +4,7 @@ export { useDefaultPhonePrefix } from './phone-field/useDefaultPhonePrefix'
 export { prefixFromTimezone, prefixFromUserTimezone } from './phone-field/timezonePrefix'
 
 export { AddressAutocomplete } from './address-autocomplete/AddressAutocomplete'
+export type { AddressAutocompleteLabels } from './address-autocomplete/constants/labels.constants'
 export type { PlaceSuggestion, SavedLocation } from './address-autocomplete/types'
 export { getSavedLocations, recordSavedLocation, clearSavedLocations } from './address-autocomplete/utils/savedLocationsStorage'
 export { getStoredCurrentLocation, saveCurrentLocation } from './address-autocomplete/utils/currentLocationStorage'

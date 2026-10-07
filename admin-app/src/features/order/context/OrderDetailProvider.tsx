@@ -128,16 +128,19 @@ export const OrderDetailProvider = ({
     areOrderEventsLoaded &&
     !orderEvents.some((event) => event.event_id === focusEventId);
 
+
+
   useEffect(() => {
     if (typeof serverId !== "number") {
       lastRefreshAttemptRef.current = null;
       return;
     }
 
+    const isForcedHydrationPending =
+      shouldForceDetailHydration &&
+      forcedHydrationDoneKeyRef.current !== `${serverId}:${freshAfter ?? ""}`;
     const needsRefresh =
-      (shouldForceDetailHydration &&
-        forcedHydrationDoneKeyRef.current !==
-          `${serverId}:${freshAfter ?? ""}`) ||
+      isForcedHydrationPending ||
       order == null ||
       shouldRefreshForFreshness(order.updated_at ?? null, freshAfter);
     if (!needsRefresh) {
@@ -150,9 +153,12 @@ export const OrderDetailProvider = ({
       return;
     }
 
+    // Forced hydration forces the first fetch only. After it, the same key is
+    // not retried: an order saved just before its event (a notification's
+    // freshAfter) stays "older" than freshAfter and would refetch forever.
     if (
       lastRefreshAttemptRef.current === refreshKey &&
-      !shouldForceDetailHydration
+      !isForcedHydrationPending
     ) {
       return;
     }

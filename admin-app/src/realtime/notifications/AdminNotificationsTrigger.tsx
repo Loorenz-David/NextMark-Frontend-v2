@@ -17,6 +17,7 @@ import { adminRealtimeClient } from "@/realtime/client";
 import {
   getAdminNotificationSnapshot,
   markAdminNotificationsReadLocally,
+  subscribeAdminNotificationArrivals,
   subscribeAdminNotifications,
 } from "./notification.store";
 import {
@@ -25,6 +26,7 @@ import {
 } from "./playAdminNotificationChime";
 import { setPendingAdminNotificationLaunchPayload } from "./adminWebPush.store";
 import { AdminNotificationItem } from "./AdminNotificationItem";
+import { AdminNotificationsAlertToggle } from "./AdminNotificationsAlertToggle";
 import { mapNotificationToAdminViewModel } from "./adminNotificationItem.domain";
 
 const notificationsChannel = createNotificationsChannel(adminRealtimeClient);
@@ -52,10 +54,6 @@ export function AdminNotificationsTrigger() {
     getAdminNotificationSnapshot,
     getAdminNotificationSnapshot,
   );
-  const latestNotificationId = items[0]?.notification_id ?? null;
-  const previousNotificationIdRef = useRef<string | number | null>(
-    latestNotificationId,
-  );
 
   useEffect(() => {
     const unlockAudio = () => {
@@ -73,38 +71,42 @@ export function AdminNotificationsTrigger() {
     };
   }, []);
 
+  // Chime on arrivals only: opening or dismissing changes which item is on
+  // top, but nothing new came in.
+  const pulseTimeoutRef = useRef<number | null>(null);
   useEffect(() => {
-    if (latestNotificationId == null) {
-      previousNotificationIdRef.current = latestNotificationId;
-      return;
-    }
-
-    const previousId = previousNotificationIdRef.current;
-    previousNotificationIdRef.current = latestNotificationId;
-
-    if (previousId == null || previousId === latestNotificationId) {
-      return;
-    }
-
-    setIsIncomingPulseActive(true);
-    void playAdminNotificationChime();
-    const timeoutId = window.setTimeout(() => {
-      setIsIncomingPulseActive(false);
-    }, 1800);
+    const release = subscribeAdminNotificationArrivals(() => {
+      setIsIncomingPulseActive(true);
+      void playAdminNotificationChime();
+      if (pulseTimeoutRef.current !== null) {
+        window.clearTimeout(pulseTimeoutRef.current);
+      }
+      pulseTimeoutRef.current = window.setTimeout(() => {
+        pulseTimeoutRef.current = null;
+        setIsIncomingPulseActive(false);
+      }, 1800);
+    });
 
     return () => {
-      window.clearTimeout(timeoutId);
+      release();
+      if (pulseTimeoutRef.current !== null) {
+        window.clearTimeout(pulseTimeoutRef.current);
+        pulseTimeoutRef.current = null;
+      }
     };
-  }, [latestNotificationId]);
+  }, []);
 
   const content = useMemo(() => {
     if (items.length === 0) {
       return (
         <div className="admin-glass-popover admin-surface-compact w-[360px] rounded-2xl p-2">
           <div className="admin-glass-divider border-b px-3 py-3">
-            <h3 className="text-sm font-semibold text-[var(--color-text)]">
-              Notifications
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-[var(--color-text)]">
+                Notifications
+              </h3>
+              <AdminNotificationsAlertToggle />
+            </div>
           </div>
           <div className="px-3 py-4 text-sm text-[var(--color-muted)]">
             No unread notifications.
@@ -115,10 +117,13 @@ export function AdminNotificationsTrigger() {
 
     return (
       <div className="admin-glass-popover admin-surface-compact max-h-[420px] w-[360px] overflow-y-auto rounded-2xl p-2">
-        <div className="admin-glass-divider border-b px-3 py-3 flex justify-between">
-          <h3 className="text-sm font-semibold text-[var(--color-text)]">
-            Notifications
-          </h3>
+        <div className="admin-glass-divider flex items-center justify-between border-b px-3 py-3">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-[var(--color-text)]">
+              Notifications
+            </h3>
+            <AdminNotificationsAlertToggle />
+          </div>
           <div
             className="underline text-sm text-[var(--color-muted)] transition hover:text-[var(--color-text)] cursor-pointer"
             onClick={() => {

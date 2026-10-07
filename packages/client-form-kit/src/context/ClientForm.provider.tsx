@@ -36,6 +36,15 @@ const getGeneralOrderNoteContent = (
   return typeof general?.content === "string" ? general.content : "";
 };
 
+const LAST_STEP = CLIENT_FORM_STEPS[CLIENT_FORM_STEPS.length - 1];
+
+// A fast response would flash the submitting screen for a split second, which
+// reads as a glitch rather than as confirmation. Every outcome waits this long.
+const MIN_SUBMIT_FEEDBACK_MS = 4000;
+
+const wait = (ms: number) =>
+  new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+
 type Props = {
   meta: ClientFormMeta;
   /**
@@ -81,19 +90,21 @@ export const ClientFormProvider = ({
       client_address: null,
       order_notes: getGeneralOrderNoteContent(meta.order_notes),
       accepted_terms_version_id: null,
-      marketing_messages: false,
+      // Opted in by default; the customer can untick it before submitting. A
+      // surface that never shows the box must not send consent nobody gave.
+      marketing_messages: options.collectMarketingConsent,
     }),
-    [defaultPrefix, meta.order_notes],
+    [defaultPrefix, meta.order_notes, options.collectMarketingConsent],
   );
 
   const [data, setData] = useState<ClientFormData>(emptyData);
   const [config, setConfig] = useState<ClientFormConfig>(initialConfig);
   const [currentStep, setCurrentStep] = useState<ClientFormStep>("client_info");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [termsError, setTermsError] = useState<string | null>(null);
   const [isRulesGateOpen, setIsRulesGateOpen] = useState(false);
-  const [hasAcknowledgedRules, setHasAcknowledgedRules] = useState(false);
 
   // Latest-ref so an unstable host callback never re-fires the effect: only a
   // real change to the answers or the step notifies.
@@ -171,10 +182,17 @@ export const ClientFormProvider = ({
     async (payload: ClientFormData) => {
       setIsSubmitting(true);
       setSubmitError(null);
+      // The submission screen covers the form; the gate is portalled above
+      // everything and would sit on top of it.
+      setIsRulesGateOpen(false);
       try {
-        const result = await ports.submit(payload);
+        const [result] = await Promise.all([
+          ports.submit(payload),
+          wait(MIN_SUBMIT_FEEDBACK_MS),
+        ]);
 
         if (result.status === "submitted") {
+          setIsSubmitted(true);
           onSubmitted();
           return;
         }
@@ -186,6 +204,11 @@ export const ClientFormProvider = ({
         }
 
         setSubmitError(result.message);
+        // The error is shown on the gate's confirm stage, which still holds the
+        // customer's place in the rules.
+        if (config.rules.length) {
+          setIsRulesGateOpen(true);
+        }
         // Only terms can go stale mid-session, so a config with none has
         // nothing to re-read and the host is spared a pointless round trip.
         if (result.refreshConfig && config.terms) {
@@ -195,7 +218,7 @@ export const ClientFormProvider = ({
         setIsSubmitting(false);
       }
     },
-    [config.terms, onSubmitted, ports, refreshConfig],
+    [config.rules.length, config.terms, onSubmitted, ports, refreshConfig],
   );
 
   /**
@@ -210,33 +233,41 @@ export const ClientFormProvider = ({
         setData(nextData);
       }
 
-      const lastStep = CLIENT_FORM_STEPS[CLIENT_FORM_STEPS.length - 1];
-      const errors = validateStep(lastStep, nextData, config);
-      if (errors.accepted_terms_version_id) {
-        setTermsError(errors.accepted_terms_version_id);
-        return;
-      }
+      const { accepted_terms_version_id: termsMessage, ...stepErrors } =
+        validateStep(LAST_STEP, nextData, config);
       // The address error is surfaced by the step itself.
-      if (Object.keys(errors).length) return;
+      if (Object.keys(stepErrors).length) return;
 
-      setTermsError(null);
-
-      // The rules are shown once, immediately before the order is committed.
-      if (config.rules.length && !hasAcknowledgedRules) {
+      // With rules, consent is given on the gate's confirm stage, after the
+      // rules — so the gate opens before the terms are checked.
+      if (config.rules.length) {
         setIsRulesGateOpen(true);
         return;
       }
 
+      if (termsMessage) {
+        setTermsError(termsMessage);
+        return;
+      }
+      setTermsError(null);
+
       await submit(nextData);
     },
-    [config, data, hasAcknowledgedRules, submit],
+    [config, data, submit],
   );
 
-  const acknowledgeRules = useCallback(async () => {
-    setHasAcknowledgedRules(true);
-    setIsRulesGateOpen(false);
+  // The gate stays open through the request: a rejection is shown on the
+  // confirm stage, and a success unmounts the form in the host.
+  const confirmAndSubmit = useCallback(async () => {
+    const errors = validateStep(LAST_STEP, data, config);
+    if (errors.accepted_terms_version_id) {
+      setTermsError(errors.accepted_terms_version_id);
+      return;
+    }
+    setTermsError(null);
+
     await submit(data);
-  }, [data, submit]);
+  }, [config, data, submit]);
 
   const dismissRulesGate = useCallback(() => setIsRulesGateOpen(false), []);
 
@@ -249,6 +280,7 @@ export const ClientFormProvider = ({
         data,
         currentStep,
         isSubmitting,
+        isSubmitted,
         submitError,
         termsError,
         isRulesGateOpen,
@@ -257,7 +289,7 @@ export const ClientFormProvider = ({
         goToStep,
         next,
         requestSubmit,
-        acknowledgeRules,
+        confirmAndSubmit,
         dismissRulesGate,
       }}
     >

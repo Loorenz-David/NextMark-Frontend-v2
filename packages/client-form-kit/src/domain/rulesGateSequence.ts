@@ -1,22 +1,36 @@
+/**
+ * The gate reads every rule in order and then closes on one confirm stage,
+ * where the terms, the marketing opt-in and the submit action live — so the
+ * customer cannot reach the commit without passing the rules first.
+ */
 export type RulesGateSequenceState = {
   activeIndex: number;
   currentPosition: number;
   isFirst: boolean;
   isLast: boolean;
+  /** True on the stage after the last rule. */
+  isConfirmStage: boolean;
   progress: number;
   ruleCount: number;
+  /** Rules plus the confirm stage; zero when there are no rules to read. */
+  stageCount: number;
 };
 
 const normalizeRuleCount = (ruleCount: number): number =>
   Math.max(0, Math.trunc(ruleCount));
 
+const getStageCount = (ruleCount: number): number => {
+  const normalizedCount = normalizeRuleCount(ruleCount);
+  return normalizedCount === 0 ? 0 : normalizedCount + 1;
+};
+
 export const clampRulesGateIndex = (
   requestedIndex: number,
   ruleCount: number,
 ): number => {
-  const normalizedCount = normalizeRuleCount(ruleCount);
-  if (normalizedCount === 0) return 0;
-  return Math.min(Math.max(0, Math.trunc(requestedIndex)), normalizedCount - 1);
+  const stageCount = getStageCount(ruleCount);
+  if (stageCount === 0) return 0;
+  return Math.min(Math.max(0, Math.trunc(requestedIndex)), stageCount - 1);
 };
 
 export const getRulesGateSequenceState = (
@@ -24,18 +38,20 @@ export const getRulesGateSequenceState = (
   ruleCount: number,
 ): RulesGateSequenceState => {
   const normalizedCount = normalizeRuleCount(ruleCount);
+  const stageCount = getStageCount(normalizedCount);
   const activeIndex = clampRulesGateIndex(requestedIndex, normalizedCount);
-  const currentPosition = normalizedCount === 0 ? 0 : activeIndex + 1;
+  const currentPosition = stageCount === 0 ? 0 : activeIndex + 1;
+  const isLast = stageCount > 0 && activeIndex === stageCount - 1;
 
   return {
     activeIndex,
     currentPosition,
     isFirst: activeIndex === 0,
-    isLast:
-      normalizedCount > 0 && activeIndex === Math.max(0, normalizedCount - 1),
-    progress:
-      normalizedCount === 0 ? 0 : currentPosition / normalizedCount,
+    isLast,
+    isConfirmStage: isLast,
+    progress: stageCount === 0 ? 0 : currentPosition / stageCount,
     ruleCount: normalizedCount,
+    stageCount,
   };
 };
 

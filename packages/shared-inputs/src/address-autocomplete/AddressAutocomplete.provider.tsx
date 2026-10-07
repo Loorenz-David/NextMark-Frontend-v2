@@ -6,6 +6,7 @@ import { useGoogleAutoComplete } from './hooks/useGoogleAutoComplete'
 import { useControllers } from './hooks/useController'
 import { AddressAutocompleteContext } from './AddressAutocomplete.context'
 import { recordSavedLocation } from './utils/savedLocationsStorage'
+import type { AddressAutocompleteLabels } from './constants/labels.constants'
 
 type AddressAutocompleteProviderProps = {
   children: ReactNode
@@ -19,6 +20,7 @@ type AddressAutocompleteProviderProps = {
   onInputValueChange?: (value: string) => void
   storageNamespace?: string
   onCurrentLocationLoadingChange?: (isLoading: boolean) => void
+  labels: AddressAutocompleteLabels
 }
 
 export const AddressAutocompleteProvider = ({
@@ -33,6 +35,7 @@ export const AddressAutocompleteProvider = ({
   onInputValueChange,
   storageNamespace,
   onCurrentLocationLoadingChange,
+  labels,
 }: AddressAutocompleteProviderProps) => {
   const initializedRef = useRef(false)
 
@@ -50,6 +53,7 @@ export const AddressAutocompleteProvider = ({
     onInputValueChange,
     storageNamespace,
     onCurrentLocationLoadingChange,
+    currentLocationLabel: labels.currentLocation,
   })
 
   useEffect(() => {
@@ -76,6 +80,7 @@ export const AddressAutocompleteProvider = ({
     enableSavedLocations,
     intentKey,
     storageNamespace,
+    labels,
     ...googleAutoComplete,
     ...controllers,
   }

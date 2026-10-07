@@ -2,9 +2,9 @@ import { useClientForm } from '../context/useClientForm'
 import type { ClientFormStep } from '../domain/clientForm.types'
 
 const STEPS: { id: ClientFormStep; label: string }[] = [
-  { id: 'client_info', label: 'Client Info' },
-  { id: 'contact_info', label: 'Contact' },
-  { id: 'delivery_address', label: 'Address' },
+  { id: 'client_info', label: 'Namn' },
+  { id: 'contact_info', label: 'Kontakt' },
+  { id: 'delivery_address', label: 'Adress' },
 ]
 
 export const StepIndicator = () => {

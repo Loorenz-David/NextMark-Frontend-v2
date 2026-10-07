@@ -42,6 +42,8 @@ const ORDER_FIELD_LABELS: Record<string, string> = {
   help_to_carry: "Help to carry",
   marketing_messages: "Marketing messages",
   delivery_windows: "Delivery window",
+  route_plan_id: "Plan",
+  delivery_dates: "Delivery date",
 };
 
 const ITEM_FIELD_LABELS: Record<string, string> = {
@@ -145,6 +147,39 @@ const formatWindows = (value: unknown) => {
   return windows.length > 0 ? windows.join("; ") : EMPTY;
 };
 
+const planDayFormatter = new Intl.DateTimeFormat("en", {
+  // Plan dates are calendar days stored at UTC midnight: read them in UTC so
+  // no team time zone shifts the day.
+  timeZone: "UTC",
+  month: "short",
+  day: "numeric",
+});
+
+const formatPlanDay = (iso: string | null) => {
+  if (!iso) return null;
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? null : planDayFormatter.format(date);
+};
+
+/** "Oct 19" or "Oct 19 – Oct 21" for a plan's start/end. */
+export const formatPlanDates = (
+  start: string | null,
+  end: string | null,
+): string | null => {
+  const startDay = formatPlanDay(start);
+  if (!startDay) return null;
+  const endDay = formatPlanDay(end);
+  return endDay && endDay !== startDay ? `${startDay} – ${endDay}` : startDay;
+};
+
+const formatDeliveryDates = (value: unknown) => {
+  if (!isRecord(value)) return EMPTY;
+  return (
+    formatPlanDates(readString(value, "start"), readString(value, "end")) ??
+    EMPTY
+  );
+};
+
 const formatScalar = (field: string, value: unknown): string => {
   if (isBlank(value)) return EMPTY;
   if (typeof value === "boolean") return value ? "Yes" : "No";
@@ -164,7 +199,11 @@ const formatFieldValue = (
   label: string | null,
 ): string => {
   if (label) return label;
+  if (field === "route_plan_id") {
+    return isBlank(value) ? "Unscheduled" : `Plan #${String(value)}`;
+  }
   if (isBlank(value)) return EMPTY;
+  if (field === "delivery_dates") return formatDeliveryDates(value);
   if (field === "client_address") return formatAddress(value);
   if (field === "delivery_windows") return formatWindows(value);
   if (PHONE_FIELDS.has(field) && (isPhone(value) || typeof value === "string")) {

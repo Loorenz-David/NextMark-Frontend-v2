@@ -8,6 +8,7 @@ import {
 import { useDraggable } from '@dnd-kit/core'
 
 import type { Order } from '@/features/order/types/order'
+import { useOrderBatchDragActive } from '@/features/order/controllers/useOrderBatchDragActive.controller'
 
 
 import { OrderCard } from './OrderCard'
@@ -62,6 +63,12 @@ export const DraggableOrderCard = ({
     },
   })
 
+  // A batch drag carries every selected order in the overlay, so the other
+  // selected cards leave the list too. The grabbed card is excluded: it is the
+  // active node dnd-kit keeps measuring, and it already hides itself.
+  const isBatchDragActive = useOrderBatchDragActive()
+  const isHiddenByBatchDrag = isBatchDragActive && isSelected && !isDragging
+
   const handleNodeRef = useCallback((node: HTMLDivElement | null) => {
     draggableNodeRef.current = node
     setNodeRef(node)
@@ -110,6 +117,7 @@ export const DraggableOrderCard = ({
     pointerEvents: isDragging ? 'none' : undefined,
     cursor: isSelectionMode ? 'pointer' : 'grab',
     ...collapseStyle,
+    ...(isHiddenByBatchDrag ? { display: 'none' } : {}),
   }
 
   return (

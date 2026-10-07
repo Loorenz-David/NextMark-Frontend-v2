@@ -1,4 +1,5 @@
 import { useMobile } from "@/app/viewport";
+
 import type { StackComponentProps } from "@/shared/stack-manager/types";
 import { SlideCarousel } from "@/shared/layout/slideCarousel";
 

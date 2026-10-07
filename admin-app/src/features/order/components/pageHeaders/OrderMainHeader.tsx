@@ -5,17 +5,20 @@ import type {
   OrderStats,
 } from "../../types/orderMeta";
 import { ActiveFilterPills, SearchFilterBar } from "@/shared/searchBars";
-import { filterConfig } from "../../domain/orderFilterConfig";
 import { useSectionPanel } from "@/shared/section-panel/SectionPanelContext";
-import { type RefObject, useEffect } from "react";
+import { type RefObject, useEffect, useMemo } from "react";
 import { pluralLabel } from "@shared-utils";
 import { ThreeDotMenu } from "@/shared/buttons/ThreeDotMenu";
 import { InfoHover } from "@/shared/layout/InfoHover";
 import { ORDER_MAIN_HEADER_INFO } from "../../info/orderMainHeader.info";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { createOrderFilterLabelFormatter } from "../../domain/orderFilterLabelFormatter";
-import { stripHiddenOrderQueryFilters } from "../../domain/orderHiddenQueryFilters";
+import { formatOrderFilterPill } from "../../domain/orderFilterLabelFormatter";
+import {
+  countActiveOrderFilters,
+  draftFromOrderQueryFilters,
+  isOrderFilterPanelKey,
+} from "../../domain/orderFilterPanel.domain";
 
 type OrderMainHeaderProps = {
   onCreate: () => void;
@@ -25,10 +28,8 @@ type OrderMainHeaderProps = {
   onClearSelection: () => void;
   isSelectionMode: boolean;
   applySearch: (input: string) => void;
-  applyFilters: (filters: OrderQueryFilters) => void;
-  updateFilters: (key: string, value: unknown) => void;
-  openPopupFilter: (popupKey: string) => void;
-  deleteFilter: (key: string, value?: unknown) => void;
+  onOpenFilters: () => void;
+  onRemoveFilter: (key: string, value?: unknown) => void;
   orderStats?: OrderStats;
   query: {
     q: string;
@@ -47,9 +48,8 @@ export const OrderMainHeader = ({
   onClearSelection,
   isSelectionMode,
   applySearch,
-  deleteFilter,
-  openPopupFilter,
-  updateFilters,
+  onOpenFilters,
+  onRemoveFilter,
   query,
   orderStats,
   actionStackRef,
@@ -57,8 +57,20 @@ export const OrderMainHeader = ({
   isActionStackVisible = true,
 }: OrderMainHeaderProps) => {
   const { setHeader } = useSectionPanel();
-  const formatFilterLabel = createOrderFilterLabelFormatter(filterConfig);
-  const visibleFilters = stripHiddenOrderQueryFilters(query.filters);
+
+  // Only the keys the filter panel owns become pills; search columns, sort and
+  // cursors stay invisible.
+  const pillFilters = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(query.filters).filter(([key]) => isOrderFilterPanelKey(key)),
+      ),
+    [query.filters],
+  );
+  const activeFilterCount = useMemo(
+    () => countActiveOrderFilters(draftFromOrderQueryFilters(query.filters)),
+    [query.filters],
+  );
 
   useEffect(() => {
     const ordersCount = orderStats?.orders?.total ?? 0;
@@ -109,10 +121,8 @@ export const OrderMainHeader = ({
           <SearchFilterBar
             placeholder="Search orders..."
             applySearch={applySearch}
-            config={filterConfig}
-            openPopupFilter={openPopupFilter}
-            updateFilter={(key, value) => updateFilters(key, value)}
-            filters={visibleFilters}
+            onOpenFilters={onOpenFilters}
+            activeFilterCount={activeFilterCount}
             searchValue={query.q}
           />
 
@@ -156,9 +166,9 @@ export const OrderMainHeader = ({
         <div className="flex w-full px-2">
           <ActiveFilterPills
             className="px-4"
-            filters={visibleFilters}
-            removeFilter={deleteFilter}
-            formatFilterLabel={(key, value) => formatFilterLabel(key, value)}
+            filters={pillFilters}
+            removeFilter={onRemoveFilter}
+            formatFilterLabel={formatOrderFilterPill}
           />
         </div>
         {isSelectionMode && (

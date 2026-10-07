@@ -11,18 +11,18 @@ export function validateStep(
   const errors: ClientFormFieldErrors = {}
 
   if (step === 'client_info') {
-    if (!data.client_first_name.trim()) errors.client_first_name = 'First name is required'
-    if (!data.client_last_name.trim()) errors.client_last_name = 'Last name is required'
+    if (!data.client_first_name.trim()) errors.client_first_name = 'Ange ditt förnamn'
+    if (!data.client_last_name.trim()) errors.client_last_name = 'Ange ditt efternamn'
   }
 
   if (step === 'contact_info') {
-    if (!data.client_email.trim()) errors.client_email = 'Email is required'
-    if (!data.client_primary_phone?.number?.trim()) errors.client_primary_phone = 'Phone number is required'
+    if (!data.client_email.trim()) errors.client_email = 'Ange din e-postadress'
+    if (!data.client_primary_phone?.number?.trim()) errors.client_primary_phone = 'Ange ditt telefonnummer'
   }
 
   if (step === 'delivery_address') {
     if (!data.client_address) {
-      errors.client_address = 'Delivery address is required'
+      errors.client_address = 'Ange en leveransadress'
     }
 
     // The backend rejects the submission outright when acceptance is required,
@@ -32,7 +32,7 @@ export function validateStep(
       data.accepted_terms_version_id !== config.terms?.version_id
     ) {
       errors.accepted_terms_version_id =
-        'Please accept the terms and conditions to continue'
+        'Du behöver godkänna villkoren för att skicka'
     }
   }
 

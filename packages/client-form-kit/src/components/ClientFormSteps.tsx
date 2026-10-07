@@ -8,6 +8,7 @@ import { ClientInfoStep } from "./ClientInfoStep";
 import { ContactInfoStep } from "./ContactInfoStep";
 import { DeliveryAddressStep } from "./DeliveryAddressStep";
 import { RulesGateSheet } from "./RulesGateSheet";
+import { ClientFormSubmissionScreen } from "./ClientFormSubmissionScreen";
 
 const stepVariants = {
   initial: (d: number) => ({ x: d * 80, opacity: 0 }),
@@ -17,11 +18,11 @@ const stepVariants = {
 
 /**
  * The whole collection sequence: indicator, the current step, and the rules
- * gate that stands between Submit and the actual write.
+ * gate that, when the team has rules, holds consent and the actual write.
  *
  * The gate ships inside rather than beside, because a host that forgot to
- * render it would leave the form silently frozen on Submit — the provider opens
- * the gate and waits for an acknowledgement that could never arrive.
+ * render it would leave the form silently frozen on the last step — the
+ * provider opens the gate and the submit action lives nowhere else.
  */
 export const ClientFormSteps = () => {
   const { currentStep } = useClientForm();
@@ -60,6 +61,7 @@ export const ClientFormSteps = () => {
       </div>
 
       <RulesGateSheet />
+      <ClientFormSubmissionScreen />
     </>
   );
 };

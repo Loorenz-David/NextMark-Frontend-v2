@@ -16,6 +16,8 @@ export type ClientFormContextValue = {
   data: ClientFormData;
   currentStep: ClientFormStep;
   isSubmitting: boolean;
+  /** Set once the host accepted the answers; the submission screen stays up. */
+  isSubmitted: boolean;
   /** The host's own message from a rejected submission. */
   submitError: string | null;
   /** Set when a submit attempt was blocked locally for missing terms acceptance. */
@@ -29,11 +31,13 @@ export type ClientFormContextValue = {
   goToStep: (step: ClientFormStep) => void;
   next: () => void;
   /**
-   * Entry point for the Submit button: validates, runs the rules gate, then
-   * submits. `overrides` covers values resolved in the same tick as the tap.
+   * Entry point for the last step's primary button: validates, then either
+   * opens the rules gate (when there are rules) or checks consent and submits.
+   * `overrides` covers values resolved in the same tick as the tap.
    */
   requestSubmit: (overrides?: Partial<ClientFormData>) => Promise<void>;
-  acknowledgeRules: () => Promise<void>;
+  /** The rules gate's confirm stage: checks consent, then submits. */
+  confirmAndSubmit: () => Promise<void>;
   dismissRulesGate: () => void;
 };
 

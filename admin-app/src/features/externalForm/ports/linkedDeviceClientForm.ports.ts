@@ -24,7 +24,7 @@ export const createLinkedDeviceClientFormPorts = (): ClientFormPorts => ({
     } catch {
       return {
         status: 'rejected',
-        message: 'Could not reach the till. Please try again.',
+        message: 'Det gick inte att nå kassan. Försök igen.',
       }
     }
   },

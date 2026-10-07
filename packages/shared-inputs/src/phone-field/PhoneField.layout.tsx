@@ -10,12 +10,14 @@ type PhoneFieldLayoutProps = {
   containerClassName?: string
   containerStyle?: CSSProperties
   prefixPopoverClassName?: string
+  numberPlaceholder?: string
 }
 
 export const PhoneFieldLayout = ({
   containerClassName,
   containerStyle,
   prefixPopoverClassName,
+  numberPlaceholder = 'Phone number',
 }: PhoneFieldLayoutProps) => {
   const {
     isOpen,
@@ -82,7 +84,7 @@ export const PhoneFieldLayout = ({
         type="tel"
         value={phoneNumber.number}
         onChange={handleNumberChange}
-        placeholder="Phone number"
+        placeholder={numberPlaceholder}
         fieldClassName="flex-3"
       />
     </div>

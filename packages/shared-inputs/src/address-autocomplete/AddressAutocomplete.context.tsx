@@ -4,6 +4,7 @@ import type { useGoogleAutoComplete } from './hooks/useGoogleAutoComplete'
 import type { useControllers } from './hooks/useController'
 
 import type { PlaceSuggestion  } from './types'
+import type { AddressAutocompleteLabels } from './constants/labels.constants'
 
 export type AddressAutocompleteContextValue =
   & ReturnType<typeof useGoogleAutoComplete>
@@ -16,6 +17,7 @@ export type AddressAutocompleteContextValue =
     enableSavedLocations: boolean
     intentKey?: string
     storageNamespace?: string
+    labels: AddressAutocompleteLabels
   }
 
 export const AddressAutocompleteContext = createContext<AddressAutocompleteContextValue | null>(null)

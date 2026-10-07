@@ -30,6 +30,8 @@ import { SectionPanel } from "../../../shared/section-panel/SectionPanel";
 import { useIsRouteMapRefreshing } from "@/features/plan";
 import { PlanDesktopShell } from "@/features/plan/views/PlanDesktopShell";
 import { MapPanel } from "../components/MapPanel";
+import { MapToggleTab } from "../components/MapToggleTab";
+import { FOLD_TAB_SURFACE_STYLE } from "../layout/foldTab.styles";
 
 const SAFE_GUTTER = 24;
 const DEFAULT_VIEWPORT_INSETS = {
@@ -40,23 +42,15 @@ const DEFAULT_VIEWPORT_INSETS = {
 };
 
 const PLAN_TOGGLE_BUTTON_STYLE: CSSProperties = {
+  ...FOLD_TAB_SURFACE_STYLE,
   padding: "29px 6px",
-  backgroundColor: "rgba(var(--theme-surface-workspace-r),0.78)",
   borderRadius: "10px 0 0 10px",
-  border: "1px solid var(--rule)",
-  boxShadow: "var(--shadow-panel-notice)",
-  backdropFilter: "blur(18px) saturate(120%)",
-  WebkitBackdropFilter: "blur(18px) saturate(120%)",
 };
 const PLAN_TOGGLE_BUTTON_SPLIT_STYLE: CSSProperties = {
+  ...FOLD_TAB_SURFACE_STYLE,
   padding: "6px 29px ",
-  backgroundColor: "rgba(var(--theme-surface-workspace-r),0.78)",
   borderBottom: "2px solid rgba(var(--theme-surface-workspace-r),0.86)",
   borderRadius: "15px 15px 0 0",
-  border: "1px solid var(--rule)",
-  boxShadow: "var(--shadow-panel-notice)",
-  backdropFilter: "blur(18px) saturate(120%)",
-  WebkitBackdropFilter: "blur(18px) saturate(120%)",
 };
 
 export function HomeDesktopView() {
@@ -85,6 +79,7 @@ export function HomeDesktopView() {
     isOrderSelectionMode: false,
     hasActiveDrag: false,
     hasPlanDropFeedback: false,
+    isMapHidden: false,
   });
 
   const derivedState = useHomeDesktopDerivedStateFlow({
@@ -110,6 +105,7 @@ export function HomeDesktopView() {
     isOrderSelectionMode,
     hasActiveDrag: Boolean(routeOperationsActiveDrag),
     hasPlanDropFeedback: Boolean(planDropFeedback),
+    isMapHidden: !layout.isMapVisible,
   };
 
   const shouldReframeToVisibleArea = useCallback(() => {
@@ -119,7 +115,8 @@ export function HomeDesktopView() {
       blockers.isDynamicSectionClosing ||
       blockers.isOrderSelectionMode ||
       blockers.hasActiveDrag ||
-      blockers.hasPlanDropFeedback
+      blockers.hasPlanDropFeedback ||
+      blockers.isMapHidden
     ) {
       return false;
     }
@@ -175,6 +172,7 @@ export function HomeDesktopView() {
         hasOverlay: layout.hasOverlay,
         isOrderOverlayOpen,
         isPlanVisible: layout.isPlanVisible,
+        isMapVisible: layout.isMapVisible,
       },
       resize,
       reframeToVisibleArea,
@@ -288,6 +286,16 @@ export function HomeDesktopView() {
           ) : null
         }
         isPlanVisible={layout.isPlanVisible}
+        isMapVisible={layout.isMapVisible}
+        buttonToggleMap={
+          layout.canToggleMap || !layout.isMapVisible ? (
+            <MapToggleTab
+              isMapVisible={layout.isMapVisible}
+              splitMode={splitMode}
+              onToggle={layout.toggleMap}
+            />
+          ) : null
+        }
       />
     </>
   );

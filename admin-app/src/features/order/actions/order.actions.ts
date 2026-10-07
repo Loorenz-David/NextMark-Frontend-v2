@@ -5,22 +5,18 @@ import {
   useSectionManager,
 } from "@/shared/resource-manager/useResourceManager";
 import {
-  deleteQueryFilter,
   resetQuery,
   setQueryFilters,
   setQuerySearch,
-  updateQueryFilters,
   useOrderQuery,
 } from "../store/orderQuery.store";
-import type {
-  OrderQueryFilters,
-  OrderQueryStringQueries,
-} from "../types/orderMeta";
+import type { OrderQueryFilters } from "../types/orderMeta";
 import {
-  filterBehavior,
-  orderStringFilters,
-  resolveConflicts,
-} from "../domain/orderFilterConfig";
+  draftFromOrderQueryFilters,
+  orderQueryFiltersFromDraft,
+  removeOrderFilterEntry,
+  type OrderFilterDraft,
+} from "../domain/orderFilterPanel.domain";
 import type { OrderDetailPayload } from "../domain/orderDetailPayload.types";
 import type { Order } from "../types/order";
 import { useOrderController } from "../controllers/order.controller";
@@ -126,126 +122,23 @@ export const useOrderActions = () => {
     resetQuery();
   }, []);
 
-  const openPopupFilter = useCallback((popupKey: string) => {
-    if (popupKey === "order.filter.order-state") {
-      popupManager.open({
-        key: "order.filter.order-state",
-        payload: {
-          selectedStates: Array.isArray(query.filters.order_state)
-            ? query.filters.order_state
-            : [],
-          onApply: (nextStates: string[]) => {
-            if (nextStates.length === 0) {
-              deleteQueryFilter("order_state");
-              return;
-            }
-
-            updateQueryFilters({ order_state: nextStates });
-          },
+  const openFilterPanel = useCallback(() => {
+    popupManager.open({
+      key: "order.filter.panel",
+      payload: {
+        draft: draftFromOrderQueryFilters(query.filters),
+        onApply: (draft: OrderFilterDraft) => {
+          setQueryFilters(orderQueryFiltersFromDraft(draft));
         },
-      });
-      return;
-    }
+      },
+    });
+  }, [popupManager, query.filters]);
 
-    if (popupKey === "order.filter.order-schedule-range") {
-      popupManager.open({
-        key: "order.filter.order-schedule-range",
-        payload: {
-          from: typeof query.filters.order_schedule_from === "string"
-            ? query.filters.order_schedule_from
-            : null,
-          to: typeof query.filters.order_schedule_to === "string"
-            ? query.filters.order_schedule_to
-            : null,
-          onApply: (payload: { from: string | null; to: string | null }) => {
-            const nextFilters = resolveConflicts(query.filters, "order_schedule_from");
-
-            if (!payload.from) {
-              delete nextFilters.order_schedule_from;
-            } else {
-              nextFilters.order_schedule_from = payload.from;
-            }
-
-            if (!payload.to) {
-              delete nextFilters.order_schedule_to;
-            } else {
-              nextFilters.order_schedule_to = payload.to;
-            }
-
-            applyFilters(nextFilters as OrderQueryFilters);
-          },
-        },
-      });
-    }
-  }, [applyFilters, popupManager, query.filters]);
-
-  const updateFilters = useCallback(
-    (key: string, value: unknown) => {
-      if (key in filterBehavior) {
-        const updatedFilters = resolveConflicts(query.filters, key);
-        applyFilters({ ...updatedFilters, [key]: value } as OrderQueryFilters);
-        return;
-      }
-
-      if (orderStringFilters.has(key as OrderQueryStringQueries)) {
-        const previous = query.filters.s ?? [];
-        const stringKey = key as OrderQueryStringQueries;
-        const alreadySelected = previous.includes(stringKey);
-        if (alreadySelected) return;
-
-        updateQueryFilters({ s: [...(query.filters.s || []), stringKey] });
-        return;
-      }
-      updateQueryFilters({ [key]: value } as Partial<OrderQueryFilters>);
-    },
-    [applyFilters, query],
-  );
-  const deleteFilter = useCallback(
+  const removeFilter = useCallback(
     (key: string, value?: unknown) => {
-      if (key === "s" && typeof value === "string") {
-        const stringKey = value as OrderQueryStringQueries;
-        const newStringFilters = (query.filters.s || []).filter(
-          (filterKey) => filterKey !== stringKey,
-        );
-
-        if (newStringFilters.length === 0) {
-          deleteQueryFilter("s");
-          return;
-        }
-
-        updateQueryFilters({ s: newStringFilters });
-        return;
-      }
-
-      if (orderStringFilters.has(key as OrderQueryStringQueries)) {
-        const stringKey = key as OrderQueryStringQueries;
-        const newStringFilters = (query.filters.s || []).filter(
-          (filterKey) => filterKey !== stringKey,
-        );
-
-        if (newStringFilters.length === 0) {
-          deleteQueryFilter("s");
-          return;
-        }
-
-        updateQueryFilters({ s: newStringFilters });
-        return;
-      }
-
-      const existingValue = query.filters[key as keyof OrderQueryFilters];
-      if (Array.isArray(existingValue) && value !== undefined) {
-        const nextValue = existingValue.filter((item) => item !== value);
-        if (nextValue.length === 0) {
-          deleteQueryFilter(key as keyof OrderQueryFilters);
-          return;
-        }
-        updateQueryFilters({ [key]: nextValue } as Partial<OrderQueryFilters>);
-        return;
-      }
-
-      deleteQueryFilter(key as keyof OrderQueryFilters);
+      setQueryFilters(removeOrderFilterEntry(query.filters, key, value));
     },
-    [query],
+    [query.filters],
   );
 
   const handleOrderMarkerClick = useCallback(
@@ -267,9 +160,8 @@ export const useOrderActions = () => {
     applySearch,
     applyFilters,
     resetFilters,
-    updateFilters,
-    openPopupFilter,
-    deleteFilter,
+    openFilterPanel,
+    removeFilter,
     openOrderCases,
     handleArchiveOrder,
     handleUnarchiveOrder,

@@ -119,7 +119,7 @@ const mapClientFormBootstrap = (
     meta: {
       ...meta,
       items: (items ?? []).map((item) => ({
-        name: item.item_type?.trim() || "Unnamed item",
+        name: item.item_type?.trim() || "Namnlös vara",
         quantity: typeof item.quantity === "number" ? item.quantity : 0,
       })),
     },

@@ -20,9 +20,9 @@ export const ContactInfoStep = () => {
 
   const handleNext = () => {
     const newErrors: typeof errors = {};
-    if (!data.client_email.trim()) newErrors.email = "Email is required";
+    if (!data.client_email.trim()) newErrors.email = "Ange din e-postadress";
     if (!primaryPhone.number.trim())
-      newErrors.phone = "Primary phone number is required";
+      newErrors.phone = "Ange ditt telefonnummer";
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) next();
   };
@@ -33,7 +33,7 @@ export const ContactInfoStep = () => {
         {/* Email */}
         <label className="flex w-full flex-col gap-1.5">
           <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-            Email <span className="text-[var(--danger)]">*</span>
+            E-post <span className="text-[var(--danger)]">*</span>
           </span>
           <div
             className={`custom-field-container${errors.email ? " is-invalid" : ""}`}
@@ -47,7 +47,7 @@ export const ContactInfoStep = () => {
                 if (errors.email)
                   setErrors((p) => ({ ...p, email: undefined }));
               }}
-              placeholder="email@example.com"
+              placeholder="namn@exempel.se"
             />
           </div>
           {errors.email && (
@@ -60,7 +60,7 @@ export const ContactInfoStep = () => {
         {/* Primary phone */}
         <label className="flex w-full flex-col gap-1.5">
           <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-            Primary Phone <span className="text-[var(--danger)]">*</span>
+            Telefonnummer <span className="text-[var(--danger)]">*</span>
           </span>
           <div
             className={`custom-field-container${errors.phone ? " is-invalid" : ""}`}
@@ -74,6 +74,7 @@ export const ContactInfoStep = () => {
               }}
               prefixPopoverClassName="client-form-portal address-ac-dropdown border-[var(--color-border-accent)] shadow-lg"
               storageNamespace={options.storageNamespace}
+              numberPlaceholder="Telefonnummer"
             />
           </div>
           {errors.phone && (
@@ -86,7 +87,7 @@ export const ContactInfoStep = () => {
         {/* Secondary phone */}
         <label className="flex w-full flex-col gap-1.5">
           <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-            Secondary Phone <span className="text-[var(--ink-faint)]">(optional)</span>
+            Extra telefonnummer <span className="text-[var(--ink-faint)]">(valfritt)</span>
           </span>
           <div className="custom-field-container">
             <PhoneField
@@ -94,6 +95,7 @@ export const ContactInfoStep = () => {
               onChange={(value) => setField("client_secondary_phone", value)}
               prefixPopoverClassName="client-form-portal address-ac-dropdown border-[var(--color-border-accent)] shadow-lg"
               storageNamespace={options.storageNamespace}
+              numberPlaceholder="Telefonnummer"
             />
           </div>
         </label>
@@ -101,11 +103,11 @@ export const ContactInfoStep = () => {
 
       <div className="flex justify-between">
         <StepButton
-          label="Back"
+          label="Tillbaka"
           variant="ghost"
           onClick={() => goToStep("client_info")}
         />
-        <StepButton label="Next" onClick={handleNext} />
+        <StepButton label="Nästa" onClick={handleNext} />
       </div>
     </div>
   );

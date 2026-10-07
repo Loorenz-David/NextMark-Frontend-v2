@@ -96,7 +96,7 @@ Important detail:
 - `apply_order_filters`
 - `copy_text`
 
-`apply_order_filters` uses `normalizeApplyOrderFiltersPayload` so search text and filters are separated cleanly before store updates.
+`apply_order_filters` uses `normalizeApplyOrderFiltersPayload` so search text and filters are separated cleanly before store updates. The order query store then runs `normalizeOrderQueryFilters` (features/order/domain/orderFilterPanel.domain.ts): `schedule_order` wins over `unschedule_order`, string booleans are coerced, and `plan_type` is user-controlled (no hidden default), so the AI may set it.
 
 Internal interaction actions (`interaction:*`) are still handled by the package hook and do not pass through provider `resolveAction`.
 

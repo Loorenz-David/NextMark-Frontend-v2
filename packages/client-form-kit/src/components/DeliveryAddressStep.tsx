@@ -11,9 +11,19 @@ import { StepButton } from "./StepButton";
 import { DeliveryAddressLoadingField } from "./DeliveryAddressLoadingField";
 import { ConsentSection } from "./ConsentSection";
 
+const ADDRESS_LABELS = {
+  currentLocation: "Min plats",
+  useCurrentLocation: "Använd min nuvarande plats",
+  searching: "Söker…",
+  noMatches: "Inga träffar. Prova att skriva adressen mer exakt.",
+};
+
 export const DeliveryAddressStep = () => {
-  const { data, setField, goToStep, requestSubmit, options } =
+  const { config, data, setField, goToStep, requestSubmit, options } =
     useClientForm();
+  // With rules, consent and the submit action move to the end of the rules
+  // gate, so this step only leads into it.
+  const hasRules = config.rules.length > 0;
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [isResolvingCurrentLocation, setIsResolvingCurrentLocation] =
     useState(false);
@@ -40,7 +50,7 @@ export const DeliveryAddressStep = () => {
 
     const typed = typedInputRef.current.trim();
     if (!typed) {
-      setGeocodeError("Please enter or select a delivery address.");
+      setGeocodeError("Skriv in eller välj en leveransadress.");
       return;
     }
 
@@ -59,7 +69,7 @@ export const DeliveryAddressStep = () => {
 
       if (!result.suggestions.length) {
         setGeocodeError(
-          "Address not found. Please select from the suggestions.",
+          "Vi hittade inte adressen. Välj ett av förslagen.",
         );
         return;
       }
@@ -86,7 +96,7 @@ export const DeliveryAddressStep = () => {
       await requestSubmit({ client_address: geocodedAddress });
     } catch {
       setGeocodeError(
-        "Could not verify address. Please select from the suggestions dropdown.",
+        "Det gick inte att kontrollera adressen. Välj ett av förslagen i listan.",
       );
     } finally {
       setIsGeocoding(false);
@@ -99,7 +109,7 @@ export const DeliveryAddressStep = () => {
         <div className="space-y-5">
           <label className="flex flex-col gap-1.5">
             <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-              Street address
+              Leveransadress
             </span>
             <AddressAutocomplete
               selectedAddress={selectedAddress}
@@ -116,7 +126,8 @@ export const DeliveryAddressStep = () => {
               }
               enableSavedLocations={options.enableSavedLocations}
               intentKey={options.savedLocationsIntentKey}
-              placeholder="Search address..."
+              placeholder="Sök adress…"
+              labels={ADDRESS_LABELS}
               renderInPortal
               popoverClassName="z-[1000] client-form-portal"
               currentLocationIconClassName="text-[var(--ink)]"
@@ -136,7 +147,7 @@ export const DeliveryAddressStep = () => {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1">
                 <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-                  City
+                  Ort
                 </span>
                 <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] text-[length:var(--cf-input)] text-[var(--ink)]">
                   {selectedAddress.city || "—"}
@@ -144,7 +155,7 @@ export const DeliveryAddressStep = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-                  Postal code
+                  Postnummer
                 </span>
                 <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] text-[length:var(--cf-input)] text-[var(--ink)]">
                   {selectedAddress.postal_code || "—"}
@@ -152,7 +163,7 @@ export const DeliveryAddressStep = () => {
               </div>
               <div className="flex flex-col gap-1 sm:col-span-2">
                 <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-                  Country
+                  Land
                 </span>
                 <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] text-[length:var(--cf-input)] text-[var(--ink)]">
                   {selectedAddress.country || "—"}
@@ -165,8 +176,8 @@ export const DeliveryAddressStep = () => {
         {options.collectOrderNotes ? (
           <label className="flex flex-col gap-1.5">
             <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-              Delivery notes{" "}
-              <span className="normal-case text-[var(--ink-faint)]">(optional)</span>
+              Leveransinstruktioner{" "}
+              <span className="normal-case text-[var(--ink-faint)]">(valfritt)</span>
             </span>
             <div className="custom-field-container">
               <input
@@ -183,17 +194,17 @@ export const DeliveryAddressStep = () => {
           <p className="text-[length:var(--cf-body)] text-[var(--danger)]">{geocodeError}</p>
         )}
 
-        <ConsentSection />
+        {hasRules ? null : <ConsentSection />}
       </div>
 
       <div className="flex justify-between">
         <StepButton
-          label="Back"
+          label="Tillbaka"
           variant="ghost"
           onClick={() => goToStep("contact_info")}
         />
         <StepButton
-          label={isGeocoding ? "Verifying…" : "Submit"}
+          label={isGeocoding ? "Kontrollerar…" : hasRules ? "Nästa" : "Skicka"}
           onClick={handleSubmit}
           disabled={isGeocoding}
         />

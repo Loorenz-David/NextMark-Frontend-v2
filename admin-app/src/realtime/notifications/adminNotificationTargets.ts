@@ -57,12 +57,21 @@ export const openAdminNotificationTargetPayload = (
   const targetPlanId = toPositiveInt(payload.target.params.planId);
 
   if (payload.target.kind === "order_detail" && targetOrderId != null) {
+    // A scheduled order opens over its plan, as it would from the plan itself.
+    if (targetPlanId != null) {
+      dependencies.openLocalDeliveryWorkspace({
+        planId: targetPlanId,
+        freshAfter: payload.occurred_at,
+      });
+    }
     dependencies.openOrderDetail(
       {
         serverId: targetOrderId,
         mode: "view",
         freshAfter: payload.occurred_at,
         focusEventId: payload.target.params.orderEventId ?? null,
+        routeGroupId: toPositiveInt(payload.target.params.routeGroupId),
+        headerBehavior: "order-main-context",
       },
       {
         pageClass: "bg-[var(--color-muted)]/10",

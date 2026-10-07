@@ -42,6 +42,12 @@ export type TeamInviteAcceptResponse = {
   user?: SessionUser | null
 }
 
+export type TeamInviteAcceptOptions = {
+  leaveCurrentTeam?: boolean
+}
+
+export const TEAM_MEMBERSHIP_CONFLICT_CODE = 'team_membership_conflict'
+
 export const teamInvitationApi = {
   listInvitesSent: (query?: TeamInviteSentQueryFilters): Promise<ApiResult<TeamInviteSentListResponse>> =>
     apiClient.request<TeamInviteSentListResponse>({
@@ -76,10 +82,14 @@ export const teamInvitationApi = {
       data: { fields: payload },
     }),
 
-  acceptInvitation: (inviteId: number | string): Promise<ApiResult<TeamInviteAcceptResponse>> =>
+  acceptInvitation: (
+    inviteId: number | string,
+    options?: TeamInviteAcceptOptions,
+  ): Promise<ApiResult<TeamInviteAcceptResponse>> =>
     apiClient.request<TeamInviteAcceptResponse>({
       path: `/team_invitations/accept/${inviteId}`,
       method: 'POST',
+      data: options?.leaveCurrentTeam ? { leave_current_team: true } : undefined,
     }),
 
   deleteInvitation: (inviteId: number | string): Promise<ApiResult<Record<string, never>>> =>
@@ -99,7 +109,11 @@ export const useCreateTeamInvite = () =>
   useCallback((payload: TeamInviteCreatePayload) => teamInvitationApi.createInvitation(payload), [])
 
 export const useUpdateTeamInviteAcceptance = () =>
-  useCallback((inviteId: number | string) => teamInvitationApi.acceptInvitation(inviteId), [])
+  useCallback(
+    (inviteId: number | string, options?: TeamInviteAcceptOptions) =>
+      teamInvitationApi.acceptInvitation(inviteId, options),
+    [],
+  )
 
 export const useUpdateTeamInviteRejection = () =>
   useCallback((inviteId: number | string) => teamInvitationApi.deleteInvitation(inviteId), [])

@@ -6,7 +6,6 @@ import { InputField } from '../input-field/InputField'
 import { SuggestionsSelector } from './SuggestionSelector'
 import { useAddressAutocompleteContext } from './AddressAutocomplete.context'
 import { isAddressCurrentLocation } from './utils/isAddressCurrentLocation'
-import { CURRENT_LOCATION_INPUT_LABEL } from './constants/location.constants'
 
 type AddressAutocompleteLayoutProps = {
   fieldClassName?: string
@@ -39,10 +38,11 @@ export const AddressAutocompleteLayout = ({
     selectedAddress,
     handleBeginManualEntryFromCurrentLocation,
     storageNamespace,
+    labels,
   } = useAddressAutocompleteContext()
 
   const isCurrentLocationMode = Boolean(selectedAddress && isAddressCurrentLocation(selectedAddress, storageNamespace))
-  const displayedValue = isCurrentLocationMode ? CURRENT_LOCATION_INPUT_LABEL : inputValue
+  const displayedValue = isCurrentLocationMode ? labels.currentLocation : inputValue
   const resolvedInputClassName = [
     inputClassName ?? 'custom-input',
     isCurrentLocationMode && embedCurrentLocationIcon ? 'pl-10' : null,

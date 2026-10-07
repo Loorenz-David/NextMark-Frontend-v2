@@ -1,6 +1,7 @@
 import { useDraggable } from '@dnd-kit/core'
 
 import type { Order } from '../../types/order'
+import { useOrderBatchDragActive } from '../../controllers/useOrderBatchDragActive.controller'
 import type { OrderAddressGroup } from '../../domain/orderAddressGroup.flow'
 import { OrderAddressGroupCard } from '../cards/OrderAddressGroupCard'
 
@@ -44,6 +45,7 @@ export const DraggableOrderAddressGroupCard = ({
     listeners,
     setNodeRef,
     isDragging,
+    active,
   } = useDraggable({
     id: `order_group:${group.key}`,
     data: {
@@ -57,11 +59,23 @@ export const DraggableOrderAddressGroupCard = ({
     },
   })
 
+  // During a batch drag a fully selected group leaves the list as one unit.
+  // Partially selected groups stay; their selected child cards hide
+  // themselves. A group holding the grabbed card stays mounted and laid out,
+  // because dnd-kit keeps measuring that active node.
+  const isBatchDragActive = useOrderBatchDragActive()
+  const isHiddenByBatchDrag =
+    isBatchDragActive &&
+    group.orders.length > 0 &&
+    group.orders.every((order) => isOrderSelected?.(order) ?? false) &&
+    !group.orders.some((order) => order.client_id === active?.id)
+
   // The DragOverlay tracks the pointer; the source only hides in place. See
   // DraggableOrderCard for why applying the transform here paints a mirror.
   // Wrapper `opacity` hides on the same frame; `visibility` alone would be
   // animated by the card body's `transition-all` (see DraggableOrderCard).
   const style: React.CSSProperties = {
+    display: isHiddenByBatchDrag ? 'none' : undefined,
     opacity: isDragging ? 0 : 1,
     visibility: isDragging ? 'hidden' : 'visible',
     pointerEvents: isDragging ? 'none' : undefined,

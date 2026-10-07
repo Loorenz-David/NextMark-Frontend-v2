@@ -1,14 +1,31 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode, type Ref } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   useRulesGateController,
   type RulesGateDirection,
 } from "../controllers/useRulesGateController";
-import type { ClientFormRule } from "../domain/clientFormConfig.types";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { ClientFormSheet } from "./ClientFormSheet";
 import { RuleReaderCard } from "./RuleReaderCard";
+import { RulesConfirmStage } from "./RulesConfirmStage";
+import { driveOnMainThread } from "../motion/driveOnMainThread";
 import { StepButton } from "./StepButton";
+
+/**
+ * Resets only the sheet body's scroll. `scrollIntoView` would also scroll the
+ * overlay, which is scrollable for as long as the opening slide pushes the
+ * panel past the bottom of a phone screen — the header jumped up and crawled
+ * back while the sheet opened.
+ */
+const scrollNearestScrollPortToTop = (element: HTMLElement) => {
+  for (let node = element.parentElement; node; node = node.parentElement) {
+    const { overflowY } = window.getComputedStyle(node);
+    if (overflowY === "auto" || overflowY === "scroll") {
+      node.scrollTop = 0;
+      return;
+    }
+  }
+};
 
 /**
  * Focus and scrolling happen when the keyed stage mounts, after the previous
@@ -17,17 +34,17 @@ import { StepButton } from "./StepButton";
 const AnimatedRuleStage = ({
   direction,
   prefersReducedMotion,
-  rule,
+  children,
 }: {
   direction: RulesGateDirection;
   prefersReducedMotion: boolean;
-  rule: ClientFormRule;
+  children: (headingRef: Ref<HTMLHeadingElement>) => ReactNode;
 }) => {
   const stageRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    stageRef.current?.scrollIntoView({ block: "start" });
+    if (stageRef.current) scrollNearestScrollPortToTop(stageRef.current);
     const frame = window.requestAnimationFrame(() => {
       headingRef.current?.focus({ preventScroll: true });
     });
@@ -52,20 +69,22 @@ const AnimatedRuleStage = ({
       initial="initial"
       animate="animate"
       exit="exit"
+      onUpdate={driveOnMainThread}
       transition={
         prefersReducedMotion
           ? { duration: 0 }
           : { duration: 0.22, ease: [0.22, 1, 0.36, 1] }
       }
     >
-      <RuleReaderCard rule={rule} headingRef={headingRef} />
+      {children(headingRef)}
     </motion.div>
   );
 };
 
 /**
- * Held between "Submit" and the actual POST. Rules are read in order and only
- * the last stage exposes the action that commits the order.
+ * Opened by the last step's "Next" when the team has rules. Rules are read in
+ * order, then a confirm stage collects consent and holds the only action that
+ * commits the order.
  */
 export const RulesGateSheet = () => {
   const {
@@ -80,11 +99,12 @@ export const RulesGateSheet = () => {
     isOpen,
     previous,
     progress,
-    ruleCount,
+    rules,
+    stageCount,
   } = useRulesGateController();
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  if (!activeRule) return null;
+  if (stageCount === 0) return null;
 
   return (
     <ClientFormSheet
@@ -95,24 +115,27 @@ export const RulesGateSheet = () => {
       dismissible={false}
       blurBackdrop
       variant="fullscreen"
-      title="Innan du bekräftar"
-      description="Så fungerar din leverans."
+      // Rules differ in text and image length; a fixed height keeps the dialog
+      // from resizing on every step.
+      desktopHeight="fixed"
+      title="Innan du skickar"
+      description="Så går leveransen till."
       headerAside={
         <p
           aria-live="polite"
           className="text-[length:var(--cf-caption)] font-semibold uppercase tracking-[0.18em] text-[var(--ink-soft)]"
         >
-          {currentPosition} of {ruleCount}
+          {currentPosition} av {stageCount}
         </p>
       }
       headerBoundary={
         <div
           role="progressbar"
-          aria-label="Läsförlopp för regler"
+          aria-label="Förlopp"
           aria-valuemin={1}
-          aria-valuemax={ruleCount}
+          aria-valuemax={stageCount}
           aria-valuenow={currentPosition}
-          aria-valuetext={`${currentPosition} of ${ruleCount}`}
+          aria-valuetext={`${currentPosition} av ${stageCount}`}
           className="h-1 overflow-hidden bg-[var(--rule)]"
         >
           <div
@@ -127,7 +150,7 @@ export const RulesGateSheet = () => {
       footer={
         <div className="flex items-center justify-between gap-3">
           <StepButton
-            label="Föregående"
+            label="Tillbaka"
             variant="ghost"
             onClick={previous}
             disabled={isFirst || isBusy}
@@ -137,7 +160,7 @@ export const RulesGateSheet = () => {
               isLast
                 ? isBusy
                   ? "Skickar…"
-                  : "Skicka beställning"
+                  : "Skicka"
                 : "Nästa"
             }
             onClick={() => void advance()}
@@ -150,11 +173,18 @@ export const RulesGateSheet = () => {
         <div className="overflow-hidden">
           <AnimatePresence mode="wait" initial={false} custom={direction}>
             <AnimatedRuleStage
-              key={activeRule.id}
-              rule={activeRule}
+              key={activeRule ? `rule-${activeRule.id}` : "confirm"}
               direction={direction}
               prefersReducedMotion={prefersReducedMotion}
-            />
+            >
+              {(headingRef) =>
+                activeRule ? (
+                  <RuleReaderCard rule={activeRule} headingRef={headingRef} />
+                ) : (
+                  <RulesConfirmStage rules={rules} headingRef={headingRef} />
+                )
+              }
+            </AnimatedRuleStage>
           </AnimatePresence>
         </div>
       </div>

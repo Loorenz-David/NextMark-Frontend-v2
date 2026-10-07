@@ -12,7 +12,7 @@ export const DeliveryAddressLoadingField = () => {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
           <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-            City
+            Ort
           </span>
           <div
             className={`relative rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] ${shimmerClassName}`}
@@ -23,7 +23,7 @@ export const DeliveryAddressLoadingField = () => {
 
         <div className="flex flex-col gap-1">
           <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-            Postal code
+            Postnummer
           </span>
           <div
             className={`relative rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] ${shimmerClassName}`}
@@ -34,7 +34,7 @@ export const DeliveryAddressLoadingField = () => {
 
         <div className="flex flex-col gap-1 sm:col-span-2">
           <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-            Country
+            Land
           </span>
           <div
             className={`relative rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--paper-sunken)] px-3 py-[var(--cf-field-py)] ${shimmerClassName}`}

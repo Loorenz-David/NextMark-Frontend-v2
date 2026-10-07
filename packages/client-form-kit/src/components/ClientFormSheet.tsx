@@ -10,6 +10,7 @@ import {
   useRole,
 } from "@floating-ui/react";
 import { BackArrowIcon } from "../icons/BackArrowIcon";
+import { driveOnMainThread } from "../motion/driveOnMainThread";
 
 /**
  * `AnimatePresence` only runs exit animations on a motion component, so the
@@ -57,13 +58,19 @@ type Props = {
   /** Softens the page behind the overlay without affecting the sheet itself. */
   blurBackdrop?: boolean;
   variant?: ClientFormSheetVariant;
+  /**
+   * From `sm` up: `content` lets the dialog grow with its body up to the cap;
+   * `fixed` pins it at the cap so it does not jump between steps of different
+   * length, and the body scrolls instead.
+   */
+  desktopHeight?: "content" | "fixed";
   children: ReactNode;
 };
 
 // Held to the same column width as the form, so the terms and the rules are
 // read at the width they were filled in at.
 const DESKTOP_PANEL =
-  "sm:h-auto sm:max-h-[80dvh] sm:max-w-[var(--cf-column)] sm:rounded-[var(--radius-lg)] sm:shadow-[0_10px_30px_rgba(46,42,36,0.18)]";
+  "sm:max-h-[80dvh] sm:max-w-[var(--cf-column)] sm:rounded-[var(--radius-lg)] sm:shadow-[0_10px_30px_rgba(46,42,36,0.18)]";
 
 const PANEL_BY_VARIANT: Record<ClientFormSheetVariant, string> = {
   sheet: `max-h-[88dvh] w-full max-w-[var(--cf-column)] rounded-t-[var(--radius-lg)] border border-[var(--rule-strong)] shadow-[0_-10px_30px_rgba(46,42,36,0.18)] ${DESKTOP_PANEL} sm:border sm:border-[var(--rule-strong)]`,
@@ -92,10 +99,11 @@ export const ClientFormSheet = ({
   footerPlacement = "pinned",
   headerPlacement = "pinned",
   onBack,
-  backLabel = "Go back",
+  backLabel = "Tillbaka",
   dismissible = true,
   blurBackdrop = false,
   variant = "sheet",
+  desktopHeight = "content",
   children,
 }: Props) => {
   const isFullscreen = variant === "fullscreen";
@@ -184,6 +192,7 @@ export const ClientFormSheet = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            onUpdate={driveOnMainThread}
             transition={{ duration: 0.18 }}
           >
             <div
@@ -193,11 +202,14 @@ export const ClientFormSheet = ({
                 <motion.div
                   ref={refs.setFloating}
                   {...getFloatingProps()}
+                  onUpdate={driveOnMainThread}
                   initial={{ y: 32, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: 24, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 320, damping: 32 }}
-                  className={`flex flex-col overflow-hidden bg-[var(--paper-raised)] ${PANEL_BY_VARIANT[variant]}`}
+                  className={`flex flex-col overflow-hidden bg-[var(--paper-raised)] ${PANEL_BY_VARIANT[variant]} ${
+                    desktopHeight === "fixed" ? "sm:h-[80dvh]" : "sm:h-auto"
+                  }`}
                 >
                   {isHeaderInline ? null : headerNode}
 

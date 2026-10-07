@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { motion } from 'framer-motion'
 
 import type { DesktopPlanViewMode } from '../hooks/useHomeDesktopLayout'
 import { MapArea } from './MapArea'
@@ -13,9 +14,11 @@ interface HomeDesktopLayoutProps {
   overlay: ReactNode
   orderOverlay?: ReactNode
   buttonTogglePlan?: ReactNode
+  buttonToggleMap?: ReactNode
   baseWidth: number
   isOrderOverlayOpen: boolean
   isPlanVisible: boolean
+  isMapVisible: boolean
   viewMode: DesktopPlanViewMode
   splitMode: boolean
   planColumnWidth: number | string
@@ -36,9 +39,11 @@ export function HomeDesktopLayout({
   overlay,
   orderOverlay,
   buttonTogglePlan,
+  buttonToggleMap,
   baseWidth,
   isOrderOverlayOpen,
   isPlanVisible,
+  isMapVisible,
   viewMode,
   splitMode,
   planColumnWidth,
@@ -59,7 +64,7 @@ export function HomeDesktopLayout({
 
   return (
     <main
-      className="grid h-full min-h-0 flex-1 overflow-hidden layout-animate"
+      className="relative grid h-full min-h-0 flex-1 overflow-hidden layout-animate"
       style={{
         gridTemplateColumns: `minmax(0, 1fr) ${planColumnGridCss} ${railColumnWidth}px`,
         willChange: 'grid-template-columns',
@@ -70,7 +75,11 @@ export function HomeDesktopLayout({
         onRailTransitionEnd?.()
       }}
     >
-      <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
+      <div
+        className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden"
+        aria-hidden={!isMapVisible}
+        inert={!isMapVisible}
+      >
         <div
           className={splitMode ? 'relative min-h-0 shrink-0 layout-animate' : 'relative min-h-0 flex-1'}
           style={
@@ -88,7 +97,11 @@ export function HomeDesktopLayout({
             onRailTransitionEnd?.()
           }}
         >
-          <MapArea map={map} mapOverlay={mapOverlay} />
+          <MapArea
+            map={map}
+            mapOverlay={mapOverlay}
+            buttonToggleMap={isMapVisible ? buttonToggleMap : null}
+          />
         </div>
 
         {splitMode ? (
@@ -129,6 +142,18 @@ export function HomeDesktopLayout({
         overlayWidth={overlayWidth}
         onPlanLayoutChange={onPlanLayoutChange}
       />
+
+      {!isMapVisible && buttonToggleMap ? (
+        <motion.div
+          className="absolute left-0 top-0 z-30"
+          initial={{ x: -150 }}
+          animate={{ x: 0 }}
+          exit={{ x: -150 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        >
+          {buttonToggleMap}
+        </motion.div>
+      ) : null}
     </main>
   )
 }

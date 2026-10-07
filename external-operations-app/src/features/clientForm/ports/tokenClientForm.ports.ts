@@ -7,7 +7,7 @@ import {
   type ClientFormStatus,
 } from "../domain/clientFormStatus";
 
-const GENERIC_FAILURE = "Something went wrong. Please try again.";
+const GENERIC_FAILURE = "Något gick fel. Försök igen.";
 
 type Params = {
   token: string;

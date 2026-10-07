@@ -4,7 +4,6 @@ import type { ChangeEvent } from 'react'
 import type { address } from '@shared-domain/core/address'
 import type { PlaceSuggestion } from '../types'
 import { recordSavedLocation } from '../utils/savedLocationsStorage'
-import { CURRENT_LOCATION_INPUT_LABEL } from '../constants/location.constants'
 import { isAddressCurrentLocation } from '../utils/isAddressCurrentLocation'
 
 type PropsuseController = {
@@ -19,6 +18,7 @@ type PropsuseController = {
   onInputValueChange?: (value: string) => void
   storageNamespace?: string
   onCurrentLocationLoadingChange?: (isLoading: boolean) => void
+  currentLocationLabel: string
 }
 
 export const useControllers = ({
@@ -33,6 +33,7 @@ export const useControllers = ({
   onInputValueChange,
   storageNamespace,
   onCurrentLocationLoadingChange,
+  currentLocationLabel,
 }: PropsuseController) => {
   const debounceMs = 500
   const debounceTimeoutRef = useRef<number | null>(null)
@@ -101,8 +102,8 @@ export const useControllers = ({
       })
       handleToogle({ value: false })
       const addressDetails = await getCurrentLocationAddress(storageNamespace)
-      setInputValue(CURRENT_LOCATION_INPUT_LABEL)
-      onInputValueChange?.(CURRENT_LOCATION_INPUT_LABEL)
+      setInputValue(currentLocationLabel)
+      onInputValueChange?.(currentLocationLabel)
       onSelectedAddress(addressDetails)
       maybeRecordSavedLocation(addressDetails)
     } catch {
@@ -146,7 +147,7 @@ export const useControllers = ({
   useEffect(() => {
     if (selectedAddress) {
       const firstLoadAddress = isAddressCurrentLocation(selectedAddress, storageNamespace)
-        ? CURRENT_LOCATION_INPUT_LABEL
+        ? currentLocationLabel
         : selectedAddress?.street_address ?? selectedAddress?.city ?? selectedAddress?.country
 
       setInputValue(firstLoadAddress ?? '')
@@ -157,7 +158,7 @@ export const useControllers = ({
         window.clearTimeout(debounceTimeoutRef.current)
       }
     }
-  }, [selectedAddress, storageNamespace])
+  }, [currentLocationLabel, selectedAddress, storageNamespace])
 
   return {
     inputValue,

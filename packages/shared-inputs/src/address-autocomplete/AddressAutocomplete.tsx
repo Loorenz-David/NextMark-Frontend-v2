@@ -3,6 +3,10 @@ import { AddressAutocompleteLayout } from './AddressAutocomplete.layout'
 import type { CSSProperties } from 'react'
 import type { address } from '@shared-domain/core/address'
 import type { ComponentRestrictions } from '@shared-google-maps'
+import {
+  DEFAULT_ADDRESS_AUTOCOMPLETE_LABELS,
+  type AddressAutocompleteLabels,
+} from './constants/labels.constants'
 
 type PropsAddressAutocomplete = {
   onSelectedAddress: (value: address | null) => void
@@ -24,6 +28,7 @@ type PropsAddressAutocomplete = {
   embedCurrentLocationIcon?: boolean
   storageNamespace?: string
   onCurrentLocationLoadingChange?: (isLoading: boolean) => void
+  labels?: Partial<AddressAutocompleteLabels>
 }
 
 export const AddressAutocomplete = ({
@@ -46,7 +51,10 @@ export const AddressAutocomplete = ({
   embedCurrentLocationIcon,
   storageNamespace,
   onCurrentLocationLoadingChange,
+  labels,
 }: PropsAddressAutocomplete) => {
+  const resolvedLabels = { ...DEFAULT_ADDRESS_AUTOCOMPLETE_LABELS, ...labels }
+
   return (
     <AddressAutocompleteProvider
       onSelectedAddress={onSelectedAddress}
@@ -59,6 +67,7 @@ export const AddressAutocomplete = ({
       onInputValueChange={onInputValueChange}
       storageNamespace={storageNamespace}
       onCurrentLocationLoadingChange={onCurrentLocationLoadingChange}
+      labels={resolvedLabels}
     >
       <AddressAutocompleteLayout
         fieldClassName={fieldClassName}

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 
 import type { DesktopPlanViewMode } from '../hooks/useHomeDesktopLayout'
+import { usePrefersReducedMotionFlow } from './prefersReducedMotion.flow'
 
 type RailLayoutDeps = {
   viewMode: DesktopPlanViewMode
@@ -10,6 +11,7 @@ type RailLayoutDeps = {
   hasOverlay: boolean
   isOrderOverlayOpen: boolean
   isPlanVisible: boolean
+  isMapVisible: boolean
 }
 
 type HomeDesktopRailSettleFlowParams = {
@@ -41,9 +43,25 @@ export const useHomeDesktopRailSettleFlow = ({
   shouldReframeToVisibleArea,
 }: HomeDesktopRailSettleFlowParams) => {
   const rafRef = useRef<number | null>(null)
+  const prefersReducedMotionRef = usePrefersReducedMotionFlow()
+  // While the map column slides back open it is still ~0px wide on the first
+  // frame; reframing then would fit the viewport to nothing. Hold the reframe
+  // until the grid transition ends. Reduced motion disables the transition
+  // (no transitionend fires), so the hold is skipped there.
+  const revealPendingRef = useRef(false)
+  const previousMapVisibleRef = useRef(layoutDeps.isMapVisible)
+
+  useEffect(() => {
+    const wasVisible = previousMapVisibleRef.current
+    previousMapVisibleRef.current = layoutDeps.isMapVisible
+    if (!wasVisible && layoutDeps.isMapVisible && !prefersReducedMotionRef.current) {
+      revealPendingRef.current = true
+    }
+  }, [layoutDeps.isMapVisible, prefersReducedMotionRef])
 
   const settleNow = useCallback(() => {
     resize()
+    if (revealPendingRef.current) return
     if (shouldReframeToVisibleArea?.() ?? true) {
       reframeToVisibleArea()
     }
@@ -69,6 +87,7 @@ export const useHomeDesktopRailSettleFlow = ({
     layoutDeps.hasOverlay,
     layoutDeps.isOrderOverlayOpen,
     layoutDeps.isPlanVisible,
+    layoutDeps.isMapVisible,
     layoutDeps.mapRowHeight,
     layoutDeps.planColumnWidth,
     layoutDeps.planRowHeight,
@@ -81,6 +100,7 @@ export const useHomeDesktopRailSettleFlow = ({
   }, [scheduleSettle])
 
   const handleRailTransitionEnd = useCallback(() => {
+    revealPendingRef.current = false
     settleNow()
   }, [settleNow])
 

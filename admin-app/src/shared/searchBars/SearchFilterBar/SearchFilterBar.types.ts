@@ -6,12 +6,6 @@ export type FilterConfig =
       value: string | number | boolean
     }
   | {
-      type: 'popup-multi-select'
-      key: string
-      label: string
-      popupKey: string
-    }
-  | {
       type: 'number-list'
       key: string
       label: string
@@ -23,18 +17,14 @@ export type FilterConfig =
       keyEnd: string
       label: string
     }
-  | {
-      type: 'popup-date-range'
-      keyStart: string
-      keyEnd: string
-      label: string
-      popupKey: string
-    }
 
 export type SearchFilterBarProps = {
   applySearch: (input: string) => void
   updateFilter?: (key: string, value: unknown) => void
-  openPopupFilter?: (popupKey: string) => void
+  /** When set, the filter icon delegates to the caller instead of the inline config popover. */
+  onOpenFilters?: () => void
+  /** Badge next to the filter icon; hidden when 0 or undefined. */
+  activeFilterCount?: number
   filters?: Record<string, unknown>
   config?: FilterConfig[]
   hideFilteredIcon?: boolean

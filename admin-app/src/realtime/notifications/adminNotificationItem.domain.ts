@@ -28,7 +28,8 @@ export type AdminNotificationItemViewModel = {
   headline: AdminNotificationHeadline | null;
   /** Shown in place of the headline when the notification has no subject. */
   title: string;
-  detail: string | null;
+  /** The detail's " · "-separated parts, one per line. */
+  detailLines: string[];
   badge: AdminNotificationBadge;
   occurredAt: string;
 };
@@ -71,6 +72,12 @@ const resolveVerb = (
   notification: NotificationItem,
   actorKind: NotificationActorKind,
 ) => {
+  // The backend names the action when it knows it (scheduled, reordered
+  // stops on, …), for orders and routes alike.
+  const actionLabel = toNonEmpty(notification.action_label);
+  if (actionLabel) {
+    return actionLabel;
+  }
   switch (notification.kind) {
     case "order.created":
       return "created";
@@ -90,6 +97,12 @@ const formatChanges = (labels: string[], total: number) => {
 };
 
 const resolveDetail = (notification: NotificationItem) => {
+  // A detail written for this notification (where an order moved, what a
+  // route change did) says more than a list of changed field names.
+  const detail = toNonEmpty(notification.detail);
+  if (detail) {
+    return detail;
+  }
   const labels = notification.change_labels ?? [];
   if (labels.length > 0) {
     return `Changed ${formatChanges(labels, notification.change_count ?? labels.length)}`;
@@ -100,6 +113,14 @@ const resolveDetail = (notification: NotificationItem) => {
   }
   return toNonEmpty(notification.description);
 };
+
+const DETAIL_SEPARATOR = " · ";
+
+const splitDetail = (detail: string | null): string[] =>
+  (detail ?? "")
+    .split(DETAIL_SEPARATOR)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
 
 const resolveBadge = (kind: string): AdminNotificationBadge => {
   if (kind === "order_chat.message_created") return "message";
@@ -125,7 +146,7 @@ export const mapNotificationToAdminViewModel = (
     actor,
     headline: verb && subject ? { verb, subject } : null,
     title: notification.title,
-    detail: resolveDetail(notification),
+    detailLines: splitDetail(resolveDetail(notification)),
     badge: resolveBadge(notification.kind),
     occurredAt: notification.occurred_at,
   };

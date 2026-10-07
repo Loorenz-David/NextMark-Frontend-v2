@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import {
   ClientFormProvider,
   EMPTY_CLIENT_FORM_CONFIG,
@@ -75,7 +74,7 @@ export const ClientFormPage = ({ token }: Props) => {
   if (status.state === 'loading') {
     return (
       <PublicCenteredState>
-        <p className="text-sm text-[var(--ink-soft)]">Loading…</p>
+        <p className="text-sm text-[var(--ink-soft)]">Laddar…</p>
       </PublicCenteredState>
     )
   }
@@ -83,8 +82,8 @@ export const ClientFormPage = ({ token }: Props) => {
   if (status.state === 'expired') {
     return (
       <PublicCenteredState
-        title="Link expired"
-        description="This form link has expired. Please contact the sender to request a new one."
+        title="Länken har gått ut"
+        description="Länken till formuläret har gått ut. Kontakta avsändaren för att få en ny."
       />
     )
   }
@@ -97,36 +96,18 @@ export const ClientFormPage = ({ token }: Props) => {
             <CheckMarkIcon className="h-7 w-7 text-[var(--accent)]" />
           </div>
         }
-        title="Already submitted"
-        description="Your information has already been received. Thank you!"
+        title="Redan skickat"
+        description="Vi har redan tagit emot dina uppgifter. Tack!"
       />
     )
   }
 
-  if (status.state === 'submitted') {
-    return (
-      <PublicCenteredState>
-        <AnimatePresence>
-          <motion.div initial={{ y: -14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex max-w-sm flex-col items-center gap-4 text-center">
-            <motion.div
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1, type: 'spring', stiffness: 260, damping: 18 }}
-              className="flex h-16 w-16 items-center justify-center rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 shadow-none"
-            >
-              <CheckMarkIcon className="h-8 w-8 text-[var(--accent)]" />
-            </motion.div>
-            <p className="text-xl font-semibold text-[var(--ink)]">Form submitted</p>
-            <p className="text-sm text-[var(--ink-soft)]">Your information has been received. Thank you!</p>
-          </motion.div>
-        </AnimatePresence>
-      </PublicCenteredState>
-    )
+  if (status.state === 'invalid') {
+    return <PublicCenteredState description="Länken är inte giltig." />
   }
 
-  if (status.state === 'invalid') {
-    return <PublicCenteredState description="This link is not valid." />
-  }
+  // 'submitted' renders the form too: the kit's submission screen is already
+  // showing the confirmation over it, and unmounting would cut that short.
 
   return (
     <ClientFormProvider

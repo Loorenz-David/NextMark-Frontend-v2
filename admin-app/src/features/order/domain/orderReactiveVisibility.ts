@@ -125,6 +125,24 @@ export const reactiveOrderVisibility = (
     }
   }
 
+  // plan type filtering (order_plan_objective)
+  if (filters.plan_type != null) {
+    const planTypes = (Array.isArray(filters.plan_type)
+      ? filters.plan_type
+      : [filters.plan_type]
+    )
+      .map((value) => String(value).trim())
+      .filter(Boolean);
+
+    if (planTypes.length > 0) {
+      const objective = order.order_plan_objective ?? null;
+      const matchesNone = objective === null && planTypes.includes("none");
+      if (!matchesNone && (!objective || !planTypes.includes(objective))) {
+        return false;
+      }
+    }
+  }
+
   const scheduleFrom = toDayTimestamp(filters.order_schedule_from);
   const scheduleTo = toDayTimestamp(filters.order_schedule_to);
   if (scheduleFrom !== null || scheduleTo !== null) {

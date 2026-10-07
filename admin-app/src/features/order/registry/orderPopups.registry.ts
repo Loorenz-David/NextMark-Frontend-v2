@@ -6,8 +6,7 @@ import { ItemForm } from "../item";
 import { SendClientFormLinkPopup } from "../popups/SendClientFormLink/SendClientFormLinkPopup";
 import { FailureNotePopup } from "../popups/FailureNote/FailureNotePopup";
 import { EditOrderNotePopup } from "../popups/EditOrderNote/EditOrderNotePopup";
-import { OrderStateFilterPopup } from "../popups/OrderStateFilter/OrderStateFilterPopup";
-import { OrderScheduleFilterPopup } from "../popups/OrderScheduleFilter/OrderScheduleFilterPopup";
+import { OrderFilterPopup } from "../popups/OrderFilter/OrderFilterPopup";
 
 type ExtractPayload<T> =
   T extends React.ComponentType<StackComponentProps<infer P>> ? P : never;
@@ -22,8 +21,7 @@ export const popupRegistry = {
   "order.client-form-link.send": SendClientFormLinkPopup,
   "order.failure-note.create": FailureNotePopup,
   "order.note.edit": EditOrderNotePopup,
-  "order.filter.order-state": OrderStateFilterPopup,
-  "order.filter.order-schedule-range": OrderScheduleFilterPopup,
+  "order.filter.panel": OrderFilterPopup,
   FilterForm: PlaceholderPopup,
 };
 

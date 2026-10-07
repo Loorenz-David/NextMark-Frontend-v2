@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  CheckMarkIcon,
   ClientFormFrame,
   ClientFormProvider,
   ClientFormScheduledDate,
@@ -153,7 +152,9 @@ export const ExternalCustomerFormPage = () => {
     <PageLayout>
       <ClientFormFrame config={config}>
         <AnimatePresence mode="wait">
-        {screen === 'collecting' ? (
+        {/* The form stays mounted through 'submitted': the kit's submission
+            screen turns its spinner into the confirmation over it. */}
+        {screen === 'collecting' || screen === 'submitted' ? (
           <motion.div
             key="external-form"
             initial={{ y: -26, opacity: 0 }}
@@ -171,20 +172,22 @@ export const ExternalCustomerFormPage = () => {
               onStateChange={handleStateChange}
             >
               <div className="flex flex-col gap-6">
-                <header className="space-y-3 pb-2 text-center">
-                  <p className="text-[length:var(--cf-eyebrow)] font-semibold uppercase tracking-[0.34em] text-[var(--ink-faint)]">
-                    Delivery Details
+                {/* On a phone the masthead is only the delivery date. A gap
+                    rather than space-y, so the hidden lines leave no margin. */}
+                <header className="flex flex-col gap-3 pb-2 text-center">
+                  <p className="hidden text-[length:var(--cf-eyebrow)] font-semibold uppercase tracking-[0.34em] text-[var(--ink-faint)] sm:block">
+                    Leveransuppgifter
                   </p>
-                  <h1 className="text-[length:var(--cf-title)] font-normal leading-tight tracking-[0.01em] text-[var(--ink)]">
-                    Confirm delivery details
+                  <h1 className="hidden text-[length:var(--cf-title)] font-normal leading-tight tracking-[0.01em] text-[var(--ink)] sm:block">
+                    Bekräfta dina leveransuppgifter
                   </h1>
-                  <div aria-hidden="true" className="mx-auto w-24 space-y-[3px] pt-1">
+                  <div aria-hidden="true" className="mx-auto hidden w-24 space-y-[3px] pt-1 sm:block">
                     <div className="h-px bg-[var(--rule-strong)]" />
                     <div className="h-px bg-[var(--rule)]" />
                   </div>
                   <ClientFormScheduledDate meta={meta} />
-                  <p className="text-[length:var(--cf-body)] italic leading-relaxed text-[var(--ink-soft)]">
-                    Complete all three steps to submit your details.
+                  <p className="hidden text-[length:var(--cf-body)] italic leading-relaxed text-[var(--ink-soft)] sm:block">
+                    Fyll i de tre stegen för att skicka dina uppgifter.
                   </p>
                 </header>
 
@@ -195,31 +198,19 @@ export const ExternalCustomerFormPage = () => {
         ) : screen === 'preparing' ? (
           <Notice motionKey="external-form-preparing">
             <p className="py-10 text-[length:var(--cf-body)] italic text-[var(--ink-soft)]">
-              Preparing form…
+              Förbereder formuläret…
             </p>
           </Notice>
         ) : screen === 'unavailable' ? (
           <Notice motionKey="external-form-unavailable">
             <p className="py-10 text-[length:var(--cf-body)] text-[var(--danger)]">
-              Could not load the form. Ask a member of staff to send it again.
+              Formuläret kunde inte laddas. Be personalen att skicka det igen.
             </p>
-          </Notice>
-        ) : screen === 'submitted' ? (
-          <Notice motionKey="external-form-submitted">
-            <div className="flex min-h-[224px] flex-col items-center justify-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)]">
-                <CheckMarkIcon className="h-8 w-8" />
-              </div>
-              <p className="text-[length:var(--cf-heading)] text-[var(--ink)]">Form submitted</p>
-              <p className="text-[length:var(--cf-body)] text-[var(--ink-soft)]">
-                Waiting for a new form request…
-              </p>
-            </div>
           </Notice>
         ) : (
           <Notice motionKey="external-form-idle">
             <p className="py-10 text-[length:var(--cf-body)] italic text-[var(--ink-soft)]">
-              Waiting for form request…
+              Väntar på nästa formulär…
             </p>
           </Notice>
         )}

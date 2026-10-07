@@ -63,6 +63,7 @@ export const SuggestionsSelector = ({ currentLocationIconClassName }: Suggestion
       handleUseCurrentLocation,
       handleSelectSavedLocation,
       savedLocationsRevision,
+      labels,
     } = useAddressAutocompleteContext()
 
     const isTyping = inputValue.trim().length > 0
@@ -85,6 +86,7 @@ export const SuggestionsSelector = ({ currentLocationIconClassName }: Suggestion
             <ul>
                 {enableCurrentLocation ? (
                   <CurrentLocationCard
+                    label={labels.useCurrentLocation}
                     onSelect={handleUseCurrentLocation}
                     iconClassName={currentLocationIconClassName}
                   />
@@ -117,7 +119,7 @@ export const SuggestionsSelector = ({ currentLocationIconClassName }: Suggestion
     }else if( isLoading ){
         return(
             <div className="px-3 py-3 text-xs text-[var(--color-muted)]">
-                Searching…
+                {labels.searching}
             </div>
         )
     }
@@ -125,10 +127,11 @@ export const SuggestionsSelector = ({ currentLocationIconClassName }: Suggestion
     return (
       <div className="flex flex-col">
         <div className="px-3 py-2.5 text-xs text-[var(--color-muted)]">
-          No matches. Try refining your search.
+          {labels.noMatches}
         </div>
         {enableCurrentLocation ? (
           <CurrentLocationCard
+            label={labels.useCurrentLocation}
             onSelect={handleUseCurrentLocation}
             iconClassName={currentLocationIconClassName}
           />

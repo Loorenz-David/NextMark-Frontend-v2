@@ -18,7 +18,7 @@ export const useRulesGateController = () => {
     config,
     isRulesGateOpen,
     isSubmitting,
-    acknowledgeRules,
+    confirmAndSubmit,
     dismissRulesGate,
   } = useClientForm();
   const [requestedIndex, setRequestedIndex] = useState(0);
@@ -34,7 +34,9 @@ export const useRulesGateController = () => {
     isFirst,
     isLast,
     progress,
+    stageCount,
   } = sequence;
+  // Null on the confirm stage, which follows the last rule.
   const activeRule = config.rules[activeIndex] ?? null;
 
   // A refreshed configuration may contain fewer rules. Keep the persisted
@@ -52,7 +54,7 @@ export const useRulesGateController = () => {
   }, [activeIndex, isCompleting, isSubmitting, ruleCount]);
 
   const advance = useCallback(async () => {
-    if (!activeRule || isSubmitting || isCompleting) return;
+    if (stageCount === 0 || isSubmitting || isCompleting) return;
 
     if (!isLast) {
       setDirection(1);
@@ -66,19 +68,19 @@ export const useRulesGateController = () => {
     completionStartedRef.current = true;
     setIsCompleting(true);
     try {
-      await acknowledgeRules();
+      await confirmAndSubmit();
     } finally {
       completionStartedRef.current = false;
       setIsCompleting(false);
     }
   }, [
-    acknowledgeRules,
     activeIndex,
-    activeRule,
+    confirmAndSubmit,
     isCompleting,
     isLast,
     isSubmitting,
     ruleCount,
+    stageCount,
   ]);
 
   return {
@@ -94,6 +96,8 @@ export const useRulesGateController = () => {
     previous,
     progress,
     ruleCount,
+    rules: config.rules,
+    stageCount,
     currentPosition,
   };
 };

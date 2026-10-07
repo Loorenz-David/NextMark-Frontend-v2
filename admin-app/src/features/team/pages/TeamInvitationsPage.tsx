@@ -1,9 +1,12 @@
+import { AnimatePresence } from 'framer-motion'
+
 import type { StackComponentProps } from '@/shared/stack-manager/types'
 import { MailIcon } from '@/assets/icons'
+import { ConfirmActionPopup } from '@/shared/popups/ConfirmActionPopup'
 
 import { TeamProvider } from '../context/TeamProvider'
 import { useTeamInvitationsFlow } from '../hooks/useTeamInvitationsFlow'
-import { useTeamInvitationActions } from '../hooks/useTeamInvitationActions'
+import { useTeamInvitationAcceptController } from '../hooks/useTeamInvitationAcceptController'
 import { useTeamInvitesReceived, useTeamInvitesSent } from '../invitations/hooks/useTeamInvitationSelectors'
 
 import { TeamInvitationsSection } from '../components/TeamInvitationsSection'
@@ -14,10 +17,16 @@ const TeamInvitationsPageContent = () => {
 
   const invitesReceived = useTeamInvitesReceived()
   const invitesSent = useTeamInvitesSent()
-  const { acceptInvitation, rejectInvitation } = useTeamInvitationActions()
+  const {
+    requestAcceptInvitation,
+    rejectInvitation,
+    isTeamSwitchPending,
+    confirmTeamSwitch,
+    cancelTeamSwitch,
+  } = useTeamInvitationAcceptController()
 
   return (
-    <div className="flex h-full w-full flex-col gap-6 overflow-auto bg-[var(--color-page)] p-6 scroll-thin">
+    <div className="relative flex h-full w-full flex-col gap-6 overflow-auto bg-[var(--color-page)] p-6 scroll-thin">
       <section className="admin-glass-panel-strong relative overflow-hidden rounded-3xl px-8 py-7">
         <div className="pointer-events-none absolute right-0 top-0 h-36 w-52 translate-x-6 -translate-y-8 rounded-full bg-[rgb(var(--color-light-blue-r),0.1)] blur-3xl" />
         <div className="relative flex items-center gap-5">
@@ -41,9 +50,19 @@ const TeamInvitationsPageContent = () => {
       <TeamInvitationsSection
         invitesReceived={invitesReceived}
         invitesSent={invitesSent}
-        onAccept={acceptInvitation}
+        onAccept={requestAcceptInvitation}
         onReject={rejectInvitation}
       />
+
+      <AnimatePresence>
+        {isTeamSwitchPending ? (
+          <ConfirmActionPopup
+            message="You already belong to another team. Accepting this invitation will remove you from your current team. Do you want to continue?"
+            onConfirm={confirmTeamSwitch}
+            onCancel={cancelTeamSwitch}
+          />
+        ) : null}
+      </AnimatePresence>
     </div>
   )
 }

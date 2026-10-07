@@ -52,7 +52,8 @@ const parseNumberListValue = (rawValue: string): number | number[] | undefined =
 export const SearchFilterBar = ({
   applySearch,
   updateFilter,
-  openPopupFilter,
+  onOpenFilters,
+  activeFilterCount,
   filters = {},
   config = [],
   hideFilteredIcon = false,
@@ -171,11 +172,22 @@ export const SearchFilterBar = ({
                 params={{
                   variant: 'ghost',
                   ariaLabel: 'Open filters',
-                  onClick: () => setOpen(prev => !prev),
-                  className: 'pr-3',
+                  onClick: () => {
+                    if (onOpenFilters) {
+                      onOpenFilters()
+                      return
+                    }
+                    setOpen(prev => !prev)
+                  },
+                  className: 'mr-1 flex items-center gap-1.5 rounded-full px-2.5 py-1.5',
                 }}
               >
                 <FilteredIcon className="h-4 w-4 text-[rgb(var(--color-light-blue-r))]" />
+                {activeFilterCount && activeFilterCount > 0 ? (
+                  <span className="min-w-3 text-center text-xs font-semibold leading-none text-[rgb(var(--color-light-blue-r))]">
+                    {activeFilterCount}
+                  </span>
+                ) : null}
               </BasicButton>
             ) : null}
           </div>
@@ -203,30 +215,6 @@ export const SearchFilterBar = ({
                   {selected ? (
                     <span className="rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-[rgb(var(--color-light-blue-r),0.12)] px-2 py-0.5 text-[10px] text-[rgb(var(--color-light-blue-r))]">
                       Selected
-                    </span>
-                  ) : null}
-                </button>
-              )
-            }
-
-            if (filter.type === 'popup-multi-select') {
-              const currentValue = filters[filter.key]
-              const selectedCount = Array.isArray(currentValue) ? currentValue.filter(Boolean).length : 0
-
-              return (
-                <button
-                  key={`${filter.type}-${filter.key}-${index}`}
-                  type="button"
-                  onClick={() => {
-                    openPopupFilter?.(filter.popupKey)
-                    setOpen(false)
-                  }}
-                  className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-surface-hover"
-                >
-                  <span>{filter.label}</span>
-                  {selectedCount > 0 ? (
-                    <span className="rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-[rgb(var(--color-light-blue-r),0.12)] px-2 py-0.5 text-[10px] text-[rgb(var(--color-light-blue-r))]">
-                      {selectedCount} selected
                     </span>
                   ) : null}
                 </button>
@@ -283,31 +271,6 @@ export const SearchFilterBar = ({
                     </BasicButton>
                   </div>
                 </div>
-              )
-            }
-
-            if (filter.type === 'popup-date-range') {
-              const hasStart = typeof filters[filter.keyStart] === 'string' && String(filters[filter.keyStart]).trim().length > 0
-              const hasEnd = typeof filters[filter.keyEnd] === 'string' && String(filters[filter.keyEnd]).trim().length > 0
-              const hasSelection = hasStart || hasEnd
-
-              return (
-                <button
-                  key={`${filter.type}-${filter.keyStart}-${filter.keyEnd}-${index}`}
-                  type="button"
-                  onClick={() => {
-                    openPopupFilter?.(filter.popupKey)
-                    setOpen(false)
-                  }}
-                  className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-surface-hover"
-                >
-                  <span>{filter.label}</span>
-                  {hasSelection ? (
-                    <span className="rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-[rgb(var(--color-light-blue-r),0.12)] px-2 py-0.5 text-[10px] text-[rgb(var(--color-light-blue-r))]">
-                      Selected
-                    </span>
-                  ) : null}
-                </button>
               )
             }
 

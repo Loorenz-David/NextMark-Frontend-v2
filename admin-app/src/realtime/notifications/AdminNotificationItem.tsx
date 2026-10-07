@@ -113,13 +113,18 @@ export const AdminNotificationItem = ({
             </p>
           )}
 
-          {item.detail ? (
-            <p
-              className="mt-0.5 truncate text-xs text-muted"
-              title={item.detail}
-            >
-              {item.detail}
-            </p>
+          {item.detailLines.length > 0 ? (
+            <div className="mt-0.5 flex flex-col gap-0.5 text-xs text-muted">
+              {item.detailLines.map((line, index) => (
+                <p
+                  key={`${index}:${line}`}
+                  className="line-clamp-2 break-words"
+                  title={line}
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
           ) : null}
 
           <p className="mt-1 flex min-w-0 items-center gap-1.5 text-[0.68rem]">

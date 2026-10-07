@@ -9,27 +9,27 @@ export const ClientInfoStep = () => {
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-            First name
+            Förnamn
           </span>
           <div className="custom-field-container">
             <input
               className="custom-input"
               value={data.client_first_name}
               onChange={(e) => setField("client_first_name", e.target.value)}
-              placeholder="First name"
+              placeholder="Förnamn"
             />
           </div>
         </label>
         <label className="flex flex-col gap-1.5">
           <span className="text-[length:var(--cf-label)] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-            Last name
+            Efternamn
           </span>
           <div className="custom-field-container">
             <input
               className="custom-input"
               value={data.client_last_name}
               onChange={(e) => setField("client_last_name", e.target.value)}
-              placeholder="Last name"
+              placeholder="Efternamn"
             />
           </div>
         </label>
@@ -37,7 +37,7 @@ export const ClientInfoStep = () => {
 
       <div className="flex justify-end">
         <StepButton
-          label="Next"
+          label="Nästa"
           onClick={next}
           disabled={
             !data.client_first_name.trim() || !data.client_last_name.trim()

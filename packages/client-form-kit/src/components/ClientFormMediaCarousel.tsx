@@ -93,7 +93,7 @@ export const ClientFormMediaCarousel = ({ items }: Props) => {
 
   return (
     <section
-      aria-label="Featured items"
+      aria-label="Utvalda produkter"
       className="space-y-4"
       {...pauseProps}
     >
@@ -140,7 +140,7 @@ export const ClientFormMediaCarousel = ({ items }: Props) => {
             <button
               key={item.id}
               type="button"
-              aria-label={`Go to item ${index + 1}`}
+              aria-label={`Visa produkt ${index + 1}`}
               aria-current={index === activeIndex}
               onClick={() => scrollToIndex(index)}
               className={[
