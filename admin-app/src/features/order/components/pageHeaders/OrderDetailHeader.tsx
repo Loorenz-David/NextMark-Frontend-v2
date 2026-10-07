@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-import { useMobile } from "@/app/viewport";
 import { ArchiveIcon, DocumentIcon, EditIcon } from "@/assets/icons";
 import { DraggableOrderDetailIcon } from "./DraggableOrderDetailIcon";
 import { BasicButton } from "@/shared/buttons/BasicButton";
-import { PageBackButton } from "@/shared/buttons/PageBackButton";
 import { DropdownButton } from "@/shared/buttons/DropdownButton";
 import { CounterBadge } from "@/shared/layout/CounterBadge";
 import { useOrderDetailHeaderPlanMeta } from "@/features/plan";
@@ -50,7 +48,6 @@ export const OrderDetailHeader = ({
   contextRouteGroupId = null,
 }: OrderDetailHeaderProps) => {
   const registry = useOrderStateRegistry();
-  const { isMobile } = useMobile();
 
   const nextState = registry.getNextStateName(order?.order_state_id);
   const currentStateName =
@@ -68,11 +65,8 @@ export const OrderDetailHeader = ({
         <div className="admin-header-wash pointer-events-none absolute inset-x-0 top-0 h-44" />
 
         <div className="relative z-10 flex items-start justify-between gap-4 px-5 py-4">
-          <div className="flex min-w-0 flex-col">
+          <div className="flex flex-col">
             <div className="flex min-w-0 items-center gap-3.5">
-              {isMobile ? (
-                <PageBackButton onClick={onClose} ariaLabel="Close order detail" />
-              ) : null}
               {order ? (
                 <DraggableOrderDetailIcon order={order} />
               ) : (
@@ -80,7 +74,7 @@ export const OrderDetailHeader = ({
                   <DocumentIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
                 </div>
               )}
-              <HeaderTitle
+              <OrderDetailHeaderTitle
                 order={order}
                 headerBehavior={headerBehavior}
                 contextRouteGroupId={contextRouteGroupId}
@@ -89,19 +83,17 @@ export const OrderDetailHeader = ({
           </div>
 
           <div className="flex shrink-0 flex-col items-end gap-2">
-            {!isMobile ? (
-              <BasicButton
-                params={{
-                  variant: "toolbarSecondary",
-                  onClick: onClose,
-                  ariaLabel: "Close order detail",
-                  className:
-                    "min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-[0.66rem]",
-                }}
-              >
-                Close
-              </BasicButton>
-            ) : null}
+            <BasicButton
+              params={{
+                variant: "toolbarSecondary",
+                onClick: onClose,
+                ariaLabel: "Close order detail",
+                className:
+                  "min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-[0.66rem]",
+              }}
+            >
+              Close
+            </BasicButton>
 
             <BasicButton
               params={{
@@ -178,7 +170,8 @@ export const OrderDetailHeader = ({
   );
 };
 
-const HeaderTitle = ({
+/** Order id, source badge and plan meta; shared by the desktop and phone headers. */
+export const OrderDetailHeaderTitle = ({
   order,
   headerBehavior,
   contextRouteGroupId,
