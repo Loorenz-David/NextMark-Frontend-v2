@@ -66,6 +66,7 @@ const createOrderEvent = (overrides: Partial<OrderEvent>): OrderEvent =>
     order_id: 1,
     team_id: 1,
     actor_id: null,
+    actor: null,
     event_name: "order_manual_message",
     payload: {},
     occurred_at: "2026-07-24T11:00:00+00:00",

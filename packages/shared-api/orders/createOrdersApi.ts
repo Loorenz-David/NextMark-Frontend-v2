@@ -64,12 +64,20 @@ export type OrderEventAction = {
   updated_at: string;
 };
 
+export type OrderEventActor = {
+  id: number;
+  username: string;
+  role_name: string | null;
+  base_role: string | null;
+};
+
 export type OrderEventItem = {
   id: number;
   event_id: string;
   order_id: number;
   team_id: number;
   actor_id: number | null;
+  actor: OrderEventActor | null;
   event_name: string;
   payload: Record<string, unknown> | null;
   occurred_at: string;

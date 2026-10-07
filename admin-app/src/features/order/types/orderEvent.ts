@@ -1,6 +1,7 @@
 import type {
   OrderEventAction,
   OrderEventActionStatus,
+  OrderEventActor,
   OrderEventItem,
 } from "@shared-api";
 
@@ -16,7 +17,7 @@ export type OrderEventMap = {
   allIds: string[];
 };
 
-export type { OrderEventAction };
+export type { OrderEventAction, OrderEventActor };
 
 export const ORDER_EVENT_ACTION_STATUS: Record<
   OrderEventActionStatus,
