@@ -27,8 +27,6 @@ const decrement = (layers: HomeMobileLayerCounts, layer: HomeMobileLayer): HomeM
       return { ...layers, popups: Math.max(0, layers.popups - 1) }
     case 'sheet':
       return { ...layers, sheets: Math.max(0, layers.sheets - 1) }
-    case 'menu':
-      return { ...layers, menu: false }
     case 'section':
       return { ...layers, sections: Math.max(0, layers.sections - 1) }
     case 'base':

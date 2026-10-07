@@ -1,12 +1,21 @@
-import type { HomeMobileLayer, HomeMobileLayerCounts, HomeMobileTabId } from './homeMobileShell.types'
+import type {
+  HomeMobileLayer,
+  HomeMobileLayerCounts,
+  HomeMobileShellTabId,
+  HomeMobileTabId,
+} from './homeMobileShell.types'
 
 export const DEFAULT_HOME_MOBILE_TAB: HomeMobileTabId = 'plans'
+
+const SHELL_TABS: readonly HomeMobileShellTabId[] = ['alerts', 'settings']
+
+export const isHomeMobileShellTab = (tab: HomeMobileTabId): tab is HomeMobileShellTabId =>
+  (SHELL_TABS as readonly string[]).includes(tab)
 
 /** Highest priority first: what the back button closes when several layers are open. */
 export const HOME_MOBILE_BACK_PRIORITY: readonly HomeMobileLayer[] = [
   'popup',
   'sheet',
-  'menu',
   'section',
   'base',
 ]
@@ -14,7 +23,6 @@ export const HOME_MOBILE_BACK_PRIORITY: readonly HomeMobileLayer[] = [
 export const EMPTY_HOME_MOBILE_LAYERS: HomeMobileLayerCounts = {
   popups: 0,
   sheets: 0,
-  menu: false,
   sections: 0,
   base: false,
 }
@@ -25,8 +33,6 @@ const layerCount = (layers: HomeMobileLayerCounts, layer: HomeMobileLayer): numb
       return layers.popups
     case 'sheet':
       return layers.sheets
-    case 'menu':
-      return layers.menu ? 1 : 0
     case 'section':
       return layers.sections
     case 'base':

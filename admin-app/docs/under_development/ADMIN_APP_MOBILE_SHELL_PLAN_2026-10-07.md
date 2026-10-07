@@ -298,8 +298,8 @@ What landed, where it deviates from the phases above, and what to check on a dev
 - **Viewport owner:** `src/app/viewport/` (`ViewportProvider`, `useMobile` / `useViewport` returning `{ isMobile, isCoarsePointer, hasHover }`, `viewport.config.ts`). `app/contexts/MobileContext.tsx` and `app/providers/MobileProvider.tsx` remain as one-line re-export shims because another session was editing a file that imports the old path; delete the shims once `OrderDetailProvider.tsx` imports from `@/app/viewport`.
 - **Breakpoint:** `--breakpoint-desk: 1000px` in `index.css`; `desk:` is the Tailwind variant. `useScrollHideActionBar` reads `DESKTOP_MEDIA_QUERY` from the viewport config.
 - **Base panel is global:** `HomeRouteOperationsManagersProvider` no longer creates its own `useBaseControlls`; the one from `HomeAppManagersProvider` is the single instance, so the shell can treat it as a back-navigation layer.
-- **Shell:** `features/home-app/components/mobile/` (`HomeMobileShell`, `HomeMobileTopBar`, `HomeMobileTabBar`, `HomeMobileMenuSheet`), `stores/homeMobileShell.store.ts`, `domain/homeMobileShell.domain.ts` (+ test in repo's hand-rolled style), `flows/homeMobileLayers.flow.ts`, `flows/homeMobileBack.flow.ts`, `flows/useHomeMobileCloseLayer.flow.ts`. `features/home-app/index.ts` is the barrel.
-- **Workspace mobile view:** `features/home-route-operations/views/HomeMobileView.tsx` renders the tab roots from `registry/homeMobileTabs.tsx` (Plans / Orders / Cases, kept mounted after first visit) and pushes the plan workspace panel + section stack as full-screen pages in a `fixed inset-0 z-[60]` layer with `safe-top`.
+- **Shell:** `features/home-app/components/mobile/` (`HomeMobileShell`, `HomeMobileTabBar`, `HomeMobileAlertsPage`, `HomeMobileSettingsPage`), `stores/homeMobileShell.store.ts`, `domain/homeMobileShell.domain.ts` (+ test in repo's hand-rolled style), `flows/homeMobileLayers.flow.ts`, `flows/homeMobileBack.flow.ts`, `flows/useHomeMobileCloseLayer.flow.ts`. `features/home-app/index.ts` is the barrel. There is **no top bar**: tabs are Plans / Orders (workspace-owned) and Alerts / Settings (shell-owned, reachable in every workspace). Cases is deprecated and has no tab.
+- **Workspace mobile view:** `features/home-route-operations/views/HomeMobileView.tsx` renders the tab roots from `registry/homeMobileTabs.tsx` (Plans / Orders, kept mounted after first visit) and pushes the plan workspace panel + section stack as full-screen pages in a `fixed inset-0 z-[60]` layer with `safe-top`. The layer is **portalled to `document.body`** because the workspace sits inside a `relative z-10` stacking context; rendered in place it painted under the tab bar.
 - **Stack manager:** `renderStack({ width: 'full' })` slides panels by `100%` instead of a measured pixel width.
 - **Bottom sheet primitives:** `shared/overlays/bottomSheet/` (`BottomSheet`, `ActionSheet`, `bottomSheetRegistry`). Sheets register while open so the back button closes them first.
 - **Tap parity:** `ThreeDotMenu` renders an `ActionSheet` on coarse pointers; `RouteGroupRailAvatar` opens its stats in a sheet on a second tap when hovering is impossible; `RouteStopWarnings` / `RouteSolutionWarnings` toggle on tap; `InfoHover` reads `hasHover` from the viewport owner.
@@ -309,15 +309,15 @@ What landed, where it deviates from the phases above, and what to check on a dev
 
 ### Deviations from the phase list
 
-- **Notifications were not touched.** `src/realtime/notifications/*` was being edited by another session during this work. The mobile top bar mounts the existing `AdminNotificationsTrigger` (360px popover). The sheet variant and the always-visible dismiss button are still open.
+- **Notification files were not edited.** `src/realtime/notifications/*` was being edited by another session during this work. The Alerts tab (`HomeMobileAlertsPage`) composes the existing store, item and alert-toggle modules through deep imports; the desktop bell trigger is not mounted on phones, so the arrival chime does not play there.
 - **`HomeDesktopHeader` was not touched** for the same reason. The dead `setHeaderActions` registrar was removed and `headerActions` dropped from `HomeAppProvider`; Cases on desktop is still only reachable through notifications until the header gets a button.
 - **No test runner was added.** The domain test follows the existing `run…Tests` export style; wiring vitest is still a prerequisite before tests can gate anything.
 - **Pre-existing gate failures** (not caused by this work): `theme-codemod --check` stops at `OrderCard.tsx:82`, and `theme-functional-color-guard` reports three `rgba(0,0,0,…)` counts off. Both files/literals predate this change set.
 
 ### Check on a device
 
-1. Plans → tap a plan → route groups page slides in with a back chevron; hardware back closes it.
+1. Plans → tap a plan → route groups page slides in over the tab bar with a back chevron; hardware back closes it.
 2. Orders → three-dot on a card opens an action sheet; selection mode shows the bottom bar; "Assign to plan…" opens the picker; back closes the picker first, then exits nothing else.
-3. Cases tab has no dead "Close" button.
-4. Menu sheet: workspace switch, theme, settings, log out. Settings index lists sections; back returns to home.
+3. Alerts tab lists unread notifications with a badge on the tab; tapping one opens its order or plan.
+4. Settings tab: account / log out, workspace switch, theme, link into the full settings area. Settings index lists sections; back returns to home.
 5. Keyboard open with the order form: footer stays reachable, header stays pinned.

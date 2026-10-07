@@ -9,7 +9,6 @@ import {
 import { useStackActionEntries } from '@/shared/stack-manager/useStackActionEntries'
 
 import type { HomeMobileLayerCounts } from '../domain/homeMobileShell.types'
-import { useHomeMobileShellStore } from '../stores/homeMobileShell.store'
 
 const countOpen = (entries: readonly { isClosing: boolean }[]) =>
   entries.filter((entry) => !entry.isClosing).length
@@ -25,14 +24,10 @@ export const useHomeMobileLayersFlow = (): HomeMobileLayerCounts => {
   const popupEntries = useStackActionEntries(popupManager)
   const sectionEntries = useStackActionEntries(sectionManager)
   const sheets = useOpenBottomSheetCount()
-  const isMenuOpen = useHomeMobileShellStore((state) => state.isMenuOpen)
 
   const popups = countOpen(popupEntries)
   const sections = countOpen(sectionEntries)
   const base = baseControlls.isBaseOpen
 
-  return useMemo(
-    () => ({ popups, sheets, menu: isMenuOpen, sections, base }),
-    [base, isMenuOpen, popups, sections, sheets],
-  )
+  return useMemo(() => ({ popups, sheets, sections, base }), [base, popups, sections, sheets])
 }

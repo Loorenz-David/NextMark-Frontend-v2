@@ -1,5 +1,6 @@
 export { useHomeApp } from './providers/HomeAppProvider'
 export { useHomeMobileShellStore } from './stores/homeMobileShell.store'
 export { HOME_MOBILE_TABS, HOME_MOBILE_TAB_LABELS } from './domain/homeMobileTabs'
-export type { HomeMobileTabId } from './domain/homeMobileShell.types'
+export { isHomeMobileShellTab } from './domain/homeMobileShell.domain'
+export type { HomeMobileTabId, HomeMobileWorkspaceTabId } from './domain/homeMobileShell.types'
 export type { HomeWorkspaceType } from './domain/homeWorkspace.types'

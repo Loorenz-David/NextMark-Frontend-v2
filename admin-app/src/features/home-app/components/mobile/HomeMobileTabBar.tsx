@@ -1,11 +1,14 @@
 import { HOME_MOBILE_TABS } from '../../domain/homeMobileTabs'
+import type { HomeMobileTabId } from '../../domain/homeMobileShell.types'
 import { useHomeMobileShellStore } from '../../stores/homeMobileShell.store'
 
 type HomeMobileTabBarProps = {
   inert?: boolean
+  /** Unread-style counts shown as a badge on the tab icon. */
+  badges?: Partial<Record<HomeMobileTabId, number>>
 }
 
-export const HomeMobileTabBar = ({ inert = false }: HomeMobileTabBarProps) => {
+export const HomeMobileTabBar = ({ inert = false, badges }: HomeMobileTabBarProps) => {
   const activeTab = useHomeMobileShellStore((state) => state.activeTab)
   const setActiveTab = useHomeMobileShellStore((state) => state.setActiveTab)
 
@@ -19,6 +22,7 @@ export const HomeMobileTabBar = ({ inert = false }: HomeMobileTabBarProps) => {
         {HOME_MOBILE_TABS.map((tab) => {
           const isActive = tab.id === activeTab
           const Icon = tab.icon
+          const badge = badges?.[tab.id] ?? 0
           return (
             <button
               key={tab.id}
@@ -31,7 +35,14 @@ export const HomeMobileTabBar = ({ inert = false }: HomeMobileTabBarProps) => {
                 isActive ? 'text-[var(--color-primary)]' : 'text-[var(--color-muted)]'
               }`}
             >
-              <Icon className="h-6 w-6" />
+              <span className="relative">
+                <Icon className="h-6 w-6" />
+                {badge > 0 ? (
+                  <span className="absolute -right-2 -top-1.5 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[rgb(var(--color-danger-r))] px-1 text-[9px] font-semibold text-danger-on-solid">
+                    {badge > 99 ? '99+' : badge}
+                  </span>
+                ) : null}
+              </span>
               <span>{tab.label}</span>
             </button>
           )
