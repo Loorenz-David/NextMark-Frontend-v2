@@ -1,7 +1,6 @@
-import { ArchiveIcon, DocumentIcon, EditIcon } from "@/assets/icons";
+import { DocumentIcon, EditIcon } from "@/assets/icons";
 import { PageBackButton } from "@/shared/buttons/PageBackButton";
 import { DropdownButton } from "@/shared/buttons/DropdownButton";
-import { CounterBadge } from "@/shared/layout/CounterBadge";
 
 import type { OrderDetailHeaderBehavior } from "../../domain/orderDetailPayload.types";
 import { useOrderStateRegistry } from "../../domain/useOrderStateRegistry";
@@ -16,7 +15,6 @@ type OrderDetailHeaderMobileProps = {
     deliveryPlanId?: number | null;
     routeGroupId?: number | null;
   }) => void;
-  openOrderCases: (payload: { orderId?: number; orderReference: string }) => void;
   onAdvanceOrderState: (clientId: string) => Promise<void>;
   onClose: () => void;
   order: Order | null;
@@ -26,13 +24,11 @@ type OrderDetailHeaderMobileProps = {
 
 /**
  * Phone header for the order detail page: back chevron, id and plan meta,
- * an icon-only edit, then one action row with the state button filling
- * the width and a compact Cases button. No drag handle: there is nothing
- * to drop the order onto from a phone.
+ * an icon-only edit, then the state button on its own row. No drag
+ * handle: there is nothing to drop the order onto from a phone.
  */
 export const OrderDetailHeaderMobile = ({
   openOrderForm,
-  openOrderCases,
   onAdvanceOrderState,
   onClose,
   order,
@@ -45,7 +41,6 @@ export const OrderDetailHeaderMobile = ({
     order?.order_state_id != null
       ? (registry.getById(order.order_state_id)?.name ?? "Unknown state")
       : "Unknown state";
-  const openCaseCount = order?.open_order_cases ?? 0;
 
   return (
     <div className="px-3 pt-3">
@@ -81,8 +76,8 @@ export const OrderDetailHeaderMobile = ({
           </button>
         </div>
 
-        <div className="admin-glass-divider relative z-10 flex items-center gap-2 border-t px-3 py-3">
-          <div className="min-w-0 flex-1">
+        <div className="admin-glass-divider relative z-10 border-t px-3 py-3">
+          <div className="min-w-0 w-full">
             <DropdownButton
               label={nextState ? `Mark as ${nextState}` : currentStateName}
               style={{ fontSize: "14px" }}
@@ -108,34 +103,6 @@ export const OrderDetailHeaderMobile = ({
               )}
             </DropdownButton>
           </div>
-
-          <button
-            type="button"
-            onClick={() =>
-              order?.id &&
-              openOrderCases({
-                orderId: order.id,
-                orderReference: order.reference_number ?? "",
-              })
-            }
-            disabled={!order?.id}
-            aria-label={
-              openCaseCount > 0
-                ? `Open order cases (${openCaseCount} open)`
-                : "Open order cases"
-            }
-            className="inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-border bg-surface-raised px-3 text-sm font-medium text-[var(--color-text)] shadow-[var(--shadow-button-compact)] transition-colors active:bg-surface-hover disabled:opacity-50"
-          >
-            <ArchiveIcon className="h-4 w-4 stroke-[var(--color-text)]" />
-            <span>Cases</span>
-            {openCaseCount > 0 ? (
-              <CounterBadge
-                text={String(openCaseCount)}
-                bgColor="rgba(var(--warning-vivid-r),0.16)"
-                textColor="rgb(var(--warning-marker-r))"
-              />
-            ) : null}
-          </button>
         </div>
       </div>
     </div>

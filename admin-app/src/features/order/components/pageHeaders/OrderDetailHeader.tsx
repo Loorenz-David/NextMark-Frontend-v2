@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-import { ArchiveIcon, DocumentIcon, EditIcon } from "@/assets/icons";
+import { DocumentIcon, EditIcon } from "@/assets/icons";
 import { DraggableOrderDetailIcon } from "./DraggableOrderDetailIcon";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { DropdownButton } from "@/shared/buttons/DropdownButton";
-import { CounterBadge } from "@/shared/layout/CounterBadge";
 import { useOrderDetailHeaderPlanMeta } from "@/features/plan";
 import {
   ORDER_DETAIL_SUBHEADER_SWEEP_EVENT,
@@ -27,10 +26,6 @@ type OrderDetailHeaderProps = {
     deliveryPlanId?: number | null;
     routeGroupId?: number | null;
   }) => void;
-  openOrderCases: (payload: {
-    orderId?: number;
-    orderReference: string;
-  }) => void;
   onAdvanceOrderState: (clientId: string) => Promise<void>;
   onClose: () => void;
   order: Order | null;
@@ -40,7 +35,6 @@ type OrderDetailHeaderProps = {
 
 export const OrderDetailHeader = ({
   openOrderForm,
-  openOrderCases,
   onAdvanceOrderState,
   onClose,
   order,
@@ -138,32 +132,6 @@ export const OrderDetailHeader = ({
               )}
             </DropdownButton>
           </div>
-
-          <BasicButton
-            params={{
-              variant: "toolbarSecondary",
-              onClick: () =>
-                order?.id &&
-                openOrderCases({
-                  orderId: order.id,
-                  orderReference: order.reference_number ?? "",
-                }),
-              ariaLabel: "Open order cases",
-              className: "min-w-[124px] justify-center px-4 py-1.5 text-sm",
-            }}
-          >
-            <ArchiveIcon className="mr-2 h-4 w-4 stroke-[var(--color-text)]" />
-            <div className="flex items-center gap-2">
-              <span>Cases</span>
-              {order?.open_order_cases != null && order.open_order_cases > 0 ? (
-                <CounterBadge
-                  text={String(order?.open_order_cases)}
-                  bgColor="rgba(var(--warning-vivid-r),0.16)"
-                  textColor="rgb(var(--warning-marker-r))"
-                />
-              ) : null}
-            </div>
-          </BasicButton>
         </div>
       </div>
     </div>

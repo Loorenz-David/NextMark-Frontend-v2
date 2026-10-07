@@ -23,7 +23,6 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
     orderServerId,
     isRefreshing,
     openOrderForm,
-    openOrderCases,
     closeOrderDetail,
     advanceDetailOrderState,
   } = useOrderDetailContext();
@@ -90,7 +89,6 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
         <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto scroll-thin">
           <OrderDetailHeaderMobile
             openOrderForm={openOrderForm}
-            openOrderCases={openOrderCases}
             onClose={closeOrderDetail}
             onAdvanceOrderState={advanceDetailOrderState}
             order={order}
@@ -140,7 +138,6 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
       <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto scroll-thin">
         <OrderDetailHeader
           openOrderForm={openOrderForm}
-          openOrderCases={openOrderCases}
           onClose={closeOrderDetail}
           onAdvanceOrderState={advanceDetailOrderState}
           order={order}
