@@ -57,7 +57,7 @@ export const HomeMobileShell = ({ children }: HomeMobileShellProps) => {
           inert={!isWorkspaceTabActive || !isRootActive}
           aria-hidden={!isWorkspaceTabActive}
           className={`flex min-h-0 flex-1 flex-col overflow-hidden ${
-            isWorkspaceTabActive ? '' : 'invisible pointer-events-none'
+            isWorkspaceTabActive ? '' : 'opacity-0 pointer-events-none'
           }`}
         >
           {children}
@@ -73,7 +73,7 @@ export const HomeMobileShell = ({ children }: HomeMobileShellProps) => {
               aria-hidden={!isActive}
               inert={!isActive || !isRootActive}
               className={`absolute inset-0 flex min-h-0 flex-col overflow-hidden ${
-                isActive ? '' : 'invisible pointer-events-none'
+                isActive ? 'z-10' : 'opacity-0 pointer-events-none'
               }`}
             >
               <SectionPanel>

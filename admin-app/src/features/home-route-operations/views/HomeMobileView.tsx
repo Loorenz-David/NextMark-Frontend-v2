@@ -87,7 +87,7 @@ export const HomeMobileView = () => {
             aria-hidden={!isActive}
             inert={!isActive || isCovered}
             className={`absolute inset-0 flex min-h-0 flex-col overflow-hidden ${
-              isActive ? '' : 'invisible pointer-events-none'
+              isActive ? 'z-10' : 'opacity-0 pointer-events-none'
             }`}
           >
             <SectionPanel>
