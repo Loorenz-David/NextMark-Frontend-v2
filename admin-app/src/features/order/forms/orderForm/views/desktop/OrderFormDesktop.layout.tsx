@@ -39,7 +39,6 @@ export const OrderFormDesktopLayout = ({
           orderScalarId={model.order?.order_scalar_id ?? null}
           referenceNumber={model.order?.reference_number ?? null}
           externalSource={model.order?.external_source ?? null}
-          isMobile={false}
           onSelectOperationType={model.formSetters.handleOperationType}
           onClose={model.closeController.requestClose}
         />

@@ -111,7 +111,7 @@ The side "drawers" (the `SectionPanel` rail on desktop) are the wrong model for 
    Popups (popupManager) stay fixed inset-0 z-[100], above everything.
 ```
 
-**Back priority (highest first):** popup → bottom sheet → top section-stack entry → base panel (plan workspace) → side menu → tab (no-op / leave app). This is the single rule the back flow, the Escape handling, and the UI close buttons all go through.
+**Back priority (highest first):** bottom sheet → popup → top section-stack entry → base panel (plan workspace) → side menu → tab (no-op / leave app). This is the single rule the back flow, the Escape handling, and the UI close buttons all go through.
 
 ### 3.2 Ownership
 
@@ -304,7 +304,12 @@ What landed, where it deviates from the phases above, and what to check on a dev
 - **Bottom sheet primitives:** `shared/overlays/bottomSheet/` (`BottomSheet`, `ActionSheet`, `bottomSheetRegistry`). Sheets register while open so the back button closes them first.
 - **Tap parity:** `ThreeDotMenu` renders an `ActionSheet` on coarse pointers; `RouteGroupRailAvatar` opens its stats in a sheet on a second tap when hovering is impossible; `RouteStopWarnings` / `RouteSolutionWarnings` toggle on tap; `InfoHover` reads `hasHover` from the viewport owner.
 - **Assignment without drag:** `features/plan/actions/assignSelectedOrders.action.ts` + `features/plan/components/mobile/PlanPickerSheet.tsx` (exported from the plan barrel) and `features/home-route-operations/components/mobile/OrderSelectionActionBar.tsx` on the Orders tab.
-- **Forms:** full-screen shells get `safe-top`; `OrderFormFooter` / `CostumerFormFooter` pad for the home indicator; the order form's mobile header is sticky; zone form rows are one column below `desk`.
+- **Forms:** full-screen shells get `safe-top`; zone form rows are one column below `desk`.
+- **Order form on phones** (`features/order/forms/orderForm/views/mobile/`): `OrderFormMobile.layout` is a fixed header + one scroll column + bottom action bar. The header is `OrderFormHeaderMobile` (back chevron, title, id, full-width Pickup/Dropoff). Fields come from `components/fields/OrderFormFieldControls.tsx`, one control per field, composed by the desktop grid (`OrderFormFields`) and the phone sections (`OrderFormFieldsMobile`: Contact, Address, Delivery, More details, message). The customer panel is `OrderFormCostumerSectionMobile`: a summary card, a `BottomSheet` with the customer search, and the customer form as a `PushedPage`. Items are inline (`OrderFormItemsSectionMobile`) with the item editor as a `PushedPage`. `OrderFormFooterMobile` holds Send form (action sheet) + Save; Delete sits at the end of the scroll column. `OrderFormHeader` / `OrderFormFooter` are desktop-only again.
+- **Costumer form on phones:** back chevron header, one field per row, save bar in flow with `safe-bottom`; the embedded variant inside the order form follows the same rules.
+- **`shared/overlays/pushedPage/PushedPage`:** a full-screen page pushed over a popup (z 110, portalled to `body`), registers as a back layer through `useBackLayerRegistration` (exported from the bottom-sheet module).
+- **`FeaturePopupHeader`** renders the back chevron on phones instead of the X; `FeaturePopupFooter` pads for the home indicator.
+- **Back priority is sheet → popup → section → base.** A sheet always renders above the popup that opened it (the order form's customer picker), so it must close first.
 - **Settings:** `features/settings/domain/settingsSections.ts` owns the section list and route map; the index route shows `SettingsMobileSectionList` on phones; `SettingsMobileView` has a top bar with back + title; settings sortables use Mouse + Touch sensors.
 
 ### Deviations from the phase list
@@ -321,3 +326,4 @@ What landed, where it deviates from the phases above, and what to check on a dev
 3. Alerts tab lists unread notifications with a badge on the tab; tapping one opens its order or plan.
 4. Settings tab: account / log out, workspace switch, theme, link into the full settings area. Settings index lists sections; back returns to home.
 5. Keyboard open with the order form: footer stays reachable, header stays pinned.
+6. Order form: "Find customer" opens a sheet; "Create Costumer" in it pushes the customer form; back closes the pushed page, then the form. "+ Item" pushes the item editor; hardware back closes it before the order form.

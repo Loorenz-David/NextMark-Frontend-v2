@@ -12,10 +12,14 @@ const SHELL_TABS: readonly HomeMobileShellTabId[] = ['alerts', 'settings']
 export const isHomeMobileShellTab = (tab: HomeMobileTabId): tab is HomeMobileShellTabId =>
   (SHELL_TABS as readonly string[]).includes(tab)
 
-/** Highest priority first: what the back button closes when several layers are open. */
+/**
+ * Highest priority first: what the back button closes when several layers
+ * are open. Sheets come first because they render above everything else,
+ * including popups that open them (the order form's customer picker).
+ */
 export const HOME_MOBILE_BACK_PRIORITY: readonly HomeMobileLayer[] = [
-  'popup',
   'sheet',
+  'popup',
   'section',
   'base',
 ]

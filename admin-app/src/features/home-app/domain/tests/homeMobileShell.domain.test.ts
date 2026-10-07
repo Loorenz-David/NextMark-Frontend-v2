@@ -27,6 +27,16 @@ export const runHomeMobileShellDomainTests = () => {
       sections: 2,
       base: true,
     })
+    assert(target === 'sheet', 'a sheet opened from a popup closes before the popup')
+  }
+
+  {
+    const target = resolveHomeMobileBackTarget({
+      popups: 1,
+      sheets: 0,
+      sections: 2,
+      base: true,
+    })
     assert(target === 'popup', 'a popup closes before anything underneath it')
   }
 

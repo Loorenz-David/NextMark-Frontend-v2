@@ -1,6 +1,8 @@
 import { AnimatePresence } from 'framer-motion'
 
+import { useMobile } from '@/app/viewport'
 import { BasicButton } from '@/shared/buttons/BasicButton'
+import { PageBackButton } from '@/shared/buttons/PageBackButton'
 import { InfoHover } from '@/shared/layout/InfoHover'
 import { ConfirmActionPopup } from '@/shared/popups/ConfirmActionPopup'
 
@@ -31,12 +33,27 @@ const CostumerFormEmbeddedBody = ({
   closeLabel?: string
 }) => {
   const model = useCostumerFormLayoutModel()
+  const { isMobile } = useMobile()
 
   return (
-    <div className="relative flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-xl border border-[var(--color-border)]/60 bg-[var(--color-ligth-bg)]">
-      <header className="sticky top-0 z-10 border-b border-[var(--color-border)]/70 bg-[var(--color-page)] px-4 py-3">
+    <div
+      className={`relative flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden bg-[var(--color-ligth-bg)] ${
+        isMobile ? '' : 'rounded-xl border border-[var(--color-border)]/60'
+      }`}
+    >
+      <header
+        className={`sticky top-0 z-10 border-b border-[var(--color-border)]/70 bg-[var(--color-page)] ${
+          isMobile ? 'py-2 pl-3 pr-3' : 'px-4 py-3'
+        }`}
+      >
         <div className="flex items-center justify-between gap-3">
-          <div>
+          {isMobile ? (
+            <PageBackButton
+              onClick={model.closeController.requestClose}
+              ariaLabel="Close costumer form"
+            />
+          ) : null}
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">{headerTitle}</h2>
               <InfoHover content={COSTUMER_FORM_EMBEDDED_INFO} />
@@ -46,21 +63,23 @@ const CostumerFormEmbeddedBody = ({
             ) : null}
           </div>
 
-          <BasicButton
-            params={{
-              variant: 'text',
-              onClick: model.closeController.requestClose,
-              ariaLabel: 'Close costumer form',
-              className: 'px-1 py-1',
-            }}
-          >
-            {closeLabel}
-          </BasicButton>
+          {!isMobile ? (
+            <BasicButton
+              params={{
+                variant: 'text',
+                onClick: model.closeController.requestClose,
+                ariaLabel: 'Close costumer form',
+                className: 'px-1 py-1',
+              }}
+            >
+              {closeLabel}
+            </BasicButton>
+          ) : null}
         </div>
       </header>
 
-      <CostumerFormFields model={model} />
-      <CostumerFormFooter onSave={model.handleSave} />
+      <CostumerFormFields model={model} compact={isMobile} />
+      <CostumerFormFooter onSave={model.handleSave} isMobile={isMobile} />
 
       <AnimatePresence>
         {model.closeController.closeState === 'confirming' ? (

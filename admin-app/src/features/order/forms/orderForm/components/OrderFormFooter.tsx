@@ -14,7 +14,6 @@ type OrderFormFooterProps = {
   onDeleteOrder?: () => void;
   sendDisabled?: boolean;
   saveDisabled?: boolean;
-  isMobile?: boolean;
   sendStatus?: OrderFormSendStatus | null;
   sendInProgress?: boolean;
 };
@@ -27,7 +26,6 @@ export const OrderFormFooter = ({
   onDeleteOrder,
   sendDisabled = false,
   saveDisabled = false,
-  isMobile = false,
   sendStatus = null,
   sendInProgress = false,
 }: OrderFormFooterProps) => {
@@ -44,11 +42,7 @@ export const OrderFormFooter = ({
 
   return (
     <footer
-      className={`flex w-full items-center  bottom-0 left-0  border-t border-[var(--color-border)] bg-[var(--surface-popup-chrome)] px-6 py-4 z-20 ${
-        isMobile
-          ? "fixed rounded-none pb-[calc(1rem+env(safe-area-inset-bottom,0px))]"
-          : "absolute rounded-b-xl"
-      }`}
+      className="absolute bottom-0 left-0 z-20 flex w-full items-center rounded-b-xl border-t border-[var(--color-border)] bg-[var(--surface-popup-chrome)] px-6 py-4"
     >
       {onDeleteOrder && (
         <ConfirmActionButton

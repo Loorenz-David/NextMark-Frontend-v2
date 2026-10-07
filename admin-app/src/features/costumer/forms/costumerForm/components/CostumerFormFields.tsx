@@ -16,6 +16,10 @@ type CostumerFormFieldsProps = {
   compact?: boolean
 }
 
+const TWO_COLUMN_ROW_CLASS = 'grid grid-cols-2 divide-x divide-[var(--color-border-accent)]'
+/** Phones get one field per row; the hairline moves from the side to between rows. */
+const SINGLE_COLUMN_ROW_CLASS = 'grid grid-cols-1 divide-y divide-[var(--color-border-accent)]'
+
 const PLAIN_INPUT_CONTAINER_CLASS = 'w-full'
 const PLAIN_INPUT_CLASS =
   'w-full border-0 bg-transparent p-0 text-sm text-[var(--color-text)] outline-none placeholder:text-[var(--color-muted)]/70'
@@ -24,11 +28,12 @@ export const CostumerFormFields = ({ model, compact = false }: CostumerFormField
   const primaryPhone = model.formState.phones[0]?.phone ?? { prefix: DEFAULT_PREFIX, number: '' }
   const secondaryPhone = model.formState.phones[1]?.phone ?? { prefix: DEFAULT_PREFIX, number: '' }
   const defaultAddress = model.formState.addresses[0]?.address ?? null
+  const pairRowClass = compact ? SINGLE_COLUMN_ROW_CLASS : TWO_COLUMN_ROW_CLASS
 
   return (
     <form
-      className={`flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden px-2 pt-4 scroll-thin ${
-        compact ? 'pb-24' : 'h-full pb-[100px]'
+      className={`flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden pt-4 scroll-thin ${
+        compact ? 'px-3 pb-6' : 'h-full px-2 pb-[100px]'
       }`}
     >
       <div className="rounded-2xl border border-[var(--color-border-accent)] bg-[var(--color-page)] shadow-sm">
@@ -52,7 +57,7 @@ export const CostumerFormFields = ({ model, compact = false }: CostumerFormField
           </Cell>
         </SplitRow>
 
-         <SplitRow splitRowClass="grid grid-cols-2 divide-x divide-[var(--color-border-accent)]">
+         <SplitRow splitRowClass={pairRowClass}>
           <Cell>
             <Field warningPlacement="besidesLabel" label="Primary Phone:">
               <PhoneField
@@ -70,7 +75,7 @@ export const CostumerFormFields = ({ model, compact = false }: CostumerFormField
           </Cell>
         </SplitRow>
 
-        <SplitRow splitRowClass="grid grid-cols-2 divide-x divide-[var(--color-border-accent)]">
+        <SplitRow splitRowClass={pairRowClass}>
           <Cell>
             <Field
               warningPlacement="besidesLabel"
