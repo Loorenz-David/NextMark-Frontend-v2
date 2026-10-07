@@ -24,6 +24,7 @@ import {
   useOrderByServerId,
 } from "../store/orderHooks.store";
 import {
+  useOrderEventsByOrderId,
   useOrderEventsLoaded,
   useRegisterViewedOrderEventHistory,
   useUnregisterViewedOrderEventHistory,
@@ -94,7 +95,7 @@ export const OrderDetailProvider = ({
   }, []);
 
   const orderDetailActions = useOrderDetailActions({ onClose });
-  const { loadOrderEventsIfNeeded } = useOrderEventFlow();
+  const { loadOrderEvents, loadOrderEventsIfNeeded } = useOrderEventFlow();
   const registerViewedOrderEventHistory = useRegisterViewedOrderEventHistory();
   const unregisterViewedOrderEventHistory =
     useUnregisterViewedOrderEventHistory();
@@ -102,6 +103,8 @@ export const OrderDetailProvider = ({
   const clientId = payload?.clientId ?? null;
   const payloadServerId = payload?.serverId ?? null;
   const freshAfter = payload?.freshAfter ?? null;
+  const focusEventId = payload?.focusEventId ?? null;
+  const focusRefetchDoneRef = useRef<string | null>(null);
   const shouldForceDetailHydration =
     payload?.headerBehavior === "order-main-context";
 
@@ -119,6 +122,11 @@ export const OrderDetailProvider = ({
   const orderState =
     useOrderStateByServerId(order?.order_state_id ?? null) ?? null;
   const areOrderEventsLoaded = useOrderEventsLoaded(orderServerId);
+  const orderEvents = useOrderEventsByOrderId(orderServerId);
+  const isFocusEventMissing =
+    focusEventId !== null &&
+    areOrderEventsLoaded &&
+    !orderEvents.some((event) => event.event_id === focusEventId);
 
   useEffect(() => {
     if (typeof serverId !== "number") {
@@ -224,6 +232,20 @@ export const OrderDetailProvider = ({
 
     void loadOrderEventsIfNeeded(orderServerId);
   }, [areOrderEventsLoaded, loadOrderEventsIfNeeded, orderServerId]);
+
+  // A history loaded before the event happened is not refreshed by every
+  // order frame; refetch once so the event a notification points at is there.
+  useEffect(() => {
+    if (
+      typeof orderServerId !== "number" ||
+      !isFocusEventMissing ||
+      focusRefetchDoneRef.current === focusEventId
+    ) {
+      return;
+    }
+    focusRefetchDoneRef.current = focusEventId;
+    void loadOrderEvents(orderServerId);
+  }, [focusEventId, isFocusEventMissing, loadOrderEvents, orderServerId]);
 
   useEffect(() => {
     if (typeof orderServerId !== "number") {

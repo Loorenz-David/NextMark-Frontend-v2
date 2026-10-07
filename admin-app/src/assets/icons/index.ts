@@ -53,6 +53,7 @@ export { default as InternationalIcon } from "./InternationalIcon.svg?react";
 export { default as StoreIcon } from "./StoreIcon.svg?react";
 export { default as SearchIcon } from "./SearchIcon.svg?react";
 export { default as BellIcon } from "./BellIcon.svg?react";
+export { default as BellOffIcon } from "./BellOffIcon.svg?react";
 export { default as ChatIcon } from "./ChatIcon.svg?react";
 export { default as ArchiveIcon } from "./ArchiveIcon.svg?react";
 export { default as DocumentIcon } from "./DocumentIcon.svg?react";

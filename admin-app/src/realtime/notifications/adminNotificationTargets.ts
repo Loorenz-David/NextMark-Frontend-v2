@@ -62,6 +62,7 @@ export const openAdminNotificationTargetPayload = (
         serverId: targetOrderId,
         mode: "view",
         freshAfter: payload.occurred_at,
+        focusEventId: payload.target.params.orderEventId ?? null,
       },
       {
         pageClass: "bg-[var(--color-muted)]/10",

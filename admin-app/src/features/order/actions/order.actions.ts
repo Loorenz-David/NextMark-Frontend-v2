@@ -30,6 +30,16 @@ type parentParamsProps = {
   pageClass?: string;
 };
 
+// Notification-opened details carry only a serverId, so a missing clientId on
+// both sides must not count as a match.
+const isSameOrderDetail = (
+  open: OrderDetailPayload,
+  next: OrderDetailPayload,
+) => {
+  if (open.clientId && next.clientId) return open.clientId === next.clientId;
+  return open.serverId != null && open.serverId === next.serverId;
+};
+
 export const useOrderActions = () => {
   const popupManager = usePopupManager();
   const sectionManager = useSectionManager();
@@ -84,7 +94,12 @@ export const useOrderActions = () => {
         .at(-1);
 
       const openPayload = latestOpenEntry?.payload as OrderDetailPayload | undefined;
-      if (openPayload && openPayload.clientId === payload.clientId) {
+      // A request to focus an event re-opens the same order so it lands there.
+      if (
+        openPayload &&
+        isSameOrderDetail(openPayload, payload) &&
+        !payload.focusEventId
+      ) {
         return;
       }
 

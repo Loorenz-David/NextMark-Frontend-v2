@@ -28,12 +28,14 @@ type UseOrderDetailPageControllerResult = {
 
 type UseOrderDetailPageControllerParams = {
   order: Order | null;
+  focusEventId?: string | null;
   routeGroupId?: number | null;
   planStartDate?: string | null;
 };
 
 export const useOrderDetailPageController = ({
   order,
+  focusEventId,
   routeGroupId,
   planStartDate,
 }: UseOrderDetailPageControllerParams): UseOrderDetailPageControllerResult => {
@@ -54,10 +56,11 @@ export const useOrderDetailPageController = ({
   const selectedInitialTab = useMemo(
     () =>
       resolveOrderDetailInitialTab({
+        hasFocusEvent: Boolean(focusEventId),
         hasMissingRequiredInfo: missingRequiredFields.length > 0,
         hasTimeWindowWarning,
       }),
-    [hasTimeWindowWarning, missingRequiredFields.length],
+    [focusEventId, hasTimeWindowWarning, missingRequiredFields.length],
   );
 
   const handleMissingOrderInfoClick = useCallback(() => {

@@ -40,6 +40,8 @@ export type OrderEventActionSummaryViewModel = {
 
 export type OrderEventTimelineItemViewModel = {
   clientId: string;
+  /** Server event id — what notifications point at. */
+  eventId: string;
   label: string;
   detail: string | null;
   time: string;
@@ -258,6 +260,7 @@ const mapEventToTimelineItem = (
 
   return {
     clientId: event.client_id,
+    eventId: event.event_id,
     label: resolveEventLabel(event.event_name),
     detail: summarizeOrderEventChanges(changes) ?? resolveEventDetail(event),
     time: formatIsoTime(event.occurred_at) ?? "--:--",

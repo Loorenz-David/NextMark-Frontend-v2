@@ -224,8 +224,12 @@ export type NotificationTarget = {
     orderCaseId?: number
     orderCaseClientId?: string
     routeId?: number
+    /** The order history entry the notification is about. */
+    orderEventId?: string
   }
 }
+
+export type NotificationActorKind = 'user' | 'client' | 'system'
 
 export type NotificationItem = {
   notification_id: string
@@ -250,6 +254,13 @@ export type NotificationItem = {
   team_id: number | null
   actor_user_id?: number | null
   actor_username?: string | null
+  actor_kind?: NotificationActorKind
+  actor_role?: string | null
+  /** The record the notification is about, e.g. "Order #2549". */
+  subject_label?: string
+  /** Up to three labels of what changed; `change_count` is the full total. */
+  change_labels?: string[]
+  change_count?: number
   title: string
   description: string
   occurred_at: string

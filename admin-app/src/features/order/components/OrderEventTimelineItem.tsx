@@ -20,6 +20,8 @@ type OrderEventTimelineItemProps = {
   item: OrderEventTimelineItemViewModel;
   isLast: boolean;
   isExpanded: boolean;
+  /** Briefly marks the entry a notification pointed at. */
+  isHighlighted?: boolean;
   onToggle: (clientId: string) => void;
 };
 
@@ -192,12 +194,13 @@ export const OrderEventTimelineItem = ({
   item,
   isLast,
   isExpanded,
+  isHighlighted = false,
   onToggle,
 }: OrderEventTimelineItemProps) => {
   const drawerId = `order-event-actions-${item.clientId}`;
 
   return (
-    <li className="relative flex gap-3">
+    <li className="relative flex gap-3" data-order-event-id={item.eventId}>
       <div className="relative flex w-4 shrink-0 flex-col items-center">
         <span className="relative mt-[0.3rem] flex h-4 w-4 items-center justify-center">
           <span
@@ -215,97 +218,109 @@ export const OrderEventTimelineItem = ({
       </div>
 
       <div className={`min-w-0 flex-1 ${isLast ? "" : "pb-5"}`}>
-        <div className="flex items-baseline justify-between gap-3">
-          <p className="min-w-0 truncate text-sm font-medium text-text">
-            {item.label}
-          </p>
-          <time className="shrink-0 text-[0.7rem] tabular-nums text-faint">
-            {item.time}
-          </time>
-        </div>
+        <div
+          className={`-mx-2 -my-1 rounded-xl px-2 py-1 ring-1 transition-[background-color,box-shadow] duration-700 ${
+            isHighlighted ? "bg-info-bg ring-info-border" : "ring-transparent"
+          }`}
+        >
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="min-w-0 truncate text-sm font-medium text-text">
+              {item.label}
+            </p>
+            <time className="shrink-0 text-[0.7rem] tabular-nums text-faint">
+              {item.time}
+            </time>
+          </div>
 
-        {item.detail ? (
-          <p className="mt-0.5 text-xs text-muted">{item.detail}</p>
-        ) : null}
+          {item.detail ? (
+            <p className="mt-0.5 text-xs text-muted">{item.detail}</p>
+          ) : null}
 
-        <div className="mt-1.5">
-          <OrderEventActorChip actor={item.actor} />
-        </div>
+          <div className="mt-1.5">
+            <OrderEventActorChip actor={item.actor} />
+          </div>
 
-        {item.changeCountLabel || item.actionSummary ? (
-          <div className="mt-2.5 overflow-hidden rounded-xl border border-border-subtle bg-surface-subtle">
-            <button
-              type="button"
-              onClick={() => onToggle(item.clientId)}
-              aria-expanded={isExpanded}
-              aria-controls={drawerId}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors hover:bg-surface-hover"
-            >
-              {item.changeCountLabel ? (
-                <span className="text-muted">{item.changeCountLabel}</span>
-              ) : null}
-              {item.changeCountLabel && item.actionSummary ? (
-                <span aria-hidden="true" className="text-faint">
-                  ·
-                </span>
-              ) : null}
-              {item.actionSummary ? (
-                <>
-                  <span className="text-muted">
-                    {item.actionSummary.countLabel}
-                  </span>
+          {item.changeCountLabel || item.actionSummary ? (
+            <div className="mt-2.5 overflow-hidden rounded-xl border border-border-subtle bg-surface-subtle">
+              <button
+                type="button"
+                onClick={() => onToggle(item.clientId)}
+                aria-expanded={isExpanded}
+                aria-controls={drawerId}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors hover:bg-surface-hover"
+              >
+                {item.changeCountLabel ? (
+                  <span className="text-muted">{item.changeCountLabel}</span>
+                ) : null}
+                {item.changeCountLabel && item.actionSummary ? (
                   <span aria-hidden="true" className="text-faint">
                     ·
                   </span>
-                  <span
-                    className={`inline-flex items-center gap-1.5 font-medium ${STATUS_TEXT_CLASS[item.actionSummary.status]}`}
-                  >
+                ) : null}
+                {item.actionSummary ? (
+                  <>
+                    <span className="text-muted">
+                      {item.actionSummary.countLabel}
+                    </span>
+                    <span aria-hidden="true" className="text-faint">
+                      ·
+                    </span>
                     <span
-                      aria-hidden="true"
-                      className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT_CLASS[item.actionSummary.status]}`}
-                    />
-                    {item.actionSummary.statusLabel}
-                  </span>
-                </>
-              ) : null}
-              <ChevronDownIcon
-                aria-hidden="true"
-                className={`ml-auto h-3 w-3 shrink-0 text-muted transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-              />
-            </button>
+                      className={`inline-flex items-center gap-1.5 font-medium ${STATUS_TEXT_CLASS[item.actionSummary.status]}`}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT_CLASS[item.actionSummary.status]}`}
+                      />
+                      {item.actionSummary.statusLabel}
+                    </span>
+                  </>
+                ) : null}
+                <ChevronDownIcon
+                  aria-hidden="true"
+                  className={`ml-auto h-3 w-3 shrink-0 text-muted transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                />
+              </button>
 
-            <div
-              id={drawerId}
-              inert={!isExpanded}
-              className={`grid transition-[grid-template-rows] duration-200 ease-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
-            >
-              <div className="min-h-0 overflow-hidden">
-                {item.changes.length > 0 ? (
-                  <section className="border-t border-border-subtle pb-1">
-                    <DrawerSectionHeading>Changes</DrawerSectionHeading>
-                    <ul>
-                      {item.changes.map((change) => (
-                        <OrderEventChangeRow key={change.id} change={change} />
-                      ))}
-                    </ul>
-                  </section>
-                ) : null}
-                {item.actions.length > 0 ? (
-                  <section className="border-t border-border-subtle">
-                    {item.changes.length > 0 ? (
-                      <DrawerSectionHeading>Actions</DrawerSectionHeading>
-                    ) : null}
-                    <ul className="divide-y divide-border-subtle">
-                      {item.actions.map((action) => (
-                        <OrderEventActionRow key={action.id} action={action} />
-                      ))}
-                    </ul>
-                  </section>
-                ) : null}
+              <div
+                id={drawerId}
+                inert={!isExpanded}
+                className={`grid transition-[grid-template-rows] duration-200 ease-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+              >
+                <div className="min-h-0 overflow-hidden">
+                  {item.changes.length > 0 ? (
+                    <section className="border-t border-border-subtle pb-1">
+                      <DrawerSectionHeading>Changes</DrawerSectionHeading>
+                      <ul>
+                        {item.changes.map((change) => (
+                          <OrderEventChangeRow
+                            key={change.id}
+                            change={change}
+                          />
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                  {item.actions.length > 0 ? (
+                    <section className="border-t border-border-subtle">
+                      {item.changes.length > 0 ? (
+                        <DrawerSectionHeading>Actions</DrawerSectionHeading>
+                      ) : null}
+                      <ul className="divide-y divide-border-subtle">
+                        {item.actions.map((action) => (
+                          <OrderEventActionRow
+                            key={action.id}
+                            action={action}
+                          />
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                </div>
               </div>
             </div>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </div>
     </li>
   );

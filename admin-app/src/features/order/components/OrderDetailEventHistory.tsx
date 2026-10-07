@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RetryIcon } from "@/assets/icons";
 
@@ -12,10 +12,16 @@ import { OrderEventTimelineItem } from "./OrderEventTimelineItem";
 
 type OrderDetailEventHistoryProps = {
   orderId: number | null;
+  /** Server event id to open expanded, scrolled to and briefly highlighted. */
+  focusEventId?: string | null;
 };
+
+const FOCUS_HIGHLIGHT_MS = 2500;
+const FOCUS_SCROLL_OFFSET_PX = 12;
 
 export const OrderDetailEventHistory = ({
   orderId,
+  focusEventId = null,
 }: OrderDetailEventHistoryProps) => {
   const { loadOrderEvents } = useOrderEventFlow();
   const orderEvents = useOrderEventsByOrderId(orderId);
@@ -24,6 +30,11 @@ export const OrderDetailEventHistory = ({
     Record<string, boolean>
   >({});
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [settledFocusEventId, setSettledFocusEventId] = useState<
+    string | null
+  >(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const scrolledFocusEventIdRef = useRef<string | null>(null);
 
   const timelineGroups = useMemo(
     () => mapOrderEventsToTimelineViewModel(orderEvents),
@@ -34,10 +45,56 @@ export const OrderDetailEventHistory = ({
     0,
   );
 
+  // The focused entry may arrive after the first load (a realtime refresh),
+  // so it is looked up on every timeline change until it is found.
+  const focusClientId = useMemo(() => {
+    if (!focusEventId) return null;
+    for (const group of timelineGroups) {
+      const match = group.items.find((item) => item.eventId === focusEventId);
+      if (match) return match.clientId;
+    }
+    return null;
+  }, [focusEventId, timelineGroups]);
+
+  useEffect(() => {
+    if (
+      !focusEventId ||
+      !focusClientId ||
+      scrolledFocusEventIdRef.current === focusEventId
+    ) {
+      return;
+    }
+    scrolledFocusEventIdRef.current = focusEventId;
+
+    // Scroll only this panel's list: scrollIntoView would also move the
+    // carousel track the panel sits in.
+    const container = listRef.current;
+    const entry = container?.querySelector<HTMLElement>(
+      `[data-order-event-id="${CSS.escape(focusEventId)}"]`,
+    );
+    if (container && entry) {
+      const top =
+        entry.getBoundingClientRect().top -
+        container.getBoundingClientRect().top +
+        container.scrollTop -
+        FOCUS_SCROLL_OFFSET_PX;
+      container.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    }
+
+    const timeoutId = window.setTimeout(
+      () => setSettledFocusEventId(focusEventId),
+      FOCUS_HIGHLIGHT_MS,
+    );
+    return () => window.clearTimeout(timeoutId);
+  }, [focusClientId, focusEventId]);
+
+  const isExpanded = (clientId: string) =>
+    expandedByClientId[clientId] ?? clientId === focusClientId;
+
   const toggleExpanded = (clientId: string) => {
     setExpandedByClientId((prev) => ({
       ...prev,
-      [clientId]: !prev[clientId],
+      [clientId]: !(prev[clientId] ?? clientId === focusClientId),
     }));
   };
 
@@ -93,7 +150,10 @@ export const OrderDetailEventHistory = ({
         </div>
       </div>
 
-      <div className="flex h-full flex-col overflow-y-auto px-5 py-4.5 scroll-thin">
+      <div
+        ref={listRef}
+        className="flex h-full flex-col overflow-y-auto px-5 py-4.5 scroll-thin"
+      >
         {typeof orderId !== "number" ? (
           <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle">
             <span className="text-sm text-[var(--color-muted)]">
@@ -137,7 +197,11 @@ export const OrderDetailEventHistory = ({
                       key={item.clientId}
                       item={item}
                       isLast={index === group.items.length - 1}
-                      isExpanded={expandedByClientId[item.clientId] ?? false}
+                      isExpanded={isExpanded(item.clientId)}
+                      isHighlighted={
+                        item.clientId === focusClientId &&
+                        settledFocusEventId !== focusEventId
+                      }
                       onToggle={toggleExpanded}
                     />
                   ))}

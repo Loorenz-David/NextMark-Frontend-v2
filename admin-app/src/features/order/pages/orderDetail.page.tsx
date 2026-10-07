@@ -32,6 +32,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
     handleTrackingLinkCopy,
   } = useOrderDetailPageController({
     order,
+    focusEventId: payload?.focusEventId ?? null,
     routeGroupId: payload?.routeGroupId ?? null,
     planStartDate: payload?.planStartDate ?? null,
   });
@@ -76,13 +77,16 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
 
               {order ? <OrderDetailNotesTab order={order} /> : null}
 
-              <OrderDetailEventHistory orderId={orderServerId} />
               {order ? (
                 <OrderDetailTimeWindows
                   order={order}
                   headerRight={timeWindowHeaderAddon}
                 />
               ) : null}
+              <OrderDetailEventHistory
+                orderId={orderServerId}
+                focusEventId={payload?.focusEventId ?? null}
+              />
             </SlideCarousel>
           </div>
 

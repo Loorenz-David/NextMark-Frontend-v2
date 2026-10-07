@@ -6,11 +6,13 @@ import {
   useSyncExternalStore,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BellIcon, CloseIcon } from "@/assets/icons";
+import { BellIcon } from "@/assets/icons";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { FloatingPopover } from "@/shared/popups/FloatingPopover/FloatingPopover";
-import { formatIsoDateRelative } from "@/shared/utils/formatIsoDate";
-import { createNotificationsChannel } from "@shared-realtime";
+import {
+  createNotificationsChannel,
+  type NotificationItem,
+} from "@shared-realtime";
 import { adminRealtimeClient } from "@/realtime/client";
 import {
   getAdminNotificationSnapshot,
@@ -21,9 +23,26 @@ import {
   playAdminNotificationChime,
   primeAdminNotificationAudio,
 } from "./playAdminNotificationChime";
-import { AdminNotificationsPushCta } from "./AdminNotificationsPushCta";
+import { setPendingAdminNotificationLaunchPayload } from "./adminWebPush.store";
+import { AdminNotificationItem } from "./AdminNotificationItem";
+import { mapNotificationToAdminViewModel } from "./adminNotificationItem.domain";
 
 const notificationsChannel = createNotificationsChannel(adminRealtimeClient);
+
+const dismissNotification = (notificationId: string) => {
+  markAdminNotificationsReadLocally([notificationId]);
+  notificationsChannel.markRead([notificationId]);
+};
+
+// Same route a push-notification click takes (AdminNotificationClickBridge).
+const openNotification = (notification: NotificationItem) => {
+  dismissNotification(notification.notification_id);
+  setPendingAdminNotificationLaunchPayload({
+    notification_id: notification.notification_id,
+    occurred_at: notification.occurred_at,
+    target: notification.target,
+  });
+};
 
 export function AdminNotificationsTrigger() {
   const [isOpen, setIsOpen] = useState(false);
@@ -87,12 +106,6 @@ export function AdminNotificationsTrigger() {
               Notifications
             </h3>
           </div>
-          <div className="admin-glass-divider border-b px-3 py-3">
-            <AdminNotificationsPushCta
-              visibility="disable-only"
-              className="w-full justify-center px-3 py-2"
-            />
-          </div>
           <div className="px-3 py-4 text-sm text-[var(--color-muted)]">
             No unread notifications.
           </div>
@@ -120,55 +133,15 @@ export function AdminNotificationsTrigger() {
             Clear all
           </div>
         </div>
-        <div className="admin-glass-divider border-b px-3 py-3">
-          <AdminNotificationsPushCta
-            visibility="disable-only"
-            className="w-full justify-center px-3 py-2"
-          />
-        </div>
 
-        <div className="divide-y divide-border-subtle">
+        <div className="flex flex-col gap-0.5 pt-1">
           {items.map((notification) => (
-            <div
+            <AdminNotificationItem
               key={notification.notification_id}
-              className="group flex gap-3 rounded-xl px-3 py-3 transition hover:bg-surface-raised"
-            >
-              <div className="flex min-w-0 flex-1 flex-col gap-2">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[var(--color-text)]">
-                      {notification.title}
-                    </p>
-                    <p className="text-sm text-[var(--color-muted)]">
-                      {notification.description}
-                    </p>
-                  </div>
-                  <span className="shrink-0 text-xs text-[var(--color-muted)]">
-                    {formatIsoDateRelative(notification.occurred_at) ??
-                      notification.occurred_at}
-                  </span>
-                </div>
-                {notification.actor_username ? (
-                  <span className="text-xs font-medium text-[var(--color-text)]/70">
-                    {notification.actor_username}
-                  </span>
-                ) : null}
-              </div>
-
-              <button
-                aria-label="Mark notification as read"
-                className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-muted)] opacity-70 transition hover:bg-surface-hover hover:opacity-100"
-                onClick={() => {
-                  markAdminNotificationsReadLocally([
-                    notification.notification_id,
-                  ]);
-                  notificationsChannel.markRead([notification.notification_id]);
-                }}
-                type="button"
-              >
-                <CloseIcon className="h-3.5 w-3.5" />
-              </button>
-            </div>
+              item={mapNotificationToAdminViewModel(notification)}
+              onOpen={() => openNotification(notification)}
+              onDismiss={dismissNotification}
+            />
           ))}
         </div>
       </div>

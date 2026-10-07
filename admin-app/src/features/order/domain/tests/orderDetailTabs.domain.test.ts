@@ -68,4 +68,18 @@ export const runOrderDetailTabsDomainTests = () => {
     combinedWarningSelection.tabId === "summary",
     "missing information should take priority over time window warnings",
   );
+
+  const focusEventSelection = resolveOrderDetailInitialTab({
+    hasFocusEvent: true,
+    hasMissingRequiredInfo: true,
+    hasTimeWindowWarning: true,
+  });
+  assert(
+    focusEventSelection.tabId === "event_history",
+    "a focused event should open event history over any warning",
+  );
+  assert(
+    focusEventSelection.reason === "focus_event",
+    "focus event reason should be kept",
+  );
 };
