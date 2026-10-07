@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
-import { BackArrowIcon } from '@/assets/icons'
+import { PageBackButton } from '@/shared/buttons/PageBackButton'
 
 import { SettingsSectionSkeleton } from '../components/SettingsSectionSkeleton'
 import { resolveSettingsSectionLabel } from '../domain/settingsSections'
@@ -22,14 +22,11 @@ export const SettingsMobileView = () => {
   return (
     <div className="admin-mobile-shell flex h-full min-h-0 w-full flex-col">
       <header className="admin-toolbar-strip safe-top relative z-30 flex w-full shrink-0 items-center gap-2 px-2 py-2">
-        <button
-          type="button"
+        <PageBackButton
           onClick={() => navigate(isIndex ? '/' : SETTINGS_INDEX_PATH)}
-          aria-label={isIndex ? 'Back to home' : 'Back to settings'}
-          className="inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-[var(--color-text)] active:bg-surface-hover"
-        >
-          <BackArrowIcon className="h-5 w-5" />
-        </button>
+          ariaLabel={isIndex ? 'Back to home' : 'Back to settings'}
+          className="ml-0"
+        />
         <h1 className="min-w-0 flex-1 truncate text-base font-semibold text-[var(--color-text)]">
           {title}
         </h1>

@@ -1,5 +1,7 @@
+import { useMobile } from '@/app/viewport'
 import { DocumentIcon, EditIcon } from '@/assets/icons'
 import { BasicButton } from '@/shared/buttons/BasicButton'
+import { PageBackButton } from '@/shared/buttons/PageBackButton'
 
 type CostumerDetailHeaderProps = {
   onClose: () => void
@@ -7,13 +9,22 @@ type CostumerDetailHeaderProps = {
 }
 
 export const CostumerDetailHeader = ({ onClose, onEdit }: CostumerDetailHeaderProps) => {
+  const { isMobile } = useMobile()
+
   return (
     <>
       <div
         className="relative flex items-center justify-between gap-3 bg-[var(--color-primary)] px-4 py-3 shadow-md"
         style={{ borderRadius: '0 0 20px 20px' }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          {isMobile ? (
+            <PageBackButton
+              onClick={onClose}
+              ariaLabel="Close costumer detail"
+              className="text-[var(--color-page)] active:bg-[var(--color-page)]/15"
+            />
+          ) : null}
           <div className="inline-flex items-center justify-center rounded-xl bg-[var(--color-muted)]/30 px-3 py-3">
             <DocumentIcon className="h-6 w-6 text-[var(--color-page)]" />
           </div>
@@ -25,15 +36,17 @@ export const CostumerDetailHeader = ({ onClose, onEdit }: CostumerDetailHeaderPr
           </div>
         </div>
 
-        <BasicButton
-          params={{
-            variant: 'textInvers',
-            onClick: onClose,
-            ariaLabel: 'Close costumer detail',
-          }}
-        >
-          close
-        </BasicButton>
+        {!isMobile ? (
+          <BasicButton
+            params={{
+              variant: 'textInvers',
+              onClick: onClose,
+              ariaLabel: 'Close costumer detail',
+            }}
+          >
+            close
+          </BasicButton>
+        ) : null}
       </div>
       <div className="flex items-center justify-end gap-3 bg-[var(--color-page)] px-4 py-3">
         <BasicButton

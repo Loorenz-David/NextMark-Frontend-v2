@@ -1,5 +1,7 @@
+import { useMobile } from '@/app/viewport'
 import { ArchiveIcon, PlusIcon } from '@/assets/icons'
 import { BasicButton } from '@/shared/buttons/BasicButton'
+import { PageBackButton } from '@/shared/buttons/PageBackButton'
 import type { OrderCaseStats } from '../../types/orderCaseMeta'
 import { pluralLabel } from '@shared-utils'
 
@@ -14,6 +16,8 @@ export const OrderCaseOrderCasesHeader = ({
   onCreateCase,
   onClose,
 }: OrderCaseOrderCasesHeaderProps) => {
+  const { isMobile } = useMobile()
+
   return (
     <div className="px-5 pt-4">
       <div className="admin-glass-panel-strong relative overflow-hidden rounded-3xl">
@@ -21,22 +25,25 @@ export const OrderCaseOrderCasesHeader = ({
 
         <div className="relative flex items-start justify-between gap-4 px-5 py-4">
           <div className="flex min-w-0 items-center gap-3.5">
+            {isMobile ? <PageBackButton onClick={onClose} ariaLabel="Close order cases" /> : null}
             <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[var(--shadow-button-accent-subtle)]">
               <ArchiveIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
             </div>
             <HeaderTitle orderCaseStats={orderCaseStats}/>
           </div>
 
-          <BasicButton
-            params={{
-              variant: 'toolbarSecondary',
-              onClick: onClose,
-              ariaLabel: 'Close order cases',
-              className: 'min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-[0.66rem]',
-            }}
-          >
-            Close
-          </BasicButton>
+          {!isMobile ? (
+            <BasicButton
+              params={{
+                variant: 'toolbarSecondary',
+                onClick: onClose,
+                ariaLabel: 'Close order cases',
+                className: 'min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-[0.66rem]',
+              }}
+            >
+              Close
+            </BasicButton>
+          ) : null}
         </div>
 
         <div className="admin-glass-divider flex justify-end border-t px-5 py-3">

@@ -1,5 +1,7 @@
+import { useMobile } from '@/app/viewport'
 import { MessageIcon } from '@/assets/icons'
 import { BasicButton } from '@/shared/buttons/BasicButton'
+import { PageBackButton } from '@/shared/buttons/PageBackButton'
 
 import type { OrderCaseState } from '../../types'
 import { OrderCaseStateSelector } from '../OrderCaseStateSelector'
@@ -17,6 +19,8 @@ export const OrderCaseDetailsHeader = ({
   onChangeState,
   onClose,
 }: OrderCaseDetailsHeaderProps) => {
+  const { isMobile } = useMobile()
+
   return (
     <div className="px-5 pt-4">
       <div className="admin-glass-panel-strong relative overflow-hidden rounded-3xl">
@@ -24,6 +28,7 @@ export const OrderCaseDetailsHeader = ({
 
         <div className="relative flex items-start justify-between gap-4 px-5 py-4">
           <div className="flex min-w-0 items-center gap-3.5">
+            {isMobile ? <PageBackButton onClick={onClose} ariaLabel="Close case details" /> : null}
             <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[var(--shadow-button-accent-subtle)]">
               <MessageIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
             </div>
@@ -37,16 +42,18 @@ export const OrderCaseDetailsHeader = ({
             </div>
           </div>
 
-          <BasicButton
-            params={{
-              variant: 'toolbarSecondary',
-              onClick: onClose,
-              ariaLabel: 'Close case details',
-              className: 'min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-[0.66rem]',
-            }}
-          >
-            Close
-          </BasicButton>
+          {!isMobile ? (
+            <BasicButton
+              params={{
+                variant: 'toolbarSecondary',
+                onClick: onClose,
+                ariaLabel: 'Close case details',
+                className: 'min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-[0.66rem]',
+              }}
+            >
+              Close
+            </BasicButton>
+          ) : null}
         </div>
 
         <div className="admin-glass-divider border-t px-5 py-3">

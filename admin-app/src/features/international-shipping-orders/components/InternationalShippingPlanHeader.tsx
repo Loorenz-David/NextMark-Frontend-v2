@@ -4,7 +4,9 @@ import {
   planIconTypeMap,
 } from '@/features/plan'
 import { useRoutePlanStateByServerId } from '@/features/plan/store/useRoutePlanState.selector'
+import { useMobile } from '@/app/viewport'
 import { BasicButton } from '@/shared/buttons/BasicButton'
+import { PageBackButton } from '@/shared/buttons/PageBackButton'
 import { StateCard } from '@/shared/layout/StateCard'
 
 import type { InternationalShippingPlanSummary } from '../domain/internationalShippingPlanSummary'
@@ -25,11 +27,15 @@ export const InternationalShippingPlanHeader = ({
   onRequestClose,
 }: InternationalShippingPlanHeaderProps) => {
   const planState = useRoutePlanStateByServerId(planStateId ?? 1)
+  const { isMobile } = useMobile()
 
   return (
     <header className="relative isolate flex w-full min-w-0 flex-col overflow-hidden bg-[var(--surface-page-header)] shadow-[var(--shadow-panel-section)]">
       <div className="admin-glass-divider relative z-10 flex min-w-0 items-center justify-between gap-3 border-b px-4 py-3">
         <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
+          {isMobile && onRequestClose ? (
+            <PageBackButton onClick={onRequestClose} ariaLabel="Close international shipping plan" />
+          ) : null}
           <div className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-hover px-3 py-3 shadow-[inset_0_1px_0_var(--color-ligth-bg)]">
             <PlanTypeIcon className="h-6 w-6 text-[var(--color-muted)]" />
           </div>
@@ -56,7 +62,7 @@ export const InternationalShippingPlanHeader = ({
           {/* Deleting is the only action a container plan offers today; the
               panel closes with the plan it was showing. */}
           <ContainerPlanActionsMenu planId={planId} onDeleted={onRequestClose} />
-          {onRequestClose ? (
+          {onRequestClose && !isMobile ? (
             <BasicButton
               params={{
                 variant: 'text',
