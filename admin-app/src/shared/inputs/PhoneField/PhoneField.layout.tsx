@@ -52,6 +52,10 @@ export const PhoneFieldLayout = ({
                 onChange={handleInputChange}
                 onFocus={handleInputFocus}
                 placeholder="+1"
+                // Out of the tab order: the keyboard's Next from the field
+                // above should land on the number, not open the prefix list.
+                // The prefix is still changed by tapping it.
+                tabIndex={-1}
                 inputRef={inputRef}
                 fieldClassName="w-[100px]"
               />
