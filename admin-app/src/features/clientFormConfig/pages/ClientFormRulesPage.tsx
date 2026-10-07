@@ -1,4 +1,4 @@
-import { DndContext, closestCenter } from '@dnd-kit/core'
+import { DndContext, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
@@ -24,6 +24,10 @@ export const ClientFormRulesPage = () => {
     toggleEnabled,
     removeRule,
   } = useClientFormRulesController()
+  const sortableSensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
+  )
 
   return (
     <ClientFormSectionLayout
@@ -48,6 +52,7 @@ export const ClientFormRulesPage = () => {
       }
     >
       <DndContext
+        sensors={sortableSensors}
         collisionDetection={closestCenter}
         modifiers={[restrictToVerticalAxis]}
         onDragEnd={(event) => {

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 
-import { useMobile } from '@/app/contexts/MobileContext'
+import { useMobile } from '@/app/viewport'
 import { DarkOverlay } from '@/shared/layout/DarkOverlay'
 
 import type { FeaturePopupShellProps } from './types'
@@ -38,7 +38,7 @@ export const FeaturePopupShell = ({
 
   if (isMobile || variant === 'fullscreen') {
     return (
-      <div className="fixed inset-0 z-[100] pointer-events-auto bg-[var(--color-page)] text-[var(--color-text)]">
+      <div className="safe-top fixed inset-0 z-[100] pointer-events-auto bg-[var(--color-page)] text-[var(--color-text)]">
         <motion.div
           className="flex h-full w-full min-h-0 min-w-0 flex-col"
           initial={{ opacity: 0, x: 28 }}

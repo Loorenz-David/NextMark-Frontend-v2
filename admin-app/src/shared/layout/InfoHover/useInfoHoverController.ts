@@ -1,14 +1,8 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+
+import { useMobile } from '@/app/viewport'
 
 const CLOSE_DELAY_MS = 150
-
-const resolveTouchMode = () => {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-    return false
-  }
-
-  return window.matchMedia('(hover: none)').matches
-}
 
 export const useInfoHoverController = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -20,7 +14,8 @@ export const useInfoHoverController = () => {
   const pointerEventRef = useRef(false)
   const pointerEventTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const popoverId = useId()
-  const isTouchMode = useMemo(resolveTouchMode, [])
+  const { hasHover } = useMobile()
+  const isTouchMode = !hasHover
 
   const clearCloseTimer = () => {
     if (!closeTimerRef.current) {

@@ -1,4 +1,4 @@
-import { useMobile } from '@/app/contexts/MobileContext'
+import { useMobile } from '@/app/viewport'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { PrintTemplateChannelPage } from '@/features/templates/printDocument/pages/PrintTemplateChannelPage'
@@ -8,18 +8,29 @@ import { SettingsOverlays } from '../components/SettingsOverlays'
 import { sectionRegistry } from '../registry/sectionRegistry'
 import { SettingsDesktopView } from '../views/SettingsDesktopView'
 import { SettingsMobileView } from '../views/SettingsMobileView'
+import { SettingsMobileSectionList } from '../components/mobile/SettingsMobileSectionList'
 
 const SettingsView = () => {
   const { isMobile } = useMobile()
 
   return (
-    <div className="h-screen overflow-hidden bg-[var(--color-page)] text-[var(--color-text)]">
+    <div
+      className={`overflow-hidden bg-[var(--color-page)] text-[var(--color-text)] ${
+        isMobile ? 'h-dvh' : 'h-screen'
+      }`}
+    >
       <SettingsOverlays />
       <div className="flex h-full w-screen flex-col overflow-hidden">
         {isMobile ? <SettingsMobileView /> : <SettingsDesktopView />}
       </div>
     </div>
   )
+}
+
+/** Desktop lands on the profile; the phone shows the section list instead. */
+const SettingsIndexRoute = () => {
+  const { isMobile } = useMobile()
+  return isMobile ? <SettingsMobileSectionList /> : <Navigate to="profile" replace />
 }
 
 export const SettingsPage = () => {
@@ -41,7 +52,7 @@ export const SettingsPage = () => {
     <SettingsProvider>
       <Routes>
         <Route element={<SettingsView />}>
-          <Route index element={<Navigate to="profile" replace />} />
+          <Route index element={<SettingsIndexRoute />} />
           <Route path="profile" element={<UserMain />} />
           <Route path="team" element={<TeamMain />} />
           <Route path="team/invitations" element={<TeamInvitations />} />

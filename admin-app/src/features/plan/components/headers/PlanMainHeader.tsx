@@ -58,8 +58,8 @@ export const PlanMainHeader = ({
         ) : null}
       </div>
 
-      <div className="flex items-center gap-1 p-4">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-1 gap-y-3 p-4">
+        <div className="flex flex-wrap items-center gap-4 gap-y-3">
           <BasicButton
             ref={setCreatePlanNodeRef}
             key="order-main-create"

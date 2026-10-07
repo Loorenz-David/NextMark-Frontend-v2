@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import { useMobile } from '@/app/viewport'
 import { TriangleWarningIcon } from '@/assets/icons'
 import { FloatingPopover } from '@/shared/popups/FloatingPopover/FloatingPopover'
 import type { RouteSolutionWarning } from '@/features/plan/routeGroup/types/routeSolution'
@@ -21,6 +22,7 @@ export const RouteSolutionWarnings = ({
 }: RouteSolutionWarningsProps) => {
   const [warningOpen, setWarningOpen] = useState(false)
   const [isResolving, setIsResolving] = useState(false)
+  const { hasHover } = useMobile()
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const filteredWarnings = useMemo(
@@ -83,9 +85,17 @@ export const RouteSolutionWarnings = ({
       floatingClassName="z-[220]"
       reference={
         <div
-          className="flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.08))]"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          role="button"
+          tabIndex={0}
+          aria-label="Show route warnings"
+          aria-expanded={warningOpen}
+          className="touch-hit-area flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.08))]"
+          onMouseEnter={hasHover ? handleMouseEnter : undefined}
+          onMouseLeave={hasHover ? handleMouseLeave : undefined}
+          onClick={(event) => {
+            event.stopPropagation()
+            if (!hasHover) setWarningOpen((current) => !current)
+          }}
         >
           <TriangleWarningIcon className="h-4 w-4 text-warning" />
         </div>

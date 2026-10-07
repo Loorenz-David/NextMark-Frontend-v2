@@ -7,7 +7,9 @@ interface SectionManagerHostProps {
   stackKey: string
   isBaseOpen: boolean
   containerClassName?: string
-  width?:number
+  /** Added to the container only while at least one section is open. */
+  activeContainerClassName?: string
+  width?: number | 'full'
 }
 
 type Section ={
@@ -28,7 +30,13 @@ const SINGLE_INSTANCE_SECTION_KEYS = new Set([
 ])
 const DEV = import.meta.env.DEV
 
-export function SectionManagerHost({ stackKey, isBaseOpen, containerClassName, width }: SectionManagerHostProps) {
+export function SectionManagerHost({
+  stackKey,
+  isBaseOpen,
+  containerClassName,
+  activeContainerClassName,
+  width,
+}: SectionManagerHostProps) {
   const sectionManager = useSectionManager()
   const entries = useStackActionEntries(sectionManager)
   const openSections = entries.filter((entry) => !entry.isClosing)
@@ -147,7 +155,13 @@ export function SectionManagerHost({ stackKey, isBaseOpen, containerClassName, w
   }
 
   return (
-    <div className={`${containerClassName} ${sectionCount > 0 ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+    <div
+      className={`${containerClassName} ${
+        sectionCount > 0
+          ? `pointer-events-auto ${activeContainerClassName ?? ''}`
+          : 'pointer-events-none'
+      }`}
+    >
       {stack}
     </div>
   )

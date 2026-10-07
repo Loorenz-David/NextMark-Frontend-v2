@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 
+import { useMobile } from '@/app/viewport'
 import { TriangleWarningIcon } from '@/assets/icons'
 import { FloatingPopover } from '@/shared/popups/FloatingPopover/FloatingPopover'
 import type { RouteSolutionStop } from '@/features/plan/routeGroup/types/routeSolutionStop'
@@ -12,6 +13,7 @@ type RouteStopWarningsProps = {
 
 export const RouteStopWarnings = ({ stop, planStartDate }: RouteStopWarningsProps) => {
     const [warningOpen, setWarningOpen] = useState(false)
+    const { hasHover } = useMobile()
     const constraintWarnings = useMemo(
         () => (Array.isArray(stop?.constraint_warnings) ? stop?.constraint_warnings ?? [] : []),
         [stop?.constraint_warnings],
@@ -33,9 +35,17 @@ export const RouteStopWarnings = ({ stop, planStartDate }: RouteStopWarningsProp
             floatingClassName="z-[220]"
             reference={
                 <div
-                    className="flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.08))]"
-                    onMouseEnter={() => setWarningOpen(true)}
-                    onMouseLeave={() => setWarningOpen(false)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Show stop warnings"
+                    aria-expanded={warningOpen}
+                    className="touch-hit-area flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.08))]"
+                    onMouseEnter={hasHover ? () => setWarningOpen(true) : undefined}
+                    onMouseLeave={hasHover ? () => setWarningOpen(false) : undefined}
+                    onClick={(event) => {
+                        event.stopPropagation()
+                        if (!hasHover) setWarningOpen((current) => !current)
+                    }}
                 >
                     <TriangleWarningIcon className="h-4 w-4 text-warning" />
                 </div>

@@ -1,10 +1,5 @@
-import { useEffect } from 'react'
-import { useMobile } from '@/app/contexts/MobileContext'
+import { useMobile } from '@/app/viewport'
 import { useBaseControlls } from '@/shared/resource-manager/useResourceManager'
-import { BasicButton } from '@/shared/buttons/BasicButton'
-import { ArchiveIcon } from '@/assets/icons'
-import { useOrderCaseActions } from '@/features/orderCase/actions/orderCase.actions'
-import { useHomeApp } from '@/features/home-app/providers/HomeAppProvider'
 import { AdminNotificationWorkspaceBridge } from '@/realtime/notifications'
 
 import { HomeDesktopView } from '../views/HomeDesktopView'
@@ -16,7 +11,6 @@ export const HomeRouteOperationsPage = () => {
   return (
     <HomeRouteOperationsManagersProvider>
       <AdminNotificationWorkspaceBridge />
-      <RouteOperationsHeaderActionsRegistrar />
       <HomeRouteOperationsContent />
     </HomeRouteOperationsManagersProvider>
   )
@@ -51,31 +45,4 @@ const HomeRouteOperationsContent = () => {
       </div>
     </div>
   )
-}
-
-const RouteOperationsHeaderActionsRegistrar = () => {
-  const { openCaseMain } = useOrderCaseActions()
-  const { setHeaderActions } = useHomeApp()
-
-  useEffect(() => {
-    setHeaderActions(
-      <BasicButton
-        params={{
-          variant: 'toolbarSecondary',
-          ariaLabel: 'Cases',
-          className: 'border-[var(--color-muted)]/24 px-4 py-[5px]',
-          onClick: openCaseMain,
-        }}
-      >
-        <ArchiveIcon className="mr-2 h-4 w-4" />
-        Cases
-      </BasicButton>,
-    )
-
-    return () => {
-      setHeaderActions(null)
-    }
-  }, [openCaseMain, setHeaderActions])
-
-  return null
 }

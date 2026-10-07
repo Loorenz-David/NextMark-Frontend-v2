@@ -6,13 +6,6 @@ import type { BaseControls } from "./types";
 
 import type { MapBridge } from "@/shared/map";
 
-export interface isMobileObject {
-  isMobile: boolean;
-  isMenuOpen: boolean;
-  setIsMobileMenuOpen: (open: boolean) => void;
-  setIsMobileViewport: (isMobile: boolean) => void;
-}
-
 export type PlanDropFeedback = {
   planClientId: string;
   movedCount: number;
@@ -32,7 +25,6 @@ export type KnownResourceRegistry = {
   mapManager?: MapBridge;
   settingsPopupManager?: StackActionManager<Record<string, unknown>>;
   popupConfirmationManager?: StackActionManager<Record<string, unknown>>;
-  isMobileObject?: isMobileObject;
   baseControlls?: BaseControls<unknown>;
   planDropFeedback?: PlanDropFeedback | null;
   unscheduleDropFeedback?: UnscheduleDropFeedback | null;

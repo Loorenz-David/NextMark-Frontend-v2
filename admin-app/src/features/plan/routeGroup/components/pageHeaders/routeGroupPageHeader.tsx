@@ -1,9 +1,11 @@
 import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 
+import { useMobile } from "@/app/viewport";
 import { planIconTypeMap } from "@/features/plan/utils/planIconTypeMap";
 import { BasicButton } from "@/shared/buttons";
 import {
+  BackArrowIcon,
   CsvIcon,
   EditIcon,
   PdfIcon,
@@ -117,6 +119,7 @@ export const RouteGroupsPageHeader = ({
   onRequestClose,
 }: RouteGroupsPageHeaderProps) => {
   const PlanTypeIcon = planIconTypeMap.local_delivery;
+  const { isMobile } = useMobile();
 
   return (
     <header className="relative isolate flex w-full min-w-0 flex-col overflow-hidden bg-[var(--surface-page-header)] shadow-[var(--shadow-panel-section)]">
@@ -126,6 +129,16 @@ export const RouteGroupsPageHeader = ({
       />
       <div className="admin-glass-divider relative z-10 flex min-w-0 items-center justify-between gap-3 border-b px-4 py-3 transition-colors duration-200">
         <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
+          {isMobile && onRequestClose ? (
+            <button
+              type="button"
+              onClick={onRequestClose}
+              aria-label="Back"
+              className="inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-[var(--color-text)] active:bg-surface-hover"
+            >
+              <BackArrowIcon className="h-5 w-5" />
+            </button>
+          ) : null}
           <div className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-hover px-3 py-3 shadow-[inset_0_1px_0_var(--color-ligth-bg)]">
             <PlanTypeIcon className="h-6 w-6 text-[var(--color-muted)]" />
           </div>
@@ -145,7 +158,7 @@ export const RouteGroupsPageHeader = ({
             </div>
           </div>
         </div>
-        {onRequestClose ? (
+        {onRequestClose && !isMobile ? (
           <BasicButton
             params={{
               variant: "text",

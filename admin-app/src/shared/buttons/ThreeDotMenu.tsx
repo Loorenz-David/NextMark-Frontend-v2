@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
+import { useMobile } from '@/app/viewport'
 import { FloatingPopover } from '@/shared/popups/FloatingPopover/FloatingPopover'
+import { ActionSheet, type ActionSheetOption } from '@/shared/overlays/bottomSheet'
 import { ConfirmActionButton } from '@/shared/buttons/DeleteButton'
 
 export type ThreeDotMenuOptionConfirmation = {
@@ -86,6 +88,37 @@ export const ThreeDotMenu = ({
   renderInPortal = false,
 }: Props) => {
   const [open, setOpen] = useState(false)
+  const { isCoarsePointer } = useMobile()
+
+  // Fingers get a bottom sheet with full-width rows instead of a 190px
+  // popover anchored to a 12px trigger. Confirmation stays two-tap.
+  if (isCoarsePointer) {
+    const sheetOptions: ActionSheetOption[] = options.map((option) => ({
+      label: option.label,
+      action: option.action,
+      icon: option.icon,
+      disabled: option.disabled,
+      destructive: Boolean(option.confirmation),
+      confirmLabel: option.confirmation?.confirmContent,
+      confirmDurationMs: option.confirmation?.duration,
+    }))
+
+    return (
+      <>
+        <ThreeDotTrigger
+          onClick={(event) => {
+            event.stopPropagation()
+            setOpen(true)
+          }}
+          dotWidth={dotWidth}
+          dotHeight={dotHeight}
+          dotClassName={dotClassName}
+          triggerClassName={`touch-hit-area ${triggerClassName ?? ''}`}
+        />
+        <ActionSheet open={open} onClose={() => setOpen(false)} options={sheetOptions} />
+      </>
+    )
+  }
 
   const renderOptionContent = (option: ThreeDotMenuOption) => (
     <div

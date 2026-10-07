@@ -1,4 +1,4 @@
-import { DndContext, closestCenter } from '@dnd-kit/core'
+import { DndContext, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -36,6 +36,10 @@ const SortableItemStateCard = ({ item, onEdit }: { item: ItemState; onEdit: (cli
 
 export const ItemStatesPage = () => {
   const { items, userStates, openCreate, openEdit, handleReorder } = useItemStateController()
+  const sortableSensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
+  )
   const isReorderEnabled = true
   const userStateIds = userStates.map((state) => String(state.id ?? state.client_id))
 
@@ -49,6 +53,7 @@ export const ItemStatesPage = () => {
     >
       {isReorderEnabled ? (
         <DndContext
+          sensors={sortableSensors}
           collisionDetection={closestCenter}
           modifiers={[restrictToVerticalAxis]}
           onDragEnd={(event) => {

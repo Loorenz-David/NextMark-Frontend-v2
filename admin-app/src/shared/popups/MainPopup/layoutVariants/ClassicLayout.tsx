@@ -1,6 +1,6 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useMobile } from '@/app/contexts/MobileContext'
+import { useMobile } from '@/app/viewport'
 
 import { usePopupContext } from '../PopupContext'
 import { PopupHeader } from '../PopupHeader'
@@ -32,7 +32,7 @@ export const MainPopupLayout = ({ children }: PropsMainPopupLayout) => {
 
             {/* Popup element */}
             <motion.div
-                className={isMobile ?`relative z-100 pointer-events-auto flex h-full w-full  flex-col  bg-[var(--color-page)] text-[var(--color-text)]`:
+                className={isMobile ?`safe-top relative z-100 pointer-events-auto flex h-full w-full  flex-col  bg-[var(--color-page)] text-[var(--color-text)]`:
                 parentParams?.autoHeight
                     ? 'relative z-10 pointer-events-auto flex w-full max-h-[calc(100vh-48px)] max-w-[600px] min-w-[500px] flex-col bg-[var(--color-page)] text-[var(--color-text)] rounded-none md:rounded-3xl'
                 : parentParams && parentParams?.controllBodyLayout

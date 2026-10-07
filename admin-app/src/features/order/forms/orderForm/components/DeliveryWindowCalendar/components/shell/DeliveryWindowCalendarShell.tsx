@@ -1,6 +1,6 @@
 import { useMemo, type ReactNode } from 'react'
 
-import { useMobile } from '@/app/contexts/MobileContext'
+import { useMobile } from '@/app/viewport'
 
 import {
   resolveDeliveryWindowCalendarShellScale,

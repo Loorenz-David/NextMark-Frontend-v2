@@ -1,4 +1,5 @@
 export { HomeRouteOperationsPage } from './pages/HomeRouteOperationsPage'
+export { HomeOverlays } from './components/HomeOverlays'
 
 // Registry and DnD exports used by route-operations internals
 export { homePopupRegistry } from './registry/homePopups'

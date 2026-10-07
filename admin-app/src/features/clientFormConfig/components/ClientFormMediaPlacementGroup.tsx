@@ -1,4 +1,4 @@
-import { DndContext, closestCenter } from '@dnd-kit/core'
+import { DndContext, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
@@ -29,7 +29,13 @@ export const ClientFormMediaPlacementGroup = ({
   onToggleEnabled,
   onDelete,
   onReorder,
-}: ClientFormMediaPlacementGroupProps) => (
+}: ClientFormMediaPlacementGroupProps) => {
+  const sortableSensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
+  )
+
+  return (
   <section className="flex flex-col gap-3 rounded-3xl border border-border-subtle bg-surface-subtle p-4">
     <div className="flex items-start justify-between gap-4">
       <div>
@@ -51,6 +57,7 @@ export const ClientFormMediaPlacementGroup = ({
 
     {items.length ? (
       <DndContext
+        sensors={sortableSensors}
         collisionDetection={closestCenter}
         modifiers={[restrictToVerticalAxis]}
         onDragEnd={(event) => {
@@ -85,4 +92,5 @@ export const ClientFormMediaPlacementGroup = ({
       <p className="py-2 text-xs text-[var(--color-muted)]/70">No images in this slot yet.</p>
     )}
   </section>
-)
+  )
+}

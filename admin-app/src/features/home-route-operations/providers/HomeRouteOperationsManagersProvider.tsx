@@ -5,19 +5,18 @@ import { DndContext, DragOverlay, MeasuringStrategy } from "@dnd-kit/core";
 
 import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext";
 import { preloadMapExtras, useMap } from "@/shared/map";
-import { useMobile } from "@/app/contexts/MobileContext";
+import { useMobile } from "@/app/viewport";
 
 import { homeCollisionDetection } from "../dnd/collisionStrategies";
-import type { PayloadBase } from "../types/types";
-import { useBaseControlls } from "../hooks/useBaseControlls";
 import { useRouteOperationsDndController } from "../hooks/useRouteOperationsDndController";
 import { RouteOperationsDragOverlay } from "../components/RouteOperationsDragOverlay";
 import { useRouteOperationsFixtureBootstrap } from "../dev/useRouteOperationsFixtureBootstrap";
 
 /**
  * Workspace-specific managers provider for route-operations.
- * Owns only workspace-local runtime state: DnD, map, base controls, and plan-type composition.
- * Global managers (popup, section) are provided by HomeAppManagersProvider at the home-app level.
+ * Owns only workspace-local runtime state: DnD, map, and plan-type composition.
+ * Global managers (popup, section, base panel) are provided by HomeAppManagersProvider
+ * at the home-app level so the phone shell can treat the base panel as a navigation layer.
  * Global notifications bridge is also at home-app level to support all workspace types.
  */
 export function HomeRouteOperationsManagersProvider({
@@ -27,7 +26,6 @@ export function HomeRouteOperationsManagersProvider({
 }) {
   const { isMobile } = useMobile();
   useRouteOperationsFixtureBootstrap();
-  const baseControlls = useBaseControlls<PayloadBase>();
 
   const mapManager = useMap();
 
@@ -100,7 +98,6 @@ export function HomeRouteOperationsManagersProvider({
     <ResourcesManagerProvider
       managers={{
         mapManager,
-        baseControlls,
         planDropFeedback,
         unscheduleDropFeedback,
         routeReorderPreview,

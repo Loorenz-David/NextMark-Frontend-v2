@@ -1,7 +1,7 @@
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useMobile } from "@/app/contexts/MobileContext";
+import { useMobile } from "@/app/viewport";
 import { useCostumerByServerId, type Costumer } from "@/features/costumer";
 import { useCostumerQueries } from "@/features/costumer/controllers/costumerQueries.controller";
 import { hasFormChanges } from "@shared-domain";

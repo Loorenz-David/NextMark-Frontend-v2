@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { MultiSelectIcon } from "@/assets/icons";
 import { BasicButton } from "@/shared/buttons/BasicButton";
-import { useMobile } from "@/app/contexts/MobileContext";
+import { useMobile } from "@/app/viewport";
 import { DriverLiveMarkerOverlay } from "@/realtime/driverLive";
 import { MapDrawingSideControls } from "@/shared/map/components/MapDrawingSideControls";
 import { MapMultiSelectOverlay } from "@/shared/map/components/MapMultiSelectOverlay";

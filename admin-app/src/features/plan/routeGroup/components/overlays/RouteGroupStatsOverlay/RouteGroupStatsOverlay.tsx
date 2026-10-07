@@ -1,4 +1,4 @@
-import { useMobile } from '@/app/contexts/MobileContext'
+import { useMobile } from '@/app/viewport'
 
 import { RouteGroupStatsOverlayShell } from './RouteGroupStatsOverlayShell'
 import { useRouteGroupStatsOverlayController } from './useRouteGroupStatsOverlayController'

@@ -55,7 +55,12 @@ type StackEntryUnion<T extends Record<PropertyKey, any>> = {
 
 export type RenderStackProps ={
   variant?: string | null
-  width?: number
+  /**
+   * Pixel width of each stacked panel, or `'full'` to fill the host and slide
+   * in from its right edge. `'full'` is what the phone shell uses: it needs no
+   * measured width, so it stays correct across rotations and resizes.
+   */
+  width?: number | 'full'
 }
 
 type StackRegistryComponent = ComponentType<any> | LazyExoticComponent<ComponentType<any>>
@@ -267,10 +272,17 @@ export class StackActionManager <
       return this.stackEntries.map((entry, index) => {
           const component = this.stackRegistry[entry.key] as ComponentType<any>
           const isFirst = index === 0 
+          const isFullWidth = width === 'full'
           const panelWidth = typeof width === 'number' && width > 0 ? width : null
-          const baseClass = panelWidth == null
-            ? 'h-full min-w-0 w-full max-w-full md:w-[400px]'
-            : 'h-full min-w-0 w-full max-w-full'
+          const baseClass = isFullWidth
+            ? 'h-full min-w-0 w-full max-w-full'
+            : panelWidth == null
+              ? 'h-full min-w-0 w-full max-w-full md:w-[400px]'
+              : 'h-full min-w-0 w-full max-w-full'
+          // Keep every keyframe in one unit; a percent start with a pixel end
+          // makes framer-motion measure to convert and settle short of 0.
+          const offscreenX: number | string = isFullWidth ? '100%' : panelWidth ?? 400
+          const restingX: number | string = isFullWidth ? '0%' : 0
 
           const RenderComp = createElement(component, {
                 payload: entry.payload,
@@ -282,8 +294,8 @@ export class StackActionManager <
           return (
             <motion.div
               key={entry.id}
-              initial={{ x: panelWidth ?? 400}}
-              animate={{ x: 0 }}
+              initial={{ x: offscreenX }}
+              animate={{ x: restingX }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                // custom drives the exit variant:
                //   false (user-close) → spring slide-out
@@ -292,8 +304,8 @@ export class StackActionManager <
                variants={{
                  exit: (isReplacement: boolean) =>
                    isReplacement
-                     ? { x: 0, transition: { duration: 0 } }
-                     : { x: panelWidth ?? 400, transition: { type: 'spring', stiffness: 300, damping: 30 } },
+                     ? { x: restingX, transition: { duration: 0 } }
+                     : { x: offscreenX, transition: { type: 'spring', stiffness: 300, damping: 30 } },
                }}
                exit="exit"
                className={

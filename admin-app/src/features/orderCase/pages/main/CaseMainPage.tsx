@@ -6,7 +6,7 @@ import { OrderCaseMainHeader } from '@/features/orderCase/components/pageHeaders
 import { useCaseMainContext } from '../../context/main/caseMain.context'
 import { CaseMainProvider } from '../../context/main/caseMain.provider'
 
-const CaseMainPageContent = () => {
+const CaseMainPageContent = ({ canClose }: { canClose: boolean }) => {
   const { cases,casesStats, caseMainActions, query } = useCaseMainContext()
   
   return (
@@ -16,7 +16,7 @@ const CaseMainPageContent = () => {
         updateFilters={caseMainActions.updateFilters}
         deleteFilter={caseMainActions.deleteFilter}
         resetQuery={caseMainActions.resetQuery}
-        onClose={caseMainActions.closeCaseMain}
+        onClose={canClose ? caseMainActions.closeCaseMain : undefined}
         orderCaseStats={casesStats}
         query={query}
       />
@@ -30,7 +30,7 @@ const CaseMainPageContent = () => {
 export const CaseMainPage = ({ onClose }: StackComponentProps<undefined>) => {
   return (
     <CaseMainProvider onClose={onClose}>
-      <CaseMainPageContent />
+      <CaseMainPageContent canClose={Boolean(onClose)} />
     </CaseMainProvider>
   )
 }

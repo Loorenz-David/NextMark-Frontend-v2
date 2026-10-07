@@ -7,62 +7,11 @@ import { useLoginMutations } from "@/features/auth/login/hooks/useLoginMutations
 
 import type { SectionKey } from "../registry/sectionRegistry";
 import { SettingsSectionSkeleton } from "../components/SettingsSectionSkeleton";
-
-type SettingsSections = {
-  key: SectionKey | "no-section";
-  label: string;
-  sections?: SettingsSections[];
-};
-
-const SETTINGS_ROUTE_MAP: Record<SectionKey, string> = {
-  "user.main": "/settings/profile",
-  "team.main": "/settings/team",
-  "team.invitations": "/settings/team/invitations",
-  "integrations.main": "/settings/integrations",
-  "integrations.status": "/settings/integrations/status",
-  "messages.main": "/settings/messages",
-  "settings.configuration": "/settings",
-  "item.main": "/settings/items",
-  "vehicle.main": "/settings/vehicles",
-  "facility.main": "/settings/facilities",
-  "trustedDevice.main": "/settings/trusted-devices",
-  "externalForm.access": "/settings/external-form",
-  "externalForm.formConfig": "/settings/external-form/configuration",
-  "printDocument.main": "/settings/print-templates/item",
-};
-
-const SETTINGS_SECTIONS: SettingsSections[] = [
-  { key: "user.main", label: "Profile" },
-  {
-    key: "team.main",
-    label: "Team",
-    sections: [
-      { key: "team.main", label: "Memebers" },
-      { key: "team.invitations", label: "Invitations" },
-    ],
-  },
-  { key: "integrations.main", label: "External Integrations" },
-  { key: "messages.main", label: "Message Automations" },
-  {
-    key: "no-section",
-    label: "Configuration",
-    sections: [
-      { key: "item.main", label: "Items" },
-      { key: "vehicle.main", label: "Vehicles" },
-      { key: "facility.main", label: "Facilities" },
-      { key: "printDocument.main", label: "Print Templates" },
-      { key: "trustedDevice.main", label: "Trusted Devices" },
-    ],
-  },
-  {
-    key: "externalForm.access",
-    label: "External Form",
-    sections: [
-      { key: "externalForm.access", label: "Form Access" },
-      { key: "externalForm.formConfig", label: "Form Configuration" },
-    ],
-  },
-];
+import {
+  SETTINGS_ROUTE_MAP,
+  SETTINGS_SECTIONS,
+  type SettingsSection,
+} from "../domain/settingsSections";
 
 export const SettingsDesktopView = () => {
   const navigate = useNavigate();
@@ -79,7 +28,7 @@ export const SettingsDesktopView = () => {
     navigate(SETTINGS_ROUTE_MAP[key]);
   };
 
-  const handleToggleSection = (option: SettingsSections) => {
+  const handleToggleSection = (option: SettingsSection) => {
     if (option.key && option.key !== "no-section") {
       handleSelectSection(option.key);
     }

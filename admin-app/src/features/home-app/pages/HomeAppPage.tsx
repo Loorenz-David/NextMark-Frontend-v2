@@ -1,12 +1,12 @@
 import { lazy, Suspense } from 'react'
 
-import { useMobile } from '@/app/contexts/MobileContext'
-import { HomeRouteOperationsPage } from '@/features/home-route-operations'
+import { useMobile } from '@/app/viewport'
+import { HomeOverlays, HomeRouteOperationsPage } from '@/features/home-route-operations'
 import { WorkspaceSkeleton } from '../components/WorkspaceSkeleton'
 import { HomeAppProvider, useHomeApp } from '../providers/HomeAppProvider'
 import { HomeAppManagersProvider } from '../providers/HomeAppManagersProvider'
 import { HomeDesktopHeader } from '../components/HomeDesktopHeader'
-import { HomeOverlays } from '@/features/home-route-operations/components/HomeOverlays'
+import { HomeMobileShell } from '../components/mobile/HomeMobileShell'
 import { OrderLinkedDeviceLiveWidget } from '@/features/order/components/linkedDeviceLive/OrderLinkedDeviceLiveWidget'
 
 const HomeStorePickupPage = lazy(() =>
@@ -39,7 +39,9 @@ function HomeAppShell() {
   if (isMobile) {
     return (
       <>
-        <ActiveWorkspaceView workspace={activeWorkspace} />
+        <HomeMobileShell>
+          <ActiveWorkspaceView workspace={activeWorkspace} />
+        </HomeMobileShell>
         <HomeOverlays />
         <OrderLinkedDeviceLiveWidget />
       </>

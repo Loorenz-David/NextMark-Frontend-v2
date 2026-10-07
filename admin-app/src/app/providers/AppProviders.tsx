@@ -3,7 +3,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import { apiClient } from "@/lib/api/ApiClient";
 import { MessageHandlerProvider, useMessageHandler } from "@shared-message-handler";
-import { MobileProvider } from "@/app/providers/MobileProvider";
+import { ViewportProvider } from "@/app/viewport";
 import { ThemeProvider } from "@/app/theme";
 import { ExternalFormPwaProvider } from "@/app/pwa";
 import { useBootstrap } from "@/features/bootstrap/bootstrap.hook";
@@ -106,7 +106,7 @@ export function AppProviders({ children }: PropsWithChildren) {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <MobileProvider>
+        <ViewportProvider>
           <MessageHandlerProvider defaultMessageDurationMs={8000} maxMessages={2}>
             <AdminNotificationsProvider>
               <AdminBusinessRealtimeProvider>
@@ -125,7 +125,7 @@ export function AppProviders({ children }: PropsWithChildren) {
               </AdminBusinessRealtimeProvider>
             </AdminNotificationsProvider>
           </MessageHandlerProvider>
-        </MobileProvider>
+        </ViewportProvider>
       </BrowserRouter>
     </ThemeProvider>
   );

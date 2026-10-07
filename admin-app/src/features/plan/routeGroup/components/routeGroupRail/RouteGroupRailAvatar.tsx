@@ -2,8 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 
+import { useMobile } from "@/app/viewport";
 import { PlusIcon } from "@/assets/icons";
 import { StateCard } from "@/shared/layout/StateCard";
+import { BottomSheet } from "@/shared/overlays/bottomSheet";
 import { FloatingPopover } from "@/shared/popups/FloatingPopover/FloatingPopover";
 
 import type { RouteGroupRailItem } from "./types";
@@ -35,7 +37,9 @@ export const RouteGroupRailAvatar = ({
   pulseSequence = 0,
 }: RouteGroupRailAvatarProps) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isIncomingPulseActive, setIsIncomingPulseActive] = useState(false);
+  const { hasHover } = useMobile();
   const hoverOpenTimeoutRef = useRef<number | null>(null);
   const suppressHoverUntilLeaveRef = useRef(false);
   const mountSequenceRef = useRef<number>(-1);
@@ -110,11 +114,19 @@ export const RouteGroupRailAvatar = ({
       className={`flex w-full flex-col items-center gap-2 rounded-2xl px-2 py-3 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-light-blue-r),0.55)] ${
         item.isActive ? "bg-surface-hover" : "hover:bg-surface-raised"
       }`}
-      onClick={() => onClick(item)}
-      onMouseEnter={schedulePopoverOpen}
-      onMouseLeave={handlePointerLeave}
-      onFocus={() => setIsPopoverOpen(true)}
-      onBlur={handlePointerLeave}
+      onClick={() => {
+        // Without hover there is no way to peek at the stats, so a second
+        // tap on the selected group opens them as a sheet.
+        if (!hasHover && item.isActive) {
+          setIsSheetOpen(true);
+          return;
+        }
+        onClick(item);
+      }}
+      onMouseEnter={hasHover ? schedulePopoverOpen : undefined}
+      onMouseLeave={hasHover ? handlePointerLeave : undefined}
+      onFocus={hasHover ? () => setIsPopoverOpen(true) : undefined}
+      onBlur={hasHover ? handlePointerLeave : undefined}
     >
       <span className="relative flex h-12 w-12 items-center justify-center">
         <AnimatePresence>
@@ -241,6 +253,21 @@ export const RouteGroupRailAvatar = ({
       ) : null}
     </button>
   );
+
+  if (!hasHover) {
+    return (
+      <>
+        {avatarButton}
+        <BottomSheet
+          open={isSheetOpen}
+          onClose={() => setIsSheetOpen(false)}
+          title={item.label}
+        >
+          <RouteGroupRailPopoverContent item={item} />
+        </BottomSheet>
+      </>
+    );
+  }
 
   return (
     <FloatingPopover

@@ -20,7 +20,7 @@ import {
   type RouteGroupPageCommandsContextValue,
   type RouteGroupPageStateContextValue,
 } from '../context/RouteGroupPage.context'
-import { useMobile } from '@/app/contexts/MobileContext'
+import { useMobile } from '@/app/viewport'
 import { useBaseControlls, usePopupManager, useSectionManager } from '@/shared/resource-manager/useResourceManager'
 import type { PayloadBase } from '@/features/home-route-operations/types/types'
 

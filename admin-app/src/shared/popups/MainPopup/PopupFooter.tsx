@@ -1,4 +1,4 @@
-import { useMobile } from '@/app/contexts/MobileContext'
+import { useMobile } from '@/app/viewport'
 import { BasicButton } from '@/shared/buttons/BasicButton'
 import type { PropsFooterConfig } from './MainPopup.types'
 import { ConfirmActionButton } from '@/shared/buttons/DeleteButton'

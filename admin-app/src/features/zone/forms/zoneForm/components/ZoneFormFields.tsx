@@ -65,7 +65,7 @@ export const ZoneFormFields = () => {
           />
         </div>
 
-        <SplitRow splitRowClass="grid grid-cols-2 divide-x divide-[var(--color-border-accent)]">
+        <SplitRow splitRowClass="grid grid-cols-1 divide-y divide-[var(--color-border-accent)] desk:grid-cols-2 desk:divide-x desk:divide-y-0">
           <Cell>
             <Field
               label="Zone name:"
@@ -141,7 +141,7 @@ export const ZoneFormFields = () => {
           />
         </div>
 
-        <SplitRow splitRowClass="grid grid-cols-2 divide-x divide-[var(--color-border-accent)]">
+        <SplitRow splitRowClass="grid grid-cols-1 divide-y divide-[var(--color-border-accent)] desk:grid-cols-2 desk:divide-x desk:divide-y-0">
           <Cell>
             <Field
               label="Max orders per route:"
@@ -185,7 +185,7 @@ export const ZoneFormFields = () => {
           </Cell>
         </SplitRow>
 
-        <SplitRow splitRowClass="grid grid-cols-2 divide-x divide-[var(--color-border-accent)]">
+        <SplitRow splitRowClass="grid grid-cols-1 divide-y divide-[var(--color-border-accent)] desk:grid-cols-2 desk:divide-x desk:divide-y-0">
           <Cell>
             <Field
               label="Window start:"
@@ -221,7 +221,7 @@ export const ZoneFormFields = () => {
           </Cell>
         </SplitRow>
 
-        <SplitRow splitRowClass="grid grid-cols-2  divide-x divide-[var(--color-border-accent)]">
+        <SplitRow splitRowClass="grid grid-cols-1 divide-y divide-[var(--color-border-accent)] desk:grid-cols-2 desk:divide-x desk:divide-y-0">
           <Cell>
             <Field
               label="ETA tolerance:"
@@ -278,7 +278,7 @@ export const ZoneFormFields = () => {
           />
         </div>
 
-        <SplitRow splitRowClass="grid grid-cols-2 divide-x divide-[var(--color-border-accent)]">
+        <SplitRow splitRowClass="grid grid-cols-1 divide-y divide-[var(--color-border-accent)] desk:grid-cols-2 desk:divide-x desk:divide-y-0">
           <Cell>
             <Field
               label="Required capabilities:"

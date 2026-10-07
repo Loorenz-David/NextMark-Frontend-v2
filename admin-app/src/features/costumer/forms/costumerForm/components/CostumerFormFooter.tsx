@@ -9,7 +9,9 @@ export const CostumerFormFooter = ({ onSave, isMobile = false }: CostumerFormFoo
   return (
     <footer
       className={`z-20 flex w-full items-center justify-end border-t border-[var(--color-border)] bg-[var(--color-page)] px-6 py-4 ${
-        isMobile ? 'fixed bottom-0 left-0 rounded-none' : 'absolute bottom-0 left-0 rounded-b-xl'
+        isMobile
+          ? 'fixed bottom-0 left-0 rounded-none pb-[calc(1rem+env(safe-area-inset-bottom,0px))]'
+          : 'absolute bottom-0 left-0 rounded-b-xl'
       }`}
     >
       <BasicButton

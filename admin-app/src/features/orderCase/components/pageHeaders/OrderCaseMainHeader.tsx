@@ -14,7 +14,8 @@ type OrderCaseMainHeaderProps = {
   updateFilters: (key: string, value: unknown) => void
   deleteFilter: (key: string) => void
   resetQuery: () => void
-  onClose: () => void
+  /** Omitted when the page is a tab root and has nothing to close. */
+  onClose?: () => void
   orderCaseStats?:OrderCaseStats
   query: {
     q: string
@@ -53,15 +54,17 @@ export const OrderCaseMainHeader = ({
           </div>
           <HeaderTitle orderCaseStats={orderCaseStats} />
         </div>
-        <BasicButton
-          params={{
-            variant: 'text',
-            onClick: onClose,
-            ariaLabel: 'Close cases',
-          }}
-        >
-          Close
-        </BasicButton>
+        {onClose ? (
+          <BasicButton
+            params={{
+              variant: 'text',
+              onClick: onClose,
+              ariaLabel: 'Close cases',
+            }}
+          >
+            Close
+          </BasicButton>
+        ) : null}
       </div>
 
       <div className="flex flex-col">

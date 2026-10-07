@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { useMobile } from "@/app/contexts/MobileContext";
+import { useMobile } from "@/app/viewport";
 import { useState } from 'react';
 
 
