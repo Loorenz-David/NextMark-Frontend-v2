@@ -7,11 +7,13 @@ import {
   MESSAGE_TEMPLATE_PERMISSION_INFO,
 } from '@/features/messaging/info/templateToggles.info'
 import { MessageScheduleControl } from '@/features/messaging/components'
+import { PLAN_TYPE_LABELS, planIconTypeMap } from '@/features/plan'
 import { SmsTemplateEditor } from '../components/SmsTemplateEditor'
 import { useSmsMessageContext } from '../context/useSmsMessageContext'
 
 export const SmsTemplateEditorPage = () => {
   const {
+    planType,
     activeTrigger,
     setActiveTrigger,
     enabled,
@@ -28,7 +30,9 @@ export const SmsTemplateEditorPage = () => {
   if (!activeTrigger) {
     return null
   }
- 
+
+  const PlanTypeIcon = planIconTypeMap[planType]
+
   return (
     <div className="flex flex-col gap-5 p-6">
       <div className="admin-glass-panel-strong flex items-center justify-between rounded-3xl px-5 py-4 shadow-none">
@@ -82,8 +86,11 @@ export const SmsTemplateEditorPage = () => {
         </div>
       </div>
       <div className="flex flex-col gap-2 px-1">
-        <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
-          SMS trigger
+        <p className="flex items-center gap-2 text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
+          <span>SMS trigger</span>
+          <span aria-hidden="true">·</span>
+          <PlanTypeIcon className="h-3 w-3" />
+          <span>{PLAN_TYPE_LABELS[planType]}</span>
         </p>
         <h2 className="text-xl font-semibold text-[var(--color-text)]">{activeTrigger.label}</h2>
         <p className="max-w-2xl text-sm text-[var(--color-muted)]">{activeTrigger.description}</p>

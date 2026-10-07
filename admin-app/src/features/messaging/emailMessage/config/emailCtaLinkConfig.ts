@@ -5,6 +5,7 @@ export const EMAIL_CTA_LINK_TOKEN_END = "}}";
 
 const EMAIL_CTA_LINK_LABELS = [
   { id: "tracking_link", displayName: "Tracking page" },
+  { id: "external_tracking_link", displayName: "Courier tracking link" },
   { id: "client_form_link", displayName: "Client form link" },
 ] as const;
 

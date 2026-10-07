@@ -1,16 +1,18 @@
 
 import type { MessageSchedulePayloadFields, MessageScheduleUnit } from '@/features/messaging/domain'
+import type { RoutePlanObjective } from '@/features/plan'
 
-export type TemplateValue = 
+export type TemplateValue =
   | Record<string, unknown>
   | unknown[]
   |null
 
 export type SmsMessageTemplate = {
-  id?: number 
+  id?: number
   client_id: string
   name: string
   event: string
+  plan_type: RoutePlanObjective
   enable?: boolean | null
   ask_permission?: boolean | null
   schedule_offset_value?: number | null
@@ -30,6 +32,7 @@ export type SmsMessageTemplatePayload = {
   client_id: string
   name: string
   event: string
+  plan_type: RoutePlanObjective
   enable?: boolean | null
   ask_permission?: boolean | null
   template?: TemplateValue

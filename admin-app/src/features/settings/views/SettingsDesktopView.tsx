@@ -29,8 +29,6 @@ const SETTINGS_ROUTE_MAP: Record<SectionKey, string> = {
   "externalForm.access": "/settings/external-form",
   "externalForm.formConfig": "/settings/external-form/configuration",
   "printDocument.main": "/settings/print-templates/item",
-  "emailMessage.main": "/settings/messages/email",
-  "smsMessage.main": "/settings/messages/sms",
 };
 
 const SETTINGS_SECTIONS: SettingsSections[] = [

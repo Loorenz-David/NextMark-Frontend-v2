@@ -6,10 +6,14 @@ export { usePlanOrders } from "./hooks/usePlanOrders";
 export { useOrderDetailHeaderPlanMeta } from "./hooks/useOrderDetailHeaderPlanMeta";
 export { formatPlanDateRangeLabel } from "./domain/planDateLabel";
 export {
+  DEFAULT_PLAN_TYPE,
+  PLAN_TYPES,
   PLAN_TYPE_LABELS,
   PLAN_TYPE_SHORT_LABELS,
+  normalizePlanType,
   resolvePlanType,
 } from "./domain/planType";
+export type { RoutePlanObjective } from "./types/plan";
 export { planIconTypeMap } from "./utils/planIconTypeMap";
 export { ContainerPlanActionsMenu } from "./components/ContainerPlanActionsMenu";
 export { planPopupRegistry } from './registry/planPopups.registry'

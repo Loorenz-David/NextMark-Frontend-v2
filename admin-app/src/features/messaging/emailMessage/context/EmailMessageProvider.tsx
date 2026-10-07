@@ -8,6 +8,7 @@ import {
   mapMessageScheduleFieldsToDraft,
   type MessageScheduleDraft,
 } from '@/features/messaging/domain'
+import type { RoutePlanObjective } from '@/features/plan'
 
 import type { EventDefinition } from '../domain/emailEvents'
 import {
@@ -23,20 +24,25 @@ import { normalizeEmailSubjectTemplateValue } from '../domain'
 import type { EmailMessageContextValue } from './EmailMessageContext'
 import { EmailMessageContext } from './EmailMessageContext'
 
-export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
+type EmailMessageProviderProps = PropsWithChildren<{
+  planType: RoutePlanObjective
+}>
+
+export const EmailMessageProvider = ({ planType, children }: EmailMessageProviderProps) => {
   const sectionManager = useSectionManager()
   const popupManager = usePopupManager()
   const templates = useEmailMessages()
   const { loadTemplates } = useEmailMessageFlow()
-  
+
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTrigger, setActiveTrigger] = useState<EventDefinition | null>(null)
-  const [enabled, setEnabled] = useState(false) 
+  const [enabled, setEnabled] = useState(false)
   const [permission, setPermission ] = useState(false)
   const [subject, setSubject] = useState<Descendant[]>(() => normalizeEmailSubjectTemplateValue())
   const [schedule, setSchedule] = useState<MessageScheduleDraft>(createImmediateMessageScheduleDraft)
   const { existingTemplate, filteredTriggers } = useEmailMessageModel({
     templates,
+    planType,
     searchQuery,
     activeTrigger,
   })
@@ -46,10 +52,15 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
   )
 
   const { saveTemplate: persistTemplate } = useEmailMessageController({ setActiveTrigger })
-  
+
   useEffect(() => {
     loadTemplates()
   }, [loadTemplates])
+
+  // An open editor belongs to the previous plan type's template; leave it.
+  useEffect(() => {
+    setActiveTrigger(null)
+  }, [planType])
 
   useEffect(() => {
     setEnabled(existingTemplate?.enable ?? false)
@@ -72,6 +83,7 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
       activeTrigger
         ? persistTemplate({
             event: activeTrigger.key,
+            plan_type: planType,
             template: editorValue,
             enable: enabled,
             subject,
@@ -81,13 +93,14 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
             schedule,
           })
         : Promise.resolve(false),
-    [activeTrigger, editorValue, enabled, existingTemplate, permission, persistTemplate, schedule, subject],
+    [activeTrigger, editorValue, enabled, existingTemplate, permission, persistTemplate, planType, schedule, subject],
   )
 
   const contextValue: EmailMessageContextValue = useMemo(
     () => ({
       sectionManager,
       popupManager,
+      planType,
       templates,
       filteredTriggers,
       searchQuery,
@@ -112,6 +125,7 @@ export const EmailMessageProvider = ({ children }: PropsWithChildren) => {
       enabled,
       filteredTriggers,
       permission,
+      planType,
       popupManager,
       saveTemplate,
       schedule,

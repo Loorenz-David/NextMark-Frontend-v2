@@ -1,16 +1,18 @@
 
 import type { EmailTemplateValue } from './emailTemplate'
 import type { MessageSchedulePayloadFields, MessageScheduleUnit } from '@/features/messaging/domain'
+import type { RoutePlanObjective } from '@/features/plan'
 
 export type TemplateValue = EmailTemplateValue | Record<string, unknown> | unknown[] | null
 
 
 export type EmailMessageTemplate = {
-  id?: number 
+  id?: number
   client_id: string
   name: string
   subject?: TemplateValue
   event: string
+  plan_type: RoutePlanObjective
   enable?: boolean | null
   ask_permission?: boolean | null
   schedule_offset_value?: number | null
@@ -31,6 +33,7 @@ export type EmailMessageTemplatePayload = {
   name: string
   subject?: TemplateValue
   event: string
+  plan_type: RoutePlanObjective
   ask_permission?: boolean | null
   enable?: boolean | null
   template?: TemplateValue

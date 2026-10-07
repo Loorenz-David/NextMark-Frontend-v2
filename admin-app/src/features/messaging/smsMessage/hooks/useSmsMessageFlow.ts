@@ -18,11 +18,14 @@ const normalizeTemplates = (payload: unknown): SmsMessageTemplate[] => {
   return []
 }
 
+// One row per (event, plan type); well above the backend's default page size.
+const TEMPLATE_LIST_LIMIT = 200
+
 export const useSmsMessageFlow = () => {
   const getTemplates = useGetSmsMessages()
 
   const loadTemplates = useCallback(async () => {
-    const response = await getTemplates()
+    const response = await getTemplates({ limit: TEMPLATE_LIST_LIMIT })
     const templates = normalizeTemplates(response.data?.message_templates)
 
     if (response.data?.message_templates && typeof response.data.message_templates === 'object' && 'byClientId' in response.data.message_templates) {

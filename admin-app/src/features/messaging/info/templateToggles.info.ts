@@ -7,5 +7,5 @@ export const MESSAGE_TEMPLATE_PERMISSION_INFO = {
 export const MESSAGE_TEMPLATE_ENABLED_INFO = {
   title: 'Enabled template',
   content:
-    'When enabled, this template becomes active for the current event. For example, if the event is order created, the configured message will be sent automatically whenever an order is created. If disabled, the event still happens, but this message is not triggered.',
+    'When enabled, this template becomes active for the current event and plan type. For example, if the event is order created and the plan type is store pickup, the configured message will be sent automatically whenever a store pickup order is created. If disabled, the event still happens, but this message is not triggered for orders of this plan type.',
 }

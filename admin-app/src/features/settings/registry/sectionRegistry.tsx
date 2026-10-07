@@ -47,16 +47,8 @@ export const sectionRegistry = {
     })),
   ),
   'settings.configuration': placeholderSection,
-  'smsMessage.main': lazy(() =>
-    import('@/features/messaging/smsMessage/pages/SmsMessageMainPage').then((module) => ({
-      default: module.SmsMessageMainPage,
-    })),
-  ),
-  'emailMessage.main': lazy(() =>
-    import('@/features/messaging/emailMessage/pages/EmailMessageMainPage').then((module) => ({
-      default: module.EmailMessageMainPage,
-    })),
-  ),
+  // SMS and email templates are reached only through 'messages.main', which
+  // owns the channel and plan-type selection the channel pages depend on.
   'printDocument.main': lazy(() =>
     import('@/features/templates/printDocument/pages/PrintTemplateMainPage').then((module) => ({
       default: module.PrintTemplateMainPage,

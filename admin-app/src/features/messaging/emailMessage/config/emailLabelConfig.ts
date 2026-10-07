@@ -6,6 +6,8 @@ export const allowedLabels: LabelDefinition[] = [
   { id: "reschedule_time", displayName: "Reschedule time" },
   { id: "tracking_number", displayName: "Tracking number" },
   { id: "tracking_link", displayName: "Tracking page" },
+  { id: "external_tracking_number", displayName: "Courier tracking number" },
+  { id: "external_tracking_link", displayName: "Courier tracking link" },
   {
     id: "expected_arrival_time_costumer",
     displayName: "Expected arrival time",

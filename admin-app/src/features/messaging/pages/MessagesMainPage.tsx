@@ -2,9 +2,11 @@ import { useMemo, useState } from 'react'
 
 import type { StackComponentProps } from '@/shared/stack-manager/types'
 import { MessageIcon } from '@/assets/icons'
+import { DEFAULT_PLAN_TYPE, type RoutePlanObjective } from '@/features/plan'
 
 import { EmailMessageMainPage } from '../emailMessage/pages/EmailMessageMainPage'
 import { SmsMessageMainPage } from '../smsMessage/pages/SmsMessageMainPage'
+import { MessagePlanTypeSelector } from '../components/MessagePlanTypeSelector'
 import { MessagesLayout } from '../layout/MessagesLayout'
 
 type MessageTabKey = 'sms' | 'email'
@@ -16,16 +18,17 @@ const TABS: { key: MessageTabKey; label: string }[] = [
 
 const MessagesMainContent = () => {
   const [activeTab, setActiveTab] = useState<MessageTabKey>('sms')
+  const [planType, setPlanType] = useState<RoutePlanObjective>(DEFAULT_PLAN_TYPE)
 
   const content = useMemo(() => {
     switch (activeTab) {
       case 'email':
-        return <EmailMessageMainPage />
+        return <EmailMessageMainPage planType={planType} />
       case 'sms':
       default:
-        return <SmsMessageMainPage />
+        return <SmsMessageMainPage planType={planType} />
     }
-  }, [activeTab])
+  }, [activeTab, planType])
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-6 overflow-y-auto bg-[var(--color-page)] p-6 scroll-thin">
@@ -43,13 +46,18 @@ const MessagesMainContent = () => {
               SMS and email templates
             </h1>
             <p className="text-sm text-[var(--color-muted)]">
-              Build reusable communication templates for order events and keep SMS and email automation easy to manage.
+              Build reusable communication templates for order events, tailored per channel and plan type.
             </p>
           </div>
         </div>
       </section>
 
-      <MessagesLayout tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab}>
+      <MessagesLayout
+        tabs={TABS}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        toolbar={<MessagePlanTypeSelector value={planType} onChange={setPlanType} />}
+      >
         {content}
       </MessagesLayout>
     </div>

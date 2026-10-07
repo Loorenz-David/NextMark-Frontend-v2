@@ -4,6 +4,7 @@ import type { Descendant } from 'slate'
 
 import type { StackActionManager } from '@/shared/stack-manager/StackActionManager'
 import type { MessageScheduleDraft } from '@/features/messaging/domain'
+import type { RoutePlanObjective } from '@/features/plan'
 
 import type { EventDefinition } from '../domain/smsEvents'
 import type { SmsMessageTemplate } from '../types/smsMessage'
@@ -16,6 +17,7 @@ export type SmsMessageTriggerCard = {
 export type SmsMessageContextValue = {
   sectionManager: StackActionManager<Record<string, unknown>>
   popupManager: StackActionManager<Record<string, unknown>>
+  planType: RoutePlanObjective
   templates: SmsMessageTemplate[]
   filteredTriggers: SmsMessageTriggerCard[]
   searchQuery: string

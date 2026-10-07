@@ -4,6 +4,7 @@ import type { Descendant } from 'slate'
 import { useMessageHandler } from '@shared-message-handler'
 import { buildClientId } from '@/lib/utils/clientId'
 import { mapMessageScheduleDraftToFields, type MessageScheduleDraft } from '@/features/messaging/domain'
+import type { RoutePlanObjective } from '@/features/plan'
 
 import { useCreateEmailMessage, useUpdateEmailMessage } from '../api/emailMessageApi'
 import { upsertEmailMessage } from '../store/emailMessageStore'
@@ -23,6 +24,7 @@ export const useEmailMessageController = ({ setActiveTrigger }: UseEmailMessageC
 
   const saveTemplate = useCallback(async ({
     event,
+    plan_type,
     template,
     enable,
     subject,
@@ -32,6 +34,7 @@ export const useEmailMessageController = ({ setActiveTrigger }: UseEmailMessageC
     schedule,
   }: {
     event: string
+    plan_type: RoutePlanObjective
     template: TemplateValue
     enable: boolean
     subject: Descendant[]
@@ -45,6 +48,7 @@ export const useEmailMessageController = ({ setActiveTrigger }: UseEmailMessageC
       client_id: existing?.client_id ?? buildClientId('message_template'),
       name,
       event,
+      plan_type,
       enable,
       subject: hasEmailSubjectTemplateContent(subject) ? subject : null,
       ask_permission,

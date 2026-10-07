@@ -4,9 +4,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { usePopupManager, useSectionManager } from '@/shared/resource-manager/useResourceManager'
 import {
   createImmediateMessageScheduleDraft,
+  findTemplateForScope,
   mapMessageScheduleFieldsToDraft,
   type MessageScheduleDraft,
 } from '@/features/messaging/domain'
+import type { RoutePlanObjective } from '@/features/plan'
 
 import { SMS_EVENTS } from '../domain/smsEvents'
 import type { EventDefinition  } from '../domain/smsEvents'
@@ -14,12 +16,16 @@ import { useSmsMessageController, useSmsMessageEditor, useSmsMessageFlow, useSms
 
 import { SmsMessageContext } from './SmsMessageContext'
 
-export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
+type SmsMessageProviderProps = PropsWithChildren<{
+  planType: RoutePlanObjective
+}>
+
+export const SmsMessageProvider = ({ planType, children }: SmsMessageProviderProps) => {
   const sectionManager = useSectionManager()
   const popupManager = usePopupManager()
   const templates = useSmsMessages()
   const { loadTemplates } = useSmsMessageFlow()
-  
+
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTrigger, setActiveTrigger] = useState<EventDefinition | null>(null)
   const [enabled, setEnabled] = useState(false)
@@ -28,22 +34,29 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
   const { saveTemplate: persistTemplate } = useSmsMessageController({setActiveTrigger})
 
   const existingTemplate = useMemo(
-    () => (activeTrigger ? templates.find((template) => template.event === activeTrigger.key) : null),
-    [activeTrigger, templates],
+    () => (activeTrigger ? findTemplateForScope(templates, activeTrigger.key, planType) : null),
+    [activeTrigger, planType, templates],
   )
- 
+
   const { value: editorValue, setValue } = useSmsMessageEditor(
     existingTemplate?.template ?? existingTemplate?.content,
   )
-
-  
 
   useEffect(() => {
     loadTemplates()
   }, [loadTemplates])
 
+  // An open editor belongs to the previous plan type's template; leave it.
+  useEffect(() => {
+    setActiveTrigger(null)
+  }, [planType])
+
   useEffect(() => {
     setEnabled(existingTemplate?.enable ?? false)
+  }, [existingTemplate])
+
+  useEffect(() => {
+    setPermission(existingTemplate?.ask_permission ?? false)
   }, [existingTemplate])
 
   useEffect(() => {
@@ -54,7 +67,7 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
     const query = searchQuery.trim().toLowerCase()
     const events = query
       ? SMS_EVENTS.filter((event) => {
-          const template = templates.find((item) => item.event === event.key)
+          const template = findTemplateForScope(templates, event.key, planType)
           const templateName = template?.name ?? ''
           return (
             event.label.toLowerCase().includes(query) ||
@@ -64,7 +77,7 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
       : SMS_EVENTS
 
     return events.map((event) => {
-      const template = templates.find((item) => item.event === event.key)
+      const template = findTemplateForScope(templates, event.key, planType)
       const status = template
         ? template.enable
           ? 'Enabled'
@@ -72,13 +85,14 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
         : 'Not configured'
       return { trigger: event, status }
     })
-  }, [searchQuery, templates])
+  }, [planType, searchQuery, templates])
 
   const saveTemplate = useMemo(
     () => () =>
       activeTrigger
         ? persistTemplate({
             event: activeTrigger.key,
+            plan_type: planType,
             template: editorValue,
             enable: enabled,
             ask_permission: permission,
@@ -87,13 +101,14 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
             schedule,
           })
         : Promise.resolve(false),
-    [activeTrigger, editorValue, enabled, existingTemplate, permission, persistTemplate, schedule],
+    [activeTrigger, editorValue, enabled, existingTemplate, permission, persistTemplate, planType, schedule],
   )
 
   const contextValue = useMemo(
     () => ({
       sectionManager,
       popupManager,
+      planType,
       templates,
       filteredTriggers,
       searchQuery,
@@ -115,6 +130,7 @@ export const SmsMessageProvider = ({ children }: PropsWithChildren) => {
       enabled,
       filteredTriggers,
       permission,
+      planType,
       popupManager,
       saveTemplate,
       schedule,

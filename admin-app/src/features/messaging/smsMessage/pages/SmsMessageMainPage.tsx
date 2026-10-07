@@ -1,16 +1,19 @@
 import { useNavigate } from "react-router-dom";
 
-import type { StackComponentProps } from "@/shared/stack-manager/types";
 import { useIsIntegrationActive } from "@/features/integrations/hooks/useIntegrationStatus";
+import type { RoutePlanObjective } from "@/features/plan";
 
 import { SmsMessageRouter } from "./SmsMessageRouter";
 import { SmsMessageProvider } from "../context/SmsMessageProvider";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 
-export const SmsMessageMainPage = (_: StackComponentProps<undefined>) => {
+type SmsMessageMainPageProps = {
+  planType: RoutePlanObjective;
+};
+
+export const SmsMessageMainPage = ({ planType }: SmsMessageMainPageProps) => {
   const hasTwilioIntegration = useIsIntegrationActive("twilio");
   const navigate = useNavigate();
-  console.log("hasTwilioIntegration", hasTwilioIntegration);
   if (!hasTwilioIntegration) {
     return (
       <div className="flex h-full w-full items-start px-6 py-6 text-sm text-[var(--color-muted)]">
@@ -43,7 +46,7 @@ export const SmsMessageMainPage = (_: StackComponentProps<undefined>) => {
   }
 
   return (
-    <SmsMessageProvider>
+    <SmsMessageProvider planType={planType}>
       <SmsMessageRouter />
     </SmsMessageProvider>
   );

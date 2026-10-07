@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 
 import { EMAIL_EVENTS  } from '@/features/messaging/emailMessage/domain/emailEvents'
+import { matchesTemplateScope } from '@/features/messaging/domain'
+import type { RoutePlanObjective } from '@/features/plan'
 
 import type { EmailMessageTemplate } from '../types'
 import type { EventDefinition } from '../domain/emailEvents'
@@ -12,22 +14,29 @@ export type EmailMessageTriggerCard = {
 
 type UseEmailMessageModelArgs = {
   templates: EmailMessageTemplate[]
+  planType: RoutePlanObjective
   searchQuery: string
   activeTrigger: EventDefinition | null
 }
 
 export const useEmailMessageModel = ({
   templates,
+  planType,
   searchQuery,
   activeTrigger,
 }: UseEmailMessageModelArgs) => {
+  // One template per event once narrowed to the selected plan type; the other
+  // plan types' templates for the same event must not shadow it.
   const templateByEvent = useMemo(
     () =>
-      templates.reduce<Record<string, EmailMessageTemplate>>((acc, template) => {
-        acc[template.event] = template
+      EMAIL_EVENTS.reduce<Record<string, EmailMessageTemplate>>((acc, trigger) => {
+        const template = templates.find((item) => matchesTemplateScope(item, trigger.key, planType))
+        if (template) {
+          acc[trigger.key] = template
+        }
         return acc
       }, {}),
-    [templates],
+    [planType, templates],
   )
 
   const existingTemplate = useMemo(

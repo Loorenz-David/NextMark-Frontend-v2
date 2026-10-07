@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import type { StackComponentProps } from "@/shared/stack-manager/types";
 import { useIsIntegrationActive } from "@/features/integrations/hooks/useIntegrationStatus";
+import type { RoutePlanObjective } from "@/features/plan";
 
 import { EmailMessageRouter } from "./EmailMessageRouter";
 import { EmailMessageProvider } from "../context/EmailMessageProvider";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 
-export const EmailMessageMainPage = (_: StackComponentProps<undefined>) => {
+type EmailMessageMainPageProps = {
+  planType: RoutePlanObjective;
+};
+
+export const EmailMessageMainPage = ({ planType }: EmailMessageMainPageProps) => {
   const navigate = useNavigate();
   const hasEmailIntegration = useIsIntegrationActive("email");
 
@@ -42,7 +46,7 @@ export const EmailMessageMainPage = (_: StackComponentProps<undefined>) => {
   }
 
   return (
-    <EmailMessageProvider>
+    <EmailMessageProvider planType={planType}>
       <EmailMessageRouter />
     </EmailMessageProvider>
   );
