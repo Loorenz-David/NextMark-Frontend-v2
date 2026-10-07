@@ -58,6 +58,24 @@ const installRuntimeAssetDiagnostics = () => {
         return
       }
 
+      // A failed image or media load also lands here, with no message or
+      // filename to report — naming the element and its URL is the only way
+      // to tell which content is dead.
+      if (
+        target instanceof HTMLImageElement ||
+        target instanceof HTMLMediaElement ||
+        target instanceof HTMLSourceElement
+      ) {
+        logRuntimeAssetIssue('content-load-error', {
+          tagName: target.tagName,
+          source:
+            target instanceof HTMLSourceElement
+              ? target.src
+              : target.currentSrc || target.src,
+        })
+        return
+      }
+
       logRuntimeAssetIssue('window-error', {
         message: event.message,
         filename: event.filename,
