@@ -31,7 +31,7 @@ export const getInviteMemberInstructions = (): InstructionStep[] => [
         type: 'paragraph',
         children: [
           {
-            text: 'Role name and role id define what the invited member can access and manage inside your workspace.',
+            text: 'The selected role defines what the invited member can access and manage inside your workspace.',
           },
         ],
       },

@@ -1,3 +1,5 @@
+import { useShallow } from 'zustand/react/shallow'
+
 import {
   selectAllUserRoles,
   selectUserRoleByClientId,
@@ -5,7 +7,7 @@ import {
   useUserRoleStore,
 } from '@/features/role/userRole/store/userRoleStore'
 
-export const useUserRoles = () => useUserRoleStore(selectAllUserRoles)
+export const useUserRoles = () => useUserRoleStore(useShallow(selectAllUserRoles))
 
 export const useUserRoleByClientId = (clientId: string | null | undefined) =>
   useUserRoleStore(selectUserRoleByClientId(clientId))

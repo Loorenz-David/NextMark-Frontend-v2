@@ -2,12 +2,13 @@ import { useMemo } from 'react'
 
 import { Field } from '@/shared/inputs/FieldContainer'
 import { InputField, PLAIN_INPUT_CLASS, PLAIN_INPUT_CONTAINER_CLASS } from '@/shared/inputs/InputField'
+import { OptionPopoverSelect } from '@/shared/inputs/OptionPopoverSelect'
 import { PopupFooter } from '@/shared/popups/MainPopup/PopupFooter'
 import { CustomInstructions } from '@/shared/layout/CustomInstructions'
-import { Cell, SplitRow } from '@/shared/layout/cells'
 
 import { useInviteMember } from './InviteMember.context'
 import { useInviteMemberConfig } from './useInviteMemberConfig'
+import { useInviteMemberRoleOptions } from './useInviteMemberRoleOptions'
 import { useInviteMemberSetters } from './useInviteMemberSetters'
 import { getInviteMemberInstructions } from './inviteMemberInstructions'
 
@@ -15,6 +16,8 @@ export const InviteMemberLayout = () => {
   const { formState, warnings, setFormState, handleSave, initialFormRef } = useInviteMember()
 
   const setters = useInviteMemberSetters({ setFormState, warnings })
+  const { roleOptions, findRoleById } = useInviteMemberRoleOptions()
+  const selectedRoleId = formState.user_role_id ? Number(formState.user_role_id) : null
 
   useInviteMemberConfig({ formState, initialFormRef })
 
@@ -47,43 +50,24 @@ export const InviteMemberLayout = () => {
             </Field>
           </div>
 
-          <SplitRow splitRowClass="grid grid-cols-2 divide-x divide-[var(--color-border-accent)]">
-            <Cell>
-              <Field
-                label="Role name:"
-                required={true}
-                gap={2}
-                warningPlacement="besidesLabel"
-                warningController={warnings.roleNameWarning}
-              >
-                <InputField
-                  value={formState.user_role_name}
-                  onChange={(event) => setters.handleRoleName(event?.target?.value ?? '')}
-                  warningController={warnings.roleNameWarning}
-                  fieldClassName={PLAIN_INPUT_CONTAINER_CLASS}
-                  inputClassName={PLAIN_INPUT_CLASS}
-                />
-              </Field>
-            </Cell>
-
-            <Cell>
-              <Field
-                label="Role id:"
-                required={true}
-                gap={2}
-                warningPlacement="besidesLabel"
-                warningController={warnings.roleIdWarning}
-              >
-                <InputField
-                  value={formState.user_role_id}
-                  onChange={(event) => setters.handleRoleId(event?.target?.value ?? '')}
-                  warningController={warnings.roleIdWarning}
-                  fieldClassName={PLAIN_INPUT_CONTAINER_CLASS}
-                  inputClassName={PLAIN_INPUT_CLASS}
-                />
-              </Field>
-            </Cell>
-          </SplitRow>
+          <div className="cell-default border-t border-[var(--color-border-accent)]">
+            <Field
+              label="Role:"
+              required={true}
+              gap={2}
+              warningPlacement="besidesLabel"
+              warningController={warnings.roleWarning}
+            >
+              <OptionPopoverSelect<number>
+                options={roleOptions}
+                value={selectedRoleId}
+                onChange={(roleId) => setters.handleRole(findRoleById(roleId))}
+                placeholder="Select a role"
+                allowEmpty={false}
+                inputFieldClassName="flex w-full items-center justify-between"
+              />
+            </Field>
+          </div>
         </div>
 
         <CustomInstructions

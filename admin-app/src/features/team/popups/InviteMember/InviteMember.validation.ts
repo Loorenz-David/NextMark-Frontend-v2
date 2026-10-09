@@ -10,10 +10,9 @@ export const useInviteMemberValidation = ({
 }) => {
   const validateForm = () => {
     const emailOk = warnings.emailWarning.validate(formState.target_email)
-    const roleNameOk = warnings.roleNameWarning.validate(formState.user_role_name)
-    const roleIdOk = warnings.roleIdWarning.validate(formState.user_role_id)
+    const roleOk = warnings.roleWarning.validate(formState.user_role_id)
 
-    return  emailOk && roleNameOk && roleIdOk
+    return emailOk && roleOk
   }
 
   return { validateForm }

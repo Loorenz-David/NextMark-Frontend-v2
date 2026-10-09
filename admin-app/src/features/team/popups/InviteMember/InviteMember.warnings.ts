@@ -17,18 +17,10 @@ export const useInviteMemberWarnings = () => {
     return isValid
   })
 
-  const roleNameWarning = useInputWarning('Role name is required.', (value, setMessage) => {
-    const isValid = validation.validateRoleName(String(value ?? ''))
-    if (!isValid) {
-      setMessage('Role name is required.')
-    }
-    return isValid
-  })
-
-  const roleIdWarning = useInputWarning('Role id must be a number.', (value, setMessage) => {
+  const roleWarning = useInputWarning('Select a role.', (value, setMessage) => {
     const isValid = validation.validateRoleId(String(value ?? ''))
     if (!isValid) {
-      setMessage('Role id must be a number.')
+      setMessage('Select a role.')
     }
     return isValid
   })
@@ -36,7 +28,6 @@ export const useInviteMemberWarnings = () => {
   return {
 
     emailWarning,
-    roleNameWarning,
-    roleIdWarning,
+    roleWarning,
   }
 }

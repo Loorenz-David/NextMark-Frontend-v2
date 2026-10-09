@@ -1,5 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react'
 
+import type { UserRole } from '@/features/role/userRole/types/userRole'
+
 import type { InviteMemberFormState } from './InviteMember.types'
 import type { InviteMemberWarnings } from './InviteMember.warnings'
 
@@ -11,7 +13,6 @@ export const useInviteMemberSetters = ({
   warnings: InviteMemberWarnings
 }) => {
   const handleUsername = (value: string) => {
-    warnings.roleNameWarning.validate(value)
     setFormState((prev) => ({ ...prev, target_username: value }))
   }
 
@@ -20,20 +21,19 @@ export const useInviteMemberSetters = ({
     setFormState((prev) => ({ ...prev, target_email: value }))
   }
 
-  const handleRoleName = (value: string) => {
-    warnings.roleNameWarning.validate(value)
-    setFormState((prev) => ({ ...prev, user_role_name: value }))
-  }
-
-  const handleRoleId = (value: string) => {
-    warnings.roleIdWarning.validate(value)
-    setFormState((prev) => ({ ...prev, user_role_id: value }))
+  const handleRole = (role: UserRole | null) => {
+    const roleId = role?.id != null ? String(role.id) : ''
+    warnings.roleWarning.validate(roleId)
+    setFormState((prev) => ({
+      ...prev,
+      user_role_id: roleId,
+      user_role_name: role?.role_name ?? '',
+    }))
   }
 
   return {
     handleUsername,
     handleEmail,
-    handleRoleName,
-    handleRoleId,
+    handleRole,
   }
 }
