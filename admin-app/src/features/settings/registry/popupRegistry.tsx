@@ -11,6 +11,7 @@ import { VehicleForm } from '@/features/infrastructure/vehicle/popups/VehicleFor
 import { FacilityForm } from '@/features/infrastructure/facility/popups/FacilityForm/FacilityForm'
 import { ClientFormRuleForm } from '@/features/clientFormConfig/popups/ClientFormRuleForm/ClientFormRuleForm'
 import { ClientFormMediaForm } from '@/features/clientFormConfig/popups/ClientFormMediaForm/ClientFormMediaForm'
+import { ClientFormRedirectForm } from '@/features/clientFormConfig/popups/ClientFormRedirectForm/ClientFormRedirectForm'
 import { TrustedDeviceEnrollPopup } from '@/features/auth/trusted-device/popups/TrustedDeviceEnroll/TrustedDeviceEnrollPopup'
 import { TrustedDeviceReprovisionPopup } from '@/features/auth/trusted-device/popups/TrustedDeviceReprovision/TrustedDeviceReprovisionPopup'
 import { TrustedDeviceSecretRevealPopup } from '@/features/auth/trusted-device/popups/TrustedDeviceSecretReveal/TrustedDeviceSecretRevealPopup'
@@ -40,6 +41,7 @@ export const popupRegistry = {
   'facility.form': FacilityForm,
   'clientFormConfig.rule.form': ClientFormRuleForm,
   'clientFormConfig.media.form': ClientFormMediaForm,
+  'clientFormConfig.redirect.form': ClientFormRedirectForm,
   'trustedDevice.enroll': TrustedDeviceEnrollPopup,
   'trustedDevice.reprovision': TrustedDeviceReprovisionPopup,
   'trustedDevice.secretReveal': TrustedDeviceSecretRevealPopup,

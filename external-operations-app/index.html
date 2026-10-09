@@ -3,6 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The form token lives in the URL path: other sites (media links, the
+         post-submit redirect) may learn the origin but never the path. Not
+         `no-referrer` — the Google Maps key's website restriction matches on
+         the Referer origin. -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>External Operations — NextMark</title>
   </head>
   <body class="client-form-theme">

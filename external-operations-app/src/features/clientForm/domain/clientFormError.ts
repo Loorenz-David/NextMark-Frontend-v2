@@ -1,3 +1,5 @@
+import type { ClientFormRedirect } from "@client-form-kit";
+
 /**
  * Public client-form routes carry their meaning in `code`, not in the HTTP
  * status: 410 means both "token expired" and "validation failed" depending on
@@ -18,6 +20,8 @@ export type ClientFormRequestError = Error & {
   code: ClientFormErrorCode;
   /** The backend's own message — safe to show, it is written for the customer. */
   detail?: string;
+  /** Sent with `token_already_used`: the team's page, offered as a link. */
+  redirect?: ClientFormRedirect | null;
 };
 
 const KNOWN_CODES: ClientFormErrorCode[] = [

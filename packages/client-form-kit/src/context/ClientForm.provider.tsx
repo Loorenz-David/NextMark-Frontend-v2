@@ -14,6 +14,7 @@ import type {
   ClientFormStep,
 } from "../domain/clientForm.types";
 import type { ClientFormConfig } from "../domain/clientFormConfig.types";
+import type { ClientFormRedirect } from "../domain/clientFormRedirect";
 import { isStepValid, validateStep } from "../domain/clientForm.validation";
 import {
   CLIENT_FORM_STEPS,
@@ -102,6 +103,8 @@ export const ClientFormProvider = ({
   const [currentStep, setCurrentStep] = useState<ClientFormStep>("client_info");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitRedirect, setSubmitRedirect] =
+    useState<ClientFormRedirect | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [termsError, setTermsError] = useState<string | null>(null);
   const [isRulesGateOpen, setIsRulesGateOpen] = useState(false);
@@ -192,6 +195,7 @@ export const ClientFormProvider = ({
         ]);
 
         if (result.status === "submitted") {
+          setSubmitRedirect(result.redirect ?? null);
           setIsSubmitted(true);
           onSubmitted();
           return;
@@ -281,6 +285,7 @@ export const ClientFormProvider = ({
         currentStep,
         isSubmitting,
         isSubmitted,
+        submitRedirect,
         submitError,
         termsError,
         isRulesGateOpen,

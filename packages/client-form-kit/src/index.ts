@@ -27,6 +27,7 @@ export {
 export { ClientFormItemsList } from "./components/ClientFormItemsList";
 export { ClientFormScheduledDate } from "./components/ClientFormScheduledDate";
 export { ClientFormSheet } from "./components/ClientFormSheet";
+export { ClientFormRedirectLink } from "./components/ClientFormRedirectLink";
 export { TermsDocumentView } from "./components/TermsDocumentView";
 export { StepButton } from "./components/StepButton";
 export { StepIndicator } from "./components/StepIndicator";
@@ -68,6 +69,9 @@ export {
   hasClientFormMedia,
   resolveClientFormMediaHref,
 } from "./domain/clientFormMedia";
+
+export { resolveClientFormRedirect } from "./domain/clientFormRedirect";
+export type { ClientFormRedirect } from "./domain/clientFormRedirect";
 
 export {
   CLIENT_FORM_STEPS,

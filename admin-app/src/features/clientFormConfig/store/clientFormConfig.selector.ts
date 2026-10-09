@@ -6,6 +6,11 @@ import {
   useClientFormMediaStore,
 } from './clientFormMedia.store'
 import {
+  selectAllClientFormRedirects,
+  selectClientFormRedirectByClientId,
+  useClientFormRedirectStore,
+} from './clientFormRedirects.store'
+import {
   selectAllClientFormRules,
   selectClientFormRuleByClientId,
   useClientFormRuleStore,
@@ -42,3 +47,9 @@ export const useActiveClientFormTermsVersion = () =>
 
 export const useClientFormTermsVersionByClientId = (clientId: string | null | undefined) =>
   useClientFormTermsStore(selectClientFormTermsVersionByClientId(clientId))
+
+export const useClientFormRedirects = () =>
+  useClientFormRedirectStore(useShallow(selectAllClientFormRedirects))
+
+export const useClientFormRedirectByClientId = (clientId: string | null | undefined) =>
+  useClientFormRedirectStore(selectClientFormRedirectByClientId(clientId))

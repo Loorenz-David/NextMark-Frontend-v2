@@ -1,8 +1,10 @@
 import {
   mapClientFormConfig,
+  resolveClientFormRedirect,
   type ClientFormConfig,
   type ClientFormData,
   type ClientFormMeta,
+  type ClientFormRedirect,
 } from "@client-form-kit";
 import {
   resolveClientFormErrorCode,
@@ -79,6 +81,22 @@ const normalizeClientFormPayload = (
   };
 };
 
+/**
+ * The team's post-submit page, from a submit response or an "already
+ * submitted" error body. The backend validates it; the kit's resolver checks it
+ * again because it is about to become a navigation in the customer's browser.
+ */
+const readRedirect = (body: unknown): ClientFormRedirect | null => {
+  if (typeof body !== "object" || body === null || !("redirect" in body)) {
+    return null;
+  }
+  const { redirect } = body;
+  if (typeof redirect !== "object" || redirect === null || !("url" in redirect)) {
+    return null;
+  }
+  return resolveClientFormRedirect(redirect.url);
+};
+
 async function handleResponse(res: Response): Promise<unknown> {
   const body = await res.text();
   let parsed: unknown = undefined;
@@ -102,6 +120,7 @@ async function handleResponse(res: Response): Promise<unknown> {
   err.status = res.status;
   err.code = resolveClientFormErrorCode(payload.code, res.status);
   err.detail = detail;
+  err.redirect = readRedirect(parsed);
   throw err;
 }
 
@@ -138,7 +157,7 @@ export async function fetchClientForm(
 export async function submitClientForm(
   token: string,
   payload: ClientFormData,
-): Promise<void> {
+): Promise<ClientFormRedirect | null> {
   const normalizedPayload = normalizeClientFormPayload(payload);
 
   const res = await fetch(`${BASE}/${token}`, {
@@ -146,5 +165,5 @@ export async function submitClientForm(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(normalizedPayload),
   });
-  await handleResponse(res);
+  return readRedirect(await handleResponse(res));
 }

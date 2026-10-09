@@ -32,5 +32,23 @@ export const useClientFormConfigActions = () => {
     [popupManager],
   )
 
-  return { openRuleForm, closeRuleForm, openMediaForm, closeMediaForm }
+  const openRedirectForm = useCallback(
+    (mode: 'create' | 'edit', clientId?: string) =>
+      popupManager.open({ key: 'clientFormConfig.redirect.form', payload: { mode, clientId } }),
+    [popupManager],
+  )
+
+  const closeRedirectForm = useCallback(
+    () => popupManager.closeByKey('clientFormConfig.redirect.form'),
+    [popupManager],
+  )
+
+  return {
+    openRuleForm,
+    closeRuleForm,
+    openMediaForm,
+    closeMediaForm,
+    openRedirectForm,
+    closeRedirectForm,
+  }
 }

@@ -1,5 +1,6 @@
 import type { ClientFormData } from '../domain/clientForm.types'
 import type { ClientFormConfig } from '../domain/clientFormConfig.types'
+import type { ClientFormRedirect } from '../domain/clientFormRedirect'
 
 /**
  * The outcome of a submission attempt, classified by the host.
@@ -10,8 +11,13 @@ import type { ClientFormConfig } from '../domain/clientFormConfig.types'
  * is resolved in the host adapter and reaches the kit as one of these three.
  */
 export type ClientFormSubmitResult =
-  /** Accepted. The kit clears its error state and calls `onSubmitted`. */
-  | { status: 'submitted' }
+  /**
+   * Accepted. The kit clears its error state and calls `onSubmitted`. With a
+   * `redirect`, the confirmation counts down and then sends the customer there —
+   * only a host on the customer's own device should ever return one; a shared
+   * in-store screen must stay put for the next customer.
+   */
+  | { status: 'submitted'; redirect?: ClientFormRedirect | null }
   /**
    * Recoverable: the customer can correct something and try again. `message` is
    * shown inline beneath the consent block. Set `refreshConfig` when the

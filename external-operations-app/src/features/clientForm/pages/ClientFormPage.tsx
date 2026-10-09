@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ClientFormProvider,
+  ClientFormRedirectLink,
   EMPTY_CLIENT_FORM_CONFIG,
   EMPTY_CLIENT_FORM_META,
   type ClientFormConfig,
@@ -54,7 +55,7 @@ export const ClientFormPage = ({ token }: Props) => {
       .catch((err: unknown) => {
         setStatus(
           isClientFormRequestError(err)
-            ? statusFromClientFormErrorCode(err.code)
+            ? statusFromClientFormErrorCode(err.code, err.redirect)
             : { state: 'invalid' },
         )
       })
@@ -98,7 +99,9 @@ export const ClientFormPage = ({ token }: Props) => {
         }
         title="Redan skickat"
         description="Vi har redan tagit emot dina uppgifter. Tack!"
-      />
+      >
+        {status.redirect ? <ClientFormRedirectLink redirect={status.redirect} /> : null}
+      </PublicCenteredState>
     )
   }
 

@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useClientForm } from "../context/useClientForm";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { driveOnMainThread } from "../motion/driveOnMainThread";
+import { ClientFormRedirectNotice } from "./ClientFormRedirectNotice";
 
 const RING_RADIUS = 36;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
@@ -26,7 +27,7 @@ const COPY = {
  * this away and the customer is back where they were, answers intact.
  */
 export const ClientFormSubmissionScreen = () => {
-  const { isSubmitting, isSubmitted } = useClientForm();
+  const { isSubmitting, isSubmitted, submitRedirect } = useClientForm();
   const prefersReducedMotion = usePrefersReducedMotion();
   const isVisible = isSubmitting || isSubmitted;
   const phase = isSubmitted ? "submitted" : "submitting";
@@ -141,10 +142,19 @@ export const ClientFormSubmissionScreen = () => {
                   </p>
                   <p className="text-[length:var(--cf-body)] text-[var(--ink-soft)]">
                     {COPY[phase].body}
+                    {isSubmitted && submitRedirect ? (
+                      <span className="sr-only">
+                        {` Du skickas vidare till ${submitRedirect.host}.`}
+                      </span>
+                    ) : null}
                   </p>
                 </motion.div>
               </AnimatePresence>
             </div>
+
+            {isSubmitted && submitRedirect ? (
+              <ClientFormRedirectNotice redirect={submitRedirect} />
+            ) : null}
           </div>
         </motion.div>
       ) : null}

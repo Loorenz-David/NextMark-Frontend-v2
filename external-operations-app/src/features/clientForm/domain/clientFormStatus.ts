@@ -1,3 +1,4 @@
+import type { ClientFormRedirect } from "@client-form-kit";
 import type { ClientFormErrorCode } from "./clientFormError";
 
 /**
@@ -9,7 +10,12 @@ export type ClientFormStatus =
   | { state: "loading" }
   | { state: "ready" }
   | { state: "expired" }
-  | { state: "already_submitted" }
+  /**
+   * A reopened link. The team's page is offered as a link only — sending
+   * someone away automatically every time they tap an old SMS would feel like
+   * the link is broken.
+   */
+  | { state: "already_submitted"; redirect: ClientFormRedirect | null }
   | { state: "invalid" }
   | { state: "submitted" };
 
@@ -20,12 +26,13 @@ export type ClientFormStatus =
  */
 export const statusFromClientFormErrorCode = (
   code: ClientFormErrorCode,
+  redirect: ClientFormRedirect | null = null,
 ): ClientFormStatus => {
   switch (code) {
     case "token_expired":
       return { state: "expired" };
     case "token_already_used":
-      return { state: "already_submitted" };
+      return { state: "already_submitted", redirect };
     default:
       return { state: "invalid" };
   }

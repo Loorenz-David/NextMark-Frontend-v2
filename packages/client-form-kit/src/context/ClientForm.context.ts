@@ -5,6 +5,7 @@ import type {
   ClientFormStep,
 } from "../domain/clientForm.types";
 import type { ClientFormConfig } from "../domain/clientFormConfig.types";
+import type { ClientFormRedirect } from "../domain/clientFormRedirect";
 import type { ClientFormOptions } from "../ports/clientFormPorts";
 
 export type ClientFormContextValue = {
@@ -18,6 +19,8 @@ export type ClientFormContextValue = {
   isSubmitting: boolean;
   /** Set once the host accepted the answers; the submission screen stays up. */
   isSubmitted: boolean;
+  /** Where the confirmation sends the customer next, when the host gave one. */
+  submitRedirect: ClientFormRedirect | null;
   /** The host's own message from a rejected submission. */
   submitError: string | null;
   /** Set when a submit attempt was blocked locally for missing terms acceptance. */

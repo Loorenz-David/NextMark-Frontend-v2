@@ -27,15 +27,15 @@ export const createTokenClientFormPorts = ({
 }: Params): ClientFormPorts => ({
   submit: async (data): Promise<ClientFormSubmitResult> => {
     try {
-      await submitClientForm(token, data);
-      return { status: "submitted" };
+      const redirect = await submitClientForm(token, data);
+      return { status: "submitted", redirect };
     } catch (error) {
       if (!isClientFormRequestError(error)) {
         return { status: "rejected", message: GENERIC_FAILURE };
       }
 
       if (isTerminalClientFormErrorCode(error.code)) {
-        onTerminated(statusFromClientFormErrorCode(error.code));
+        onTerminated(statusFromClientFormErrorCode(error.code, error.redirect));
         return { status: "terminated" };
       }
 

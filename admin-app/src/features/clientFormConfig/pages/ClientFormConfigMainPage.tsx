@@ -4,6 +4,7 @@ import { DocumentIcon } from '@/assets/icons'
 
 import { useClientFormConfigController } from '../controllers/useClientFormConfigController'
 import { ClientFormMediaPage } from './ClientFormMediaPage'
+import { ClientFormRedirectPage } from './ClientFormRedirectPage'
 import { ClientFormRulesPage } from './ClientFormRulesPage'
 import { ClientFormTermsPage } from './ClientFormTermsPage'
 
@@ -16,6 +17,8 @@ const ClientFormConfigContent = () => {
         return <ClientFormRulesPage />
       case 'media':
         return <ClientFormMediaPage />
+      case 'redirect':
+        return <ClientFormRedirectPage />
       case 'terms':
       default:
         return <ClientFormTermsPage />
@@ -38,8 +41,8 @@ const ClientFormConfigContent = () => {
               Form configuration
             </h1>
             <p className="text-sm text-[var(--color-muted)]">
-              Control the terms customers accept, the delivery rules they read, and the media shown
-              on your public client form.
+              Control the terms customers accept, the delivery rules they read, the media shown on
+              your public client form, and where customers go after submitting it.
             </p>
           </div>
         </div>
