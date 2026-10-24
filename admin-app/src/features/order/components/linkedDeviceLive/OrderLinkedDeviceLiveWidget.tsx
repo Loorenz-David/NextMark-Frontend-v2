@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 
+import { useViewport } from "@/app/viewport";
+
 import {
   SUBMITTED_WIDGET_DISMISS_MS,
   useOrderLinkedDeviceLiveWidgetController,
@@ -22,6 +24,7 @@ export const OrderLinkedDeviceLiveWidget = () => {
     handleOpen,
     handleClose,
   } = useOrderLinkedDeviceLiveWidgetController();
+  const { isMobile, isStandalone } = useViewport();
 
   return (
     <AnimatePresence>
@@ -32,7 +35,11 @@ export const OrderLinkedDeviceLiveWidget = () => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 16, opacity: 0 }}
           transition={{ duration: 0.24, ease: "easeOut" }}
-          className="fixed bottom-4 left-4 z-90"
+          className={`fixed left-4 z-90 ${
+            isStandalone && !isMobile
+              ? "bottom-[calc(1rem+env(safe-area-inset-bottom,0px))]"
+              : "bottom-4"
+          }`}
         >
           <button
             type="button"

@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 
+import { useViewport } from "@/app/viewport";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { useScrollHideActionBar } from "@/shared/hooks/useScrollHideActionBar";
 import { OrderLoadingList } from "@/shared/loadingCards/order";
@@ -34,6 +35,7 @@ const OrderMainContent = ({
     isLoadingNextPage,
     loadNextPage,
   } = useOrderContext();
+  const { isMobile, isStandalone } = useViewport();
   const actionStackRef = useRef<HTMLDivElement | null>(null);
   const [actionStackHeight, setActionStackHeight] = useState(0);
 
@@ -149,7 +151,13 @@ const OrderMainContent = ({
       {!isInitialLoading &&
         !isRefreshingOrders &&
         (isLoadingNextPage || hasMorePages) && (
-          <div className="flex justify-center  px-4 pb-4 pt-3">
+          <div
+            className={`flex justify-center  px-4 pt-3 ${
+              isStandalone && !isMobile
+                ? "pb-[calc(1rem+env(safe-area-inset-bottom,0px))]"
+                : "pb-4"
+            }`}
+          >
             <BasicButton
               params={{
                 onClick: () => {

@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import { motion } from "framer-motion";
 
-import { useMobile } from "@/app/viewport";
+import { useViewport } from "@/app/viewport";
 import { DarkOverlay } from "@/shared/layout/DarkOverlay";
 
 type OrderFormShellProps<TViewProps extends object> = {
@@ -17,7 +17,7 @@ export const OrderFormShell = <TViewProps extends object>({
   mobileView: MobileView,
   viewProps,
 }: OrderFormShellProps<TViewProps>) => {
-  const { isMobile } = useMobile();
+  const { isMobile, isTablet, isStandalone } = useViewport();
 
   if (isMobile) {
     return (
@@ -36,10 +36,16 @@ export const OrderFormShell = <TViewProps extends object>({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div
+      className={`fixed inset-0 z-[100] flex items-center justify-center ${
+        isStandalone ? "safe-p-4" : "p-4"
+      }`}
+    >
       <DarkOverlay onTapAction={onRequestClose} />
       <motion.div
-        className="relative z-10 flex h-[min(92vh,900px)] w-[950px] min-h-0 min-w-0 "
+        className={`relative z-10 flex h-[min(92dvh,900px)] w-[min(950px,calc(100vw-2rem))] min-h-0 min-w-0 ${
+          isTablet ? "max-h-full" : ""
+        }`}
         initial={{ opacity: 0, x: 90 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 90 }}

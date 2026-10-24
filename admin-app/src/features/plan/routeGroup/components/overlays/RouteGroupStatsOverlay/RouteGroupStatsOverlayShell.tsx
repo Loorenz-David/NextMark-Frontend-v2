@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { useViewport } from "@/app/viewport";
 import { useMapManager } from "@/shared/resource-manager/useResourceManager";
 import { ROUTE_GROUP_STATS_OVERLAY_GRADIENT } from "./routeGroupStatsOverlay.constants";
 import { RouteGroupConsumptionStatsColumn } from "./RouteGroupConsumptionStatsColumn";
@@ -110,6 +111,9 @@ export const RouteGroupStatsOverlayShell = ({
 }: RouteGroupStatsOverlayShellProps) => {
   const shellRef = useRef<HTMLDivElement | null>(null)
   useShellMapInsets(shellRef, hidden)
+  const { isMobile, isStandalone } = useViewport()
+  const bottomPadClass =
+    isStandalone && !isMobile ? "pb-[calc(1rem+env(safe-area-inset-bottom,0px))]" : "pb-4"
 
   return (
     <div ref={shellRef} className="pointer-events-none absolute inset-x-0 bottom-0 z-[20] flex w-full flex-col justify-end">
@@ -121,7 +125,7 @@ export const RouteGroupStatsOverlayShell = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 18 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none px-4 pb-4"
+            className={`pointer-events-none px-4 ${bottomPadClass}`}
           >
             <button
               type="button"
@@ -138,7 +142,7 @@ export const RouteGroupStatsOverlayShell = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none w-full  pb-4 pt-10"
+            className={`pointer-events-none w-full  ${bottomPadClass} pt-10`}
             style={{ background: ROUTE_GROUP_STATS_OVERLAY_GRADIENT }}
           >
             <div className="flex flex-col gap-4 ">

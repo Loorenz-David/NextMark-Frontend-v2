@@ -1,6 +1,6 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useMobile } from '@/app/viewport'
+import { useViewport } from '@/app/viewport'
 
 import { usePopupContext } from '../PopupContext'
 import { PopupHeader } from '../PopupHeader'
@@ -12,11 +12,15 @@ type PropsMainPopupLayout = {
 }
 
 export const MainPopupLayout = ({ children }: PropsMainPopupLayout) => {
-    const {isMobile} = useMobile()
+    const { isMobile, isTablet, isStandalone } = useViewport()
+    // Tablet: keep a gutter round the popup so it never runs edge to edge on a
+    // short screen; the gutter also clears the safe areas in the installed app.
+    const tabletGutterClass = isTablet ? (isStandalone ? 'safe-p-4' : 'p-4') : ''
+    const minWidthClass = isTablet ? 'min-w-[min(500px,100%)]' : 'min-w-[500px]'
 
     const { closeState, confirmClose, cancelClose, closePopup, parentParams } = usePopupContext()
     return (  
-        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center ${tabletGutterClass}`}>
 
             {/* Overlay */}
             {!isMobile && 
@@ -34,10 +38,10 @@ export const MainPopupLayout = ({ children }: PropsMainPopupLayout) => {
             <motion.div
                 className={isMobile ?`safe-top relative z-100 pointer-events-auto flex h-full w-full  flex-col  bg-[var(--color-page)] text-[var(--color-text)]`:
                 parentParams?.autoHeight
-                    ? 'relative z-10 pointer-events-auto flex w-full max-h-[calc(100vh-48px)] max-w-[600px] min-w-[500px] flex-col bg-[var(--color-page)] text-[var(--color-text)] rounded-none md:rounded-3xl'
+                    ? `relative z-10 pointer-events-auto flex w-full ${isTablet ? 'max-h-full' : 'max-h-[calc(100vh-48px)]'} max-w-[600px] ${minWidthClass} flex-col bg-[var(--color-page)] text-[var(--color-text)] rounded-none md:rounded-3xl`
                 : parentParams && parentParams?.controllBodyLayout
                     ? 'relative z-10 pointer-events-auto flex h-full  flex-col rounded-none   text-[var(--color-text)] md:rounded-3xl' 
-                    :`relative z-10 pointer-events-auto flex h-full  max-h-[800px] max-w-[600px] min-w-[500px] bg-[var(--color-page)]  flex-col rounded-none   text-[var(--color-text)] md:rounded-3xl`
+                    :`relative z-10 pointer-events-auto flex h-full  max-h-[800px] max-w-[600px] ${minWidthClass} bg-[var(--color-page)]  flex-col rounded-none   text-[var(--color-text)] md:rounded-3xl`
                 }
                 initial={{ opacity: 0, x: 100 }}
                  animate={{

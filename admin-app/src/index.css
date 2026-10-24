@@ -1321,6 +1321,16 @@ textarea:focus {
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
 }
+/* `p-4` for overlay containers in the installed app: each side pads by the
+   larger of 1rem and its safe-area inset, so a centred popup never sits under
+   the status bar or the home indicator. */
+.safe-p-4 {
+  padding:
+    max(1rem, env(safe-area-inset-top, 0px))
+    max(1rem, env(safe-area-inset-right, 0px))
+    max(1rem, env(safe-area-inset-bottom, 0px))
+    max(1rem, env(safe-area-inset-left, 0px));
+}
 
 /* Expands a small visual control to a finger-sized hit area without
    changing its layout box. */

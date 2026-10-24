@@ -1,6 +1,6 @@
 # 06 — Implementation plan: admin-app usable on iPad landscape
 
-**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending; Phases 0c, 1 and 2 committed and stacked (0 → 0c → 1 → 2); Phase 3 source implemented, uncommitted, automated gates green, visual and device rows pending; Chrome geometry and device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
+**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending; Phases 0c, 1 and 2 committed and stacked (0 → 0c → 1 → 2); Phase 3 committed on `ipad/phase-3-typography`, automated gates green, visual and device rows pending; Phase 4 implemented on `ipad/phase-4-popups`, uncommitted, automated gates green, device rows pending; Chrome geometry and device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
 
 Paths relative to `Front_end/admin-app/src` unless stated. Line numbers are in `02`/`03`; re-grep before editing.
 
@@ -141,6 +141,8 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 ---
 
 ## Phase 4 — Popups, forms and settings at tablet height (1 session)
+
+**Status (2026-10-24):** implemented, uncommitted on `ipad/phase-4-popups`. All automated gates are green: lint 0 errors / 52 warnings, tests 97/97, build, popup contract, theme regression, external-form PWA, `git diff --check`. Rows A6–A8, D1 and E1–E2 are pending; C2 needs the installed app (Phase 5). Per-popup `FeaturePopupShell` decisions are in `08`: all 11 users stay centred, and `lg`/`full` go full screen on tablet. Deviations: the order-form inset sits on the overlay, not the footer; the customer and route-group edit shells were added because row A7 names them.
 
 - `OrderFormShell.tsx` `w-[950px]` → `w-[min(950px, calc(100vw - 2rem))]`, inner `OrderFormDesktop.layout.tsx` 560 column → `minmax(0, 560px)`; heights `min(92vh, 900)` → `min(92dvh, 900px)`; footer `.safe-bottom` when `isStandalone`.
 - `shared/popups/MainPopup/layoutVariants/ClassicLayout.tsx`: on `tablet` wrap in `p-4`, `max-h-[calc(100dvh-2rem)]`, `min-w-[min(500px, 100%)]`; `PopupBody.tsx` fix `const { isMobile } = useMobile()`; `PopupFooter.tsx` safe-area bottom inset.

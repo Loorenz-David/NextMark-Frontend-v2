@@ -26,8 +26,8 @@ Everything a session (Claude or Codex) needs to make `Front_end/admin-app` fully
 | 1 Home geometry for tablets | committed on `ipad/phase-1-geometry` (stacked on 0c); Chrome geometry + iPad rows pending | 2026-10-24 Codex + Claude review |
 | 1b Content priority decisions (user, after Phase 5) → 6b tablet content variants | inventory done; decisions deferred until the iPad is usable | |
 | 2 Touch parity, tap targets, drag tuning | committed on `ipad/phase-2-touch` (stacked on 1); Chrome + iPad rows pending | 2026-10-24 Codex + Claude review |
-| 3 Typography and density tokens | implemented on `ipad/phase-3-typography`, uncommitted; automated gates green; A and E visual rows and iPad review pending | 2026-10-24 Codex |
-| 4 Popups, forms, settings at tablet height | waits for Phase 3 tip | |
+| 3 Typography and density tokens | committed on `ipad/phase-3-typography` (`9952997`); automated gates green; A and E visual rows and iPad review pending | 2026-10-24 Codex + Claude review |
+| 4 Popups, forms, settings at tablet height | implemented on `ipad/phase-4-popups` (from the Phase 3 tip), uncommitted; all automated gates green; A6–A8, D1, C2 (after Phase 5) and E1–E2 rows pending | 2026-10-24 Claude |
 | 5 Installable admin PWA | branch `ipad/phase-5-pwa` open (from stack tip), runs parallel with 3 | |
 | 6 Printing from the iPad | not started | |
 | 7 Optional (map drawing, AI panel, timeline) | not started | |

@@ -1,4 +1,4 @@
-import { useMobile } from '@/app/viewport'
+import { useViewport } from '@/app/viewport'
 import { BasicButton } from '@/shared/buttons/BasicButton'
 import type { PropsFooterConfig } from './MainPopup.types'
 import { ConfirmActionButton } from '@/shared/buttons/DeleteButton'
@@ -10,7 +10,7 @@ type PropsPopupFooter = {
 }
 
 export const PopupFooter = ({ footerConfig }: PropsPopupFooter) => {
-    const { isMobile } = useMobile()
+    const { isMobile, isStandalone } = useViewport()
     const hasButtons = footerConfig?.saveButton || footerConfig?.deleteButton
 
     if (!hasButtons) return null
@@ -18,7 +18,7 @@ export const PopupFooter = ({ footerConfig }: PropsPopupFooter) => {
     return ( 
         <footer className={
             ` absolute bottom-0 flex w-full items-center justify-between gap-4 border-t border-[var(--color-border)] bottom-0 left-0 bg-[var(--color-page)] rounded-b-xl ` + 
-            (isMobile ? `px-4 py-4` : ` px-6 py-4 pt-3`)
+            (isMobile ? `px-4 pt-4 ${isStandalone ? 'pb-[calc(1rem+env(safe-area-inset-bottom,0px))]' : 'pb-4'}` : ` px-6 py-4 pt-3`)
         }
         >       
             

@@ -40,6 +40,37 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phase 4 popups, forms and settings at tablet height (Claude)
+
+- Branch: `ipad/phase-4-popups` (from the Phase 3 tip `9952997`); no commit. Re-grepped every symbol before editing. Geometry keys off `isTablet`, touch off `isCoarsePointer`, insets off `isStandalone`; no new `text-[Npx]` literals.
+- **Inset rule used throughout:** whatever touches the screen edge takes the inset. Centred popups get it on their overlay container through a new `.safe-p-4` helper (`index.css`, next to `.safe-*`: each side pads by `max(1rem, inset)`). `.safe-bottom` is unlayered CSS and *replaces* Tailwind bottom padding, so surfaces that already have bottom padding use `pb-[calc(N+env(safe-area-inset-bottom,0px))]` (the existing `FeaturePopupFooter` pattern). Home surfaces add the inset only when `isStandalone && !isMobile`, because the phone tab bar already owns it.
+- Order form (`OrderFormShell.tsx`): `w-[min(950px,calc(100vw-2rem))]`, `h-[min(92dvh,900px)]`, plus `max-h-full` on tablet; the overlay uses `safe-p-4` when standalone. `OrderFormDesktop.layout.tsx`: the 560 column is `shrink` instead of `shrink-0`. This is the flex equivalent of `minmax(0,560px)`, and it has no effect while the shell is 950 wide. The same dvh, standalone and tablet `max-h-full` treatment goes on `CostumerFormShell.tsx` and `RouteGroupEditFormShell.tsx`. They are outside the plan's file list, but row A7 names them.
+- MainPopup (`ClassicLayout.tsx`, Settings popups): on tablet the container gets `p-4` (`safe-p-4` when standalone), so `h-full max-h-[800px]` resolves to `min(800px, 100dvh-2rem)`. `autoHeight` uses `max-h-full`, and the min width is `min(500px,100%)`. Desktop classes are unchanged. `PopupFooter.tsx` adds the bottom inset only in the phone full-screen branch, the one place the footer touches the edge; line 31 stays put for the `theme-map.json` anchor. `PopupBody.tsx` already destructures `const { isMobile } = useMobile()`, so it needed no fix.
+- `FeaturePopupShell.tsx`: the size map uses `dvh`. On tablet, `lg`/`full` go full screen, and centred popups sit in a scroll-safe overlay: `fixed inset-0 overflow-y-auto overscroll-contain` › `relative flex min-h-full items-center justify-center p-4` › backdrop + panel. A content-sized (`mdNoHeight`) popup taller than the screen scrolls with its footer reachable instead of being clipped at both ends, and it stays centred when it fits. Desktop keeps the original tree and classes.
+- **Per-popup tablet decisions (11 users, all `variant="center"`; none is `lg`/`full`):**
+
+| Popup | Size | Tablet | Why |
+|---|---|---|---|
+| `EditOrderNotePopup` | sm | centred | `min(86dvh,760px)` = 640px at 744 tall; short note form |
+| `SendClientFormLinkPopup` | sm | centred | same height; short form |
+| `ItemForm` | md | centred | `min(88dvh,820px)` = 655px at 744 tall; body scrolls inside |
+| `FailureNotePopup` | mdNoHeight | centred | one note field |
+| `OrderFilterPopup` | mdNoHeight | centred | its body caps itself at `min(70vh,640px)` |
+| `SwitchActingUserPopup` | mdNoHeight | centred | short user list |
+| `PlanObjectiveMismatchPopup` | mdNoHeight | centred | decision prompt |
+| `OrderAssignmentContactWarningPopup` | mdNoHeight | centred | choice prompt; the overlay scroll covers its longer views |
+| `PlanFormPopup` | mdNoHeight | centred | content-sized form, 600px wide; full screen would stretch fields to ~1150px; the overlay scroll covers short screens |
+| `CreateRouteGroupFormPopup` | mdNoHeight | centred | same reasoning as the plan form |
+| `ZoneForm` | mdNoHeight | centred | small form; zone drawing stays desktop-only (Q4) |
+| *(rule)* any `lg`/`full` | lg/full | **full screen** | no current user; the Phase 6 PDF viewer (`lg`) will get it |
+
+- Settings (`SettingsDesktopView.tsx`): on tablet the sidebar is `w-60` and its nav list scrolls (`min-h-0 overflow-y-auto`), so Log out stays on screen at 744 tall. Back, nav rows, sub-rows and Log out are `min-h-11` on coarse pointers, and the Log out block is `.safe-bottom` when standalone.
+- Bottom insets when standalone (tablet/desktop branch): `RouteGroupStatsOverlayShell.tsx` (both states; the map-inset observer measures the extra padding), `RouteGroupReadyFooter.tsx` (`pb-25` → `calc(6.25rem+inset)`), `OrderLinkedDeviceLiveWidget.tsx` (`bottom-4` → `calc(1rem+inset)`) and the order list "Show more" pager in `orderMain.page.tsx`.
+- Plan deviation: the order-form footer did not get `.safe-bottom`. On tablet the modal never reaches the bottom edge (it leaves at least 30px at 744 tall), so the inset goes on its overlay instead. The unconditional `vh` → `dvh` changes render identically on desktop browsers.
+- Gates: `npm run lint` ✅ (0 errors, 52 existing warnings); `npm test` ✅ (97/97); `npm run build` ✅ (Tailwind emits every new arbitrary class, checked in `dist`); `check:popup-contract` ✅; `theme:regression` ✅ (typography codemod `--check` 0 replacements); `check:external-form-pwa` ✅; `git diff --check` ✅ (no untracked files). No check or lint rule was changed.
+- Device matrix: A6–A8 ⏳, D1 ⏳, C2 ⏳ (needs the installed app, so it can only run after Phase 5 is merged), E1–E2 ⏳ desktop visual comparison. Chrome was not used, as directed. E3 ✅.
+- Left for the next session / device watch items: D1 depends on Safari scrolling the focused field into view; no keyboard-specific code was added. A8: Phase 3 already capped the notifications list height; its `w-[360px]` popover position was not in the Phase 4 list. `RouteGroupStatsOverlayShell` `max-h-[40vh]` was left as is. On the iPad, check that a tall `PlanFormPopup` scrolls with a finger dragged in the side margins.
+
 ### 2026-10-24 — Phase 3 typography and density tokens (Codex)
 
 - Branch: `ipad/phase-3-typography`; no commit. Re-grepped typography, icon-size, height and badge tokens before editing. Source changes stay in the Phase 3 surfaces and codemod-eligible files.

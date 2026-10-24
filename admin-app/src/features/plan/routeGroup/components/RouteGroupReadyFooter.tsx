@@ -1,3 +1,4 @@
+import { useViewport } from "@/app/viewport";
 import { DeliveryReadyIcon } from "@/assets/icons";
 import { BasicButton } from "@/shared/buttons";
 
@@ -8,8 +9,12 @@ type RouteGroupReadyFooterProps = {
 export const RouteGroupReadyFooter = ({
   onReadyForDelivery,
 }: RouteGroupReadyFooterProps) => {
+  const { isMobile, isStandalone } = useViewport();
+  const bottomPadClass =
+    isStandalone && !isMobile ? "pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))]" : "pb-25";
+
   return (
-    <div className="flex mt-auto pb-25 flex-col justify-end items-end shrink-0    ">
+    <div className={`flex mt-auto ${bottomPadClass} flex-col justify-end items-end shrink-0    `}>
       <BasicButton
         params={{
           variant: "primary",
