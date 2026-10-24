@@ -40,6 +40,16 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Stack committed, second wave opened (Claude)
+
+- Committed and stacked in merge order: `ipad/phase-0-foundations` → `ipad/phase-0c-baseline` (0c) → `ipad/phase-1-geometry` (1) → `ipad/phase-2-touch` (2). Nothing merged to `main`; that waits for the iPad rows.
+- Integration found two defects the separate branches could not show, fixed in the commit that caused them: 0c's typed `MapInstanceManager` rejected Phase 1's `gestureHandling` because the repo's own Maps typings (`packages/shared-google-maps/googleMaps.globals.ts`) lacked the field — added to the Phase 1 commit; a 0c file had trailing whitespace (`git diff --check` ignores untracked files) — fixed in the 0c commit.
+- Gates on the stack tip: lint 0 errors / 52 warnings ✅, tests 97/97 ✅, build ✅, popup contract ✅, theme regression ✅, external-form PWA ✅, `git diff --check` ✅. Phase 1 builds on its own ✅.
+- **Gate rule from now on:** the baseline is green, so every phase must leave the full gates green. A failure in a file outside the phase list is reported, not fixed.
+- Second wave: **Phase 3** (`ipad/phase-3-typography`) and **Phase 5** (`ipad/phase-5-pwa`) run in parallel from the stack tip; **Phase 4** (`ipad/phase-4-popups`) starts from Phase 3's tip because the codemod rewrites the same popup files. Merge order stays 3 → 4 → 5 (5 rebases last).
+- Codex's Chrome tool fails on setup (`node:process` in `node_repl`); sessions skip it and leave Chrome rows pending for Claude or the user.
+- Device check (user, next day): Phase 0 rows first, then A/B rows for 1 and 2 on the stack tip, then whatever of 3–5 is committed.
+
 ### 2026-10-24 — Phase 2 touch (Codex, reviewed by Claude)
 
 - Branch: `ipad/phase-2-touch`; no commit. Re-grepped the Phase 2 symbols before editing and kept source edits to the named Phase 2 files. `PlanCard` and `ItemTypeCountsPill` already use `useViewport()` from Phase 0.

@@ -195,6 +195,8 @@ Per `05_PRINTING_AND_BLUETOOTH.md` §4: `features/templates/printDocument/contro
 
 **Merge order:** 0 → 0c → 1 → 2 (rebase on 1, resolve the 4 shared files) → 3 → 4 → 5. Each branch merges only after its device rows pass.
 
+**Second wave (2026-10-24, after 0c/1/2 were stacked):** Phases **3 and 5** run in parallel from the `ipad/phase-2-touch` tip (Phase 5 touches `public/`, `app/pwa`, `index.html`, scripts and back-layer wiring; Phase 3 touches `index.css` tokens and class literals). **Phase 4** branches from Phase 3's tip. With the baseline green, every phase must leave the full gates green.
+
 **Parallel sessions need separate working trees.** Two agents in one checkout overwrite each other's files. Use `git worktree add` per phase branch, each with its own `npm ci` in `admin-app` (≈400 MB each). Branch naming: `ipad/phase-N-<slug>`; commits only when the user asks (K1).
 
 ## Session protocol (every implementing session)
