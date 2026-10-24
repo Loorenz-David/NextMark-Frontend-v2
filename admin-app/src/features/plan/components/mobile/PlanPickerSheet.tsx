@@ -38,7 +38,7 @@ const PlanPickerRow = ({
         <PlanTypeIcon className="h-5 w-5 text-[var(--color-muted)]" />
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-[0.95rem] font-semibold text-[var(--color-text)]">
+        <span className="truncate text-rem-0_95 font-semibold text-[var(--color-text)]">
           {plan.label}
         </span>
         <span className="truncate text-xs text-[var(--color-muted)]">

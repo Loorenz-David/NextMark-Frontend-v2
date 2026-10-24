@@ -110,11 +110,11 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       monthTitleClassName: 'text-sm font-semibold text-[var(--color-text)]',
       weekdayRowClassName: 'grid grid-cols-7 px-2 pb-1',
       weekdayLabelClassName:
-        'text-center text-[10px] font-semibold text-[var(--color-muted)]',
+        'text-center text-micro font-semibold text-[var(--color-muted)]',
       dayCellClassName: ' h-10 w-8   text-xs ',
-      dayNumberClassName: 'text-[11px] font-semibold',
+      dayNumberClassName: 'text-2xs font-semibold',
       dayWindowCountClassName:
-        'rounded-full bg-[var(--color-dark-blue)]/10  px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-dark-blue)]',
+        'rounded-full bg-[var(--color-dark-blue)]/10  px-1.5 py-0.5 text-nano font-semibold text-[var(--color-dark-blue)]',
       dayWindowSelectedCountClassName: 'text-white bg-[var(--color-page)]/20',
       dayClosedClassName:
         'rounded-full bg-red-400 h-2 w-2',
@@ -123,7 +123,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
     },
     mode: {
       rootClassName: 'flex flex-wrap gap-1.5',
-      buttonClassName: 'rounded-full border px-2 py-0.5 text-[11px] transition-colors',
+      buttonClassName: 'rounded-full border px-2 py-0.5 text-2xs transition-colors',
       activeButtonClassName:
         'border-[var(--color-text)] bg-[var(--color-text)] text-[var(--color-page)]',
       inactiveButtonClassName:
@@ -131,28 +131,28 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
     },
     list: {
       rootClassName:
-        'rounded-lg border border-[var(--color-border-accent)] bg-[var(--color-page)] py-3 h-[370px] overflow-hidden',
+        'rounded-lg border border-[var(--color-border-accent)] bg-[var(--color-page)] py-3 h-[370px] [@media(pointer:coarse)]:h-[min(370px,55dvh)] overflow-hidden',
       headerClassName: 'mb-3 px-3 flex items-center justify-between gap-2',
       titleClassName: 'text-xs font-semibold text-[var(--color-text)]',
-      subtitleClassName: 'mt-1 text-[11px] text-[var(--color-muted)]',
+      subtitleClassName: 'mt-1 text-2xs text-[var(--color-muted)]',
       clearActionClassName:
-        'h-auto border-0 bg-transparent px-0 py-0 text-[9px] font-normal normal-case tracking-normal text-[var(--color-muted)] underline hover:bg-transparent',
+        'h-auto border-0 bg-transparent px-0 py-0 text-nano font-normal normal-case tracking-normal text-[var(--color-muted)] underline hover:bg-transparent',
       groupsClassName: 'flex flex-col gap-3 h-full px-3 overflow-y-auto scroll-thin pb-10',
       groupClassName: 'flex flex-col gap-1.5',
-      groupDateClassName: 'text-[10px] font-semibold text-[var(--color-text)]',
+      groupDateClassName: 'text-micro font-semibold text-[var(--color-text)]',
       windowsStackClassName: 'flex flex-col gap-1.5',
       windowCardClassName: 'flex flex-col gap-1.5',
       windowMetaRowClassName: 'flex items-center justify-between gap-2',
       windowItemClassName:
         'flex items-center gap-2 rounded-xl bg-[var(--color-light-blue)]/12 px-2.5 py-1.5',
       windowTimeClassName:
-        'flex min-w-0 items-center gap-2 text-[10px] font-medium text-[var(--color-dark-blue)]',
+        'flex min-w-0 items-center gap-2 text-micro font-medium text-[var(--color-dark-blue)]',
       windowActionsClassName: 'flex items-center gap-1',
       editActionClassName:
-        ' rounded-sm px-1 py-[2px] text-[9px] text-[var(--color-muted)] hover:bg-blue-100 cursor-pointer',
+        ' rounded-sm px-1 py-[2px] text-nano text-[var(--color-muted)] hover:bg-blue-100 cursor-pointer',
       removeActionClassName:
-        ' rounded-sm px-1 py-[2px] text-[9px]  text-red-500 hover:bg-red-100 cursor-pointer',
-      emptyClassName: 'text-[11px] text-[var(--color-muted)] px-2',
+        ' rounded-sm px-1 py-[2px] text-nano  text-red-500 hover:bg-red-100 cursor-pointer',
+      emptyClassName: 'text-2xs text-[var(--color-muted)] px-2',
     },
     editor: {
       rootClassName:
@@ -161,7 +161,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       titleClassName:
         'text-xs font-semibold text-[var(--color-text)]',
       datesClassName:
-        'pb-1 text-[10px] text-[var(--color-muted)] whitespace-nowrap',
+        'pb-1 text-micro text-[var(--color-muted)] whitespace-nowrap',
       controlsRowClassName:
         'flex items-start justify-between gap-3',
       pickerClassName:
@@ -169,9 +169,9 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       betweenLabelClassName: 'text-xs text-[var(--color-muted)]',
       actionsClassName: 'flex  flex-col items-stretch gap-2 pr-2 ',
       cancelButtonClassName:
-        'px-4 py-1 text-[12px] rounded-sm border-1 border-[var(--color-border-accent)]  text-base text-[var(--color-text)] cursor-pointer hover:bg-[var(--color-border)]',
+        'px-4 py-1 text-px-12 rounded-sm border-1 border-[var(--color-border-accent)]  text-base text-[var(--color-text)] cursor-pointer hover:bg-[var(--color-border)]',
       applyButtonClassName:
-        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-4 py-1.5 text-[12px] font-semibold  text-[var(--color-primary)] shadow-[var(--shadow-button-calendar-sm)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
+        'rounded-full border border-[color-mix(in_srgb,var(--color-primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-4 py-1.5 text-px-12 font-semibold  text-[var(--color-primary)] shadow-[var(--shadow-button-calendar-sm)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]',
     },
   },
   desktopRegular: {
@@ -200,7 +200,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
         'rounded-full bg-[var(--color-dark-blue)]/10 px-2 py-0.5 text-xs font-semibold text-[var(--color-dark-blue)]',
       dayWindowSelectedCountClassName: '',
       dayClosedClassName:
-        'self-end text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]',
+        'self-end text-micro font-semibold uppercase tracking-wide text-[var(--color-muted)]',
       dayClosedLabel:'Closed',
       footerClassName: 'px-3 pb-3',
     },
@@ -280,7 +280,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       dayCellClassName: 'mx-0.5 my-0.5 h-16 p-1.5 text-sm',
       dayNumberClassName: 'text-sm font-semibold',
       dayWindowCountClassName:
-        'rounded-full bg-[var(--color-dark-blue)]/10 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-dark-blue)]',
+        'rounded-full bg-[var(--color-dark-blue)]/10 px-1.5 py-0.5 text-micro font-semibold text-[var(--color-dark-blue)]',
       dayWindowSelectedCountClassName: '',
       dayClosedClassName:
         'rounded-full bg-red-400 h-2 w-2',
@@ -315,9 +315,9 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
         'flex min-w-0 items-center gap-2ext-sm font-medium text-[var(--color-dark-blue)]',
       windowActionsClassName: 'flex items-center gap-1.5',
       editActionClassName:
-        'h-auto border-0 bg-transparent px-0 py-0 text-[11px] text-[var(--color-muted)] hover:text-[var(--color-dark-blue)]',
+        'h-auto border-0 bg-transparent px-0 py-0 text-2xs text-[var(--color-muted)] hover:text-[var(--color-dark-blue)]',
       removeActionClassName:
-        'h-auto border-0 bg-transparent px-0 py-0 text-[11px] font-normal normal-case tracking-normal text-red-500 hover:bg-red-200',
+        'h-auto border-0 bg-transparent px-0 py-0 text-2xs font-normal normal-case tracking-normal text-red-500 hover:bg-red-200',
       emptyClassName: 'text-xs text-[var(--color-muted)]',
     },
     editor: {
@@ -327,7 +327,7 @@ const DELIVERY_WINDOW_CALENDAR_SHELL_PRESETS: Record<
       titleClassName:
         'text-lg font-semibold text-[var(--color-text)]',
       datesClassName:
-        'pb-1 text-[11px] text-[var(--color-muted)] whitespace-nowrap',
+        'pb-1 text-2xs text-[var(--color-muted)] whitespace-nowrap',
       controlsRowClassName:
         'flex items-start justify-between gap-3',
       pickerClassName:

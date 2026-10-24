@@ -213,7 +213,7 @@ export const SearchFilterBar = ({
                 >
                   <span>{filter.label}</span>
                   {selected ? (
-                    <span className="rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-[rgb(var(--color-light-blue-r),0.12)] px-2 py-0.5 text-[10px] text-[rgb(var(--color-light-blue-r))]">
+                    <span className="rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-[rgb(var(--color-light-blue-r),0.12)] px-2 py-0.5 text-micro text-[rgb(var(--color-light-blue-r))]">
                       Selected
                     </span>
                   ) : null}

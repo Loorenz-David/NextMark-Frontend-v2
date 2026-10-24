@@ -47,7 +47,7 @@ export function AdminNotificationsAlertToggle() {
       onClick={() => {
         void toggle();
       }}
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.68rem] font-medium transition-colors disabled:cursor-wait disabled:opacity-60 ${PILL_CLASS[state]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-rem-0_68 font-medium transition-colors disabled:cursor-wait disabled:opacity-60 ${PILL_CLASS[state]}`}
     >
       <span
         aria-hidden="true"

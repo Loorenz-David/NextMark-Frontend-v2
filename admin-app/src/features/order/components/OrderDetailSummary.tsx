@@ -44,11 +44,11 @@ export const OrderDetailSummary = ({
   );
 
   return (
-    <div className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+    <div className="admin-glass-panel flex h-[420px] [@media(pointer:coarse)]:h-[min(420px,55dvh)] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
       <div className="admin-glass-divider flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
         <div>
           <div className="flex items-center gap-3">
-            <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
+            <p className="text-micro font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
               Customer Details
             </p>
             {order?.help_to_carry ? (
@@ -64,7 +64,7 @@ export const OrderDetailSummary = ({
             <button
               type="button"
               onClick={onMissingOrderInfoClick}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-warning-border bg-warning-bg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-warning transition-colors hover:bg-warning/25"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-warning-border bg-warning-bg px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.1em] text-warning transition-colors hover:bg-warning/25"
               aria-label="Open client form for missing order information"
             >
               <ExclamationIcon className="h-3 w-3 text-warning" />
@@ -74,7 +74,7 @@ export const OrderDetailSummary = ({
 
           {stateName ? (
             <span
-              className="inline-flex items-center rounded-full border px-2.5 py-1 text-[0.64rem] font-medium uppercase tracking-[0.16em]"
+              className="inline-flex items-center rounded-full border px-2.5 py-1 text-rem-0_64 font-medium uppercase tracking-[0.16em]"
               style={{
                 color: stateColor,
                 borderColor: `${stateColor}55`,
@@ -183,7 +183,7 @@ export const OrderDetailSummary = ({
       </div>
 
       <div className="admin-glass-divider border-t px-5 py-3">
-        <p className="text-[0.72rem] text-[var(--color-muted)]">
+        <p className="text-rem-0_72 text-[var(--color-muted)]">
           Created at:{" "}
           {toDateOnly(order?.creation_date ?? null) || "missing creation date"}
         </p>
@@ -197,10 +197,10 @@ const DetailCard = ({ label, value, className }: DetailCardProps) => {
     <div
       className={`rounded-3xl border border-border bg-surface-subtle px-4 py-3 ${className ?? ""}`}
     >
-      <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-muted)]">
+      <p className="text-micro font-medium uppercase tracking-[0.2em] text-[var(--color-muted)]">
         {label}
       </p>
-      <div className="mt-1 break-words text-[0.98rem] leading-7 text-[var(--color-text)]">
+      <div className="mt-1 break-words text-rem-0_98 leading-7 text-[var(--color-text)]">
         {value}
       </div>
     </div>

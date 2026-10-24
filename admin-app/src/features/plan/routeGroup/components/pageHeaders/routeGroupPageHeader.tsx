@@ -137,13 +137,13 @@ export const RouteGroupsPageHeader = ({
           <div className="min-w-0 flex-1 text-lg font-semibold text-[var(--color-text)]">
             <div className="flex min-w-0 flex-col overflow-hidden">
               <span className="truncate">{summary.title}</span>
-              <p className="truncate text-[11px] font-normal text-[var(--color-muted)]">
+              <p className="truncate text-2xs font-normal text-[var(--color-muted)]">
                 {summary.orderCount} orders • {summary.itemCount} items •{" "}
                 {formatMetric(summary.totalVolume, "㎥")} •{" "}
                 {formatMetric(summary.totalWeight, "kg")}
               </p>
               {summary.subtitle ? (
-                <p className="truncate text-[11px] font-normal text-[var(--color-muted)]/80">
+                <p className="truncate text-2xs font-normal text-[var(--color-muted)]/80">
                   {summary.subtitle}
                 </p>
               ) : null}

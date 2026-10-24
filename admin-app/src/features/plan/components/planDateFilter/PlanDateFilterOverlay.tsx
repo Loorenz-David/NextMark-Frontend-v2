@@ -18,7 +18,7 @@ export const PlanDateFilterOverlay = ({
     <div className="admin-glass-popover w-[320px] rounded-2xl border border-[var(--color-border-accent)] p-4 shadow-[var(--shadow-panel-filter)]">
       <div className="space-y-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]/80">
+          <p className="text-micro font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]/80">
             Time mode
           </p>
           <div className="mt-2">

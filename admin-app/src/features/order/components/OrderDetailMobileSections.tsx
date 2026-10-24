@@ -42,7 +42,7 @@ export const OrderDetailMobileSections = ({
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setIndex(sectionIndex)}
-                className={`min-h-10 flex-1 cursor-pointer rounded-xl px-2 text-[0.82rem] font-medium transition-colors ${
+                className={`min-h-10 flex-1 cursor-pointer rounded-xl px-2 text-rem-0_82 font-medium transition-colors ${
                   isActive
                     ? "bg-surface-raised text-[var(--color-text)] shadow-[var(--shadow-button-compact)]"
                     : "text-[var(--color-muted)] active:bg-surface-hover"

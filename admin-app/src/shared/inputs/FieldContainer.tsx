@@ -48,7 +48,7 @@ export function Field({
     <label className={`flex w-full flex-col py-1  ${"gap-" + gap}`}>
       <div className="flex justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold text-[var(--color-muted)]">
+          <span className="text-micro font-semibold text-[var(--color-muted)]">
             {label}
             {required && <span className="ml-1 text-danger">*</span>}
           </span>

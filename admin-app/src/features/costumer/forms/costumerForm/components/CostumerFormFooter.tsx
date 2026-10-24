@@ -13,7 +13,7 @@ export const CostumerFormFooter = ({ onSave, isMobile = false }: CostumerFormFoo
           params={{
             variant: 'primary',
             onClick: onSave,
-            className: 'h-12 w-full rounded-2xl text-[15px]',
+            className: 'h-12 w-full rounded-2xl text-px-15',
             ariaLabel: 'Save costumer',
           }}
         >

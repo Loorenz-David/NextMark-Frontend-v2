@@ -49,7 +49,7 @@ export const OrderCard = ({
             confirmation: {
               confirmContent: "Confirm unarchive",
               confirmClassName:
-                "flex w-full items-center justify-center rounded-lg bg-success-solid px-3 py-2 text-[10px] text-success-on-solid",
+                "flex w-full items-center justify-center rounded-lg bg-success-solid px-3 py-2 text-micro text-success-on-solid",
               confirmOverLay: "bg-success-solid-strong",
               duration: 4000,
             },
@@ -67,7 +67,7 @@ export const OrderCard = ({
             confirmation: {
               confirmContent: "Confirm archive",
               confirmClassName:
-                "flex w-full items-center justify-center rounded-lg bg-danger-solid px-3 py-2 text-[10px] text-danger-on-solid",
+                "flex w-full items-center justify-center rounded-lg bg-danger-solid px-3 py-2 text-micro text-danger-on-solid",
               duration: 4000,
             },
           },
@@ -87,7 +87,7 @@ export const OrderCard = ({
         }`}
       >
         {order.archive_at && (
-          <div className="absolute right-1 -top-3 z-20 flex items-center rounded-full border border-warning-border bg-warning-strong/50 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-warning backdrop-blur-md">
+          <div className="absolute right-1 -top-3 z-20 flex items-center rounded-full border border-warning-border bg-warning-strong/50 px-2.5 py-1 text-px-8 font-semibold uppercase tracking-[0.14em] text-warning backdrop-blur-md">
             Archived
           </div>
         )}
@@ -101,7 +101,7 @@ export const OrderCard = ({
             </span>
             <OrderOperationTypeBadges operationType={order.operation_type} />
             {external_source && (
-              <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
+              <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-rem-0_55 uppercase tracking-[0.16em] text-[var(--color-muted)]">
                 {external_source}
               </span>
             )}

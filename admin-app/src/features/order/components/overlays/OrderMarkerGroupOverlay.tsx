@@ -41,7 +41,7 @@ const OrderGroupOverlayRow = ({ order, onSelectOrder }: OrderGroupOverlayRowProp
           {orderState && (
             <StateCard label={orderState.name} color={orderState.color ? orderState.color : '#363636ff'} />
           )}
-          <div className="flex items-center gap-1 rounded-full border border-border bg-surface-raised px-2 py-1 text-[11px] text-[var(--color-muted)]">
+          <div className="flex items-center gap-1 rounded-full border border-border bg-surface-raised px-2 py-1 text-2xs text-[var(--color-muted)]">
             <ItemIcon className="h-3 w-3 app-icon" />
             <span>{totalItems}</span>
           </div>

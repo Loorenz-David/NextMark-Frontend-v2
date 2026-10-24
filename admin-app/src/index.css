@@ -40,6 +40,9 @@
   --ink-soft: rgba(206, 220, 224, 0.68);
   --ink-faint: rgba(255, 255, 255, 0.45);
   --ink-inverse: #182224;
+  --notification-badge-ink: #ffffff;
+  --missing-info-badge: #fde047;
+  --missing-info-badge-ink: #713f12;
 
   --rule-subtle: rgba(255, 255, 255, 0.06);
   --rule: rgba(255, 255, 255, 0.12);
@@ -304,6 +307,9 @@
   --ink-soft: #6b7280;
   --ink-faint: #9ca3af;
   --ink-inverse: #ffffff;
+  --notification-badge-ink: var(--accent-on-solid);
+  --missing-info-badge: #fde047;
+  --missing-info-badge-ink: #713f12;
 
   --rule-subtle: #f0f0f0;
   --rule: #e5e5e5;
@@ -570,10 +576,68 @@
   --color-info-ink: var(--info-ink);
   --color-info-bg: var(--info-bg);
   --color-info-border: var(--info-border);
-  --color-notification-badge-ink: #ffffff;
-  --color-missing-info-badge: #fde047;
-  --color-missing-info-badge-ink: #713f12;
+  --color-notification-badge-ink: var(--notification-badge-ink);
+  --color-missing-info-badge: var(--missing-info-badge);
+  --color-missing-info-badge-ink: var(--missing-info-badge-ink);
   --color-foreground-mark: var(--foreground-mark);
+}
+
+/* Arbitrary utility sizes retain their exact desktop values. */
+@theme {
+  --text-nano: 0.5625rem;
+  --text-micro: 0.625rem;
+  --text-2xs: 0.6875rem;
+  --text-px-8: 8px;
+  --text-px-9: 9px;
+  --text-px-12: 12px;
+  --text-px-10_5: 10.5px;
+  --text-px-12_5: 12.5px;
+  --text-px-13: 13px;
+  --text-px-14: 14px;
+  --text-px-15: 15px;
+  --text-px-19: 19px;
+  --text-rem-0_54: 0.54rem;
+  --text-rem-0_55: 0.55rem;
+  --text-rem-0_58: 0.58rem;
+  --text-rem-0_6: 0.6rem;
+  --text-rem-0_62: 0.62rem;
+  --text-rem-0_64: 0.64rem;
+  --text-rem-0_65: 0.65rem;
+  --text-rem-0_66: 0.66rem;
+  --text-rem-0_68: 0.68rem;
+  --text-rem-0_7: 0.7rem;
+  --text-rem-0_72: 0.72rem;
+  --text-rem-0_8: 0.8rem;
+  --text-rem-0_82: 0.82rem;
+  --text-rem-0_85: 0.85rem;
+  --text-rem-0_95: 0.95rem;
+  --text-rem-0_98: 0.98rem;
+  --text-rem-2: 2rem;
+  --text-rem-2_8: 2.8rem;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --text-nano: 0.75rem;
+    --text-micro: 0.75rem;
+    --text-2xs: 0.75rem;
+    --text-xs: 0.8125rem;
+    --text-px-8: 0.75rem;
+    --text-px-9: 0.75rem;
+    --text-px-10_5: 0.75rem;
+    --text-px-12: 0.75rem;
+    --text-rem-0_54: 0.75rem;
+    --text-rem-0_55: 0.75rem;
+    --text-rem-0_58: 0.75rem;
+    --text-rem-0_6: 0.75rem;
+    --text-rem-0_62: 0.75rem;
+    --text-rem-0_64: 0.75rem;
+    --text-rem-0_65: 0.75rem;
+    --text-rem-0_66: 0.75rem;
+    --text-rem-0_68: 0.75rem;
+    --text-rem-0_7: 0.75rem;
+    --text-rem-0_72: 0.75rem;
+  }
 }
 
 * {
@@ -1286,6 +1350,16 @@ textarea:focus {
 }
 
 @media (pointer: coarse) {
+  :is(button, [role="button"], a, label, summary) svg:is([class~="h-2"], [class~="h-2.5"]) {
+    min-width: 14px;
+    min-height: 14px;
+  }
+
+  :is(button, [role="button"], a, label, summary) svg[class~="h-3"] {
+    min-width: 16px;
+    min-height: 16px;
+  }
+
   html, body, #root {
     overscroll-behavior: none;
     -webkit-tap-highlight-color: transparent;

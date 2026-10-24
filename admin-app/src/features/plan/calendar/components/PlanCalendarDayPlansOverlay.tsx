@@ -64,10 +64,10 @@ export const PlanCalendarDayPlansOverlay = ({
       className="admin-glass-popover flex max-h-[440px] w-[min(92vw,400px)] flex-col overflow-hidden rounded-xl border border-border bg-[rgba(var(--theme-surface-popover-r),0.94)] shadow-[var(--shadow-panel-popover)] backdrop-blur-md"
     >
       <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-2.5">
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+        <span className="font-mono text-micro uppercase tracking-[0.14em] text-[var(--color-muted)]">
           {formatIsoDateFriendly(dateKey)}
         </span>
-        <span className="text-[11px] text-[var(--color-muted)]">
+        <span className="text-2xs text-[var(--color-muted)]">
           {plans.length} {plans.length === 1 ? "plan" : "plans"}
         </span>
       </div>

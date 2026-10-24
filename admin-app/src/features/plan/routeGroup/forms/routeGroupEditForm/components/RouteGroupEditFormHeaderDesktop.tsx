@@ -25,7 +25,7 @@ export const RouteGroupFormDesktopHeader = ({
                         <div className="text-sm font-semibold text-[var(--color-text)]">{header.title}</div>
                         <InfoHover content={ROUTE_GROUP_ROUTE_SOLUTION_PREFERENCES_INFO} />
                     </div>
-                    <div className="flex  text-[9px] text-[var(--color-muted)] gap-2">
+                    <div className="flex  text-nano text-[var(--color-muted)] gap-2">
                         <span>{header.variant}</span>
                         <span>/</span>
                         <span>{header.optimizationDate}</span>

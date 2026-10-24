@@ -72,7 +72,7 @@ export const OrderMissingInfoNotifier = ({
             <li key={field}>{field}</li>
           ))}
         </ul>
-        <p className="mt-2 text-[11px] text-[var(--color-muted)]">
+        <p className="mt-2 text-2xs text-[var(--color-muted)]">
           Tap the warning icon again to complete this order.
         </p>
       </div>

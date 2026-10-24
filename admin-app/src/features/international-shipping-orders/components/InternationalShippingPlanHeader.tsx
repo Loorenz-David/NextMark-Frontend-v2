@@ -43,10 +43,10 @@ export const InternationalShippingPlanHeader = ({
             <span className="truncate text-lg font-semibold text-[var(--color-text)]">
               {summary.label}
             </span>
-            <p className="truncate text-[11px] font-normal text-[var(--color-muted)]">
+            <p className="truncate text-2xs font-normal text-[var(--color-muted)]">
               {PLAN_TYPE_LABELS.international_shipping} • {summary.dateLabel}
             </p>
-            <p className="truncate text-[11px] font-normal text-[var(--color-muted)]/80">
+            <p className="truncate text-2xs font-normal text-[var(--color-muted)]/80">
               {summary.orderCount} orders • {summary.itemCount} items
             </p>
           </div>

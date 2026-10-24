@@ -134,7 +134,7 @@ export const OrderFormFields = ({
           params={{
             variant: "text",
             onClick: () => setShowMore((prev) => !prev),
-            className: "px-0 py-0 text-[10px] text-[var(--color-muted)]",
+            className: "px-0 py-0 text-micro text-[var(--color-muted)]",
             ariaLabel: showMore ? "Show less fields" : "Show more fields",
           }}
         >

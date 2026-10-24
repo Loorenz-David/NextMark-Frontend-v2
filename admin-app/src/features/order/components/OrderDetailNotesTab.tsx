@@ -25,9 +25,9 @@ export const OrderDetailNotesTab = ({ order }: OrderDetailNotesTabProps) => {
   const notes = extractNormalizedNotes(order?.order_notes);
 
   return (
-    <div className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+    <div className="admin-glass-panel flex h-[420px] [@media(pointer:coarse)]:h-[min(420px,55dvh)] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
       <div className="admin-glass-divider border-b px-5 py-4">
-        <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
+        <p className="text-micro font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
           Order Notes
         </p>
       </div>
@@ -48,7 +48,7 @@ export const OrderDetailNotesTab = ({ order }: OrderDetailNotesTabProps) => {
               >
                 <div className="mb-1 flex items-start justify-between gap-3">
                   <p
-                    className={`text-[10px] font-medium uppercase tracking-[0.2em] ${style.label}`}
+                    className={`text-micro font-medium uppercase tracking-[0.2em] ${style.label}`}
                   >
                     {NOTE_TYPE_LABEL[note.type]}
                   </p>

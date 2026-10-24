@@ -33,10 +33,10 @@ export const OrderCaseDetailsHeader = ({
               <MessageIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
             </div>
             <div className="flex min-w-0 flex-col">
-              <span className="text-[0.98rem] font-semibold tracking-tight text-[var(--color-text)]">
+              <span className="text-rem-0_98 font-semibold tracking-tight text-[var(--color-text)]">
                 {title}
               </span>
-              <span className="mt-0.5 text-[0.72rem] text-[var(--color-muted)]">
+              <span className="mt-0.5 text-rem-0_72 text-[var(--color-muted)]">
                 Current state: {state}
               </span>
             </div>
@@ -48,7 +48,7 @@ export const OrderCaseDetailsHeader = ({
                 variant: 'toolbarSecondary',
                 onClick: onClose,
                 ariaLabel: 'Close case details',
-                className: 'min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-[0.66rem]',
+                className: 'min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-rem-0_66',
               }}
             >
               Close

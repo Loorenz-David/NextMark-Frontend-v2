@@ -230,7 +230,7 @@ function AiAnalyticsBarListComponent({ data, meta }: AiAnalyticsBarListProps) {
 
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-[0.62rem] uppercase tracking-[0.12em] text-[var(--color-muted)]">Total</div>
+                <div className="text-rem-0_62 uppercase tracking-[0.12em] text-[var(--color-muted)]">Total</div>
                 <div className="text-sm font-semibold text-[var(--color-text)]">{formatValue(donutTotal)}</div>
               </div>
             </div>

@@ -53,7 +53,7 @@ export function MapToggleTab({ isMapVisible, splitMode, onToggle }: MapToggleTab
     >
       <div className="flex h-full flex-col items-center justify-center gap-1 text-[var(--color-muted)]">
         <span
-          className="text-[9px] font-semibold uppercase tracking-[0.2em] text-[var(--color-muted)]/90"
+          className="text-nano font-semibold uppercase tracking-[0.2em] text-[var(--color-muted)]/90"
           style={{ writingMode: 'vertical-rl' }}
         >
           map

@@ -168,7 +168,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: 6, opacity: 0 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
-                    className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium  ${
+                    className={`inline-flex items-center rounded-md border px-2 py-0.5 text-2xs font-medium  ${
                       dropFeedback.status === "error"
                         ? "border-[rgb(var(--danger-state-r))]/35 bg-[rgb(var(--danger-state-r))]/10 text-[rgb(var(--danger-state-r))]"
                         : "border-[rgb(var(--success-deep-r))]/35 bg-[rgb(var(--success-deep-r))]/10 text-[rgb(var(--success-deep-r))]"
@@ -199,7 +199,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
       </div>
       <div className="flex  flex-col gap-2 text-xs text-[var(--color-muted)]">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-[12px]">
+          <div className="flex items-center gap-2 text-px-12">
             {showZoneCount ? (
               <>
                 <LayersIcon className="h-3 w-3 app-icon" />
@@ -214,12 +214,12 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
               </>
             )}
           </div>
-          <div className="flex items-center gap-2 text-[12px]">
+          <div className="flex items-center gap-2 text-px-12">
             <OrderIcon className="h-3 w-3 app-icon" />
             <span>{orderCount} Orders</span>
           </div>
           <div
-            className="text-[12px]"
+            className="text-px-12"
             onMouseEnter={handleItemCountMouseEnter}
             onMouseLeave={handleItemCountMouseLeave}
             onClick={handleItemCountClick}
@@ -246,7 +246,7 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
               }
             >
               <div className="admin-glass-popover min-w-[11rem] rounded-lg border border-border bg-[rgba(var(--theme-surface-popover-r),0.92)] px-3 py-2 shadow-[var(--shadow-panel-popover)] backdrop-blur-md">
-                <div className="mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted)]/90">
+                <div className="mb-1 text-micro uppercase tracking-[0.14em] text-[var(--color-muted)]/90">
                   Item Types
                 </div>
                 <div className="space-y-1">
@@ -267,11 +267,11 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
               </div>
             </FloatingPopover>
           </div>
-          <div className="flex items-center gap-2 text-[12px]">
+          <div className="flex items-center gap-2 text-px-12">
             <WeightIcon className="h-2 w-2 app-icon" />
             <span>{formatMetric(totalWeight, "kg")} </span>
           </div>
-          <div className="flex items-center gap-2 text-[12px]">
+          <div className="flex items-center gap-2 text-px-12">
             <DimensionsIcon className="h-3 w-3 app-icon" />
             <span>{formatMetric(totalVolume, "㎥")} </span>
           </div>

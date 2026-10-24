@@ -205,17 +205,17 @@ export const OrderDetailHeaderTitle = ({
   return (
     <div className="flex min-w-0 flex-col">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="text-[0.98rem] font-semibold tracking-tight text-[var(--color-text)]">
+        <span className="text-rem-0_98 font-semibold tracking-tight text-[var(--color-text)]">
           {title}
         </span>
         {order?.external_source ? (
-          <span className="inline-flex w-fit rounded-full border border-[var(--color-border-accent)] bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] px-2 py-0.5 text-[0.54rem] font-medium uppercase tracking-[0.2em] text-[var(--color-primary)]">
+          <span className="inline-flex w-fit rounded-full border border-[var(--color-border-accent)] bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] px-2 py-0.5 text-rem-0_54 font-medium uppercase tracking-[0.2em] text-[var(--color-primary)]">
             {order.external_source}
           </span>
         ) : null}
       </div>
       {shouldRenderPlanMeta ? (
-        <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-[0.72rem] text-[var(--color-muted)]">
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-rem-0_72 text-[var(--color-muted)]">
           <span
             className={`truncate max-w-[150px] ${
               isSubheaderSweepActive ? "order-detail-subheader-sweep-text" : ""

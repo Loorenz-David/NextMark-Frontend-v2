@@ -32,10 +32,10 @@ export const PlanCalendarHeader = ({
       </div>
 
       <div className="flex min-w-0 flex-col">
-        <span className="text-[19px] font-bold tracking-[-0.02em] text-[var(--color-text)]">
+        <span className="text-px-19 font-bold tracking-[-0.02em] text-[var(--color-text)]">
           Plans
         </span>
-        <span className="truncate text-[12.5px] text-[var(--color-muted)]">
+        <span className="truncate text-px-12_5 text-[var(--color-muted)]">
           {stats.planCount} {stats.planCount === 1 ? "plan" : "plans"} ·{" "}
           {stats.orderCount} {stats.orderCount === 1 ? "order" : "orders"} ·{" "}
           {stats.itemCount} {stats.itemCount === 1 ? "item" : "items"}
@@ -79,7 +79,7 @@ export const PlanCalendarHeader = ({
         <button
           type="button"
           onClick={onCreatePlan}
-          className="flex items-center gap-1.5 rounded-full px-4 py-[9px] text-[13px] font-medium transition-opacity hover:opacity-85"
+          className="flex items-center gap-1.5 rounded-full px-4 py-[9px] text-px-13 font-medium transition-opacity hover:opacity-85"
           style={{
             backgroundColor: "var(--color-text)",
             color: "var(--color-page)",

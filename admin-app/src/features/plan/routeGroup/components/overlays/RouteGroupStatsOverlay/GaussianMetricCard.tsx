@@ -231,7 +231,7 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
 
           {activeFace.subDisplayValue ? (
             <div className="-mt-1 flex justify-center">
-              <span className="text-center text-[10px] font-medium text-muted">
+              <span className="text-center text-micro font-medium text-muted">
                 {activeFace.subDisplayValue}
               </span>
             </div>
@@ -241,7 +241,7 @@ export const GaussianMetricCard = ({ card, routeScopeKey }: GaussianMetricCardPr
             <div className="text-center text-xs font-semibold text-text">
               {activeFace.label}
               {isEstimated ? (
-                <span className="ml-1 rounded-full border border-border-accent px-1.5 py-[1px] text-[9px] uppercase tracking-[0.08em] text-muted">
+                <span className="ml-1 rounded-full border border-border-accent px-1.5 py-[1px] text-nano uppercase tracking-[0.08em] text-muted">
                   Est.
                 </span>
               ) : null}

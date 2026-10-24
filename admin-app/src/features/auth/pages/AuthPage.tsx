@@ -34,10 +34,10 @@ export function AuthPage() {
           <div className="admin-auth-panel-highlight pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--foreground-mark)_14%,transparent),transparent_54%)]" />
           <div className="relative flex flex-col gap-6">
             <header className="space-y-3 text-center">
-              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-faint">
+              <p className="text-rem-0_7 font-semibold uppercase tracking-[0.35em] text-faint">
                 Next Mark Admin
               </p>
-              <h1 className="text-4xl font-semibold tracking-[-0.04em] text-text sm:text-[2.8rem]">
+              <h1 className="text-4xl font-semibold tracking-[-0.04em] text-text sm:text-rem-2_8">
                 Admin panel access
               </h1>
               <p className="text-sm leading-6 text-muted">

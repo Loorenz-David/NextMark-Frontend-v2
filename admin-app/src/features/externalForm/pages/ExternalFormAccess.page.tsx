@@ -18,10 +18,10 @@ export const ExternalFormAccessPage = () => {
 
       <section className="relative w-full max-w-2xl overflow-hidden rounded-4xl border border-border bg-[linear-gradient(180deg,rgba(var(--theme-surface-external-r),0.96),rgba(var(--theme-surface-shell-top-r),0.94))] shadow-[var(--shadow-panel-external)]">
         <div className="border-b border-border-subtle px-8 py-8">
-          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.34em] text-[var(--accent)]/68">
+          <p className="text-rem-0_68 font-semibold uppercase tracking-[0.34em] text-[var(--accent)]/68">
             External Form
           </p>
-          <h1 className="mt-3 text-[2rem] font-semibold tracking-[-0.04em] text-text">
+          <h1 className="mt-3 text-rem-2 font-semibold tracking-[-0.04em] text-text">
             Customer Form Access
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-faint">
@@ -33,19 +33,19 @@ export const ExternalFormAccessPage = () => {
         <div className="space-y-6 px-8 py-8">
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-3xl border border-border bg-surface-raised p-4">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-faint">
+              <p className="text-rem-0_65 font-semibold uppercase tracking-[0.28em] text-faint">
                 Step 1
               </p>
               <p className="mt-3 text-base font-medium text-text">Client identity</p>
             </div>
             <div className="rounded-3xl border border-border bg-surface-raised p-4">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-faint">
+              <p className="text-rem-0_65 font-semibold uppercase tracking-[0.28em] text-faint">
                 Step 2
               </p>
               <p className="mt-3 text-base font-medium text-text">Contact details</p>
             </div>
             <div className="rounded-3xl border border-border bg-surface-raised p-4">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-faint">
+              <p className="text-rem-0_65 font-semibold uppercase tracking-[0.28em] text-faint">
                 Step 3
               </p>
               <p className="mt-3 text-base font-medium text-text">Delivery address</p>

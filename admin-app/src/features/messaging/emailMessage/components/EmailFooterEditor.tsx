@@ -68,7 +68,7 @@ export const EmailFooterEditor = ({ buttons, onChange }: EmailFooterEditorProps)
               <BasicButton
                 params={{
                   variant: 'secondary',
-                  className: 'px-2  text-md',
+                  className: 'px-2  text-sm',
                   onClick: () => removeButton(button.id),
                   ariaLabel: 'Remove footer button',
                 }}

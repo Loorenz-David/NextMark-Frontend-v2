@@ -67,7 +67,7 @@ function AiOrderCardComponent({ order, onRowClick }: AiOrderCardProps) {
           <span className="truncate text-base font-semibold text-[var(--color-text)]">{orderLabel}</span>
           <OrderOperationTypeBadges operationType={order.operation_type} />
           {order.external_source && (
-            <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.55rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
+            <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-rem-0_55 uppercase tracking-[0.16em] text-[var(--color-muted)]">
               {order.external_source}
             </span>
           )}

@@ -28,7 +28,7 @@ export const OrderManualMessageField = ({
       className={`rounded-2xl border border-[var(--color-border-accent)] bg-[var(--surface-popup-chrome)] shadow-sm ${className ?? ""}`}
     >
       <div className="flex items-center justify-between gap-3 px-4 pt-3">
-        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted)]">
+        <p className="text-micro font-medium uppercase tracking-[0.18em] text-[var(--color-muted)]">
           Send message to customer
         </p>
       </div>

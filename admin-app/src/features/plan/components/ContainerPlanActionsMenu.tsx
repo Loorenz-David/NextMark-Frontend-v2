@@ -59,7 +59,7 @@ export const ContainerPlanActionsMenu = ({
           confirmation: {
             confirmContent: "Confirm delete",
             confirmClassName:
-              "flex w-full items-center justify-center rounded-lg bg-danger-solid px-3 py-2 text-[10px] text-danger-on-solid",
+              "flex w-full items-center justify-center rounded-lg bg-danger-solid px-3 py-2 text-micro text-danger-on-solid",
             duration: 4000,
           },
         },

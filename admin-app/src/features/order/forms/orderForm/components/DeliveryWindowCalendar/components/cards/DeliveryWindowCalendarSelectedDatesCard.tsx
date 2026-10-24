@@ -38,7 +38,7 @@ export const DeliveryWindowCalendarSelectedDatesCard = ({
               <span className={`${isCompact ? 'text-xs' : 'text-sm md:text-base'} font-semibold text-[var(--color-text)]`}>
                 {formatLocalDateCardLabel(entry.localDate)}
               </span>
-              <span className={`${isCompact ? 'min-w-6 rounded-md px-1.5 py-0 text-[10px]' : 'min-w-7 rounded-lg px-2 py-0.5 text-xs md:min-w-8 md:rounded-xl md:py-1 md:text-sm'} flex items-center justify-center bg-[var(--color-page)] font-semibold text-[var(--color-text)]`}>
+              <span className={`${isCompact ? 'min-w-6 rounded-md px-1.5 py-0 text-micro' : 'min-w-7 rounded-lg px-2 py-0.5 text-xs md:min-w-8 md:rounded-xl md:py-1 md:text-sm'} flex items-center justify-center bg-[var(--color-page)] font-semibold text-[var(--color-text)]`}>
                 {entry.windowCount}
               </span>
             </div>

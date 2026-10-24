@@ -25,7 +25,7 @@ export const CostumerPanelShell = ({
       {!hidePanelTitle ? (
         <div className={`flex w-full items-center justify-between gap-2 ${resolvedHeaderBoxClassName}`}>
           <div className="flex min-w-0 items-center gap-2">
-            <span className="text-[12px] font-semibold">Costumer</span>
+            <span className="text-px-12 font-semibold">Costumer</span>
             <InfoHover content={ORDER_FORM_COSTUMER_INFO} />
             {titleAdornment ?? null}
           </div>

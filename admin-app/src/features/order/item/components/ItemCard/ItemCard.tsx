@@ -98,7 +98,7 @@ export const ItemCard = ({
           <span className="mt-1 block min-w-0 truncate text-xs text-[var(--color-muted)]/95">
             {item.article_number || '—'}
           </span>
-          <span className="mt-1 block min-w-0 truncate text-[11px] text-[var(--color-muted)]/95">
+          <span className="mt-1 block min-w-0 truncate text-2xs text-[var(--color-muted)]/95">
             Position: {item.item_position ?? '—'}
           </span>
         </div>
@@ -133,7 +133,7 @@ export const ItemCard = ({
                       onConfirm={handleDelete}
                       deleteContent={<DeleteIcon className="h-4 w-4 text-danger"/>}
                       confirmContent={'Confirm deletion'}
-                      confirmClassName="text-danger-on-solid text-[10px] px-2 py-1 rounded-md bg-danger-solid"
+                      confirmClassName="text-danger-on-solid text-micro px-2 py-1 rounded-md bg-danger-solid"
                     />
               </div>
             ) : null}

@@ -9,7 +9,7 @@ export const CostumerPanelEmptyView = ({
 }: CostumerPanelEmptyViewProps) => {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 px-4 pb-4">
-      <span className="text-[14px] text-[var(--color-muted)]">No costumer selected.</span>
+      <span className="text-px-14 text-[var(--color-muted)]">No costumer selected.</span>
       <div className="flex items-center justify-end">
         <BasicButton
           params={{

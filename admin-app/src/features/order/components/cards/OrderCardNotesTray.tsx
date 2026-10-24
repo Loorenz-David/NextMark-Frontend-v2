@@ -27,7 +27,7 @@ export const OrderCardNotesTray = ({
             className={`border-t px-3 py-2 ${style.container}`}
           >
             <p
-              className={`text-[9px] font-semibold uppercase tracking-[0.16em] ${style.label}`}
+              className={`text-nano font-semibold uppercase tracking-[0.16em] ${style.label}`}
             >
               {NOTE_TYPE_LABEL[note.type]}
             </p>

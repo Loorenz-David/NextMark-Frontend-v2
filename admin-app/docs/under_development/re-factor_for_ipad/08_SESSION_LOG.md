@@ -40,6 +40,16 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phase 3 typography and density tokens (Codex)
+
+- Branch: `ipad/phase-3-typography`; no commit. Re-grepped typography, icon-size, height and badge tokens before editing. Source changes stay in the Phase 3 surfaces and codemod-eligible files.
+- Added `text-nano`, `text-micro`, `text-2xs` and exact-value aliases for existing arbitrary px/rem sizes. Desktop values remain unchanged; coarse pointers raise sub-12px text to 12px and `text-xs` to 13px. The codemod replaced 295 uses across 134 files; its `--check` runs in `theme:regression`. Removed all nine no-op `text-md` uses. Interactive SVGs with `h-2`/`h-2.5`/`h-3` have coarse-pointer minimums of 14/14/16px.
+- Added coarse-pointer viewport-height caps to the four order-detail panels, delivery-window calendar and notifications list, preserving their desktop heights. Moved the three Phase 0 badge colors to light/dark theme variables.
+- Judgment: the plan's nearest-token rem conversion would slightly change desktop sizes, so fractional sizes keep exact desktop values through aliases. The two no-op `text-md` spans and raw button use `text-base/normal` to preserve inherited 16px with normal line height; BasicButton cases use its existing `text-sm` size.
+- Gates: `npm run lint` ✅ (0 errors, 52 existing warnings); `npm test` ✅ (97/97); `npm run build` ✅; `npm run check:popup-contract` ✅; `npm run theme:regression` ✅; `npm run check:external-form-pwa` ✅; codemod `--check` ✅; `git diff --check` ✅ including the new script. No check or lint rule was relaxed.
+- Device matrix: A1–A7 readability ⏳; E1–E2 desktop visual comparison ⏳. Chrome was not used, as directed; iPad device review remains pending. E3 automated gates ✅.
+- Claude review (2026-10-24): codemod mapping verified value-for-value (295 replacements, 195 colour classes intact, no `text-[Npx|rem]` left outside the excluded folders). Two desktop regressions fixed: the light theme's missing-info badge had moved to `--warning-soft`/`--ink` (amber/near-black instead of the original yellow/brown) — restored the original values in the light block; `--text-nano/micro/2xs--line-height: normal` made converted text stop inheriting its line height — removed, so the utilities emit font-size only, exactly like the arbitrary classes they replace. Desktop watch item for E1: the nine `text-md` no-ops now resolve to `text-sm`/`text-base`.
+
 ### 2026-10-24 — Stack committed, second wave opened (Claude)
 
 - Committed and stacked in merge order: `ipad/phase-0-foundations` → `ipad/phase-0c-baseline` (0c) → `ipad/phase-1-geometry` (1) → `ipad/phase-2-touch` (2). Nothing merged to `main`; that waits for the iPad rows.

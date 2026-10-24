@@ -58,7 +58,7 @@ export const RouteGroupOrderGroupCard = ({
               stopOrder={group.firstStopOrder}
               variant={"small"}
             />
-            <span className="text-[10px] text-[var(--color-muted)] "> to </span>
+            <span className="text-micro text-[var(--color-muted)] "> to </span>
             <StopOrderAvatar
               stopOrder={group.lastStopOrder}
               variant={"small"}
@@ -96,7 +96,7 @@ export const RouteGroupOrderGroupCard = ({
                     }
                   >
                     <div
-                      className="admin-backdrop-blur-xl w-56 rounded-3xl border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.06))] p-3 text-[0.85rem] text-warning shadow-[var(--shadow-panel-floating)]"
+                      className="admin-backdrop-blur-xl w-56 rounded-3xl border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.06))] p-3 text-rem-0_85 text-warning shadow-[var(--shadow-panel-floating)]"
                       onMouseEnter={() => setWarningOpen(true)}
                       onMouseLeave={() => setWarningOpen(false)}
                     >

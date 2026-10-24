@@ -47,7 +47,7 @@ export const AccordionSection = ({
             className="flex w-full items-center justify-between rounded-xl   bg-[var(--color-page)] px-4 py-3 text-left"
             >
             {typeof title === 'string' ? (
-                <span className="text-md font-bold text-[var(--color-muted)]">
+                <span className="text-base/normal font-bold text-[var(--color-muted)]">
                 {title}
                 </span>
             ) : (
@@ -96,7 +96,7 @@ export const DescriptiveTitle = ({
           <div className="flex">
                 {icon}
                 <div className="flex flex-col gap-1">
-                    <span className="text-md font-bold text-[var(--color-muted)]">
+                    <span className="text-base/normal font-bold text-[var(--color-muted)]">
                         {header}
                     </span>
                     <span className="text-xs  text-[var(--color-muted)]/80 ">

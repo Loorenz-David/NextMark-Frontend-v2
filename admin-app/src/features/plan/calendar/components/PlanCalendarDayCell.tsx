@@ -124,7 +124,7 @@ export const PlanCalendarDayCell = ({
     >
       <div className="flex shrink-0 items-center">
         <span
-          className={`flex h-[22px] w-[22px] items-center justify-center rounded-calendar-day-number font-mono text-[12px] ${
+          className={`flex h-[22px] w-[22px] items-center justify-center rounded-calendar-day-number font-mono text-px-12 ${
             cell.isToday
               ? "bg-[var(--color-text)] font-semibold text-[var(--color-page)]"
               : cell.inMonth
@@ -169,7 +169,7 @@ export const PlanCalendarDayCell = ({
                     setIsTapOverlayOpen((current) => !current);
                   }}
                   aria-label={`Show all ${plans.length} plans for ${cell.dateKey}`}
-                  className="w-full shrink-0 rounded-md px-1 py-0.5 text-left text-[10.5px] font-medium text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)]"
+                  className="w-full shrink-0 rounded-md px-1 py-0.5 text-left text-px-10_5 font-medium text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)]"
                 >
                   + {extraPlanCount} more {extraPlanCount === 1 ? "plan" : "plans"}
                 </button>

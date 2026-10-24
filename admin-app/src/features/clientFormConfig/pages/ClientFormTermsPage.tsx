@@ -89,7 +89,7 @@ export const ClientFormTermsPage = () => {
 
       {/* Version cards need a readable, stable column — not a share of the width. */}
       <div className="flex w-64 shrink-0 flex-col gap-3 overflow-auto border-l border-border-subtle pl-4 scroll-thin xl:w-72">
-        <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
+        <p className="text-rem-0_62 font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
           Version history
         </p>
         <TermsVersionList

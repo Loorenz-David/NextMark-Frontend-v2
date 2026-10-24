@@ -164,7 +164,7 @@ export const MessageScheduleControl = ({
           }}
         >
           <span className="flex flex-col items-start gap-0.5">
-            <span className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+            <span className="text-rem-0_62 font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
               {resolvedLabels.buttonLabel}
             </span>
             <span className="text-sm font-semibold text-[var(--color-text)]">{summary}</span>

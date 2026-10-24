@@ -13,7 +13,7 @@ export const CostumerPanelSearchBackAction = ({
       params={{
         variant: 'ghost',
         onClick,
-        className: 'flex items-center gap-1 px-1 py-1 text-[11px] text-[var(--color-muted)]',
+        className: 'flex items-center gap-1 px-1 py-1 text-2xs text-[var(--color-muted)]',
         ariaLabel: 'Back to selected costumer',
       }}
     >

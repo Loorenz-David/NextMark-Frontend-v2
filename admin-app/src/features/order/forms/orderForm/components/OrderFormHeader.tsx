@@ -49,7 +49,7 @@ export const OrderFormHeader = ({
           <InfoHover content={ORDER_FORM_HEADER_INFO} />
         </div>
         {orderIdentity && (
-          <span className="text-[10px]">{orderIdentity}</span>
+          <span className="text-micro">{orderIdentity}</span>
         )}
       </div>
       <div>

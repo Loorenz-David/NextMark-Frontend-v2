@@ -62,7 +62,7 @@ const CHANGE_DOT_CLASS: Record<OrderEventChangeKind, string> = {
 };
 
 const DrawerSectionHeading = ({ children }: { children: string }) => (
-  <p className="px-3 pt-2.5 pb-1 text-[0.6rem] font-medium uppercase tracking-[0.16em] text-faint">
+  <p className="px-3 pt-2.5 pb-1 text-rem-0_6 font-medium uppercase tracking-[0.16em] text-faint">
     {children}
   </p>
 );
@@ -82,7 +82,7 @@ const OrderEventChangeRow = ({
         {change.label}
       </span>
       {change.scope ? (
-        <span className="min-w-0 truncate rounded-md bg-surface-hover px-1.5 py-px text-[0.6rem] font-medium text-muted">
+        <span className="min-w-0 truncate rounded-md bg-surface-hover px-1.5 py-px text-rem-0_6 font-medium text-muted">
           {change.scope}
         </span>
       ) : null}
@@ -132,7 +132,7 @@ const OrderEventActorChip = ({
     ) : (
       <span
         aria-hidden="true"
-        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[0.55rem] font-semibold ${ACTOR_AVATAR_CLASS[actor.kind]}`}
+        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-rem-0_55 font-semibold ${ACTOR_AVATAR_CLASS[actor.kind]}`}
       >
         {actor.initial}
       </span>
@@ -143,7 +143,7 @@ const OrderEventActorChip = ({
       {actor.name}
     </span>
     {actor.roleLabel ? (
-      <span className="shrink-0 rounded-full border border-border-subtle px-1.5 py-px text-[0.58rem] font-medium uppercase tracking-[0.14em] text-muted">
+      <span className="shrink-0 rounded-full border border-border-subtle px-1.5 py-px text-rem-0_58 font-medium uppercase tracking-[0.14em] text-muted">
         {actor.roleLabel}
       </span>
     ) : null}
@@ -165,19 +165,19 @@ const OrderEventActionRow = ({
         {action.label}
       </span>
       {action.channel ? (
-        <span className="shrink-0 rounded-md bg-surface-hover px-1.5 py-px text-[0.6rem] font-medium uppercase tracking-[0.12em] text-muted">
+        <span className="shrink-0 rounded-md bg-surface-hover px-1.5 py-px text-rem-0_6 font-medium uppercase tracking-[0.12em] text-muted">
           {action.channel}
         </span>
       ) : null}
       <span
-        className={`shrink-0 text-[0.68rem] font-medium ${STATUS_TEXT_CLASS[action.status]}`}
+        className={`shrink-0 text-rem-0_68 font-medium ${STATUS_TEXT_CLASS[action.status]}`}
       >
         {formatOrderEventActionStatus(action.status)}
       </span>
     </div>
 
     {action.attempts > 1 || action.scheduledFor || action.error ? (
-      <div className="flex flex-col gap-0.5 pl-3.5 text-[0.68rem] text-muted">
+      <div className="flex flex-col gap-0.5 pl-3.5 text-rem-0_68 text-muted">
         {action.attempts > 1 ? <span>{action.attempts} attempts</span> : null}
         {action.scheduledFor ? (
           <span>Scheduled for {action.scheduledFor}</span>
@@ -227,7 +227,7 @@ export const OrderEventTimelineItem = ({
             <p className="min-w-0 truncate text-sm font-medium text-text">
               {item.label}
             </p>
-            <time className="shrink-0 text-[0.7rem] tabular-nums text-faint">
+            <time className="shrink-0 text-rem-0_7 tabular-nums text-faint">
               {item.time}
             </time>
           </div>

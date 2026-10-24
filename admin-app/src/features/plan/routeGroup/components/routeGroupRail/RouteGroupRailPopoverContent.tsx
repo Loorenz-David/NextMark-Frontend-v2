@@ -30,7 +30,7 @@ export const RouteGroupRailPopoverContent = ({
         <div className="text-sm font-semibold text-[var(--accent-ink)]">
           {item.label}
         </div>
-        <div className="text-[11px] text-[var(--accent-ink)]/78">
+        <div className="text-2xs text-[var(--accent-ink)]/78">
           {item.zoneLabel ?? "Route group"}
         </div>
       </div>

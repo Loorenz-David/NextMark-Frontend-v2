@@ -27,9 +27,9 @@ export const OrderDetailTimeWindows = ({ order, headerRight }: OrderDetailTimeWi
   })
 
   return (
-    <div className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+    <div className="admin-glass-panel flex h-[420px] [@media(pointer:coarse)]:h-[min(420px,55dvh)] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
       <div className="admin-glass-divider flex items-center justify-between gap-3 border-b px-5 py-4">
-        <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
+        <p className="text-micro font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
           Delivery Windows
         </p>
         {headerRight ? (
@@ -48,7 +48,7 @@ export const OrderDetailTimeWindows = ({ order, headerRight }: OrderDetailTimeWi
 
             return (
               <div key={`order_time_window_group_${order.id}_${i}`}>
-                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-muted)]">
+                <p className="text-micro font-medium uppercase tracking-[0.2em] text-[var(--color-muted)]">
                   {serializeDate}
                 </p>
                 <div className="mt-3 flex flex-col gap-2.5">

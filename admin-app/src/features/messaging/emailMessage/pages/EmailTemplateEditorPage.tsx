@@ -79,7 +79,7 @@ export const EmailTemplateEditorPage = () => {
               params={{
                 variant: 'primary',
                 onClick: () => saveTemplate(),
-                className: 'px-4 py-2 text-md',
+                className: 'px-4 py-2 text-sm',
                 ariaLabel: 'Save template',
               }}
             >

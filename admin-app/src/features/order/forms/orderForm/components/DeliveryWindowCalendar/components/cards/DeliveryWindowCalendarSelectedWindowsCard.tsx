@@ -61,7 +61,7 @@ export const DeliveryWindowCalendarSelectedWindowsCard = ({
                           variant: 'text',
                           onClick: () => onEdit(row),
                           className:
-                            `${isCompact ? 'text-[10px]' : 'text-[11px] md:text-xs'} h-auto border-none bg-transparent px-0 py-0 font-semibold normal-case tracking-normal text-[var(--color-dark-blue)]`,
+                            `${isCompact ? 'text-micro' : 'text-2xs md:text-xs'} h-auto border-none bg-transparent px-0 py-0 font-semibold normal-case tracking-normal text-[var(--color-dark-blue)]`,
                         }}
                       >
                         Edit
@@ -71,7 +71,7 @@ export const DeliveryWindowCalendarSelectedWindowsCard = ({
                           variant: 'text',
                           onClick: () => onRemove(row),
                           className:
-                            `${isCompact ? 'text-[10px]' : 'text-[11px] md:text-xs'} h-auto border-none bg-transparent px-0 py-0 font-semibold normal-case tracking-normal text-danger hover:bg-transparent`,
+                            `${isCompact ? 'text-micro' : 'text-2xs md:text-xs'} h-auto border-none bg-transparent px-0 py-0 font-semibold normal-case tracking-normal text-danger hover:bg-transparent`,
                         }}
                       >
                         Remove
@@ -80,14 +80,14 @@ export const DeliveryWindowCalendarSelectedWindowsCard = ({
                   </div>
                 ))
               ) : (
-                <div className={`${isCompact ? 'rounded-lg px-2 py-1.5 text-[11px]' : 'rounded-xl px-3 py-2 text-xs md:text-sm'} border border-dashed border-[var(--color-border-accent)] text-[var(--color-muted)]`}>
+                <div className={`${isCompact ? 'rounded-lg px-2 py-1.5 text-2xs' : 'rounded-xl px-3 py-2 text-xs md:text-sm'} border border-dashed border-[var(--color-border-accent)] text-[var(--color-muted)]`}>
                   No time windows for this date.
                 </div>
               )}
             </div>
           ))}
 
-          {helperText ? <p className={`${isCompact ? 'text-[11px]' : 'text-xs md:text-sm'} text-[var(--color-muted)]`}>{helperText}</p> : null}
+          {helperText ? <p className={`${isCompact ? 'text-2xs' : 'text-xs md:text-sm'} text-[var(--color-muted)]`}>{helperText}</p> : null}
         </div>
       )}
     </section>

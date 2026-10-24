@@ -25,7 +25,7 @@ export const PlanContainerViewToggle = () => {
           key={view}
           type="button"
           onClick={() => setContainerView(view)}
-          className={`rounded-full px-3 py-1 text-[12.5px] transition-all ${
+          className={`rounded-full px-3 py-1 text-px-12_5 transition-all ${
             containerView === view
               ? "bg-[var(--surface-card-muted)] font-semibold text-[var(--color-text)] shadow-sm"
               : "font-medium text-[var(--color-muted)] hover:text-[var(--color-text)]"

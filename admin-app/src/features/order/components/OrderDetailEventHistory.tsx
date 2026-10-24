@@ -112,9 +112,9 @@ export const OrderDetailEventHistory = ({
   };
 
   return (
-    <div className="admin-glass-panel flex h-[420px] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+    <div className="admin-glass-panel flex h-[420px] [@media(pointer:coarse)]:h-[min(420px,55dvh)] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
       <div className="admin-glass-divider flex items-center justify-between gap-3 border-b px-5 py-4">
-        <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
+        <p className="text-micro font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
           Event History
         </p>
         <div className="flex items-center gap-2.5">
@@ -133,7 +133,7 @@ export const OrderDetailEventHistory = ({
                   ? "Refreshing order events"
                   : "Refresh order events"
               }
-              className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-1 text-[0.62rem] font-medium uppercase tracking-[0.14em] text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-1 text-rem-0_62 font-medium uppercase tracking-[0.14em] text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <RetryIcon
                 aria-hidden="true"
@@ -143,7 +143,7 @@ export const OrderDetailEventHistory = ({
           ) : null}
 
           {typeof orderId === "number" && loaded ? (
-            <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--color-muted)]">
+            <span className="text-micro font-medium uppercase tracking-[0.16em] text-[var(--color-muted)]">
               {visibleEventCount} events
             </span>
           ) : null}
@@ -188,7 +188,7 @@ export const OrderDetailEventHistory = ({
           <div className="flex flex-col gap-5 pb-1">
             {timelineGroups.map((group) => (
               <section key={group.key} aria-label={group.label}>
-                <p className="mb-3 text-[0.62rem] font-medium uppercase tracking-[0.18em] text-faint">
+                <p className="mb-3 text-rem-0_62 font-medium uppercase tracking-[0.18em] text-faint">
                   {group.label}
                 </p>
                 <ol className="flex flex-col">

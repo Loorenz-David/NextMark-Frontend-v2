@@ -129,7 +129,7 @@ export const AdminNotificationItem = ({
             </div>
           ) : null}
 
-          <p className="mt-1 flex min-w-0 items-center gap-1.5 text-[0.68rem]">
+          <p className="mt-1 flex min-w-0 items-center gap-1.5 text-rem-0_68">
             <span className="shrink-0 font-medium text-info">{timeLabel}</span>
             {!item.headline && item.actor.kind !== "system" ? (
               <>

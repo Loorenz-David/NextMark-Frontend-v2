@@ -61,13 +61,13 @@ export const ActingUserCard = ({ user, isActive, onSelect }: ActingUserCardProps
           </span>
         ) : null}
         {role ? (
-          <span className="mt-0.5 truncate text-[11px] uppercase tracking-wide text-[var(--color-muted)]/80">
+          <span className="mt-0.5 truncate text-2xs uppercase tracking-wide text-[var(--color-muted)]/80">
             {role}
           </span>
         ) : null}
       </div>
       {isActive ? (
-        <span className="flex h-5 items-center rounded-full bg-[color-mix(in_srgb,var(--color-blue-500)_18%,transparent)] px-2 text-[11px] font-semibold text-[rgba(var(--info-r),0.95)]">
+        <span className="flex h-5 items-center rounded-full bg-[color-mix(in_srgb,var(--color-blue-500)_18%,transparent)] px-2 text-2xs font-semibold text-[rgba(var(--info-r),0.95)]">
           Active
         </span>
       ) : (

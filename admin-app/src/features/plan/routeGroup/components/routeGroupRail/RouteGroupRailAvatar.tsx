@@ -196,7 +196,7 @@ export const RouteGroupRailAvatar = ({
           </span>
         </motion.span>
         <span
-          className="pointer-events-none absolute flex h-[42px] w-[42px] items-center justify-center rounded-full text-[11px] font-semibold text-[var(--color-text)] shadow-[inset_0_1px_0_var(--color-ligth-bg)]"
+          className="pointer-events-none absolute flex h-[42px] w-[42px] items-center justify-center rounded-full text-2xs font-semibold text-[var(--color-text)] shadow-[inset_0_1px_0_var(--color-ligth-bg)]"
           style={{
             background:
               "radial-gradient(circle at 35% 30%, rgba(var(--theme-surface-avatar-top-r),0.68) 0%, rgba(var(--theme-surface-avatar-mid-r),0.52) 58%, rgba(var(--theme-surface-avatar-bottom-r),0.42) 100%)",

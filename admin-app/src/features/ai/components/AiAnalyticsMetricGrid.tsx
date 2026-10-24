@@ -40,7 +40,7 @@ function AiAnalyticsMetricGridComponent({ data }: AiAnalyticsMetricGridProps) {
           className="admin-glass-panel admin-surface-compact flex min-h-[110px] flex-col gap-2 rounded-lg border border-border p-4"
           title={metric.hint ?? metric.description}
         >
-          <div className="text-[0.68rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <div className="text-rem-0_68 uppercase tracking-[0.14em] text-[var(--color-muted)]">
             {metric.label}
           </div>
           <div className="text-2xl font-semibold tracking-tight text-[var(--color-text)]">

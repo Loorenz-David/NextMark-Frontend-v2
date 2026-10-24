@@ -77,7 +77,7 @@ export const SmsTemplateEditorPage = () => {
               params={{
                 variant: 'primary',
                 onClick: () => saveTemplate(),
-                className: 'px-4 py-2 text-md',
+                className: 'px-4 py-2 text-sm',
                 ariaLabel: 'Save template',
               }}
             >
@@ -86,7 +86,7 @@ export const SmsTemplateEditorPage = () => {
         </div>
       </div>
       <div className="flex flex-col gap-2 px-1">
-        <p className="flex items-center gap-2 text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
+        <p className="flex items-center gap-2 text-rem-0_62 font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
           <span>SMS trigger</span>
           <span aria-hidden="true">·</span>
           <PlanTypeIcon className="h-3 w-3" />

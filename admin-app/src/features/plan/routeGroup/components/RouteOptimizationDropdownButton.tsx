@@ -93,19 +93,19 @@ export const RouteOptimizationDropdownButton = ({
                   <div className="flex items-center gap-2">
                     <span className="text-left text-sm text-[var(--color-text)]">{label}</span>
                     {isBest ? (
-                      <span className="rounded-full border border-[rgba(var(--optimize-r),0.24)] bg-[rgba(var(--optimize-r),0.14)] px-2 py-0.5 text-[10px] text-[var(--optimize-ink)]">
+                      <span className="rounded-full border border-[rgba(var(--optimize-r),0.24)] bg-[rgba(var(--optimize-r),0.14)] px-2 py-0.5 text-micro text-[var(--optimize-ink)]">
                         Best
                       </span>
                     ) : null}
                   </div>
                   <div className="flex items-center gap-2">
                     {isPendingPreview ? (
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                      <span className="text-micro uppercase tracking-[0.18em] text-[var(--color-muted)]">
                         Loading
                       </span>
                     ) : null}
                     {isPreviewing ? (
-                      <span className="rounded-full border border-[rgba(var(--optimize-r),0.24)] bg-[rgba(var(--optimize-r),0.14)] px-2 py-0.5 text-[10px] text-[var(--optimize-ink)]">
+                      <span className="rounded-full border border-[rgba(var(--optimize-r),0.24)] bg-[rgba(var(--optimize-r),0.14)] px-2 py-0.5 text-micro text-[var(--optimize-ink)]">
                         Preview
                       </span>
                     ) : null}

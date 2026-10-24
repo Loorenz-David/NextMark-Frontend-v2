@@ -1,6 +1,6 @@
 # 06 — Implementation plan: admin-app usable on iPad landscape
 
-**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending; Phases 0c, 1 and 2 committed and stacked (0 → 0c → 1 → 2); Chrome geometry and device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
+**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending; Phases 0c, 1 and 2 committed and stacked (0 → 0c → 1 → 2); Phase 3 source implemented, uncommitted, automated gates green, visual and device rows pending; Chrome geometry and device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
 
 Paths relative to `Front_end/admin-app/src` unless stated. Line numbers are in `02`/`03`; re-grep before editing.
 
@@ -122,6 +122,8 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 ---
 
 ## Phase 3 — Typography and density tokens (1 session + codemod)
+
+**Status (2026-10-24):** implemented, uncommitted on `ipad/phase-3-typography`. The codemod and all automated gates pass (lint 0 errors / 52 warnings, tests 97/97). A1–A7 readability and E1–E2 desktop visual checks remain pending; E3 automated checks pass. Exact desktop sizes are retained through value-specific aliases for fractional rem and nonstandard px utilities, rather than rounding those values to the three named sizes.
 
 **Goal:** text never below 12px and icons never below 14px on coarse pointers, with zero visual change on desktop.
 

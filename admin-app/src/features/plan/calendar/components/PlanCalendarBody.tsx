@@ -55,7 +55,7 @@ export const PlanCalendarBody = ({
         {CALENDAR_WEEKDAY_LABELS.map((label) => (
           <span
             key={label}
-            className="text-center font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--color-muted)]/80"
+            className="text-center font-mono text-micro uppercase tracking-[0.08em] text-[var(--color-muted)]/80"
           >
             {label}
           </span>
@@ -74,7 +74,7 @@ export const PlanCalendarBody = ({
           return [
             <span
               key={`week-${week[0]?.dateKey}`}
-              className="flex min-h-0 items-center justify-center font-mono text-[10px] uppercase tracking-[0.06em] text-[var(--color-muted)]/70"
+              className="flex min-h-0 items-center justify-center font-mono text-micro uppercase tracking-[0.06em] text-[var(--color-muted)]/70"
               title={weekNumber != null ? `Week ${weekNumber}` : undefined}
             >
               {weekNumber != null ? `V${weekNumber}` : ""}

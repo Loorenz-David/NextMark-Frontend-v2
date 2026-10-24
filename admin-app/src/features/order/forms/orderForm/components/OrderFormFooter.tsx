@@ -60,7 +60,7 @@ export const OrderFormFooter = ({
       <div className="flex flex-1 items-center justify-end gap-3">
         {sendStatus ? (
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.64rem] font-medium uppercase tracking-[0.12em] ${statusToneClass}`}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-rem-0_64 font-medium uppercase tracking-[0.12em] ${statusToneClass}`}
           >
             {sendStatus.state === "loading" ? (
               <span className="h-2.5 w-2.5 animate-spin rounded-full border border-current border-t-transparent" />

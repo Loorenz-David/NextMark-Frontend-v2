@@ -70,11 +70,11 @@ export const CostumerDetailOrdersSection = () => {
         <div className="flex items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
             <span className="text-sm font-semibold text-[var(--color-text)]">Orders</span>
-            <span className="text-[11px] text-[var(--color-muted)]">
+            <span className="text-2xs text-[var(--color-muted)]">
               {stats.totalOrders} total • {stats.totalItems} items • {formatStatValue(stats.totalVolume)} m³ •{' '}
               {formatStatValue(stats.totalWeight)} kg
             </span>
-            {loadingLabel ? <span className="text-[11px] text-[var(--color-muted)]">{loadingLabel}</span> : null}
+            {loadingLabel ? <span className="text-2xs text-[var(--color-muted)]">{loadingLabel}</span> : null}
           </div>
 
           <div className="flex items-center gap-2">

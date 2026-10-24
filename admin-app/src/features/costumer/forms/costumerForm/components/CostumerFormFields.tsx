@@ -134,7 +134,7 @@ export const CostumerFormFields = ({ model, compact = false }: CostumerFormField
       <div className="flex px-2 py-5">
         <div className="flex w-full flex-col gap-1">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold text-[var(--color-muted)]">
+            <span className="text-micro font-semibold text-[var(--color-muted)]">
               Operating Hours:
             </span>
             <InfoHover content={COSTUMER_OPERATING_HOURS_INFO} />

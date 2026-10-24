@@ -73,7 +73,7 @@ const ConsumptionMetricCard = ({
       <div className="flex items-center gap-2">
         <div className="min-w-0 truncate text-xs font-medium text-muted">{metric.label}</div>
         {isEstimated ? (
-          <span className="rounded-full border border-border-accent px-1.5 py-0.5 text-[10px] uppercase tracking-[0.08em] text-muted">
+          <span className="rounded-full border border-border-accent px-1.5 py-0.5 text-micro uppercase tracking-[0.08em] text-muted">
             Est.
           </span>
         ) : null}

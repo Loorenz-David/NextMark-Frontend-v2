@@ -54,7 +54,7 @@ export const ZoneColorField = ({
             style={{ backgroundColor: normalizedValue }}
           />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
+            <p className="text-micro font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
               Zone Color
             </p>
             <p className="mt-1 text-sm font-medium text-[var(--color-text)]">
@@ -84,7 +84,7 @@ export const ZoneColorField = ({
         </div>
 
         <div className="mt-4 flex flex-col gap-2">
-          <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
+          <label className="text-micro font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
             Hex
           </label>
           <input

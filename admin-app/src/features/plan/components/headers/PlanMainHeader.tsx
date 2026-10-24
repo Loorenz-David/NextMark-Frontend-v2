@@ -108,7 +108,7 @@ const HeaderButtons = ({ onRequestClose }: ButtonsProps) => {
         }}
       >
         <div className="flex gap-1 items-center justify-center">
-          <span className="font-semibold uppercase tracking-[0.2em] text-[var(--color-muted)]/90 text-[9px]">
+          <span className="font-semibold uppercase tracking-[0.2em] text-[var(--color-muted)]/90 text-nano">
             fold{" "}
           </span>
           <ChevronDownIcon

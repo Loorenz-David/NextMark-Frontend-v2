@@ -64,7 +64,7 @@ export const TimeColumn = ({
 
   return (
     <div className="relative flex min-w-0 flex-1 flex-col">
-      <div className="px-2 pb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+      <div className="px-2 pb-1 text-micro font-semibold uppercase tracking-wide text-[var(--color-muted)]">
         {label}
       </div>
       <div

@@ -42,10 +42,10 @@ const ItemMainContent = () => {
             <ItemIcon className="h-9 w-9" />
           </div>
           <div className="flex flex-col gap-1">
-            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-[var(--color-muted)]">
+            <p className="text-rem-0_62 font-semibold uppercase tracking-[0.3em] text-[var(--color-muted)]">
               Item Configuration
             </p>
-            <h1 className="text-[2rem] font-semibold leading-none text-[var(--color-text)]">
+            <h1 className="text-rem-2 font-semibold leading-none text-[var(--color-text)]">
               Item settings
             </h1>
             <p className="text-sm text-[var(--color-muted)]">
