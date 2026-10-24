@@ -40,6 +40,14 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phase 5 admin PWA (Codex)
+
+- Branch `ipad/phase-5-pwa`; no commit. Re-grepped PWA, viewport and back-layer symbols before editing. Phase 3 typography and `index.css` remain untouched.
+- Added `admin.webmanifest` and favicon-derived admin icons, a root admin contract and route-aware head selection. The form manifest and `/external-form` containment remain scoped. Kept `ExternalFormPwaProvider` as named. The admin head uses `default` status bar style and the dark page tone `#182224`.
+- Extended `check:external-form-pwa` to verify the admin contract, icons and root scope while retaining the notification-only service-worker guard. Added standalone tablet history handling for popup, section and sheet stacks by reusing the phone shell's stack-count/back flow; no second history owner or service worker was added. This uses the existing stack registry rather than individual `useBackLayerRegistration` calls because the managers already expose all popup and section entries to that flow.
+- Gates: `npm run lint` ✅ (0 errors, 52 existing warnings); `npm test` ✅ (97/97); `npm run build` ✅; `check:popup-contract` ✅; `theme:regression` ✅; `check:external-form-pwa` ✅; `git diff --check` ✅ with new files included via intent-to-add. No check or lint rule changed.
+- Device matrix: C1–C6 and D2–D3 ⏳ pending on the iPad. C3 requires logging in once inside the installed app because iPadOS partitions its storage from Safari. C6 requires the installed app's push permission tap and a delivered push. Chrome was not used.
+- Claude review (2026-10-24): manifest, head tags, guard-script extension and the standalone-tablet back flow match `04` §3–5; the service worker is still notification-only. **Open asset issue:** the admin icons are a small low-resolution logo on a white square inside a dark frame, and `maskable-512.png` is a byte copy of `icon-512.png` (no safe-zone padding). Needs a proper source logo (SVG or ≥1024px PNG) from the user before the client installs it. Silent auto-update follows as Phase 5b (`10_AUTO_UPDATE.md`).
 ### 2026-10-24 — Phase 4 popups, forms and settings at tablet height (Claude)
 
 - Branch: `ipad/phase-4-popups` (from the Phase 3 tip `9952997`); no commit. Re-grepped every symbol before editing. Geometry keys off `isTablet`, touch off `isCoarsePointer`, insets off `isStandalone`; no new `text-[Npx]` literals.

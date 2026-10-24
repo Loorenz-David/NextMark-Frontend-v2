@@ -15,6 +15,8 @@ const errors = []
 const MANIFEST_PATH = join(ROOT, 'public/external-form.webmanifest')
 const DOMAIN_PATH = join(ROOT, 'src/app/pwa/domain/externalFormPwa.ts')
 const SERVICE_WORKER_PATH = join(ROOT, 'public/admin-notifications-sw.js')
+const ADMIN_MANIFEST_PATH = join(ROOT, 'public/admin.webmanifest')
+const ADMIN_DOMAIN_PATH = join(ROOT, 'src/app/pwa/domain/adminPwa.ts')
 
 // ── The manifest agrees with the contract the app code depends on ────────────
 if (!existsSync(MANIFEST_PATH)) {
@@ -84,6 +86,42 @@ if (!existsSync(MANIFEST_PATH)) {
   }
 }
 
+// The root-scoped admin install has a separate manifest and icon set.
+if (!existsSync(ADMIN_MANIFEST_PATH)) {
+  errors.push('[manifest missing] public/admin.webmanifest')
+} else {
+  const manifest = JSON.parse(readFileSync(ADMIN_MANIFEST_PATH, 'utf8'))
+  const domainSource = readFileSync(ADMIN_DOMAIN_PATH, 'utf8')
+  const contractBlock = domainSource.match(/ADMIN_MANIFEST_CONTRACT = \{([\s\S]*?)\n\} as const/)
+  if (!contractBlock) {
+    errors.push('[contract unreadable] ADMIN_MANIFEST_CONTRACT not found in adminPwa.ts')
+  } else {
+    for (const [, key, expected] of contractBlock[1].matchAll(/^\s*(\w+):\s*'([^']*)'\s*,/gm)) {
+      if (manifest[key] !== expected) {
+        errors.push(`[admin manifest drift] ${key}: manifest has ${JSON.stringify(manifest[key])}, code expects ${JSON.stringify(expected)}`)
+      }
+    }
+  }
+  if (manifest.id !== '/' || manifest.scope !== '/' || manifest.start_url !== '/' || manifest.display !== 'standalone') {
+    errors.push('[admin manifest] root id, scope, start_url and standalone display are required')
+  }
+  if ('orientation' in manifest) errors.push('[admin manifest] orientation must be omitted')
+  const requiredIcons = [
+    ['/pwa/admin/icon-192.png', '192x192', 'any'],
+    ['/pwa/admin/icon-512.png', '512x512', 'any'],
+    ['/pwa/admin/maskable-512.png', '512x512', 'maskable'],
+  ]
+  for (const [src, sizes, purpose] of requiredIcons) {
+    if (!manifest.icons?.some((icon) => icon.src === src && icon.sizes === sizes && icon.purpose === purpose && icon.type === 'image/png')) {
+      errors.push(`[admin manifest] missing ${sizes} ${purpose} icon ${src}`)
+    }
+    if (!existsSync(join(ROOT, 'public', src))) errors.push(`[icon missing] public${src}`)
+  }
+  if (!existsSync(join(ROOT, 'public/pwa/admin/apple-touch-icon-180.png'))) {
+    errors.push('[icon missing] public/pwa/admin/apple-touch-icon-180.png')
+  }
+}
+
 // ── The notification service worker stays a notification service worker ──────
 if (!existsSync(SERVICE_WORKER_PATH)) {
   errors.push('[service worker missing] public/admin-notifications-sw.js')
@@ -119,4 +157,4 @@ if (errors.length > 0) {
   process.exit(1)
 }
 
-console.log('External-form PWA checks passed.')
+console.log('External-form and admin PWA checks passed.')

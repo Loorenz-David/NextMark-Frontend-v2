@@ -9,6 +9,7 @@ import { HomeAppManagersProvider } from '../providers/HomeAppManagersProvider'
 import { HomeDesktopHeader } from '../components/HomeDesktopHeader'
 import { HomeMobileShell } from '../components/mobile/HomeMobileShell'
 import { OrderLinkedDeviceLiveWidget } from '@/features/order/components/linkedDeviceLive/OrderLinkedDeviceLiveWidget'
+import { useHomeTabletBackFlow } from '../flows/useHomeTabletBack.flow'
 
 const HomeStorePickupPage = lazy(() =>
   import('@/features/home-store-pickup/pages/HomeStorePickupPage').then((module) => ({
@@ -51,6 +52,7 @@ function HomeAppShell() {
 
   return (
     <div className="flex h-dvh w-screen flex-col overflow-hidden">
+      <HomeTabletBackBridge />
       <HomeDesktopHeader />
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         <ActiveWorkspaceView workspace={activeWorkspace} />
@@ -62,6 +64,11 @@ function HomeAppShell() {
       <OrderLinkedDeviceLiveWidget />
     </div>
   )
+}
+
+function HomeTabletBackBridge() {
+  useHomeTabletBackFlow()
+  return null
 }
 
 function ActiveWorkspaceView({ workspace }: { workspace: ReturnType<typeof useHomeApp>['activeWorkspace'] }) {

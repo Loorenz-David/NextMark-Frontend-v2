@@ -1,6 +1,6 @@
 # 06 — Implementation plan: admin-app usable on iPad landscape
 
-**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending; Phases 0c, 1 and 2 committed and stacked (0 → 0c → 1 → 2); Phase 3 committed on `ipad/phase-3-typography`, automated gates green, visual and device rows pending; Phase 4 implemented on `ipad/phase-4-popups`, uncommitted, automated gates green, device rows pending; Chrome geometry and device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
+**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phases 0, 0c, 1, 2, 3, 4, 5 and 5b committed and stacked (0 → 0c → 1 → 2 → 3 → 4 → 5 → 5b), all automated gates green on the tip; all device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
 
 Paths relative to `Front_end/admin-app/src` unless stated. Line numbers are in `02`/`03`; re-grep before editing.
 
@@ -155,6 +155,8 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 ---
 
 ## Phase 5 — Installable admin PWA and standalone behaviour (1 session)
+
+**Status (2026-10-24):** implemented on `ipad/phase-5-pwa`, uncommitted. All automated gates green (lint 0 errors / 52 existing warnings; tests 97/97); C1–C6 and D2–D3 await iPad verification.
 
 Follow `04_PWA_AND_PLATFORM.md` §3–5: `public/admin.webmanifest` + icons in `public/pwa/admin/`; `app/pwa/domain/adminPwa.ts` with `ADMIN_MANIFEST_CONTRACT` and head tags; `resolvePwaHeadState` picks form vs admin by pathname (extend `domain/tests/externalFormPwa.test.ts`); extend `scripts/check-external-form-pwa.mjs` (or add `check-admin-pwa.mjs` and wire into `package.json`) to assert the admin manifest and still forbid a caching SW; rename `ExternalFormPwaProvider` → `PwaProvider` only with the user's agreement. History integration for tablet layers: reuse `useBackLayerRegistration` from `shared/overlays/bottomSheet` for popups and section stack on `isStandalone && isTablet` so the iPad edge-swipe closes the top layer (`04` §5). Status bar style `default` first.
 
