@@ -9,7 +9,7 @@ type ExtractPayload<T> = T extends React.ComponentType<StackComponentProps<infer
   ? P
   : never
 
-const LegacySection = (_: StackComponentProps<{ clientId?: string; mode?: string }>) =>
+const LegacySection = () =>
   createElement(OrderMainPage)
 
 export const pageRegistry = {

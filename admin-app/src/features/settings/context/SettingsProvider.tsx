@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react'
 import { useMemo } from 'react'
 
 import { StackActionManager } from '@/shared/stack-manager/StackActionManager'
-import { ResourcesManagerProvider } from '@/shared/resource-manager/ResourceManagerContext'
+import { ResourcesManagerProvider } from '@/shared/resource-manager/ResourceManagerContext-components'
 import { useStackActionEntries } from '@/shared/stack-manager/useStackActionEntries'
 import { MainPopup } from '@/shared/popups/MainPopup/MainPopup'
 

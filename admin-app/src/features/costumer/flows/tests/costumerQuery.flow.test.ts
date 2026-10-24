@@ -1,4 +1,4 @@
-import { runCostumerQueryFlow } from '../costumerQuery.flow'
+import { useCostumerQueryFlow } from '../costumerQuery.flow'
 
 const assert = (condition: boolean, message: string) => {
   if (!condition) {
@@ -9,5 +9,5 @@ const assert = (condition: boolean, message: string) => {
 export const runCostumerQueryFlowTests = async () => {
   // Hook behavior is integration-tested via UI consumers. Keep this contract test
   // minimal and runtime-safe for non-React test harnesses.
-  assert(typeof runCostumerQueryFlow === 'function', 'runCostumerQueryFlow should be exported as a function')
+  assert(typeof useCostumerQueryFlow === 'function', 'useCostumerQueryFlow should be exported as a function')
 }

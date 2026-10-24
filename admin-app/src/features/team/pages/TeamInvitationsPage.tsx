@@ -1,6 +1,5 @@
 import { AnimatePresence } from 'framer-motion'
 
-import type { StackComponentProps } from '@/shared/stack-manager/types'
 import { MailIcon } from '@/assets/icons'
 import { ConfirmActionPopup } from '@/shared/popups/ConfirmActionPopup'
 
@@ -67,7 +66,7 @@ const TeamInvitationsPageContent = () => {
   )
 }
 
-export const TeamInvitationsPage = (_: StackComponentProps<undefined>) => (
+export const TeamInvitationsPage = () => (
   <TeamProvider>
     <TeamInvitationsPageContent />
   </TeamProvider>

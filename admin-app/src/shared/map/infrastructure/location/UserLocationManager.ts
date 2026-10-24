@@ -4,7 +4,7 @@ import type { MapInstanceManager } from '../core/MapInstanceManager'
 import { resolveBrowserCurrentCoordinates } from '@/shared/utils/browserGeolocation'
 
 export class UserLocationManager {
-  private userLocationMarker: any = null
+  private userLocationMarker: google.maps.marker.AdvancedMarkerElement | null = null
   private mapInstanceManager: MapInstanceManager
 
   constructor(mapInstanceManager: MapInstanceManager) {

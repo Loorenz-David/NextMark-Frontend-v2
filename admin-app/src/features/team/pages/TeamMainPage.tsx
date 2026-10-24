@@ -1,5 +1,4 @@
 import {useEffect} from 'react'
-import type { StackComponentProps } from '@/shared/stack-manager/types'
 import { UsersIcon } from '@/assets/icons'
 
 import { TeamProvider } from '../context/TeamProvider'
@@ -69,7 +68,7 @@ const TeamMainPageContent = () => {
   )
 }
 
-export const TeamMainPage = (_: StackComponentProps<undefined>) => (
+export const TeamMainPage = () => (
   <TeamProvider>
     <TeamMainPageContent />
   </TeamProvider>

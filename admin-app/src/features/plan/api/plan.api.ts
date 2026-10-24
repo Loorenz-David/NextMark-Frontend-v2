@@ -18,6 +18,7 @@ import type {
 } from "@/features/plan/types/planMeta";
 
 import type { OrderListResponse } from "@/features/order/api/orderApi";
+import type { OrderQueryStoreFilters } from "@/features/order/types/orderMeta";
 
 export type PlanListResponse = {
   route_plan: DeliveryPlanMap;
@@ -60,7 +61,7 @@ export const planApi = {
 
   getPlanOrders: (
     planId: number | string,
-    query?: any,
+    query?: OrderQueryStoreFilters,
   ): Promise<ApiResult<OrderListResponse>> =>
     apiClient.request<OrderListResponse>({
       path: `/route_plans/${planId}/orders/`,

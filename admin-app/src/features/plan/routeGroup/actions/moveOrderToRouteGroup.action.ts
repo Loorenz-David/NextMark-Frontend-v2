@@ -12,13 +12,7 @@ import {
   routeGroupApi,
   type MoveOrderToRouteGroupResponse,
 } from "@/features/plan/routeGroup/api/routeGroup.api";
-import {
-  selectRouteGroupByServerId,
-  updateRouteGroup,
-  useRouteGroupStore,
-  getRouteGroupSnapshot,
-  restoreRouteGroupSnapshot,
-} from "@/features/plan/routeGroup/store/routeGroup.slice";
+import { selectRouteGroupByServerId, useRouteGroupStore, getRouteGroupSnapshot, restoreRouteGroupSnapshot } from "@/features/plan/routeGroup/store/routeGroup.slice";
 import {
   selectRouteSolutionsByRouteGroupId,
   upsertRouteSolution,

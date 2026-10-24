@@ -2,15 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { SearchFilterBar } from '@/shared/searchBars'
 import { AnimationRenderer } from '@/shared/spiners'
 
-import { runCostumerQueryFlow } from '../../flows/costumerQuery.flow'
+import { useCostumerQueryFlow } from '../../flows/costumerQuery.flow'
 
 
 import { useCostumerSearch } from '../../flows/useCostumerSearch.flow'
 import { PlusIcon } from '@/assets/icons'
 import type { CostumerSearchBarProps } from './CostumerSearchBar.types'
+import { shouldRunCostumerQuery } from '../../domain/shouldRunCostumerQuery'
 
-
-export const shouldRunCostumerQuery = (input: string): boolean => input.trim().length > 0
 
 const SEARCH_DEBOUNCE_MS = 400
 const MIN_SEARCH_LOADING_MS = 1000
@@ -25,7 +24,7 @@ export const CostumerSearchBar = ({
 }: CostumerSearchBarProps) => {
   
   
-  const {queryCostumers , visibleCostumers, isLoading, error} = runCostumerQueryFlow()
+  const {queryCostumers , visibleCostumers, isLoading, error} = useCostumerQueryFlow()
   const [showLoading, setShowLoading] = useState(false)
   const [isDebouncing, setIsDebouncing] = useState(false)
   const loadingStartAtRef = useRef<number | null>(null)

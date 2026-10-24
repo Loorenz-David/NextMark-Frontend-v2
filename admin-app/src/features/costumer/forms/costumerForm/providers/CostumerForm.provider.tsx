@@ -6,7 +6,7 @@ import { hasFormChanges } from '@shared-domain'
 
 import { useCostumerByClientId } from '../../../store/costumer.selectors'
 import { useCostumerFormActions } from '../controllers/useCostumerFormSubmit.controller'
-import { CostumerFormContextProvider } from '../context/CostumerForm.context'
+import { CostumerFormContextProvider } from '../context/CostumerForm.context-components'
 import { useCostumerFormBootstrapState } from './useCostumerFormBootstrapState'
 import { useCostumerFormCloseController } from './useCostumerFormCloseController'
 import type { CostumerFormPayload, CostumerFormSubmitOptions } from '../state/CostumerForm.types'

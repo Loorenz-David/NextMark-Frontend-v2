@@ -34,7 +34,8 @@ export {
   isRangeValue,
   isMultipleValue,
 } from './model/validation.utils'
-export { CalendarProvider, useCalendarContext } from './model/CalendarContext'
+export { useCalendarContext } from './model/CalendarContext'
+export { CalendarProvider } from './model/CalendarContext-components'
 
 export { CalendarRoot } from './ui/CalendarRoot'
 export { CalendarHeader } from './ui/CalendarHeader'
@@ -42,9 +43,8 @@ export { CalendarGrid } from './ui/CalendarGrid'
 export { CalendarWeekRow } from './ui/CalendarWeekRow'
 export {
   CalendarDayCell,
-  isSelectionActivationKey,
-  buildDayCellKeyDownHandler,
 } from './ui/CalendarDayCell'
+export { isSelectionActivationKey, buildDayCellKeyDownHandler } from './ui/calendarDayCellKeyboard'
 
 export { CalendarSandboxExample } from './examples/CalendarSandboxExample'
 

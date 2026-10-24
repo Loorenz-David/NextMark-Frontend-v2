@@ -10,24 +10,10 @@ import type {
   RouteSolutionTimesPayload,
   RouteSolutionUpdateResponse,
 } from '@/features/plan/routeGroup/api/routeSolution.api'
-import { applyRouteSolutionGetPayload, useRouteSolutionReadFlow } from '@/features/plan/routeGroup/flows/routeSolutionRead.flow'
+import { useRouteSolutionReadFlow } from '@/features/plan/routeGroup/flows/routeSolutionRead.flow'
 import { normalizeByClientIdArray } from '@/features/plan/routeGroup/api/mappers/routeSolutionPayload.mapper'
-import {
-  selectRouteSolutionByServerId,
-  selectRouteSolutionsByRouteGroupId,
-  purgeNonSelectedRouteSolutionsForGroup,
-  setSelectedRouteSolution,
-  upsertRouteSolution,
-  upsertRouteSolutions,
-  useRouteSolutionStore,
-} from '@/features/plan/routeGroup/store/routeSolution.store'
-import {
-  upsertRouteSolutionStop,
-  upsertRouteSolutionStops,
-  removeRouteSolutionStopsBySolutionIds,
-  replaceRouteSolutionStopsForSolution,
-  useRouteSolutionStopStore,
-} from '@/features/plan/routeGroup/store/routeSolutionStop.store'
+import { selectRouteSolutionByServerId, selectRouteSolutionsByRouteGroupId, purgeNonSelectedRouteSolutionsForGroup, setSelectedRouteSolution, upsertRouteSolution, useRouteSolutionStore } from '@/features/plan/routeGroup/store/routeSolution.store'
+import { upsertRouteSolutionStop, removeRouteSolutionStopsBySolutionIds, replaceRouteSolutionStopsForSolution, useRouteSolutionStopStore } from '@/features/plan/routeGroup/store/routeSolutionStop.store'
 import { applyOrderStateUpdatePayload } from '@/features/order/actions/applyOrderStateUpdatePayload.action'
 import { useOrderStateBatch } from '@/features/order/controllers/orderStateBatch.controller'
 import { usePlanStateChanges } from '@/features/plan/controllers/planState.controller'

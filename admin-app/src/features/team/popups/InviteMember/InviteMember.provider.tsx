@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { makeInitialFormCopy } from '@shared-domain'
 
-import { InviteMemberContextProvider } from './InviteMember.context'
+import { InviteMemberContextProvider } from './InviteMember.context-provider'
 import type { InviteMemberFormState } from './InviteMember.types'
 import { useInviteMemberWarnings } from './InviteMember.warnings'
 import { useInviteMemberValidation } from './InviteMember.validation'

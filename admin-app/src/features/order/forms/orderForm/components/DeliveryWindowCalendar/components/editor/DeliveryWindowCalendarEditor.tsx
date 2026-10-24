@@ -22,11 +22,11 @@ export const DeliveryWindowCalendarEditor = ({
   onCancel,
   onApply,
 }: DeliveryWindowCalendarEditorProps) => {
+  const shellScale = useDeliveryWindowCalendarShellScale()
   if (!isOpen) {
     return null
   }
 
-  const shellScale = useDeliveryWindowCalendarShellScale()
   const { editor } = shellScale
 
   return (

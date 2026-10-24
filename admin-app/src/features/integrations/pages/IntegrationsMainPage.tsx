@@ -1,4 +1,3 @@
-import type { StackComponentProps } from '@/shared/stack-manager/types'
 import { SettingIcon } from '@/assets/icons'
 
 import { IntegrationsProvider } from '../context/IntegrationsProvider'
@@ -40,7 +39,7 @@ const IntegrationsPageContent = () => {
   )
 }
 
-export const IntegrationsMainPage = (_: StackComponentProps<undefined>) => (
+export const IntegrationsMainPage = () => (
   <IntegrationsProvider>
     <IntegrationsPageContent />
   </IntegrationsProvider>

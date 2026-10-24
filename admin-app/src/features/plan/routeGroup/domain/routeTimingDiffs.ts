@@ -1,4 +1,3 @@
-import type { RouteGroup } from '@/features/plan/routeGroup/types/routeGroup'
 import type { RouteSolution } from '@/features/plan/routeGroup/types/routeSolution'
 import type { RouteSolutionStop } from '@/features/plan/routeGroup/types/routeSolutionStop'
 

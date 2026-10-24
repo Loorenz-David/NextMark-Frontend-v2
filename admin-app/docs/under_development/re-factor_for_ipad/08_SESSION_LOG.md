@@ -40,6 +40,14 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phase 0c lint and legacy-test baseline cleanup (Codex)
+
+- Branch: `ipad/phase-0c-baseline`; no commit. Worked within the Phase 0c lint/test baseline scope.
+- Lint: fixed type, hook, unused-code, and React-refresh violations without changing lint rules or adding suppressions. Split non-component context and helper exports into sibling files, preserving package and feature boundaries. `npm run lint`: 0 errors / 52 warnings (down from 207 errors / 54 warnings).
+- Tests: `npm test` passes 97/97. Updated stale legacy fixtures and three map tests for the current map manager and a jsdom environment; added `jsdom` as a dev dependency. Fixed a real order-form submit bug: missing item IDs are rejected before the submit continues.
+- Gates: `npm run build`, `npm run check:popup-contract`, `npm run theme:regression`, `npm run check:external-form-pwa`, and `git diff --check` pass. The theme map's PlanForm line anchor moved from 118 to 114 after unused-import cleanup; the exact color assertion remains unchanged.
+- Chrome geometry at 1024×768, 1180×820, and 1366×1024 with `?viewport=tablet&pointer=coarse`: pending. Chrome browser setup failed before navigation with `Importing module "node:process" is not allowed in node_repl`. No iPad is available today; touch rows remain pending.
+
 ### 2026-10-24 — Phase 0 committed, next phases opened (Claude)
 
 - No iPad available today; the user moves on and verifies Phase 0 on the device tomorrow. Phase 0 code committed on `ipad/phase-0-foundations` as **device-unverified**; if the device rows fail, fix on that branch and rebase the downstream branches.

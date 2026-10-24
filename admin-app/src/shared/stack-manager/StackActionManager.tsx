@@ -1,10 +1,10 @@
 import { createElement,  } from 'react'
-import type { ComponentType, LazyExoticComponent, ReactNode } from 'react'
+import type { ComponentType, JSXElementConstructor, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { v4 as uuidv4 } from "uuid"
 
 // Keep payload flexible; simple object shapes should be allowed without requiring an index signature.
-export type ActionPayload = any
+export type ActionPayload = unknown
 
 export interface BeforeCloseConfig {
   shouldWarn?: () => boolean
@@ -31,9 +31,9 @@ export interface ActionComponentProps<TPayload = ActionPayload> {
 }
 
 export interface ActionManagerOptions<
-  TPayloadMap extends Record<PropertyKey, any>
+  TPayloadMap extends object
 > {
-  blueprint?: ComponentType<any> | null
+  blueprint?: JSXElementConstructor<never> | null
   stackRegistry: {
     [K in keyof TPayloadMap]: StackRegistryComponent
   }
@@ -48,7 +48,7 @@ export interface ActionEntry<K extends PropertyKey, P> {
   parentParams?: Record<string, unknown>
 }
 
-type StackEntryUnion<T extends Record<PropertyKey, any>> = {
+type StackEntryUnion<T extends object> = {
   [K in keyof T]: ActionEntry<K, T[K]>
 }[keyof T]
 
@@ -63,14 +63,25 @@ export type RenderStackProps ={
   width?: number | 'full'
 }
 
-type StackRegistryComponent = ComponentType<any> | LazyExoticComponent<ComponentType<any>>
+type StackRegistryComponent = JSXElementConstructor<never>
+
+type BlueprintRenderProps = {
+  children?: ReactNode
+  id?: string
+  position?: number
+  parentParams?: Record<string, unknown>
+  payload?: unknown
+  onRequestClose?: () => void
+}
+
+type StackRenderProps = { payload?: unknown; onClose: () => void }
 
 export class StackActionManager <
-  TPayloadMap extends Record<PropertyKey, any>
+  TPayloadMap extends object
 >{
   private stackEntries: StackEntryUnion<TPayloadMap>[] = []
   private listeners = new Set<() => void>()
-  private readonly blueprint?: ComponentType<any> | null
+  private readonly blueprint?: JSXElementConstructor<never> | null
   private readonly stackRegistry:{[K in keyof TPayloadMap]: StackRegistryComponent}
   private readonly closeDelayMs: number
 
@@ -252,7 +263,8 @@ export class StackActionManager <
     key:K
   ): TPayloadMap[K] | undefined {
 
-    return this.getEntry( key as string )?.payload
+    const entry = this.getEntry(key as string) as ActionEntry<K, TPayloadMap[K]> | undefined
+    return entry?.payload
   }
 
   closeLastOnEsc = (event:KeyboardEvent)=>{
@@ -265,12 +277,12 @@ export class StackActionManager <
   }
 
   renderStack({variant, width}:RenderStackProps): ReactNode[] | undefined {
-    const Blueprint = this.blueprint
+    const Blueprint = this.blueprint as ComponentType<BlueprintRenderProps> | null | undefined
 
 
     if (variant == 'dynamicSectionPanels'){
       return this.stackEntries.map((entry, index) => {
-          const component = this.stackRegistry[entry.key] as ComponentType<any>
+          const component = this.stackRegistry[entry.key] as ComponentType<StackRenderProps>
           const isFirst = index === 0 
           const isFullWidth = width === 'full'
           const panelWidth = typeof width === 'number' && width > 0 ? width : null
@@ -333,7 +345,7 @@ export class StackActionManager <
     else{
 
        return this.stackEntries.map((entry, index) => {
-        const component = this.stackRegistry[entry.key] as ComponentType<any>
+        const component = this.stackRegistry[entry.key] as ComponentType<StackRenderProps>
         const RenderComp = createElement(component, {
             payload: entry.payload,
             onClose: () => this.close(entry.id),

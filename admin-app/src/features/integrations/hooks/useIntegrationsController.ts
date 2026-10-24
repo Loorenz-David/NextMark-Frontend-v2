@@ -5,6 +5,7 @@ import { useMessageHandler } from '@shared-message-handler'
 import { usePopupManager } from '@/shared/resource-manager/useResourceManager'
 
 import type { IntegrationKey } from '../types/integration'
+import type { InitialFormState } from '../popups/IntegrationConfig/IntegrationConfig.types'
 import { integrationEmailApi } from '../api/integrationEmailApi'
 import { integrationShopifyApi } from '../api/integrationShopifyApi'
 import { integrationTwilioApi } from '../api/integrationTwilioApi'
@@ -14,7 +15,7 @@ import { integrationTwilioApi } from '../api/integrationTwilioApi'
 
 export type IntegrationsPayload = {
   key : IntegrationKey
-  form: any
+  form: InitialFormState
   integrationId?: number | null
 }
 
@@ -28,7 +29,7 @@ export const useIntegrationsController = () => {
 
       if(key == 'shopify'){
         const shopifyForm = form.shopify
-        if( !(shopifyForm.shop.trim().length > 0) ) return 
+        if (!shopifyForm.shop?.trim()) return
         const res = await integrationShopifyApi.connect(shopifyForm.shop.trim())
         const authUrl = res.data?.auth_url
         if (!authUrl) return

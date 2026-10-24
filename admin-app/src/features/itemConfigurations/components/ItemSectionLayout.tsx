@@ -18,7 +18,6 @@ export const ItemSectionLayout = ({
   title,
   description,
   onCreate,
-  query,
   onSearch,
   showSearch = true,
   bodyClassName,

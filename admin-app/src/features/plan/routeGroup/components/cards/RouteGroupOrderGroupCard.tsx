@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { DraggableAttributes } from "@dnd-kit/core";
+import type { DraggableAttributes, DraggableSyntheticListeners } from "@dnd-kit/core";
 
 import { BoldArrowIcon, TriangleWarningIcon } from "@/assets/icons";
 import { FloatingPopover } from "@/shared/popups/FloatingPopover/FloatingPopover";
@@ -16,7 +16,7 @@ type RouteGroupOrderGroupCardProps = {
   routeGroupId?: number | null;
   projectedStopOrderByClientId?: Map<string, number> | null;
   dragAttributes?: DraggableAttributes;
-  dragListeners?: any;
+  dragListeners?: DraggableSyntheticListeners;
 };
 
 const formatRange = (

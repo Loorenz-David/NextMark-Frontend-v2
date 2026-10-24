@@ -1,7 +1,7 @@
 import { getTemplateVariantsByChannel, getTemplateVariantsMapByChannel } from "../domain"
 import type { availableChannels, availableVariants } from "../types"
 
-export const usePrintTemplateVariantsFlow = (channel: availableChannels, selected_variant: availableVariants)=>{
+export const resolvePrintTemplateVariants = (channel: availableChannels, selected_variant: availableVariants)=>{
     
     const templateVariantsMap = getTemplateVariantsMapByChannel(channel)
     const templateVariants = getTemplateVariantsByChannel(channel)

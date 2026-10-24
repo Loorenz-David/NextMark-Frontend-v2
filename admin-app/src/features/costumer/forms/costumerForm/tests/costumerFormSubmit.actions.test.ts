@@ -69,7 +69,7 @@ export const runCostumerFormSubmitActionsTests = async () => {
   assert(Boolean(createPayload), 'create mode should call createCostumer')
 
   const createFields = buildCostumerCreateFields(createState)
-  assert(createFields.addresses?.length === 0, 'create payload should omit empty placeholder addresses')
+  assert(createFields.addresses === undefined, 'create payload should omit empty placeholder addresses')
   assert(createFields.phones?.length === 2, 'create payload should include full phones array')
   assert(createFields.operating_hours?.length === 2, 'create payload should include selected operating hours')
   assert(
@@ -78,10 +78,12 @@ export const runCostumerFormSubmitActionsTests = async () => {
   )
 
   const editState = makeFormState()
+  editState.operating_hours[0] = { ...editState.operating_hours[0], open_time: '10:00' }
   const editSnapshot: RefObject<CostumerFormState | null> = {
     current: {
       ...editState,
       last_name: 'Other',
+      operating_hours: makeFormState().operating_hours,
     },
   }
 

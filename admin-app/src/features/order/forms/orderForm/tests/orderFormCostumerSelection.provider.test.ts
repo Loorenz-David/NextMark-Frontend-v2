@@ -3,7 +3,7 @@ import type { Costumer } from '@/features/costumer'
 import {
   resolvePendingCostumerAction,
   shouldPromptCostumerSelection,
-} from '../providers/OrderForm.provider'
+} from '../domain/orderFormCostumerSelection'
 
 const assert = (condition: boolean, message: string) => {
   if (!condition) {

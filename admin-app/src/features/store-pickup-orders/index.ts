@@ -5,7 +5,7 @@ export { StorePickupOrdersPage } from './pages/StorePickupOrders.page'
 export { StorePickupOrdersPageContent } from './pages/StorePickupOrdersContent.page'
 
 // Provider & Context
-export { StorePickupOrdersProvider } from './context/StorePickupOrders.provider'
+export { StorePickupOrdersProvider } from './context/StorePickupOrders.provider-components'
 export { useStorePickupOrdersContext } from './context/useStorePickupOrdersContext'
 
 // Controller

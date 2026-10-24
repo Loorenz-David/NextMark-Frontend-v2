@@ -3,7 +3,7 @@ import { useCallback, useEffect } from "react";
 
 import { DndContext, DragOverlay, MeasuringStrategy } from "@dnd-kit/core";
 
-import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext";
+import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext-components";
 import { preloadMapExtras, useMap } from "@/shared/map";
 import { useMobile } from "@/app/viewport";
 

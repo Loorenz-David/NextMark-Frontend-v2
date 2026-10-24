@@ -2,11 +2,7 @@ import { useState } from "react";
 
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { Field } from "@/shared/inputs/FieldContainer";
-import {
-  InputField,
-  PLAIN_INPUT_CLASS,
-  PLAIN_INPUT_CONTAINER_CLASS,
-} from "@/shared/inputs/InputField";
+import { InputField } from "@/shared/inputs/InputField";
 import { PhoneField } from "@/shared/inputs/PhoneField";
 import {
   formatIsoDateFriendly,

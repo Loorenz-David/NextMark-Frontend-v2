@@ -1,5 +1,5 @@
 import { buildCostumerSearchQuery } from '@/features/costumer/flows/useCostumerSearch.flow'
-import {  shouldRunCostumerQuery } from '../CostumerSearchBar'
+import { shouldRunCostumerQuery } from '../../../domain/shouldRunCostumerQuery'
 
 const assert = (condition: boolean, message: string) => {
   if (!condition) {

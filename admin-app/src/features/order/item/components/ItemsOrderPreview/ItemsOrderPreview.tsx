@@ -9,7 +9,6 @@ import {
   useItemFlow,
 } from "../../hooks/useItemFlow";
 import type { Item } from "../../types";
-import { ItemCard } from "../ItemCard";
 import { ItemsOrderPreviewDefaultLayout } from "./ItemsOrderPreviewDefault.layout";
 import { ItemsOrderPreviewScrollLayout } from "./ItemsOrderPreviewScroll.layout";
 import { ItemsOrderPreviewStickyLayout } from "./ItemsOrderPreviewSticky.layout";

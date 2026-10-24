@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 
-import type { StackComponentProps } from '@/shared/stack-manager/types'
 import { ItemIcon } from '@/assets/icons'
 
 import { ItemTypesPage } from './ItemTypesPage'
@@ -79,7 +78,7 @@ const ItemMainContent = () => {
   )
 }
 
-export const ItemMainPage = (_: StackComponentProps<undefined>) => (
+export const ItemMainPage = () => (
   <>
     <ItemMainContent />
   </>

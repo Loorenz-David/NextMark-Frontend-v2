@@ -3,7 +3,7 @@ import { useEffect, useMemo, type PropsWithChildren } from 'react'
 import { useCostumerDetailActions } from '../actions/costumerDetails.actions'
 import { useCostumerQueries } from '../controllers/costumerQueries.controller'
 import { useCostumerByClientId, useCostumerByServerId } from '../store/costumer.selectors'
-import { CostumerDetailContextProvider } from './CostumerDetailContext'
+import { CostumerDetailContextProvider } from './CostumerDetailContext-components'
 
 type CostumerDetailPayload = {
   clientId?: string

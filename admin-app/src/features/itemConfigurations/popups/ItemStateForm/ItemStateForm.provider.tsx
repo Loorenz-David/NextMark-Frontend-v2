@@ -5,7 +5,7 @@ import { makeInitialFormCopy } from '@shared-domain'
 
 import { useItemStateByClientId } from '../../hooks/useItemSelectors'
 
-import { ItemStateFormContextProvider } from './ItemStateForm.context'
+import { ItemStateFormContextProvider } from './ItemStateForm.context-provider'
 import type { ItemStateFormPayload, ItemStateFormState } from './ItemStateForm.types'
 import { useItemStateFormWarnings } from './ItemStateForm.warnings'
 import { useItemStateFormValidation } from './ItemStateForm.validation'

@@ -4,10 +4,7 @@ import { BasicButton } from '@/shared/buttons/BasicButton'
 import { CloseIcon } from '@/assets/icons'
 import { usePopupContext } from './PopupContext'
 
-type PropsPopupHeader = {
- 
-}
-export const PopupHeader = ({}: PropsPopupHeader) => {
+export const PopupHeader = () => {
     const { isMobile } = useMobile()
     const { headerConfig, closePopup } = usePopupContext()
     if (headerConfig?.excludeHeader){

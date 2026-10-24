@@ -17,9 +17,8 @@ type ClientFormMediaFormContextValue = {
   handleDelete: () => void
 }
 
-const ClientFormMediaFormContext = createContext<ClientFormMediaFormContextValue | null>(null)
+export const ClientFormMediaFormContext = createContext<ClientFormMediaFormContextValue | null>(null)
 
-export const ClientFormMediaFormContextProvider = ClientFormMediaFormContext.Provider
 
 export const useClientFormMediaForm = () => {
   const context = useContext(ClientFormMediaFormContext)

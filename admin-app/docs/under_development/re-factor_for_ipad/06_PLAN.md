@@ -58,6 +58,8 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 
 ## Phase 0c — Lint and legacy-test baseline cleanup (1 session, mechanical, any model)
 
+**Status (2026-10-24):** code complete on `ipad/phase-0c-baseline`; lint has 0 errors / 52 warnings, tests pass 97/97, build and all three checks pass. Chrome viewport verification is pending because the browser connection fails during setup; iPad touch rows remain pending. No commit made.
+
 **Found during Phase 0 (2026-10-24):** `npm run lint` fails on `main` with 207 errors in 110 files that Phase 0 did not touch (70 `no-explicit-any`, 65 `no-unused-vars`, 43 `react-refresh/only-export-components`, 8 `rules-of-hooks`, 7 `no-unused-expressions`, 5 `prefer-const`, …). The new vitest runner also exposes 8 legacy test failures that had never run: `costumerFormSubmit.actions`, `orderMapMarkers.flow`, `orderFormDeliveryWindows.flow`, `orderFormSubmit.controller`, `planDateFilter.utils` (assertion failures — each may be a stale test **or a real bug**, decide per case), and three `shared/map` tests (`circleSelection` needs `document`, `layers` reads a missing internal property, `markerLayerManager.dotContent`).
 
 **Goal:** make `npm run lint` and `npm test` green on `main` so later phases have a real gate. No behaviour changes except where a legacy test reveals an actual bug (then fix the bug, log it in `08`).

@@ -1,4 +1,4 @@
-import { StorePickupOrdersProvider } from '../context/StorePickupOrders.provider'
+import { StorePickupOrdersProvider } from '../context/StorePickupOrders.provider-components'
 import { useStorePickupPageController } from '../controllers/useStorePickupPageController'
 import { StorePickupOrdersPageContent } from './StorePickupOrdersContent.page'
 

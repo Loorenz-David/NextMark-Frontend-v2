@@ -21,17 +21,11 @@ const removeEmptyEntries = (input: Record<string, unknown>) => (
 )
 
 const buildNestedFilters = (query: PlanQueryFilters): Record<string, unknown> => {
-  const {
-    mode,
-    start_date,
-    end_date,
-    after_cursor,
-    before_cursor,
-    limit,
-    sort,
-    filters,
-    ...filterableFields
-  } = query
+  const { filters } = query
+  const filterableFields: Record<string, unknown> = { ...query }
+  for (const key of ['mode', 'start_date', 'end_date', 'after_cursor', 'before_cursor', 'limit', 'sort', 'filters']) {
+    delete filterableFields[key]
+  }
 
   const base = isRecord(filters) ? filters : {}
   return removeEmptyEntries({

@@ -10,7 +10,7 @@ import { formatIsoDate } from "@/shared/utils/formatIsoDate";
 import { useOrderItemDraftController } from "../../../item";
 import { useOrderByClientId } from "../../../store/orderHooks.store";
 import { useOrderFormActions } from "../controllers/useOrderFormSubmit.actions";
-import { OrderFormContextComposer } from "../context/OrderForm.context";
+import { OrderFormContextComposer } from "../context/OrderForm.context-components";
 import { applySelectedCostumerToOrderForm } from "../flows/orderFormCostumerApply.flow";
 import {
   normalizeEmail,
@@ -31,44 +31,7 @@ import { useOrderFormValidation } from "../state/OrderForm.validation";
 import { useOrderFormWarnings } from "../state/OrderForm.warnings";
 import { useOrderFormSetters } from "../state/orderForm.setters";
 import { useCostumerFromOrderFlow } from "../flows/orderFormCostumerLoad.flow";
-
-type PendingCostumerAction = "replace" | "keep" | "cancel";
-
-export const shouldPromptCostumerSelection = ({
-  mode,
-  source,
-}: {
-  mode: OrderFormMode;
-  source: CostumerSelectionSource;
-}) => mode === "edit" && source !== "lookup";
-
-export const resolvePendingCostumerAction = ({
-  action,
-  pendingCostumer,
-  pendingCostumerSource,
-  currentSelectedCostumer,
-  currentSelectedCostumerSource,
-}: {
-  action: PendingCostumerAction;
-  pendingCostumer: Costumer | null;
-  pendingCostumerSource: CostumerSelectionSource | null;
-  currentSelectedCostumer: Costumer | null;
-  currentSelectedCostumerSource: CostumerSelectionSource | null;
-}) => {
-  if (!pendingCostumer || action === "cancel") {
-    return {
-      selectedCostumer: currentSelectedCostumer,
-      selectedCostumerSource: currentSelectedCostumerSource,
-      shouldApplySnapshot: false,
-    };
-  }
-
-  return {
-    selectedCostumer: pendingCostumer,
-    selectedCostumerSource: pendingCostumerSource ?? "panel",
-    shouldApplySnapshot: action === "replace",
-  };
-};
+import { resolvePendingCostumerAction, shouldPromptCostumerSelection } from '../domain/orderFormCostumerSelection'
 
 const applyCostumerSnapshotToOrderForm = ({
   costumer,

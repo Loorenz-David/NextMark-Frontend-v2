@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 
-import type { StackComponentProps } from '@/shared/stack-manager/types'
 import { UserIcon } from '@/assets/icons'
 
 import { UserProvider } from '../context/UserProvider'
@@ -50,7 +49,7 @@ const UserMainContent = () => {
   )
 }
 
-export const UserMainPage = (_: StackComponentProps<undefined>) => (
+export const UserMainPage = () => (
   <UserProvider>
     <UserMainContent />
   </UserProvider>

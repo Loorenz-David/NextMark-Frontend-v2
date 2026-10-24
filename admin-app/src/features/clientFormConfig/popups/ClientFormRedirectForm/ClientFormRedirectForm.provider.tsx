@@ -5,7 +5,7 @@ import { makeInitialFormCopy } from '@shared-domain'
 
 import { useClientFormRedirectByClientId } from '../../store/clientFormConfig.selector'
 import type { ClientFormRedirect } from '../../types/clientFormRedirect'
-import { ClientFormRedirectFormContextProvider } from './ClientFormRedirectForm.context'
+import { ClientFormRedirectFormContextProvider } from './ClientFormRedirectForm.context-provider'
 import type {
   ClientFormRedirectFormPayload,
   ClientFormRedirectFormState,

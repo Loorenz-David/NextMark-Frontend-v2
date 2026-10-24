@@ -6,7 +6,8 @@ import { buildMonthMatrix } from '../domain/monthMatrix.builder'
 import { getCalendarDayKey } from '../domain/dayKey.utils'
 import type { CalendarModel } from '../model/calendar.types'
 import { resolveFocusDayKey } from '../model/useCalendarModel'
-import { CalendarDayCell, buildDayCellKeyDownHandler } from '../ui/CalendarDayCell'
+import { CalendarDayCell } from '../ui/CalendarDayCell'
+import { buildDayCellKeyDownHandler } from '../ui/calendarDayCellKeyboard'
 import { CalendarRoot } from '../ui/CalendarRoot'
 
 const assert = (condition: boolean, message: string) => {

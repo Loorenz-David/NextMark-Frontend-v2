@@ -6,7 +6,7 @@ type NotifyProps = {
     event : ORDER_EVENT_KEYS
 }
 
-export const notifyMessageTemplate = ({event}:NotifyProps)=>{
+export const useNotifyMessageTemplate = ({event}:NotifyProps)=>{
     const emailTemplates = useEmailMessages()
     const smsTemplates = useSmsMessages()
 

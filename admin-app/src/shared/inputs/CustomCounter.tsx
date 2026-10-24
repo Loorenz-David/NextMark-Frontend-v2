@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { ChangeEvent, FocusEvent } from "react";
+import type { ChangeEvent } from "react";
 
 import { cn } from "@/lib/utils/cn";
 import { BasicButton } from "../buttons";
@@ -65,7 +65,7 @@ export const CustomCounter = ({
   }, [draft]);
 
   const handleBlur = useCallback(
-    (_event: FocusEvent<HTMLInputElement>) => {
+    () => {
       isFocusedRef.current = false;
       const n = parseNumeric(draft, allowFloat);
       const normalized = n !== null ? clampValue(n, min, max) : (min ?? 0);

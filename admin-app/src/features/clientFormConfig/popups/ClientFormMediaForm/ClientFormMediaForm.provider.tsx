@@ -6,7 +6,7 @@ import { makeInitialFormCopy } from '@shared-domain'
 import { MEDIA_PLACEMENTS, type MediaPlacement } from '../../domain/mediaPlacement'
 import { useClientFormMediaByClientId } from '../../store/clientFormConfig.selector'
 import type { ClientFormMedia } from '../../types/clientFormMedia'
-import { ClientFormMediaFormContextProvider } from './ClientFormMediaForm.context'
+import { ClientFormMediaFormContextProvider } from './ClientFormMediaForm.context-provider'
 import type {
   ClientFormMediaFormPayload,
   ClientFormMediaFormState,

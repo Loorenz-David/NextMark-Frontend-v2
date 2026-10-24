@@ -15,7 +15,6 @@ export const useRouteGroupsPageShellController = (
     routeGroup,
     orders,
     orderCount,
-    selectedRouteSolution,
     routeGroups,
   } = useRouteGroupPageState();
   const { railItems, handleRouteGroupClick } =

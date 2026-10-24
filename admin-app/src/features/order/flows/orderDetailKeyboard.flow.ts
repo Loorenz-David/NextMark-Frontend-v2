@@ -1,4 +1,3 @@
-import { useSectionManager } from '@/shared/resource-manager/useResourceManager'
 import { useEffect } from 'react'
 
 type UseOrderDetailKeyboardFlowParams = {

@@ -31,7 +31,7 @@ import {
 } from "../store/orderEventHooks.store";
 import { useOrderStateByServerId } from "../store/orderStateHooks.store";
 import { setOrderPlanId, upsertOrders } from "../store/order.store";
-import { OrderDetailContextProvider } from "./OrderDetailContext";
+import { OrderDetailContextProvider } from "./OrderDetailContext-components";
 import type { Order, OrderMap } from "../types/order";
 
 type OrderDetailProviderProps = PropsWithChildren<{
@@ -200,7 +200,9 @@ export const OrderDetailProvider = ({
             if (typeof routePlanId === "number") {
               setOrderPlanId(fetchedOrder.client_id, routePlanId);
             }
-          } catch {}
+          } catch {
+            // Route context is optional for an order without a plan.
+          }
         }
       } catch (error) {
         console.error("Failed to refresh order detail", error);

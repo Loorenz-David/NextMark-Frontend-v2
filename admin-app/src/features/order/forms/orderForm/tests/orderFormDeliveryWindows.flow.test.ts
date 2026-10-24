@@ -14,7 +14,7 @@ const assert = (condition: boolean, message: string) => {
 export const runOrderFormDeliveryWindowsFlowTests = () => {
   {
     const built = buildWindowsFromLocalDates({
-      localDates: ['2026-03-05'],
+      localDates: ['2099-03-05'],
       startTime: '09:00',
       endTime: '11:00',
       existingWindows: [],
@@ -32,13 +32,13 @@ export const runOrderFormDeliveryWindowsFlowTests = () => {
 
   {
     const withOverlap = buildWindowsFromLocalDates({
-      localDates: ['2026-03-05'],
+      localDates: ['2099-03-05'],
       startTime: '10:30',
       endTime: '12:00',
       existingWindows: [
         {
-          start_at: '2026-03-05T09:00:00.000Z',
-          end_at: '2026-03-05T11:00:00.000Z',
+          start_at: '2099-03-05T09:00:00.000Z',
+          end_at: '2099-03-05T11:00:00.000Z',
           window_type: 'FULL_RANGE',
         },
       ],

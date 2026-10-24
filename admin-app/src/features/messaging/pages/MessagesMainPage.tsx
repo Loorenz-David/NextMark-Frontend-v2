@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 
-import type { StackComponentProps } from '@/shared/stack-manager/types'
 import { MessageIcon } from '@/assets/icons'
 import { DEFAULT_PLAN_TYPE, type RoutePlanObjective } from '@/features/plan'
 
@@ -64,4 +63,4 @@ const MessagesMainContent = () => {
   )
 }
 
-export const MessagesMainPage = (_: StackComponentProps<undefined>) => <MessagesMainContent />
+export const MessagesMainPage = () => <MessagesMainContent />

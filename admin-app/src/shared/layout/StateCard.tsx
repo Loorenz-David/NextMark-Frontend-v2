@@ -1,20 +1,11 @@
-
-
+import { verifyHexColor } from './stateCardColor.domain'
 
 const defaultState = 'undefined'
 const defaultColor = '#494949'
 type Props = {
  label?:string | typeof defaultState | null
  color?:string | typeof defaultColor | null
- style?: {}
-}
-
-export const verifyHexColor = (color: string| null | undefined): string | null => {
-  if (!color) return null
-  if(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(color)){
-    return color
-  }
-  return null
+ style?: React.CSSProperties
 }
 
 export const StateCard = ({ label, color, style }: Props) => {

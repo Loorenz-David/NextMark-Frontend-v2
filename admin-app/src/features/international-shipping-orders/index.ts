@@ -5,7 +5,7 @@ export { InternationalShippingOrdersPage } from './pages/InternationalShippingOr
 export { InternationalShippingOrdersPageContent } from './pages/InternationalShippingOrdersContent.page'
 
 // Provider & Context
-export { InternationalShippingOrdersProvider } from './context/InternationalShippingOrders.provider'
+export { InternationalShippingOrdersProvider } from './context/InternationalShippingOrders.provider-components'
 export { useInternationalShippingOrdersContext } from './context/useInternationalShippingOrdersContext'
 
 // Controller

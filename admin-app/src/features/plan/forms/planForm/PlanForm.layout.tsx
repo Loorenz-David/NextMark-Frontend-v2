@@ -1,10 +1,6 @@
 import { ZoneSelector } from "@/features/zone";
 import { Field } from "@/shared/inputs/FieldContainer";
-import {
-  InputField,
-  PLAIN_INPUT_CLASS,
-  PLAIN_INPUT_CONTAINER_CLASS,
-} from "@/shared/inputs/InputField";
+import { InputField } from "@/shared/inputs/InputField";
 import { CustomDatePicker } from "@/shared/inputs/CustomDatePicker";
 import { InputWarning } from "@/shared/inputs/InputWarning";
 import { BasicButton } from "@/shared/buttons/BasicButton";

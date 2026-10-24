@@ -4,7 +4,7 @@ import {
   type CalendarModel,
 } from '@/shared/calendar'
 import type { CostumerOperatingHours } from '@/features/costumer'
-import { BackArrowIcon, BoldArrowIcon } from '@/assets/icons'
+import { BoldArrowIcon } from '@/assets/icons'
 import type { DeliveryWindowDisplayRow } from '../../../../flows/orderFormDeliveryWindows.flow'
 import { formatDateInTimeZone, isDayClosedByOperatingHours } from '../../../../flows/orderFormDeliveryWindows.flow'
 import { WEEKDAY_LABELS } from '../../DeliveryWindowCalendarLayout.flow'

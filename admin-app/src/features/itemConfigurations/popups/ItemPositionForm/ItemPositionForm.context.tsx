@@ -14,9 +14,8 @@ type ItemPositionFormContextValue = {
   handleDelete: () => void
 }
 
-const ItemPositionFormContext = createContext<ItemPositionFormContextValue | null>(null)
+export const ItemPositionFormContext = createContext<ItemPositionFormContextValue | null>(null)
 
-export const ItemPositionFormContextProvider = ItemPositionFormContext.Provider
 
 export const useItemPositionForm = () => {
   const context = useContext(ItemPositionFormContext)

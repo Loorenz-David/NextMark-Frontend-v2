@@ -22,7 +22,7 @@ Everything a session (Claude or Codex) needs to make `Front_end/admin-app` fully
 | Phase | Status | Session |
 |---|---|---|
 | 0 Foundations + BottomSheet scroll trap + hover-reveal bug | committed on `ipad/phase-0-foundations`; device check pending; lint baseline moved to Phase 0c | Session 1 |
-| 0c Lint + legacy-test baseline cleanup | not started (found in Phase 0: 207 lint errors, 8 legacy test failures on main) | |
+| 0c Lint + legacy-test baseline cleanup | code complete on `ipad/phase-0c-baseline`; automated gates green; Chrome geometry check blocked by browser connection; touch pending | Phase 0c session |
 | 1 Home geometry for tablets | not started | |
 | 1b Content priority decisions (user, after Phase 5) → 6b tablet content variants | inventory done; decisions deferred until the iPad is usable | |
 | 2 Touch parity, tap targets, drag tuning | not started | |

@@ -5,7 +5,7 @@ import { makeInitialFormCopy } from '@shared-domain'
 
 import { useItemPositionByClientId } from '../../hooks/useItemSelectors'
 
-import { ItemPositionFormContextProvider } from './ItemPositionForm.context'
+import { ItemPositionFormContextProvider } from './ItemPositionForm.context-provider'
 import type { ItemPositionFormPayload, ItemPositionFormState } from './ItemPositionForm.types'
 import { useItemPositionFormWarnings } from './ItemPositionForm.warnings'
 import { useItemPositionFormValidation } from './ItemPositionForm.validation'

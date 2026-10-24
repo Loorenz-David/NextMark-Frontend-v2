@@ -1,4 +1,4 @@
-import { InternationalShippingOrdersProvider } from '../context/InternationalShippingOrders.provider'
+import { InternationalShippingOrdersProvider } from '../context/InternationalShippingOrders.provider-components'
 import { useInternationalShippingPageController } from '../controllers/useInternationalShippingPageController'
 import { InternationalShippingOrdersPageContent } from './InternationalShippingOrdersContent.page'
 

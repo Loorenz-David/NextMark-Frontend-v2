@@ -384,6 +384,20 @@ export const executeOrderFormSubmit = async (
     updatedItems.length > 0 ||
     deletedItemClientIds.length > 0;
 
+  const hasUnresolvedItemIds =
+    updatedItems.some(
+      (item) => typeof (item.id ?? itemInitialByClientId[item.client_id]?.id) !== "number",
+    ) ||
+    deletedItemClientIds.some(
+      (clientId) => typeof itemInitialByClientId[clientId]?.id !== "number",
+    );
+  if (hasUnresolvedItemIds) {
+    return {
+      status: "dependency_error",
+      message: "Item id is required to save item changes.",
+    };
+  }
+
   const nextCostumerId =
     typeof selectedCostumer?.id === "number" ? selectedCostumer.id : null;
   const currentOrderCostumerId =
@@ -427,6 +441,8 @@ export const executeOrderFormSubmit = async (
       const createItemsPayload = createdItems.map((item) => {
         const payloadItem = { ...item };
         const { order_id, id, ...fields } = payloadItem;
+        void order_id;
+        void id;
         return fields;
       });
 

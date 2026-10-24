@@ -16,10 +16,29 @@ type RouteTimePayload = {
   end_time: string | null
 }
 
+const isRouteTimePayload = (value: unknown): value is RouteTimePayload =>
+  typeof value === 'object' && value !== null &&
+  'start_date' in value && typeof value.start_date === 'string' &&
+  'end_date' in value && typeof value.end_date === 'string' &&
+  'start_time' in value && (value.start_time === null || typeof value.start_time === 'string') &&
+  'end_time' in value && (value.end_time === null || typeof value.end_time === 'string')
+
+const isRouteStartTimePayload = (value: unknown): value is Pick<RouteTimePayload, 'start_date' | 'start_time'> =>
+  typeof value === 'object' && value !== null &&
+  'start_date' in value && typeof value.start_date === 'string' &&
+  'start_time' in value && (value.start_time === null || typeof value.start_time === 'string')
+
+const isPlanDatePayload = (value: unknown): value is PlanDatePayload =>
+  typeof value === 'object' && value !== null &&
+  'start_date' in value && typeof value.start_date === 'string' &&
+  'end_date' in value && typeof value.end_date === 'string'
+
 export const useRouteGroupEditFormWarnings = () => {
   const planDateWarning = useInputWarning(
     'Plan must have a start and end date',
-    ({ start_date, end_date }: PlanDatePayload, setWarningMessage) => {
+    (value, setWarningMessage) => {
+      if (!isPlanDatePayload(value)) return false
+      const { start_date, end_date } = value
       if (!validateString(start_date)) {
         setWarningMessage('Plan must have a start date')
         return false
@@ -46,7 +65,9 @@ export const useRouteGroupEditFormWarnings = () => {
 
   const routeStartTimeWarning = useInputWarning(
     'Start time cannot be in the past for today',
-    ({ start_date, start_time }: Pick<RouteTimePayload, 'start_date' | 'start_time'>, setWarningMessage) => {
+    (value, setWarningMessage) => {
+      if (!isRouteStartTimePayload(value)) return false
+      const { start_date, start_time } = value
       if (!isDateTimeOnOrAfterNow(start_date, start_time)) {
         setWarningMessage('Start time cannot be in the past for today')
         return false
@@ -57,7 +78,9 @@ export const useRouteGroupEditFormWarnings = () => {
 
   const routeEndTimeWarning = useInputWarning(
     'End time must be after start time',
-    ({ start_date, end_date, start_time, end_time }: RouteTimePayload, setWarningMessage) => {
+    (value, setWarningMessage) => {
+      if (!isRouteTimePayload(value)) return false
+      const { start_date, end_date, start_time, end_time } = value
       if (!isDateTimeOnOrAfterNow(end_date, end_time)) {
         setWarningMessage('End time cannot be in the past for today')
         return false

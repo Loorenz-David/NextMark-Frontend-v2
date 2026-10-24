@@ -6,7 +6,7 @@ import { BasicButton } from "@/shared/buttons/BasicButton";
 import SegmentedSelect from "@/shared/inputs/SegmentedSelect";
 import { Switch } from "@/shared/inputs/Switch";
 import { CustomDatePicker } from "@/shared/inputs/CustomDatePicker";
-import { verifyHexColor } from "@/shared/layout/StateCard";
+import { verifyHexColor } from "@/shared/layout/stateCardColor.domain";
 import {
   FeaturePopupBody,
   FeaturePopupClosePrompt,

@@ -1,24 +1,21 @@
 
-import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
+import { lazy, type ComponentType, type JSXElementConstructor, type LazyExoticComponent } from 'react'
 
 import type { StackComponentProps } from '@/shared/stack-manager/types'
 export type SectionKey = keyof typeof sectionRegistry
 
-type RegistryComponent =
-  | ComponentType<StackComponentProps<any>>
-  | LazyExoticComponent<ComponentType<StackComponentProps<any>>>
+type RegistryComponent = JSXElementConstructor<never>
 
-type ExtractPayload<T> = T extends LazyExoticComponent<ComponentType<StackComponentProps<infer P>>>
-  ? P
-  : T extends ComponentType<StackComponentProps<infer P>>
-  ? P
-  : never
+type PropsPayload<Props> = Props extends StackComponentProps<infer P> ? P : undefined
+type ExtractPayload<T> = T extends LazyExoticComponent<infer C>
+  ? C extends ComponentType<infer Props> ? PropsPayload<Props> : undefined
+  : T extends ComponentType<infer Props> ? PropsPayload<Props> : undefined
 
 export type SettingsSectionPayloads = {
   [K in keyof typeof sectionRegistry]: ExtractPayload<(typeof sectionRegistry)[K]>
 }
 
-const placeholderSection = (_: StackComponentProps<undefined>) => <div />
+const placeholderSection = () => <div />
 
 export const sectionRegistry = {
   'user.main': lazy(() =>

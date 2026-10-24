@@ -5,7 +5,7 @@ import { makeInitialFormCopy } from '@shared-domain'
 
 import { useClientFormRuleByClientId } from '../../store/clientFormConfig.selector'
 import type { ClientFormRule } from '../../types/clientFormRule'
-import { ClientFormRuleFormContextProvider } from './ClientFormRuleForm.context'
+import { ClientFormRuleFormContextProvider } from './ClientFormRuleForm.context-provider'
 import type { ClientFormRuleFormPayload, ClientFormRuleFormState } from './ClientFormRuleForm.types'
 import { useClientFormRuleFormValidation } from './ClientFormRuleForm.validation'
 import { useClientFormRuleFormWarnings } from './ClientFormRuleForm.warnings'
