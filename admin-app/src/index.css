@@ -777,10 +777,13 @@ select:focus {
 
 body:has([data-drag-cue="active"]) .drag-preview-lift {
   animation: drag-cue-lift 160ms ease-out both;
+}
+
+/* Every drag preview card has a rounded 1px border; darken it while lifted
+   rather than framing the card with an extra outline. */
+body:has([data-drag-cue="active"]) .drag-preview-lift > * {
+  border-color: var(--color-border-emphasis);
   box-shadow: var(--shadow-panel-overlay-strong);
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: 0.75rem;
 }
 
 @keyframes drag-cue-lift {

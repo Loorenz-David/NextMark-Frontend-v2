@@ -138,3 +138,5 @@ Someone who rests a finger on a card for more than 120 ms and then scrolls *slow
 ## 6. Desktop (decision D8, 2026-10-24)
 
 The press and lift cue applies to every pointer. `shared/dnd/dragCue.ts` owns the attribute (`data-drag-cue`); `CueMouseSensor` adds it to mouse drags by wrapping the public sensor callbacks, so mouse activation (press and move 6px) is unchanged. The §3.4 styles now live outside `(pointer: coarse)` under the names `data-drag-cue`, `.drag-preview-lift` and `drag-cue-lift`; the preview's up-left offset stays touch-only.
+
+Lift styling (user feedback 2026-10-24): no outer accent outline (it looked cheap); while lifted, the preview card's own border turns `--color-border-emphasis` (mid grey) and the card takes the strong overlay shadow.
