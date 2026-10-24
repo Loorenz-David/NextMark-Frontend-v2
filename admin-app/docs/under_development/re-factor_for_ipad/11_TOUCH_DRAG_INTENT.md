@@ -134,3 +134,7 @@ Use the individual `scale` property, never `transform`: dnd-kit and sortable ite
 ## 5. Known trade-off (accepted)
 
 Someone who rests a finger on a card for more than 120 ms and then scrolls *slowly* will pick the card up rather than scroll. The squeeze cue and the lift make that obvious at once, and dropping on no target must change nothing (verify in the home `onDragEnd` path; the logged test drop ended with `over: null`). If this turns out to be common on the iPad, raise `minDwellMs` or lower `maxStartSpeedPxPerMs` (one constant each).
+
+## 6. Desktop (decision D8, 2026-10-24)
+
+The press and lift cue applies to every pointer. `shared/dnd/dragCue.ts` owns the attribute (`data-drag-cue`); `CueMouseSensor` adds it to mouse drags by wrapping the public sensor callbacks, so mouse activation (press and move 6px) is unchanged. The §3.4 styles now live outside `(pointer: coarse)` under the names `data-drag-cue`, `.drag-preview-lift` and `drag-cue-lift`; the preview's up-left offset stays touch-only.

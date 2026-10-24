@@ -761,37 +761,38 @@ select:focus {
   touch-action: manipulation;
 }
 
-@media (pointer: coarse) {
-  [data-touch-drag="pressing"] {
-    scale: 0.97;
-    transition: scale 140ms ease-out;
-  }
-
-  [data-touch-drag="active"] {
-    scale: 1.03;
-    box-shadow: var(--shadow-panel-overlay-strong);
-    animation: touch-drag-lift 160ms ease-out;
-  }
-
-  body:has([data-touch-drag="active"]) .touch-drag-preview-lift {
-    animation: touch-drag-lift 160ms ease-out both;
-    box-shadow: var(--shadow-panel-overlay-strong);
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-    border-radius: 0.75rem;
-  }
+/* Drag cue for every pointer (user decision 2026-10-24): the held card
+   squeezes, then the drag preview lifts in. Attribute set by the sensors in
+   shared/dnd (dragCue.ts). `scale` composes with dnd-kit's inline transform. */
+[data-drag-cue="pressing"] {
+  scale: 0.97;
+  transition: scale 140ms ease-out;
 }
 
-@keyframes touch-drag-lift {
+[data-drag-cue="active"] {
+  scale: 1.03;
+  box-shadow: var(--shadow-panel-overlay-strong);
+  animation: drag-cue-lift 160ms ease-out;
+}
+
+body:has([data-drag-cue="active"]) .drag-preview-lift {
+  animation: drag-cue-lift 160ms ease-out both;
+  box-shadow: var(--shadow-panel-overlay-strong);
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 0.75rem;
+}
+
+@keyframes drag-cue-lift {
   0% { scale: 0.97; }
   60% { scale: 1.03; }
   100% { scale: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body:has([data-touch-drag="active"]) .touch-drag-preview-lift { animation: none; }
-  [data-touch-drag="active"] { animation: none; }
-  [data-touch-drag="pressing"] { transition: none; }
+  body:has([data-drag-cue="active"]) .drag-preview-lift { animation: none; }
+  [data-drag-cue="active"] { animation: none; }
+  [data-drag-cue="pressing"] { transition: none; }
 }
 
 /* Firefox */

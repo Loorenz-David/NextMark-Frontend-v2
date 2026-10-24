@@ -47,7 +47,7 @@ Standalone (installed) mode removes Safari chrome. The status bar still occupies
 
 ## 4. Hard constraints (acceptance gates for every phase)
 
-1. **Desktop ≥ 1440px stays visually identical** unless a phase explicitly says otherwise. The client also uses wide monitors.
+1. **Desktop ≥ 1440px stays visually identical** unless a phase explicitly says otherwise. The client also uses wide monitors. Recorded exception: the drag press/lift cue (D8).
 2. **The phone shell (< 1000px) keeps working.** It was built on 2026-10-07 (`docs/under_development/ADMIN_APP_MOBILE_SHELL_PLAN_2026-10-07.md`) and Split View on an iPad lands in it.
 3. **Layer rules hold** (`Front_end/AGENTS.md`): viewport facts in `src/app/viewport`, shell chrome in `features/home-app`, workspace layout in `features/home-route-operations`, primitives in `src/shared`. Feature → feature imports only through barrels.
 4. **One viewport owner.** New breakpoints or input-class facts are added to `src/app/viewport/viewport.config.ts` and `ViewportProvider.tsx`, never measured locally in components.

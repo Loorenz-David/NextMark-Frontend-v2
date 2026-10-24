@@ -5,6 +5,7 @@ import {
   type TouchDragIntentConfig,
   type TouchSample,
 } from './domain/touchDragIntent'
+import { setDragCue } from './dragCue'
 
 export type TouchIntentDecisionInfo = {
   decision: 'activate' | 'abort'
@@ -82,7 +83,7 @@ export class PressIntentTouchSensor implements SensorInstance {
       tolerance: props.options.config.tolerancePx,
     }, { x: this.start.x, y: this.start.y })
     this.cueTimer = setTimeout(() => {
-      if (this.intent.phase() === 'pending') this.node?.setAttribute('data-touch-drag', 'pressing')
+      if (this.intent.phase() === 'pending') setDragCue(this.node, 'pressing')
     }, props.options.config.pressCueDelayMs)
     this.holdTimer = setTimeout(() => {
       if (this.intent.holdElapsed(performance.now()).effect === 'activate') {
@@ -100,7 +101,7 @@ export class PressIntentTouchSensor implements SensorInstance {
     if (this.finished) return
     if (this.holdTimer !== null) clearTimeout(this.holdTimer)
     if (this.cueTimer !== null) clearTimeout(this.cueTimer)
-    this.node?.setAttribute('data-touch-drag', 'active')
+    setDragCue(this.node, 'active')
     this.doc.addEventListener('click', this.stopClick, true)
     this.doc.getSelection()?.removeAllRanges()
     this.props.onStart({ x: this.start.x, y: this.start.y })
@@ -161,7 +162,7 @@ export class PressIntentTouchSensor implements SensorInstance {
     this.finished = true
     if (this.holdTimer !== null) clearTimeout(this.holdTimer)
     if (this.cueTimer !== null) clearTimeout(this.cueTimer)
-    this.node?.removeAttribute('data-touch-drag')
+    setDragCue(this.node, null)
     this.target.removeEventListener('touchmove', this.handleMove as EventListener)
     this.target.removeEventListener('touchend', this.handleEnd as EventListener)
     this.target.removeEventListener('touchcancel', this.handleCancel as EventListener)

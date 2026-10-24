@@ -11,6 +11,7 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | D3 | 2026-10-24 | **Revised by the user.** Safari cannot do Bluetooth, so Bluetooth printing goes through a **native bridge app** we build and sideload (wrapper shell with a `navigator.bluetooth` polyfill, WebBLE Apache-2.0 as the base; `nextmarkBridge` for MFi/TCP). The web app keeps a transport layer: share/AirPrint first (works everywhere), bridge transports when present. Parallel native project, separate repo. | WebKit does not ship Web Bluetooth/Serial/USB; a sideloaded WKWebView app can. | `05_PRINTING_AND_BLUETOOTH.md` §6 |
 | D4 | 2026-10-24 | Service worker stays notification-only; admin PWA gets a second manifest with `scope: "/"`. | Guard script + live-deployment requirement. | `04_PWA_AND_PLATFORM.md` |
 | D5 | 2026-10-24 | Desktop ≥ 1440px must stay pixel-identical unless a phase says otherwise. | Client also works on monitors. | `00_GOAL_AND_CONSTRAINTS.md` |
+| D8 | 2026-10-24 | The drag **press and lift cue** (squeeze while held, preview lifts with shadow and accent ring) applies to **every pointer, desktop included**. Mouse **activation** is unchanged (press and move 6px, no hold). | The user liked the cue on touch and wants the same feel on PC. A hold for the mouse was not adopted: no scroll conflict to solve, and it would swallow slow clicks. | `11_TOUCH_DRAG_INTENT.md` §6, `shared/dnd/CueMouseSensor.ts` |
 | D7 | 2026-10-24 | Content-priority decisions (`09`) are made **after Phases 0–5**, when the user can use the app on the iPad; implemented as Phase 6b before the bridge project. | Decisions need the real device experience. | `06_PLAN.md` Phase 1b/6b |
 | D6 | 2026-10-24 | The native bridge app is **deferred to after the full iPad refactor**. The web app ships share/AirPrint printing and keeps a transport port open for it. | The user wants to explore the bridge as a reusable project for several PWAs. | `06_PLAN.md` Phase 6, `05` §6 |
 
@@ -39,6 +40,13 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | K8 | Phase 6 | Printer | **Deferred by the user** until the printing phase. Test with "Save to Files" meanwhile. |
 
 ## Session entries
+
+### 2026-10-24 — Phase 2b reviewed; drag cue extended to desktop (Claude)
+
+- Phase 2b review: sensor on the public dnd-kit API, pure decision with 8 cases, direction-free, cue attribute owned by the sensor, mouse unchanged, null drop is a no-op. Gates green; committed.
+- User tested in Chrome emulation: "looks great". Decision D8: keep the cue on PC and wide screens.
+- Implemented: `shared/dnd/dragCue.ts` (one `data-drag-cue` attribute + `PRESS_CUE_DELAY_MS` 80), `shared/dnd/CueMouseSensor.ts` (MouseSensor with the cue, added by wrapping the public sensor callbacks; activation unchanged), the touch sensor now uses the same helper, CSS moved out of `(pointer: coarse)` and renamed (`data-drag-cue`, `.drag-preview-lift`, `drag-cue-lift`), the home preview lifts for every pointer (the up-left offset stays touch-only). Tests: `CueMouseSensor.vitest.test.ts` (no flash on quick clicks, press → active → cleared, 6px activation unchanged).
+- Desktop watch item (E rows): a click held longer than 80 ms shows a brief squeeze before the card opens; raise `PRESS_CUE_DELAY_MS` if it feels busy.
 
 ### 2026-10-24 — Phase 2b touch drag intent (Codex)
 

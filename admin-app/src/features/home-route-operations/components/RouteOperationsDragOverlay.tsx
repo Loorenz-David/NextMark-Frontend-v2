@@ -14,7 +14,7 @@ export const RouteOperationsDragOverlay = ({
   activeDrag,
 }: RouteOperationsDragOverlayProps) => {
   const { isCoarsePointer } = useViewport();
-  const previewClassName = `pointer-events-none cursor-grabbing ${isCoarsePointer ? "-translate-x-6 -translate-y-12 touch-drag-preview-lift" : ""}`;
+  const previewClassName = `drag-preview-lift pointer-events-none cursor-grabbing ${isCoarsePointer ? "-translate-x-6 -translate-y-12" : ""}`;
   if (!activeDrag) {
     return null;
   }
