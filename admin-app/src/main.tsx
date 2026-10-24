@@ -6,14 +6,6 @@ import { AppProviders } from './app/providers/AppProviders'
 declare const __APP_BUILD_ID__: string
 declare const __APP_BUILD_TIMESTAMP__: string
 
-// listener for setting the dynamic height on mobile browsers
-function updateVH() {
-  document.documentElement.style.setProperty(
-    '--vh',
-    `${window.innerHeight * 0.01}px`
-  )
-}
-
 const buildInfo = {
   buildId: __APP_BUILD_ID__,
   buildTimestamp: __APP_BUILD_TIMESTAMP__,
@@ -118,8 +110,6 @@ const installRuntimeAssetDiagnostics = () => {
   }).__NEXTMARK_BUILD_INFO__ = buildInfo
 }
 
-window.addEventListener('resize', updateVH)
-updateVH()
 installRuntimeAssetDiagnostics()
 
 createRoot(document.getElementById('root')!).render(

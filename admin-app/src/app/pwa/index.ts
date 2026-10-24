@@ -5,4 +5,4 @@ export {
   EXTERNAL_FORM_PATH,
   isExternalFormPath,
 } from './domain/externalFormPwa'
-export { isStandaloneDisplay } from './domain/standaloneDisplay'
+export { isStandaloneDisplay, readStandaloneDisplayEnvironment } from './domain/standaloneDisplay'

@@ -65,7 +65,7 @@ export const PlanCalendarPlanChip = ({
   return (
     <div
       onClick={handleClick}
-      className="flex shrink-0 cursor-pointer flex-col gap-1 rounded-[10px] border px-2 py-1.5 transition-all duration-150"
+      className="flex shrink-0 cursor-pointer flex-col gap-1 rounded-calendar-plan-chip border px-2 py-1.5 transition-all duration-150"
       style={{
         backgroundColor: `color-mix(in srgb, ${stateColor} 11%, transparent)`,
         borderColor: `color-mix(in srgb, ${stateColor} 32%, transparent)`,

@@ -8,6 +8,7 @@ import {
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { formatMetric } from "@shared-utils";
+import { useViewport } from "@/app/viewport";
 import { StateCard } from "@/shared/layout/StateCard";
 import { FloatingPopover } from "@/shared/popups/FloatingPopover/FloatingPopover";
 import type { DeliveryPlan } from "../../types/plan";
@@ -70,7 +71,8 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
   );
   const hasItemTypeCounts = itemTypeCountEntries.length > 0;
   const [itemTypePopoverOpen, setItemTypePopoverOpen] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const { isCoarsePointer, hasHover } = useViewport();
+  const isTouchDevice = isCoarsePointer || !hasHover;
   const itemTypePopoverDelayTimeoutRef = useRef<ReturnType<
     typeof setTimeout
   > | null>(null);
@@ -112,27 +114,6 @@ export const PlanCard = ({ plan, isOver, dropFeedback }: PropsPlanCard) => {
     },
     [],
   );
-
-  useEffect(() => {
-    if (
-      typeof window === "undefined" ||
-      typeof window.matchMedia !== "function"
-    ) {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia("(hover: none), (pointer: coarse)");
-    const syncDeviceType = () => {
-      setIsTouchDevice(mediaQuery.matches);
-    };
-
-    syncDeviceType();
-    mediaQuery.addEventListener("change", syncDeviceType);
-
-    return () => {
-      mediaQuery.removeEventListener("change", syncDeviceType);
-    };
-  }, []);
 
   const DeliveryPlanState = useRoutePlanStateByServerId(plan.state_id ?? 1);
 
@@ -325,7 +306,7 @@ export const RoundAvatar = ({
   isOver,
   isBusy,
 }: PropsRoundAvatar) => {
-  let variant = isOver ? "over" : "idle";
+  const variant = isOver ? "over" : "idle";
 
   return (
     <motion.div

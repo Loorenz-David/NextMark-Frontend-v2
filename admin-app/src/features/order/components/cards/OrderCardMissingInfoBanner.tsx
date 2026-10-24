@@ -37,8 +37,8 @@ export const OrderCardMissingInfoBanner = ({
       )}
     >
       <div className="flex min-w-0 items-center gap-2">
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-yellow-300">
-          <ExclamationIcon className="h-3 w-3 text-yellow-900" />
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-missing-info-badge">
+          <ExclamationIcon className="h-3 w-3 text-missing-info-badge-ink" />
         </span>
         <span
           className="truncate text-xs font-medium text-warning"

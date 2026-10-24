@@ -1,8 +1,11 @@
 import { createContext } from 'react'
 
 export type ViewportState = {
-  /** Phone/tablet shell is active (viewport narrower than `MOBILE_MAX_WIDTH`). */
+  sizeClass: 'phone' | 'tablet' | 'desktop'
+  /** Phone shell is active (viewport narrower than `TABLET_MIN_WIDTH`). */
   isMobile: boolean
+  isTablet: boolean
+  isStandalone: boolean
   /** Primary input is a finger: enlarge hit areas, replace hover-only affordances. */
   isCoarsePointer: boolean
   /** The device can hover; when false, hover popovers need a tap fallback. */
@@ -10,7 +13,10 @@ export type ViewportState = {
 }
 
 export const DESKTOP_VIEWPORT_FALLBACK: ViewportState = {
+  sizeClass: 'desktop',
   isMobile: false,
+  isTablet: false,
+  isStandalone: false,
   isCoarsePointer: false,
   hasHover: true,
 }

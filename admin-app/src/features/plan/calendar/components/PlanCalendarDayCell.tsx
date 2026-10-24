@@ -124,7 +124,7 @@ export const PlanCalendarDayCell = ({
     >
       <div className="flex shrink-0 items-center">
         <span
-          className={`flex h-[22px] w-[22px] items-center justify-center rounded-[7px] font-mono text-[12px] ${
+          className={`flex h-[22px] w-[22px] items-center justify-center rounded-calendar-day-number font-mono text-[12px] ${
             cell.isToday
               ? "bg-[var(--color-text)] font-semibold text-[var(--color-page)]"
               : cell.inMonth

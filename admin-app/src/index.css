@@ -271,7 +271,6 @@
   font-family: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--color-text);
   background-color: var(--color-page);
-  --vh: 100%;
 }
 
 [data-theme="light"] {
@@ -522,6 +521,8 @@
 }
 
 @theme inline {
+  --radius-calendar-plan-chip: 10px;
+  --radius-calendar-day-number: 7px;
   --color-page: var(--paper);
   --color-surface: var(--surface);
   --color-surface-subtle: var(--paper-subtle);
@@ -569,6 +570,9 @@
   --color-info-ink: var(--info-ink);
   --color-info-bg: var(--info-bg);
   --color-info-border: var(--info-border);
+  --color-notification-badge-ink: #ffffff;
+  --color-missing-info-badge: #fde047;
+  --color-missing-info-badge-ink: #713f12;
   --color-foreground-mark: var(--foreground-mark);
 }
 
@@ -1238,6 +1242,8 @@ textarea:focus {
 /* ------------------------------------------------------------------------ */
 @theme {
   --breakpoint-desk: 1000px;
+  --breakpoint-tablet: 1000px;
+  --breakpoint-wide: 1440px;
 }
 
 /* Safe-area helpers for fixed chrome (top bars, tab bars, sticky footers). */
@@ -1279,7 +1285,17 @@ textarea:focus {
   }
 }
 
-@media (max-width: 999px) and (pointer: coarse) {
+@media (pointer: coarse) {
+  html, body, #root {
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button, [role="button"], a, label, summary {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+  }
+
   /* iOS Safari zooms the page when a focused field is smaller than 16px. */
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
   select,

@@ -15,9 +15,7 @@ const SettingsView = () => {
 
   return (
     <div
-      className={`overflow-hidden bg-[var(--color-page)] text-[var(--color-text)] ${
-        isMobile ? 'h-dvh' : 'h-screen'
-      }`}
+      className="h-dvh overflow-hidden bg-[var(--color-page)] text-[var(--color-text)]"
     >
       <SettingsOverlays />
       <div className="flex h-full w-screen flex-col overflow-hidden">
