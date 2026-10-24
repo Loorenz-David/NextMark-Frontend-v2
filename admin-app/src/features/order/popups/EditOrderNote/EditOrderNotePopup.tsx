@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { useReloadBlocker } from "@/app/version";
 import type { StackComponentProps } from "@/shared/stack-manager/types";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { InputField } from "@/shared/inputs/InputField";
@@ -34,6 +35,10 @@ export const EditOrderNotePopup = ({
   const { updateOrderNote } = useOrderNotesController();
   const [value, setValue] = useState(payload?.noteContent ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  useReloadBlocker(
+    isSubmitting || value.trim() !== (payload?.noteContent ?? "").trim(),
+    "edit-order-note",
+  );
 
   const canSubmit = useMemo(
     () => value.trim().length > 0 && value.trim() !== (payload?.noteContent ?? "").trim() && !isSubmitting,

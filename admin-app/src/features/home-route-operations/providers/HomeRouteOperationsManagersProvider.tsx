@@ -6,6 +6,7 @@ import { DndContext, DragOverlay, MeasuringStrategy } from "@dnd-kit/core";
 import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext-components";
 import { preloadMapExtras, useMap } from "@/shared/map";
 import { useViewport } from "@/app/viewport";
+import { useReloadBlocker } from "@/app/version";
 
 import { homeCollisionDetection } from "../dnd/collisionStrategies";
 import { useRouteOperationsDndController } from "../hooks/useRouteOperationsDndController";
@@ -93,6 +94,7 @@ export function HomeRouteOperationsManagersProvider({
     routeReorderPreview: null,
     sensors: [],
   };
+  useReloadBlocker(Boolean(activeDrag), "home-route-operations-drag");
 
   return (
     <ResourcesManagerProvider

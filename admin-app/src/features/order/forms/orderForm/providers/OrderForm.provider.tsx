@@ -2,6 +2,7 @@ import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useMobile } from "@/app/viewport";
+import { useReloadBlocker } from "@/app/version";
 import { useCostumerByServerId, type Costumer } from "@/features/costumer";
 import { useCostumerQueries } from "@/features/costumer/controllers/costumerQueries.controller";
 import { hasFormChanges } from "@shared-domain";
@@ -332,6 +333,7 @@ export const OrderFormProvider = ({
     () => hasFormChanges(formState, initialFormRef),
     [formState, initialFormRef],
   );
+  useReloadBlocker(hasUnsavedChanges, "order-form");
 
   const closeController = useOrderFormCloseController({
     isMobile,

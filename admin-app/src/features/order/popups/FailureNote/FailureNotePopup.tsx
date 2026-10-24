@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 
 import { FailureNoteComposer } from "@shared-failure-notes";
+import { useReloadBlocker } from "@/app/version";
 import type { StackComponentProps } from "@/shared/stack-manager/types";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import {
@@ -32,6 +33,7 @@ export const FailureNotePopup = ({
   const [noteValue, setNoteValue] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const didSubmitRef = useRef(false);
+  useReloadBlocker(isSubmitting || noteValue.trim().length > 0, "failure-note");
 
   const canSubmit = useMemo(
     () => noteValue.trim().length > 0 && !isSubmitting,

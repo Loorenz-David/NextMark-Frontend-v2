@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import svgr from "vite-plugin-svgr";
@@ -7,6 +7,21 @@ import path from "path";
 
 const buildId = `${Date.now()}`;
 const buildTimestamp = new Date().toISOString();
+
+// `/version.json` is what a running app compares its own `__APP_BUILD_ID__`
+// against to notice a deploy (src/app/version). Same constants, so the two can
+// never disagree.
+const appVersionManifest = (): Plugin => ({
+  name: "nextmark-app-version-manifest",
+  apply: "build",
+  generateBundle() {
+    this.emitFile({
+      type: "asset",
+      fileName: "version.json",
+      source: JSON.stringify({ buildId, builtAt: buildTimestamp }),
+    });
+  },
+});
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -18,6 +33,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     svgr(),
+    appVersionManifest(),
     // visualizer({
     //   filename: "dist/stats.html",
     //   template: "treemap", // important

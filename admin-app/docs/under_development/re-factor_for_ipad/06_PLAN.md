@@ -166,6 +166,8 @@ Follow `04_PWA_AND_PLATFORM.md` §3–5: `public/admin.webmanifest` + icons in `
 
 ## Phase 5b — Silent auto-update for the installed app (1 session)
 
+**Status (2026-10-24):** app side (`10` §3, §3.1, §3.2, §5 build stamp) implemented on `ipad/phase-5b-auto-update`, uncommitted; all automated gates green. Hosting side (`10` §4, `deploy-admin.yml`) **not started — awaits the user's confirmation**. C9–C12 await a real deploy (C12's "old chunk still loads" path needs §4).
+
 Spec: `10_AUTO_UPDATE.md` (user requirement 2026-10-24: every deploy reaches installed apps automatically, no prompt, reliable on Mac, iPad and iPhone). App side: build emits `/version.json`; `src/app/version/` checks it (no-store) on resume, `pageshow`, `online`, `focus` and every 5 min while visible; reloads silently at a safe moment (reload-blocker registry wired into dirty forms, drags, focused inputs), refetching `index.html` with `cache: 'reload'` first; `vite:preloadError` reloads once per build; the notification SW gets `registration.update()`. Hosting side: `deploy-admin.yml` uploads `assets/` first with immutable caching and without `--delete`, then entry files with `no-cache` — **CI/CD change, confirm with the user before editing**.
 
 **Acceptance:** rows C9–C12; `dist/version.json` id equals the running build id; vitest cases in `10` §3.2; gates green.

@@ -2,6 +2,9 @@ import { DndContext, MouseSensor, TouchSensor, closestCenter, useSensor, useSens
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useState } from 'react'
+
+import { useReloadBlocker } from '@/app/version'
 
 import { ItemSectionLayout } from '../components/ItemSectionLayout'
 import { ItemStateCard } from '../components/ItemStateCard'
@@ -41,6 +44,8 @@ export const ItemStatesPage = () => {
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   )
   const isReorderEnabled = true
+  const [isSorting, setIsSorting] = useState(false)
+  useReloadBlocker(isSorting, 'item-states-sort')
   const userStateIds = userStates.map((state) => String(state.id ?? state.client_id))
 
   return (
@@ -56,7 +61,10 @@ export const ItemStatesPage = () => {
           sensors={sortableSensors}
           collisionDetection={closestCenter}
           modifiers={[restrictToVerticalAxis]}
+          onDragStart={() => setIsSorting(true)}
+          onDragCancel={() => setIsSorting(false)}
           onDragEnd={(event) => {
+            setIsSorting(false)
             if (!event.over) {
               return
             }

@@ -1,7 +1,9 @@
 import { DndContext, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { useState } from 'react'
 
+import { useReloadBlocker } from '@/app/version'
 import { SearchBar } from '@/shared/buttons/SearchBar'
 
 import { ClientFormRuleCard } from '../components/ClientFormRuleCard'
@@ -28,6 +30,8 @@ export const ClientFormRulesPage = () => {
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   )
+  const [isSorting, setIsSorting] = useState(false)
+  useReloadBlocker(isSorting, 'client-form-rules-sort')
 
   return (
     <ClientFormSectionLayout
@@ -55,7 +59,10 @@ export const ClientFormRulesPage = () => {
         sensors={sortableSensors}
         collisionDetection={closestCenter}
         modifiers={[restrictToVerticalAxis]}
+        onDragStart={() => setIsSorting(true)}
+        onDragCancel={() => setIsSorting(false)}
         onDragEnd={(event) => {
+          setIsSorting(false)
           if (!event.over) {
             return
           }

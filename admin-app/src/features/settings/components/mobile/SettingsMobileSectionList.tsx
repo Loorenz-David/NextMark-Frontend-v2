@@ -4,6 +4,7 @@ import { ChevronDownIcon } from '@/assets/icons'
 import { useLoginMutations } from '@/features/auth/login/hooks/useLoginMutations'
 
 import { listSettingsLeafGroups, resolveSettingsRoute } from '../../domain/settingsSections'
+import { SettingsBuildStamp } from '../SettingsBuildStamp'
 
 /** The settings index on a phone: every section as a tappable row, grouped. */
 export const SettingsMobileSectionList = () => {
@@ -47,6 +48,7 @@ export const SettingsMobileSectionList = () => {
       >
         Log out
       </button>
+      <SettingsBuildStamp className="mt-4 text-center" />
     </div>
   )
 }

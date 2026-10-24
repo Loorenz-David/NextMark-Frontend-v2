@@ -7,6 +7,7 @@ import { BackArrowIcon2 } from "@/assets/icons";
 import { useLoginMutations } from "@/features/auth/login/hooks/useLoginMutations";
 
 import type { SectionKey } from "../registry/sectionRegistry";
+import { SettingsBuildStamp } from "../components/SettingsBuildStamp";
 import { SettingsSectionSkeleton } from "../components/SettingsSectionSkeleton";
 import {
   SETTINGS_ROUTE_MAP,
@@ -146,6 +147,7 @@ export const SettingsDesktopView = () => {
           >
             Log out
           </button>
+          <SettingsBuildStamp className="mt-3 px-3" />
         </div>
       </aside>
 
