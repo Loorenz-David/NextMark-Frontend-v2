@@ -2,19 +2,23 @@ import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
 
 import {
+  hasDesktopMapVisiblePreference,
   loadDesktopMapVisible,
   saveDesktopMapVisible,
 } from './homeDesktopLayout.storage'
 
 type HomeDesktopLayoutState = {
-  /** Whether the desktop map column is unfolded. Persisted across reloads. */
-  isMapVisible: boolean
+  /** Null means no saved preference; the viewport class supplies the default. */
+  isMapVisible: boolean | null
   showMap: () => void
   hideMap: () => void
 }
 
+const loadMapVisibilityPreference = (): boolean | null =>
+  hasDesktopMapVisiblePreference() ? loadDesktopMapVisible() : null
+
 export const useHomeDesktopLayoutStore = create<HomeDesktopLayoutState>((set) => ({
-  isMapVisible: loadDesktopMapVisible(),
+  isMapVisible: loadMapVisibilityPreference(),
   showMap: () => {
     saveDesktopMapVisible(true)
     set({ isMapVisible: true })
@@ -25,8 +29,8 @@ export const useHomeDesktopLayoutStore = create<HomeDesktopLayoutState>((set) =>
   },
 }))
 
-export const useIsDesktopMapVisible = (): boolean =>
-  useHomeDesktopLayoutStore((state) => state.isMapVisible)
+export const useIsDesktopMapVisible = (isTablet = false): boolean =>
+  useHomeDesktopLayoutStore((state) => state.isMapVisible ?? !isTablet)
 
 export const useDesktopMapActions = () =>
   useHomeDesktopLayoutStore(

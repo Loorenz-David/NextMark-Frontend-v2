@@ -54,6 +54,7 @@ declare global {
         zoom?: number
         disableDefaultUI?: boolean
         mapId?: string
+        gestureHandling?: "cooperative" | "greedy" | "none" | "auto"
         styles?: MapTypeStyle[]
         zoomControl?: boolean
         mapTypeControl?: boolean

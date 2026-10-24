@@ -40,6 +40,14 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phase 1 geometry (Codex, reviewed by Claude)
+
+- Branch: `ipad/phase-1-geometry`; no commit. Re-grepped each edited symbol and kept source edits within the Phase 1 files.
+- Implemented tablet track calculation, 420px base rail / 560px plan rail, initial map fold when no saved preference, reciprocal map/plan folding, 16px tablet map inset, coarse-pointer fold-tab width, calendar day minimum width with horizontal scroll, bounded map overlay widths, and greedy map gesture handling. Desktop track formulas and widths stay unchanged. Added domain cases for 1024, 1180, 1366, 1440 and 1920.
+- Gates: build ✅; popup contract ✅; theme regression ✅; external-form PWA ✅; full lint ❌ 207 errors / 54 warnings (unchanged Phase 0c baseline); npm test ❌ 89/97 (same eight Phase 0c legacy failures). Changed-file ESLint is clear apart from the 11 pre-existing `no-explicit-any` errors in `MapInstanceManager.ts`, also assigned to Phase 0c. No check or lint rule was relaxed.
+- Chrome device-mode geometry at 1024×768, 1180×820, 1366×1024: ⏳ pending. The browser connection failed during initialization (`Importing module "node:process" is not allowed in node_repl`), before any page opened. A1–A5, B10, and desktop E1 remain unverified; touch rows await the iPad.
+- Stopped because the required lint gate cannot be made green within the Phase 1 file list. Phase 0c owns the repository baseline. Follow-up: merge/rebase the completed Phase 0c cleanup, rerun all gates, complete Chrome geometry and desktop comparisons, then review the Phase 1 changes before marking this phase implemented.
+- Claude review (2026-10-24): code complete against the Phase 1 list; the stop was the inherited baseline, now cleared by 0c. Reverted the four map popup width changes (`min(Npx, calc(100% - 2rem))` can shrink content-sized popups on desktop, and the tablet map is never narrower than 464px when shown, so the popups already fit). Moved the saved-preference check into `homeDesktopLayout.storage.ts`. Replaced the domain test's viewport loop (width was not an input) with rail 420/560 cases. Chosen tablet widths: order rail 420, plan rail 560, map inset 16.
 ### 2026-10-24 — Phase 0c lint and legacy-test baseline cleanup (Codex)
 
 - Branch: `ipad/phase-0c-baseline`; no commit. Worked within the Phase 0c lint/test baseline scope.

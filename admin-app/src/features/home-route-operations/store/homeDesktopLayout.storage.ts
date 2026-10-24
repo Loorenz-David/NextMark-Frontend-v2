@@ -2,6 +2,15 @@ const STORAGE_KEY = 'home.desktop.mapVisible.v1'
 
 const isBrowser = typeof window !== 'undefined'
 
+export const hasDesktopMapVisiblePreference = (): boolean => {
+  if (!isBrowser) return false
+  try {
+    return window.localStorage.getItem(STORAGE_KEY) !== null
+  } catch {
+    return false
+  }
+}
+
 export const loadDesktopMapVisible = (): boolean => {
   if (!isBrowser) return true
   try {

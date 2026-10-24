@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { useViewport } from "@/app/viewport";
 import { usePlanContainerView } from "@/features/plan";
 
 import {
@@ -39,23 +40,31 @@ export function useHomeDesktopLayout({
   openSectionsCount = 0,
   isOrderOverlayOpen = false,
 }: HomeDesktopLayoutParams) {
-  const [isPlanOpen, setIsPlanOpen] = useState(true);
+  const { sizeClass, isTablet } = useViewport();
+  const isMapVisible = useIsDesktopMapVisible(isTablet);
+  const [isPlanOpen, setIsPlanOpen] = useState(() => !isTablet || !isMapVisible);
   const [viewMode, setViewModeState] = useState<DesktopPlanViewMode>(() =>
     resolveInitialViewMode(),
   );
-  const isMapVisible = useIsDesktopMapVisible();
   const { showMap, hideMap } = useDesktopMapActions();
+
+  useEffect(() => {
+    if (isTablet && isMapVisible && isPlanOpen) {
+      setIsPlanOpen(false);
+    }
+  }, [isTablet, isMapVisible, isPlanOpen]);
 
   const isPlanVisible = isPlanOpen;
 
-  const BASE_WIDTH = 450;
-  const ORDER_OVERLAY_WIDTH = 550;
-  const OVERLAY_WIDTH = 450;
+  const BASE_WIDTH = isTablet ? 420 : 450;
+  const ORDER_OVERLAY_WIDTH = isTablet ? 560 : 550;
+  const OVERLAY_WIDTH = isTablet ? 560 : 450;
 
   const hasOverlay = openSectionsCount > 0;
   const railColumnWidth = isOrderOverlayOpen ? ORDER_OVERLAY_WIDTH : BASE_WIDTH;
   const planContainerView = usePlanContainerView();
   const tracks = resolveHomeDesktopTracks({
+    sizeClass,
     viewMode,
     isPlanVisible,
     isMapVisible,
@@ -71,6 +80,7 @@ export function useHomeDesktopLayout({
     setIsPlanOpen(false);
   };
   const openPlan = () => {
+    if (isTablet) hideMap();
     setIsPlanOpen(true);
   };
   const togglePlan = () => {
@@ -82,6 +92,7 @@ export function useHomeDesktopLayout({
   };
   const toggleMap = () => {
     if (!isMapVisible) {
+      if (isTablet) setIsPlanOpen(false);
       showMap();
       return;
     }
@@ -117,7 +128,7 @@ export function useHomeDesktopLayout({
     mapFlex: 1,
     baseWidth: BASE_WIDTH,
     orderOverlayWidth: ORDER_OVERLAY_WIDTH,
-    planWidth: DESKTOP_PLAN_WIDTH,
+    planWidth: isTablet ? BASE_WIDTH : DESKTOP_PLAN_WIDTH,
     planColumnWidth: tracks.planColumnWidth,
     mapRowHeight: tracks.mapRowHeight,
     planRowHeight: tracks.planRowHeight,

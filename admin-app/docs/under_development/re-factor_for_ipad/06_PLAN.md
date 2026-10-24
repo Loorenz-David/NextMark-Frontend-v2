@@ -1,6 +1,6 @@
 # 06 — Implementation plan: admin-app usable on iPad landscape
 
-**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending, repository lint baseline unresolved. Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
+**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending; Phases 0c and 1 committed and stacked; Chrome geometry and device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
 
 Paths relative to `Front_end/admin-app/src` unless stated. Line numbers are in `02`/`03`; re-grep before editing.
 

@@ -9,6 +9,7 @@ export const DESKTOP_MAP_RAIL_WIDTH = 320
 export const DESKTOP_SPLIT_RATIO = 50
 
 export type HomeDesktopTracksInput = {
+  sizeClass: 'phone' | 'tablet' | 'desktop'
   viewMode: DesktopPlanViewMode
   isPlanVisible: boolean
   isMapVisible: boolean
@@ -38,6 +39,7 @@ export type HomeDesktopTracks = {
  * Invariant: the two center panels can never be folded at the same time.
  */
 export const resolveHomeDesktopTracks = ({
+  sizeClass,
   viewMode,
   isPlanVisible,
   isMapVisible,
@@ -62,7 +64,9 @@ export const resolveHomeDesktopTracks = ({
     ? 0
     : !isMapVisible
       ? `calc(100vw - ${railColumnWidth}px)`
-      : planContainerView === 'calendar'
+      : sizeClass === 'tablet'
+        ? `calc(100vw - ${railColumnWidth}px)`
+        : planContainerView === 'calendar'
         ? `calc(100vw - ${DESKTOP_MAP_RAIL_WIDTH}px - ${railColumnWidth}px)`
         : DESKTOP_PLAN_WIDTH
 
