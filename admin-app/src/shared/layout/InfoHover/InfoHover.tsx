@@ -56,6 +56,7 @@ export const InfoHover = ({
           aria-haspopup="dialog"
           aria-expanded={controller.isOpen}
           className={cn(
+            'touch-hit-area',
             triggerClassName ?? DEFAULT_TEXT_TRIGGER_CLASSES,
           )}
           onClick={handleTriggerClick}
@@ -71,7 +72,7 @@ export const InfoHover = ({
           aria-haspopup="dialog"
           aria-expanded={controller.isOpen}
           className={cn(
-            'inline-flex items-center justify-center',
+            'touch-hit-area inline-flex items-center justify-center',
             triggerClassName ?? DEFAULT_ICON_TRIGGER_CLASSES,
           )}
           onClick={handleTriggerClick}

@@ -95,7 +95,7 @@ export const ZoneMapOverlay = () => {
         <div className="relative w-52 rounded-xl border border-[var(--color-muted)]/30 bg-[var(--color-page)]/95 p-3 shadow-lg backdrop-blur-sm">
           <button
             aria-label="Exit zone mode"
-            className="absolute -left-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--color-muted)]/30 bg-[var(--color-page)] text-[var(--color-muted)] shadow-sm"
+            className="touch-hit-area absolute -left-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--color-muted)]/30 bg-[var(--color-page)] text-[var(--color-muted)] shadow-sm"
             onClick={exitZoneMode}
             type="button"
           >

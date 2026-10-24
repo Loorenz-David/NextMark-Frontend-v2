@@ -33,7 +33,7 @@ export const TeamNameEditorRow = ({
             placeholder="Team name"
           />
           <button
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-[rgb(var(--color-light-blue-r),0.35)] bg-[rgb(var(--color-light-blue-r),0.12)] text-[rgb(var(--color-light-blue-r))]"
+            className="touch-hit-area flex h-7 w-7 items-center justify-center rounded-full border border-[rgb(var(--color-light-blue-r),0.35)] bg-[rgb(var(--color-light-blue-r),0.12)] text-[rgb(var(--color-light-blue-r))]"
             onClick={confirmEdit}
             type="button"
             aria-label="Confirm team name"
@@ -41,7 +41,7 @@ export const TeamNameEditorRow = ({
             <BoldCheckIcon className="h-3.5 w-3.5" />
           </button>
           <button
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised text-[var(--color-muted)]"
+            className="touch-hit-area flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised text-[var(--color-muted)]"
             onClick={cancelEdit}
             type="button"
             aria-label="Cancel team name edit"
@@ -55,7 +55,7 @@ export const TeamNameEditorRow = ({
             Team: {teamName}
           </p>
           <button
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised text-[var(--color-muted)]"
+            className="touch-hit-area flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised text-[var(--color-muted)]"
             onClick={startEdit}
             type="button"
             aria-label="Edit team name"

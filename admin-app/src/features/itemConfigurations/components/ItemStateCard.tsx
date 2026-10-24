@@ -46,6 +46,8 @@ export const ItemStateCard = ({ item, onEdit }: ItemStateCardProps) => {
             <button
               type="button"
               onPointerDown={(event) => event.stopPropagation()}
+              onMouseDown={(event) => event.stopPropagation()}
+              onTouchStart={(event) => event.stopPropagation()}
               onClick={(event) => {
                 event.stopPropagation()
                 onEdit(item.client_id)

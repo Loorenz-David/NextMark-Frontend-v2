@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useViewport } from "@/app/viewport";
 
 import { ExclamationIcon } from "@/assets/icons";
 import { getOrderMissingRequiredFieldLabels } from "@/features/order/domain/orderMissingRequiredInfo.domain";
@@ -17,6 +18,7 @@ export const OrderMissingInfoNotifier = ({
   const validators = useOrderValidation();
   const { openOrderForm } = useOrderActions();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const { hasHover } = useViewport();
 
   const missingFields = useMemo(
     () => getOrderMissingRequiredFieldLabels(order, validators),
@@ -38,14 +40,18 @@ export const OrderMissingInfoNotifier = ({
       reference={
         <button
           type="button"
-          className="flex h-7 w-7 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-300 shadow-sm"
+          className="touch-hit-area flex h-7 w-7 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-300 shadow-sm"
           aria-label="Order has missing information"
-          onMouseEnter={() => setIsPopoverOpen(true)}
-          onMouseLeave={() => setIsPopoverOpen(false)}
+          onMouseEnter={() => { if (hasHover) setIsPopoverOpen(true); }}
+          onMouseLeave={() => { if (hasHover) setIsPopoverOpen(false); }}
           onClick={(event) => {
             event.stopPropagation();
-            setIsPopoverOpen(false);
-            openOrderForm({ clientId: order.client_id, mode: "edit" });
+            if (!hasHover && !isPopoverOpen) {
+              setIsPopoverOpen(true);
+            } else {
+              setIsPopoverOpen(false);
+              openOrderForm({ clientId: order.client_id, mode: "edit" });
+            }
           }}
         >
           <ExclamationIcon className="h-4 w-4 text-yellow-900" />
@@ -67,7 +73,7 @@ export const OrderMissingInfoNotifier = ({
           ))}
         </ul>
         <p className="mt-2 text-[11px] text-[var(--color-muted)]">
-          Click the warning icon to complete this order.
+          Tap the warning icon again to complete this order.
         </p>
       </div>
     </FloatingPopover>

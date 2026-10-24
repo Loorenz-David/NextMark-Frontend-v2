@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useViewport } from "@/app/viewport";
 import type { DraggableAttributes, DraggableSyntheticListeners } from "@dnd-kit/core";
 
 import { BoldArrowIcon, TriangleWarningIcon } from "@/assets/icons";
@@ -41,6 +42,7 @@ export const RouteGroupOrderGroupCard = ({
   dragListeners,
 }: RouteGroupOrderGroupCardProps) => {
   const [warningOpen, setWarningOpen] = useState(false);
+  const { hasHover } = useViewport();
 
   return (
     <div className="flex flex-col border-y border-dashed  border-y-[var(--color-muted)]/80 my-4">
@@ -80,14 +82,17 @@ export const RouteGroupOrderGroupCard = ({
                     renderInPortal={true}
                     floatingClassName="z-[220]"
                     reference={
-                      <div
-                        className="flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.08))]"
+                      <button
+                        type="button"
+                        aria-label="Show order stop warning"
+                        aria-expanded={warningOpen}
+                        className="touch-hit-area flex h-7 w-7 items-center justify-center rounded-full border border-warning-border bg-[linear-gradient(135deg,rgba(var(--warning-highlight-r),0.18),rgba(var(--warning-highlight-r),0.08))]"
                         onMouseEnter={() => setWarningOpen(true)}
                         onMouseLeave={() => setWarningOpen(false)}
-                        onClick={(event) => event.stopPropagation()}
+                        onClick={(event) => { event.stopPropagation(); if (!hasHover) setWarningOpen((open) => !open); }}
                       >
                         <TriangleWarningIcon className="h-4 w-4 text-warning" />
-                      </div>
+                      </button>
                     }
                   >
                     <div

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useDndContext } from "@dnd-kit/core";
+import { useViewport } from "@/app/viewport";
 
 import {
   buildCalendarOverlayDroppableId,
@@ -27,6 +28,8 @@ const PLAN_ASSIGNABLE_DRAG_TYPES = new Set([
  * the pointer has been away for longer than that crossing takes.
  */
 const DRAG_LEAVE_GRACE_MS = 220;
+const TOUCH_DRAG_LEAVE_GRACE_MS = 600;
+const TOUCH_DRAG_OPEN_DELAY_MS = 300;
 
 type UseCalendarDayDragOverlayControllerParams = {
   dateKey: CalendarDayKey;
@@ -51,6 +54,7 @@ export const useCalendarDayDragOverlayController = ({
   isPast,
   isOverCell,
 }: UseCalendarDayDragOverlayControllerParams) => {
+  const { isCoarsePointer } = useViewport();
   const { active, over, measureDroppableContainers } = useDndContext();
   const dragOverlayDateKey = usePlanCalendarStore(
     (state) => state.dragOverlayDateKey,
@@ -73,13 +77,19 @@ export const useCalendarDayDragOverlayController = ({
   useEffect(() => {
     if (!isOverCell || !isPlanAssignableDrag) return;
     if (!hasMultiplePlans || isPast) return;
-    setDragOverlayDateKey(dateKey);
+    if (!isCoarsePointer) {
+      setDragOverlayDateKey(dateKey);
+      return;
+    }
+    const timeout = setTimeout(() => setDragOverlayDateKey(dateKey), TOUCH_DRAG_OPEN_DELAY_MS);
+    return () => clearTimeout(timeout);
   }, [
     isOverCell,
     isPlanAssignableDrag,
     hasMultiplePlans,
     isPast,
     dateKey,
+    isCoarsePointer,
     setDragOverlayDateKey,
   ]);
 
@@ -90,12 +100,13 @@ export const useCalendarDayDragOverlayController = ({
     if (!isDragOverlayOpen || !isPlanAssignableDrag || isDragOverDay) return;
     const timeout = setTimeout(() => {
       setDragOverlayDateKey(null);
-    }, DRAG_LEAVE_GRACE_MS);
+    }, isCoarsePointer ? TOUCH_DRAG_LEAVE_GRACE_MS : DRAG_LEAVE_GRACE_MS);
     return () => clearTimeout(timeout);
   }, [
     isDragOverlayOpen,
     isPlanAssignableDrag,
     isDragOverDay,
+    isCoarsePointer,
     setDragOverlayDateKey,
   ]);
 

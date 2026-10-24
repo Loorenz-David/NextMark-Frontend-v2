@@ -91,7 +91,7 @@ export const OrderMarkerGroupOverlay = () => {
             type="button"
             onClick={closeGroupOverlay}
             aria-label="Close grouped marker list"
-            className="rounded-md p-1 text-[var(--color-muted)] transition-colors hover:bg-surface-sunken"
+            className="touch-hit-area rounded-md p-1 text-[var(--color-muted)] transition-colors hover:bg-surface-sunken"
           >
             <CloseIcon className="h-3 w-3" />
           </button>

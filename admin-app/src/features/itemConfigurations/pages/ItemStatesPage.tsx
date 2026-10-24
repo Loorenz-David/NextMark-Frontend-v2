@@ -28,7 +28,7 @@ const SortableItemStateCard = ({ item, onEdit }: { item: ItemState; onEdit: (cli
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} className="dnd-touch-source" {...attributes} {...listeners}>
       <ItemStateCard item={item} onEdit={onEdit} />
     </div>
   )

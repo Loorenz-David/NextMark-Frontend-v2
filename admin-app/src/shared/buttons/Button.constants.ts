@@ -5,6 +5,9 @@ export type ButtonVariant = 'primary' | 'secondary' | 'toolbarSecondary' | 'ghos
 export const buttonBaseClass =
   'cursor-pointer transition active:scale-[0.98] duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-inherit backdrop-blur-xl'
 
+export const coarsePointerButtonClass =
+  'min-h-10 py-2.5 [&_svg]:shrink-0'
+
 export const buttonVariantClasses: Record<ButtonVariant, string> = {
   text: 'bg-surface-raised border border-border hover:bg-surface-hover inline-flex items-center justify-center rounded-xl px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-muted)]',
   textInvers:

@@ -25,7 +25,7 @@ Everything a session (Claude or Codex) needs to make `Front_end/admin-app` fully
 | 0c Lint + legacy-test baseline cleanup | committed on `ipad/phase-0c-baseline`; lint 0 errors, tests 97/97, all gates green | 2026-10-24 Codex |
 | 1 Home geometry for tablets | committed on `ipad/phase-1-geometry` (stacked on 0c); Chrome geometry + iPad rows pending | 2026-10-24 Codex + Claude review |
 | 1b Content priority decisions (user, after Phase 5) → 6b tablet content variants | inventory done; decisions deferred until the iPad is usable | |
-| 2 Touch parity, tap targets, drag tuning | not started | |
+| 2 Touch parity, tap targets, drag tuning | committed on `ipad/phase-2-touch` (stacked on 1); Chrome + iPad rows pending | 2026-10-24 Codex + Claude review |
 | 3 Typography and density tokens | not started | |
 | 4 Popups, forms, settings at tablet height | not started | |
 | 5 Installable admin PWA | not started | |

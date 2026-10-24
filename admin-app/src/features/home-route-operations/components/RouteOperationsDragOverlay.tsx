@@ -1,4 +1,5 @@
 import type { ActiveDrag } from "@/features/plan/hooks/usePlanOrderDndController";
+import { useViewport } from "@/app/viewport";
 import { OrderDragOverlayCard } from "@/features/order";
 import { OrderBatchDragOverlayCard } from "@/features/order/components/cards/OrderBatchDragOverlayCard";
 import { OrderGroupDragOverlayCard } from "@/features/order/components/cards/OrderGroupDragOverlayCard";
@@ -12,13 +13,15 @@ type RouteOperationsDragOverlayProps = {
 export const RouteOperationsDragOverlay = ({
   activeDrag,
 }: RouteOperationsDragOverlayProps) => {
+  const { isCoarsePointer } = useViewport();
+  const previewClassName = `pointer-events-none cursor-grabbing ${isCoarsePointer ? "-translate-x-6 -translate-y-12" : ""}`;
   if (!activeDrag) {
     return null;
   }
 
   if (activeDrag.type === "route_stop") {
     return (
-      <div className="pointer-events-none w-fit cursor-grabbing">
+      <div className={`${previewClassName} w-fit`}>
         <RouteStopDragOverlay
           routeStopClientId={activeDrag.routeStopClientId}
           order={activeDrag.order}
@@ -31,7 +34,7 @@ export const RouteOperationsDragOverlay = ({
 
   if (activeDrag.type === "route_stop_group") {
     return (
-      <div className="pointer-events-none cursor-grabbing">
+      <div className={previewClassName}>
         <RouteStopGroupDragOverlay
           count={activeDrag.count}
           label={activeDrag.label}
@@ -44,7 +47,7 @@ export const RouteOperationsDragOverlay = ({
 
   if (activeDrag.type === "order") {
     return (
-      <div className="pointer-events-none w-fit cursor-grabbing">
+      <div className={`${previewClassName} w-fit`}>
         <OrderDragOverlayCard order={activeDrag.order} />
       </div>
     );
@@ -52,7 +55,7 @@ export const RouteOperationsDragOverlay = ({
 
   if (activeDrag.type === "order_batch") {
     return (
-      <div className="pointer-events-none cursor-grabbing">
+      <div className={previewClassName}>
         <OrderBatchDragOverlayCard
           selectedCount={activeDrag.selectedCount}
           isLoading={activeDrag.isLoading}
@@ -63,7 +66,7 @@ export const RouteOperationsDragOverlay = ({
 
   if (activeDrag.type === "order_group") {
     return (
-      <div className="pointer-events-none cursor-grabbing">
+      <div className={previewClassName}>
         <OrderGroupDragOverlayCard
           count={activeDrag.count}
           label={activeDrag.label}

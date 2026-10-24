@@ -19,6 +19,7 @@ export const useSnapScroll = ({
   const wheelCaptureRef = useRef(false)
   const isUserScrollingRef = useRef(false)
   const suppressNextScrollRef = useRef(false)
+  const scrollIdleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [visualIndex, setVisualIndex] = useState(0)
 
   const selectedIndex = useMemo(() => {
@@ -133,6 +134,13 @@ export const useSnapScroll = ({
     }
 
     isUserScrollingRef.current = true
+    if (typeof window !== 'undefined' && !('onscrollend' in window)) {
+      if (scrollIdleTimerRef.current) clearTimeout(scrollIdleTimerRef.current)
+      scrollIdleTimerRef.current = setTimeout(() => {
+        scrollIdleTimerRef.current = null
+        snapToNearest()
+      }, 120)
+    }
     const node = scrollRef.current
     if (node) {
       const nearestIndex = Math.round(node.scrollTop / itemHeight)
@@ -143,7 +151,7 @@ export const useSnapScroll = ({
         onChange(nextValue)
       }
     }
-  }, [isValueDisabled, itemHeight, onChange, resolveNearestEnabledIndex, value, values])
+  }, [isValueDisabled, itemHeight, onChange, resolveNearestEnabledIndex, snapToNearest, value, values])
 
   useEffect(() => {
     const node = scrollRef.current
@@ -158,6 +166,7 @@ export const useSnapScroll = ({
     node.addEventListener('scrollend', handleScrollEnd as EventListener)
     return () => {
       node.removeEventListener('scrollend', handleScrollEnd as EventListener)
+      if (scrollIdleTimerRef.current) clearTimeout(scrollIdleTimerRef.current)
     }
   }, [snapToNearest])
 

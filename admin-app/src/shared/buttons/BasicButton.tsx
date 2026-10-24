@@ -1,7 +1,8 @@
 import { forwardRef, type ReactNode } from 'react'
 
 import { cn } from '../../lib/utils/cn'
-import { buttonBaseClass, buttonVariantClasses, type ButtonParams } from './Button.constants'
+import { useViewport } from '../../app/viewport'
+import { buttonBaseClass, buttonVariantClasses, coarsePointerButtonClass, type ButtonParams } from './Button.constants'
 
 interface BasicButtonProps {
   children: ReactNode
@@ -12,6 +13,7 @@ export const BasicButton = forwardRef<HTMLButtonElement, BasicButtonProps>(funct
   { children, params },
   ref,
 ) {
+  const { isCoarsePointer } = useViewport()
   const { 
     variant = 'secondary',
      onClick,
@@ -41,6 +43,7 @@ export const BasicButton = forwardRef<HTMLButtonElement, BasicButtonProps>(funct
         buttonBaseClass,
         buttonVariantClasses[variant],
         className,
+        isCoarsePointer && (variant === 'rounded' ? 'min-h-11 min-w-11' : coarsePointerButtonClass),
       )}
       style={ style }
       disabled={disabled}

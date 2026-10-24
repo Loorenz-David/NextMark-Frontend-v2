@@ -131,6 +131,7 @@
   border-top-color: #1d4ed8; /* same as square border */
 }
 
+@media (hover: hover) {
 .map-marker--variant-default:hover {
   cursor: pointer;
   transform: translateY(-50%) scale(1.1);
@@ -147,6 +148,7 @@
   cursor: pointer;
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 4px 10px rgba(29, 78, 216, 0.5);
+}
 }
 
 .map-marker--variant-order.map-marker--hovered {
@@ -325,11 +327,13 @@
   transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
+@media (hover: hover) {
 .map-cluster-marker:hover .map-cluster-marker__inner {
   transform: scale(1.08);
   box-shadow:
     0 6px 20px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
 }
 
 .map-cluster-marker.map-marker--hovered .map-cluster-marker__inner,

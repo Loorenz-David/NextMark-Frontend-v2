@@ -52,7 +52,7 @@ export const PlanCalendarHeader = ({
             type="button"
             onClick={onStepPrevious}
             aria-label="Previous month"
-            className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-surface-hover"
+            className="touch-hit-area flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-surface-hover"
           >
             <ChevronDownIcon className="h-4 w-4 rotate-90 text-[var(--color-muted)]" />
           </button>
@@ -68,7 +68,7 @@ export const PlanCalendarHeader = ({
             type="button"
             onClick={onStepNext}
             aria-label="Next month"
-            className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-surface-hover"
+            className="touch-hit-area flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-surface-hover"
           >
             <ChevronDownIcon className="h-4 w-4 -rotate-90 text-[var(--color-muted)]" />
           </button>

@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useViewport } from '@/app/viewport'
 import { useShallow } from 'zustand/react/shallow'
 
 import {
@@ -26,6 +27,7 @@ import { MAP_MARKER_LAYERS } from '@/shared/map'
 import { useBaseControlls, useMapManager } from '@/shared/resource-manager/useResourceManager'
 
 export const useOrderDriverLiveMapFlow = () => {
+  const { hasHover } = useViewport()
   const mapManager = useMapManager()
   const baseControls = useBaseControlls<PayloadBase>()
   const isBaseOpen = baseControls.isBaseOpen
@@ -80,6 +82,7 @@ export const useOrderDriverLiveMapFlow = () => {
         })
       },
       onMouseEnter: (event, position) => {
+        if (!hasHover) return
         const markerAnchorEl = event.currentTarget as HTMLElement | null
         if (!markerAnchorEl) return
 
@@ -90,8 +93,26 @@ export const useOrderDriverLiveMapFlow = () => {
         })
       },
       onMouseLeave: () => {
-        closeOverlay()
+        if (hasHover) closeOverlay()
       },
+    }).map((marker) => {
+      const originalClick = marker.onClick
+      return {
+        ...marker,
+        onClick: (event: MouseEvent) => {
+          if (!hasHover) {
+            const position = liveDriverPositions.find((entry) => marker.id === `driver-live:orders:${entry.driver_id}`)
+            const markerAnchorEl = event.currentTarget as HTMLElement | null
+            if (!position || !markerAnchorEl) return
+            if (useDriverLiveMarkerOverlayStore.getState().overlay.markerId !== marker.id) {
+              openOverlay({ markerId: marker.id, markerAnchorEl, position })
+              return
+            }
+            closeOverlay()
+          }
+          originalClick?.(event)
+        },
+      }
     })
 
     mapManager.setMarkerLayer(MAP_MARKER_LAYERS.driverLiveOrders, markers)
@@ -114,6 +135,7 @@ export const useOrderDriverLiveMapFlow = () => {
     fetchRouteGroupDetails,
     fetchRouteGroupOverview,
     routeSolutions,
+    hasHover,
   ])
 
   useEffect(() => {

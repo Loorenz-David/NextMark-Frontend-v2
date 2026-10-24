@@ -83,7 +83,7 @@ export const OrderDetailHeader = ({
                 onClick: onClose,
                 ariaLabel: "Close order detail",
                 className:
-                  "min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-[0.66rem]",
+                  "min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-xs",
               }}
             >
               Close

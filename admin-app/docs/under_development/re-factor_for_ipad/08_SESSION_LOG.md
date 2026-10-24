@@ -40,6 +40,21 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phase 2 touch (Codex, reviewed by Claude)
+
+- Branch: `ipad/phase-2-touch`; no commit. Re-grepped the Phase 2 symbols before editing and kept source edits to the named Phase 2 files. `PlanCard` and `ItemTypeCountsPill` already use `useViewport()` from Phase 0.
+- Implemented tap paths for the route-group warning, missing-info notifier, delivery-window days, and driver markers; coarse-pointer button and listed small-control hit areas; settings drag-source callout suppression and Edit event isolation; calmer coarse-pointer auto-scroll, lifted drag previews, longer calendar drag dwell/grace, and scroll-idle snapping fallback. Scoped map hover styles to hover-capable input. This is partial and has not passed device review.
+- Gates: `npm run build` ✅; `npm run check:popup-contract` ✅; `npm run theme:regression` ✅; `npm run check:external-form-pwa` ✅; `git diff --check` ✅. `npm run lint` ❌: 207 errors and 54 warnings, the same recorded Phase 0c repository baseline. `npm test -- --run` ❌: 89/97, the same eight legacy failures recorded for Phase 0c. No check or lint rule was changed.
+- Chrome device-mode geometry at 1024×768, 1180×820 and 1366×1024: ⏳ unverified. The browser connection failed at setup (`Importing module "node:process" is not allowed in node_repl`), before navigation. No iPad available; finger checks remain pending. Desktop E1–E2 visual comparison pending; E3 fails on lint.
+- Left for continuation after Phase 0c: finish the Phase 2 file-list audit, run the required visual and finger rows, and verify the touch-specific behavior on an iPad. `SlideCarouselDots` is decorative and has no click handler to enlarge. The package `MessageCard` close control received a local pseudo-element hit-area because package CSS cannot depend on the admin app stylesheet.
+- Claude review (2026-10-24): code complete against the Phase 2 list; the stop was the inherited baseline, cleared by 0c. Changed-file lint adds no new errors. Driver-marker tap ids checked against `realtime/driverLive/driverLive.map.ts`. Acceptance greps pass (`matchMedia` in features: only reduced-motion; the one `group-hover` reveal is the hover-gated Phase 0 fix). Merged a duplicate `@/app/viewport` import. Device watch item: every `BasicButton` is ≥ 40px tall on coarse pointers, so check crowded headers on the iPad.
+
+| Device matrix row | Result |
+|---|---|
+| B1–B9, B14, B15 finger interactions | ⏳ iPad unavailable; no touch pass claimed |
+| A1–A9 at 1024×768, 1180×820, 1366×1024 | ⏳ Chrome connection failed before navigation |
+| E1–E2 desktop visual comparison | ⏳ Chrome connection failed before navigation |
+| E3 automated gates | ❌ lint baseline; build, popup, theme and PWA ✅ |
 ### 2026-10-24 — Phase 1 geometry (Codex, reviewed by Claude)
 
 - Branch: `ipad/phase-1-geometry`; no commit. Re-grepped each edited symbol and kept source edits within the Phase 1 files.

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useViewport } from '@/app/viewport'
 import {
   CalendarRoot,
   type CalendarModel,
@@ -53,6 +54,7 @@ export const DeliveryWindowCalendarCalendar = ({
   disableAddWindow,
   footer,
 }: DeliveryWindowCalendarCalendarProps) => {
+  const { hasHover } = useViewport()
   const shellScale = useDeliveryWindowCalendarShellScale()
   const { calendar } = shellScale
   const visibleDaysMatrix = model.daysMatrix.filter((weekRow) =>
@@ -152,10 +154,15 @@ export const DeliveryWindowCalendarCalendar = ({
                   onSelect={() => {
                     onMarkSelectionInteraction()
                     if (closedByHours) {
-                      onOpenClosedWarningPopover(dayKey)
+                      if (hasHover || !isPopoverOpen) onOpenClosedWarningPopover(dayKey)
+                      else onClosePopoverNow()
                       return
                     }
                     params.onSelect()
+                    if (!hasHover && windowCount > 0 && !isPopoverBlocked) {
+                      if (isPopoverOpen) onClosePopoverNow()
+                      else onOpenWindowsPopover(dayKey)
+                    }
                   }}
                   onMouseEnter={() => {
                     params.onMouseEnter?.()

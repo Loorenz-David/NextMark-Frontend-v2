@@ -34,7 +34,7 @@ export const MapDrawingSideControls = ({
           onClick={onClear}
           aria-label="Clear selection shape"
           disabled={disabled || clearDisabled}
-          className="flex cursor-pointer items-center justify-center rounded-md border border-[var(--color-muted)]/40 bg-[var(--color-page)] p-2 disabled:cursor-not-allowed disabled:opacity-40"
+          className="touch-hit-area flex cursor-pointer items-center justify-center rounded-md border border-[var(--color-muted)]/40 bg-[var(--color-page)] p-2 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <EraseIcon className="h-3 w-3 text-[var(--color-muted)]" />
         </button>

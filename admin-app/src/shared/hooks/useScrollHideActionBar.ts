@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type UIEvent } from "react";
 
-import { DESKTOP_MEDIA_QUERY } from "@/app/viewport";
+import { DESKTOP_MEDIA_QUERY, useViewport } from "@/app/viewport";
 import { useMediaQuery } from "@/lib/utils/useMediaQuery";
 
 type UseScrollHideActionBarParams = {
@@ -21,7 +21,8 @@ export const useScrollHideActionBar = ({
   expandedHeight,
 }: UseScrollHideActionBarParams) => {
   const isDesktop = useMediaQuery(DESKTOP_MEDIA_QUERY);
-  const isActive = enabled && isDesktop;
+  const { isCoarsePointer } = useViewport();
+  const isActive = enabled && isDesktop && !isCoarsePointer;
   const [isActionBarVisible, setIsActionBarVisible] = useState(true);
   const lastScrollTopRef = useRef(0);
   const lastToggleAtRef = useRef(0);

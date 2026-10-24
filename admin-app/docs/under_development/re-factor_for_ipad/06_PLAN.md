@@ -1,6 +1,6 @@
 # 06 — Implementation plan: admin-app usable on iPad landscape
 
-**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending; Phases 0c and 1 committed and stacked; Chrome geometry and device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
+**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending; Phases 0c, 1 and 2 committed and stacked (0 → 0c → 1 → 2); Chrome geometry and device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
 
 Paths relative to `Front_end/admin-app/src` unless stated. Line numbers are in `02`/`03`; re-grep before editing.
 
@@ -104,6 +104,8 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 **Acceptance:** every row in `09` has a decision; disputed rows are listed in `08` as open questions.
 
 ## Phase 2 — Touch parity, tap targets, drag tuning (1–2 sessions)
+
+**Status (2026-10-24):** partial source changes on `ipad/phase-2-touch`, uncommitted. Build, popup, theme and PWA gates pass; repository lint remains at the known 207 errors/54 warnings and legacy tests at 89/97. Phase 0c owns those failures. Chrome device-mode connection failed; all geometry and finger rows remain unverified. Continue only after the baseline gate is green.
 
 **Goal:** every action reachable by tap; primary controls ≥ 44px on coarse pointers; drags start on purpose and land where the finger is.
 

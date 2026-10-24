@@ -5,7 +5,7 @@ import { DndContext, DragOverlay, MeasuringStrategy } from "@dnd-kit/core";
 
 import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext-components";
 import { preloadMapExtras, useMap } from "@/shared/map";
-import { useMobile } from "@/app/viewport";
+import { useViewport } from "@/app/viewport";
 
 import { homeCollisionDetection } from "../dnd/collisionStrategies";
 import { useRouteOperationsDndController } from "../hooks/useRouteOperationsDndController";
@@ -24,7 +24,7 @@ export function HomeRouteOperationsManagersProvider({
 }: {
   children: ReactNode;
 }) {
-  const { isMobile } = useMobile();
+  const { isMobile, isCoarsePointer } = useViewport();
   useRouteOperationsFixtureBootstrap();
 
   const mapManager = useMap();
@@ -113,8 +113,8 @@ export function HomeRouteOperationsManagersProvider({
         measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
         autoScroll={{
           enabled: true,
-          threshold: { x: 0.1, y: 0.2 },
-          acceleration: 12,
+          threshold: { x: 0.1, y: isCoarsePointer ? 0.12 : 0.2 },
+          acceleration: isCoarsePointer ? 6 : 12,
           interval: 8,
         }}
         onDragStart={onDragStart}
