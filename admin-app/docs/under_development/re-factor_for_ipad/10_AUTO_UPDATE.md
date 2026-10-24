@@ -62,7 +62,7 @@ Reload is deferred while any blocker is active, and retried when blockers clear 
 - version payload parsing: valid, malformed, empty, HTML (captive portal) → no update.
 - throttle: two triggers inside 30 s → one fetch.
 
-## 4. Hosting side (CI/CD change: needs the user's confirmation before editing)
+## 4. Hosting side (CI/CD change — approved by the user 2026-10-24, applied on `ipad/phase-5-pwa`)
 
 Replace the single `Sync build to S3` step in `Front_end/.github/workflows/deploy-admin.yml` with two steps, **assets first** so a new `index.html` never points at chunks that are not uploaded yet:
 
@@ -80,6 +80,7 @@ Replace the single `Sync build to S3` step in `Front_end/.github/workflows/deplo
 - Entry files use `cp --recursive` (not `sync`) so unchanged files like the manifest, icons and `admin-notifications-sw.js` get the new `no-cache` metadata on the first run too.
 - Removed entry files (rare) are no longer deleted automatically; note it in the deploy doc.
 - Keep the CloudFront invalidation step.
+- Applied with one addition: `*.webmanifest` files upload with `--content-type application/manifest+json` (the CLI's guess was a binary type).
 - Verify after the first deploy: `curl -sI https://<admin-host>/` and `/version.json` and a deep link like `/external-form/x` show `cache-control: no-cache`; `curl -sI https://<admin-host>/assets/<file>.js` shows `immutable`. The deep link is served through CloudFront's error-page fallback; if it lacks the header, note it (the app side still refetches `index.html` before reloading).
 
 ## 5. Acceptance

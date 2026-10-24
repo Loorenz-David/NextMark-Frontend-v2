@@ -40,6 +40,20 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phases 4 and 5b reviewed; full stack committed (Claude)
+
+- Final stack (linear, nothing on `main` yet): `phase-0-foundations` → `phase-0c-baseline` → `phase-1-geometry` → `phase-2-touch` → `phase-3-typography` → `phase-4-popups` → `phase-5-pwa` (+ deploy workflow cache headers) → `phase-5b-auto-update`. Test and merge from the 5b tip.
+- Gates on the tip: lint 0 errors / 52 warnings, tests 143/143, build, popup contract, theme regression, PWA checks, `git diff --check` ✅. `dist/version.json` id equals the id inlined in the bundle.
+- Phase 4 review: desktop keeps the original `FeaturePopupShell`/`ClassicLayout` trees and classes; tablet-only branches add the gutter, scrollable overlay and full-screen rule; `vh`→`dvh` is identical on desktop browsers. No changes needed.
+- Phase 5b review: never reloads on a failed/malformed check or a failed `index.html` refetch; blockers re-checked after the refetch; loop guard per target build; service worker only gets `update()`. No changes needed.
+- Deploy workflow (§4 of `10`) approved by the user and committed on `ipad/phase-5-pwa`: assets first, immutable, no `--delete`; entry files `no-cache`; manifests with the manifest content type. Separate buckets for driver/external apps, so nothing else deletes kept assets. After the first deploy from `main`, check:
+  - `curl -sI https://<admin-host>/ | grep -i cache-control` → `no-cache`
+  - `curl -sI https://<admin-host>/version.json | grep -i cache-control` → `no-cache`
+  - `curl -sI https://<admin-host>/assets/<any file>.js | grep -i cache-control` → `immutable`
+  - `curl -sI https://<admin-host>/external-form/x | grep -i cache-control` (CloudFront error-page fallback; note the result)
+- Later: S3 lifecycle rule to expire old `assets/` objects after ~30 days.
+- Open for the user: proper NextMark logo (SVG or ≥1024px PNG) for the install icons; device rows for every phase; removal of the finished worktrees.
+
 ### 2026-10-24 — Phase 5b silent auto-update, app side (Claude)
 
 - Scope: `10_AUTO_UPDATE.md` §3, §3.1, §3.2 and the optional §5 build stamp. Branch `ipad/phase-5b-auto-update`; no commit. **`.github/workflows/deploy-admin.yml` (§4) untouched** — it needs the user's confirmation. Symbols re-grepped before every edit. Chrome not used.
