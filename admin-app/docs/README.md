@@ -30,6 +30,7 @@ Documentation index for the `admin-app` application.
 | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | [under_development/ZONE_CREATION_MODE_PLAN.md](./under_development/ZONE_CREATION_MODE_PLAN.md)       | Zone creation mode — drawing, optimistic create, hover, edit popup |
 | [under_development/ADMIN_APP_MOBILE_SHELL_PLAN_2026-10-07.md](./under_development/ADMIN_APP_MOBILE_SHELL_PLAN_2026-10-07.md) | Mobile shell — tabs, page stack, bottom sheets, back-button navigation for phones |
+| [under_development/re-factor_for_ipad/README.md](./under_development/re-factor_for_ipad/README.md) | iPad landscape refactor — context vault (graph map, geometry and touch inventories, PWA, printing) and phased plan |
 
 ---
 
