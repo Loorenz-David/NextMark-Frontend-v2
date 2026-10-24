@@ -40,6 +40,14 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phase 2b touch drag intent (Codex)
+
+- Branch `ipad/phase-2b-touch-intent`; no commit. Re-grepped the drag sensor, draggable cue, overlay, logger and drop symbols before editing. Kept the temporary dev logger and wired `onIntentDecision` to its `intent` entries in dev.
+- Added `shared/dnd/domain/touchDragIntent.ts` and eight vitest cases for hold timing, tolerance, flick, press-pause-move in both vertical directions, rest-then-flick, non-cancelable movement, post-decision behavior and sparse samples. Direction is absent from the decision rule. The speed helper uses recent sampled movement, so a late flick is not diluted by the earlier rest.
+- Added `PressIntentTouchSensor` against dnd-kit 6.3.1's public sensor contract, without subclassing its sensors or reading private members. It decides on the first move outside tolerance, prevents that move only for an activation, aborts pending gestures on scroll, suppresses long-press native actions, and owns the press/active attribute. All four drag contexts use `useAppDragSensors`; MouseSensor remains at distance 6. Added the source and overlay cues with reduced-motion handling; kept the Phase 2 preview offset. Home `onDragEnd` returns without a change when `over` is null.
+- Values retained from `11`: hold 220 ms, tolerance 8 px, dwell 120 ms, speed 0.8 px/ms, recent window 50 ms, press cue 80 ms. These need iPad tuning after B16–B20.
+- Gates: lint ✅ (0 errors, 52 existing warnings); tests ✅ (151/151); build ✅; popup contract ✅; theme regression ✅; external-form PWA ✅; `git diff --check` including untracked files ✅. No check or lint rule changed. Chrome was not used. B16–B20 and E1–E2 remain pending; E3 automated gates ✅.
+
 ### 2026-10-24 — Touch drag diagnosed with logs; Phase 2b specified (Claude)
 
 - User report: in Chrome iPad mini emulation (1024 wide) taps work but drag-and-drop does not. First test ran on the wrong checkout (`ipad/phase-0-foundations` served from `NextMark-app-v2/Front_end/admin-app`); retested on the stack tip — same result.

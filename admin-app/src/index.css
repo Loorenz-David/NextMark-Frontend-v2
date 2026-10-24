@@ -761,6 +761,39 @@ select:focus {
   touch-action: manipulation;
 }
 
+@media (pointer: coarse) {
+  [data-touch-drag="pressing"] {
+    scale: 0.97;
+    transition: scale 140ms ease-out;
+  }
+
+  [data-touch-drag="active"] {
+    scale: 1.03;
+    box-shadow: var(--shadow-panel-overlay-strong);
+    animation: touch-drag-lift 160ms ease-out;
+  }
+
+  body:has([data-touch-drag="active"]) .touch-drag-preview-lift {
+    animation: touch-drag-lift 160ms ease-out both;
+    box-shadow: var(--shadow-panel-overlay-strong);
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 0.75rem;
+  }
+}
+
+@keyframes touch-drag-lift {
+  0% { scale: 0.97; }
+  60% { scale: 1.03; }
+  100% { scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:has([data-touch-drag="active"]) .touch-drag-preview-lift { animation: none; }
+  [data-touch-drag="active"] { animation: none; }
+  [data-touch-drag="pressing"] { transition: none; }
+}
+
 /* Firefox */
 .scroll-thin {
   scrollbar-width: thin;

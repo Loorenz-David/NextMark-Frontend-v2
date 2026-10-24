@@ -1,10 +1,11 @@
-import { DndContext, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
+import { DndContext, closestCenter } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
 
 import { useReloadBlocker } from '@/app/version'
+import { useAppDragSensors } from '@/shared/dnd/useAppDragSensors'
 
 import { ItemSectionLayout } from '../components/ItemSectionLayout'
 import { ItemStateCard } from '../components/ItemStateCard'
@@ -39,10 +40,7 @@ const SortableItemStateCard = ({ item, onEdit }: { item: ItemState; onEdit: (cli
 
 export const ItemStatesPage = () => {
   const { items, userStates, openCreate, openEdit, handleReorder } = useItemStateController()
-  const sortableSensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
-  )
+  const sortableSensors = useAppDragSensors()
   const isReorderEnabled = true
   const [isSorting, setIsSorting] = useState(false)
   useReloadBlocker(isSorting, 'item-states-sort')

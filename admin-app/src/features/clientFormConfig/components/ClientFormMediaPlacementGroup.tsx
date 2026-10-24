@@ -1,9 +1,10 @@
-import { DndContext, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
+import { DndContext, closestCenter } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState } from 'react'
 
 import { useReloadBlocker } from '@/app/version'
+import { useAppDragSensors } from '@/shared/dnd/useAppDragSensors'
 
 import {
   MEDIA_PLACEMENT_DESCRIPTIONS,
@@ -33,10 +34,7 @@ export const ClientFormMediaPlacementGroup = ({
   onDelete,
   onReorder,
 }: ClientFormMediaPlacementGroupProps) => {
-  const sortableSensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
-  )
+  const sortableSensors = useAppDragSensors()
   const [isSorting, setIsSorting] = useState(false)
   useReloadBlocker(isSorting, 'client-form-media-sort')
 

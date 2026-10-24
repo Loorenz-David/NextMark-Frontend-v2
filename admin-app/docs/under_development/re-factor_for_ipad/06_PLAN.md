@@ -176,6 +176,8 @@ Spec: `10_AUTO_UPDATE.md` (user requirement 2026-10-24: every deploy reaches ins
 
 ## Phase 2b — Touch drag intent (1 session) — stacked after 5b
 
+**Status (2026-10-24):** implemented, uncommitted on `ipad/phase-2b-touch-intent`. Pure intent state machine and eight vitest cases, public-API touch sensor, one shared sensor hook at all four contexts, dev intent logging and touch cues are in place. Automated gates green (lint 0 errors / 52 existing warnings, tests 151/151, build, popup contract, theme regression, external-form PWA, diff check). B16–B20 and E1–E2 device/visual checks remain pending; E3 automated checks pass. The temporary dev logger remains for the device pass.
+
 Spec: `11_TOUCH_DRAG_INTENT.md` (user decision 2026-10-24: hold with a clear cue + press-pause-move; direction-based intent rejected because route stops reorder vertically). A custom dnd-kit touch sensor on the public sensor API with a pure, tested gesture state machine; one `useAppDragSensors()` hook replaces the four sensor setups; pressing/lift cues through a `data-touch-drag` attribute owned by the sensor; long-press callout and selection blocked.
 
 **Acceptance:** rows B16–B20; `11` §4; desktop mouse drag unchanged (E1–E3); gates green. Before merging to `main`, revert the temporary dev logger commit (`TEMPORARY: log touch drag gestures…`).

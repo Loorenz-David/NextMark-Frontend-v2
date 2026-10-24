@@ -32,7 +32,7 @@ Everything a session (Claude or Codex) needs to make `Front_end/admin-app` fully
 | 4 Popups, forms, settings at tablet height | committed on `ipad/phase-4-popups` (stacked on 3); A6–A8, D1, C2, E rows pending | 2026-10-24 Claude session + review |
 | 5 Installable admin PWA | committed on `ipad/phase-5-pwa` (stacked on 4) + deploy workflow cache headers (user-approved); C/D rows pending | 2026-10-24 Codex + Claude review |
 | 5b Silent auto-update (`10_AUTO_UPDATE.md`) | committed on `ipad/phase-5b-auto-update` (stacked on 5); C9–C12 need a deploy or `npm run preview` | 2026-10-24 Claude session + review |
-| 2b Touch drag intent (`11_TOUCH_DRAG_INTENT.md`) | branch `ipad/phase-2b-touch-intent` (stacked on 5b, carries the temporary dev logger); spec ready | |
+| 2b Touch drag intent (`11_TOUCH_DRAG_INTENT.md`) | implemented, uncommitted on `ipad/phase-2b-touch-intent`; all automated gates green; B16–B20 and E rows pending; temporary dev logger retained | 2026-10-24 Codex |
 | 6 Printing from the iPad | not started | |
 | 7 Optional (map drawing, AI panel, timeline) | not started | |
 
