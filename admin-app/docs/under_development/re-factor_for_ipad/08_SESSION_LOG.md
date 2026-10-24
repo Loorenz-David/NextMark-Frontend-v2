@@ -52,7 +52,8 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
   - `curl -sI https://<admin-host>/assets/<any file>.js | grep -i cache-control` → `immutable`
   - `curl -sI https://<admin-host>/external-form/x | grep -i cache-control` (CloudFront error-page fallback; note the result)
 - Later: S3 lifecycle rule to expire old `assets/` objects after ~30 days.
-- Open for the user: proper NextMark logo (SVG or ≥1024px PNG) for the install icons; device rows for every phase; removal of the finished worktrees.
+- Install icons replaced (user: reuse the driver-app icon): source is the 1024px PNG inside `driver-app/public/pwa-icon.svg`, cropped to the dark tile and made full-bleed (corners filled from the adjacent gradient) so iOS applies its own rounding instead of showing a white square; `maskable-512.png` has the artwork at 80% so the logo stays inside the launcher safe zone.
+- Open for the user: device rows for every phase; removal of the finished worktrees.
 
 ### 2026-10-24 — Phase 5b silent auto-update, app side (Claude)
 
