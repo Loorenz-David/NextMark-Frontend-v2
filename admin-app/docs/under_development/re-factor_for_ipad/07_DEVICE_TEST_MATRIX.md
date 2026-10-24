@@ -56,6 +56,10 @@ Run after every phase. Copy the table into `08_SESSION_LOG.md` under the session
 | C6 | Web push permission prompt can be triggered and a push arrives | |
 | C7 | Print item labels → share sheet appears with Print/AirPrint; PDF page size equals label size | |
 | C8 | Print route sheet → share sheet / in-app viewer | |
+| C9 | Installed app: deploy a new build, reopen from the home screen → new build runs, no prompt (build stamp / `__NEXTMARK_BUILD_INFO__`) | |
+| C10 | Same with the order form open and edited → no reload until saved or closed; reloads on the next reopen | |
+| C11 | C9 on iPhone home-screen app and Mac Safari Dock web app | |
+| C12 | Long-open old session after a deploy: a screen never opened before still loads (old chunk kept) or reloads once | |
 
 ## D. Keyboard and dynamic size
 

@@ -13,6 +13,7 @@ Everything a session (Claude or Codex) needs to make `Front_end/admin-app` fully
 | `04_PWA_AND_PLATFORM.md` | Existing external-form PWA, guard script, admin manifest design, SW decision, standalone behaviours, how to verify on the iPad | Phase 5 (and `.safe-*` work in 0/4) |
 | `05_PRINTING_AND_BLUETOOTH.md` | What prints today, iPad constraints (no Web Bluetooth, blob download broken in standalone), options ranked, recommendation, sources | Phase 6 |
 | `09_CONTENT_PRIORITY.md` | Element-by-element inventory of the key surfaces with the user's Keep / Collapse / Hide decision per row; spec for tablet content variants | Phase 1b (decide), Phases 3–4 (implement) |
+| `10_AUTO_UPDATE.md` | Silent auto-update for installed apps: why Apple devices go stale, version check + safe reload, S3/CloudFront cache headers (Phase 5b) |
 | `06_PLAN.md` | Architecture decision (size class + input class), Phases 0–7 with file lists and acceptance, sequencing, session protocol | always (your phase) |
 | `07_DEVICE_TEST_MATRIX.md` | Manual checks A–E to run on the iPad and on desktop after each phase | end of every phase |
 | `08_SESSION_LOG.md` | Decision register, open client questions, append-only session entries | start and end of every session |

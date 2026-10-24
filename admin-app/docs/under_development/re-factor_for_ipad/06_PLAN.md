@@ -164,6 +164,14 @@ Follow `04_PWA_AND_PLATFORM.md` §3–5: `public/admin.webmanifest` + icons in `
 
 ---
 
+## Phase 5b — Silent auto-update for the installed app (1 session)
+
+Spec: `10_AUTO_UPDATE.md` (user requirement 2026-10-24: every deploy reaches installed apps automatically, no prompt, reliable on Mac, iPad and iPhone). App side: build emits `/version.json`; `src/app/version/` checks it (no-store) on resume, `pageshow`, `online`, `focus` and every 5 min while visible; reloads silently at a safe moment (reload-blocker registry wired into dirty forms, drags, focused inputs), refetching `index.html` with `cache: 'reload'` first; `vite:preloadError` reloads once per build; the notification SW gets `registration.update()`. Hosting side: `deploy-admin.yml` uploads `assets/` first with immutable caching and without `--delete`, then entry files with `no-cache` — **CI/CD change, confirm with the user before editing**.
+
+**Acceptance:** rows C9–C12; `dist/version.json` id equals the running build id; vitest cases in `10` §3.2; gates green.
+
+---
+
 ## Phase 6 — Printing from the iPad (1 session, then client decision)
 
 Per `05_PRINTING_AND_BLUETOOTH.md` §4: `features/templates/printDocument/controllers/deliverPdf.controller.ts` chooses Web Share (files) → in-app viewer → download; `downloadByEvent.flow.ts` and `PrintTemplatePreview.tsx` route through it; a small viewer popup (`FeaturePopupShell` `lg`) with the blob in an `<iframe>` and Share/Print buttons. Desktop unchanged (download). Then, per `05` §6: capability detection (`hasWebBluetooth`, `hasNativeBridge`) in `app/`, transport layer in `features/templates/printDocument/transports/`, and printer-language renderers (ZPL/ESC-POS/TSPL) for the client's model once known. The **NextMark Bridge** native app (WKWebView + WebBLE polyfill + `nextmarkBridge` for MFi/TCP) is **deferred until the whole iPad refactor is done** (user decision 2026-10-24, D6): it will serve several of the user's PWAs and deserves its own exploration. Phase 6 therefore ships only the share/AirPrint transport and leaves the transport port ready for `webBluetooth` / `nativeBridge` implementations.

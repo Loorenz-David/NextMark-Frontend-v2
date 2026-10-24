@@ -40,6 +40,13 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phases 3 and 5 reviewed and stacked; Phase 4 and 5b opened (Claude)
+
+- Stack now: 0 → 0c → 1 → 2 → 3 (`ipad/phase-3-typography`) → 5 (`ipad/phase-5-pwa`, rebased on 3). Gates on the Phase 5 tip: lint 0 errors, tests 97/97, build, popup contract, theme regression, PWA checks, `git diff --check` ✅.
+- Phase 3 review fixes and Phase 5 logo issue: see their entries below.
+- User requirement (2026-10-24): installed apps must update automatically on every deploy, with no prompt, reliably on Apple devices. Hosting verified as S3 `delivery-frontend-app` + CloudFront `E16F4UEPFT2P6Y` via `Front_end/.github/workflows/deploy-admin.yml` (not nginx; the EC2 nginx only serves the API). Spec written: `10_AUTO_UPDATE.md`; plan section Phase 5b; device rows C9–C12.
+- Opened `ipad/phase-4-popups` (from Phase 3 tip) and `ipad/phase-5b-auto-update` (from Phase 5 tip), worktrees `NextMark-ipad/phase-4` and `phase-5b`. They run in parallel; merge order 4 → 5 (rebased on 4) → 5b.
+
 ### 2026-10-24 — Phase 5 admin PWA (Codex)
 
 - Branch `ipad/phase-5-pwa`; no commit. Re-grepped PWA, viewport and back-layer symbols before editing. Phase 3 typography and `index.css` remain untouched.
