@@ -40,6 +40,14 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Touch drag diagnosed with logs; Phase 2b specified (Claude)
+
+- User report: in Chrome iPad mini emulation (1024 wide) taps work but drag-and-drop does not. First test ran on the wrong checkout (`ipad/phase-0-foundations` served from `NextMark-app-v2/Front_end/admin-app`); retested on the stack tip — same result.
+- Added a temporary dev-only logger (`src/app/debug/`, committed as `TEMPORARY…` on `ipad/phase-2b-touch-intent`). Evidence: the finger left the 8 px tolerance at 159–237 ms, before the 250 ms hold; dnd-kit cancelled, the browser took the pan (`pointercancel`, later moves non-cancelable). Holding still ≥ 250 ms works (`dnd:start` at 253 ms, moves `defaultPrevented`). A long press also fired `selectstart`/`contextmenu`.
+- Root cause: not a wiring bug — the hold works, but nothing tells the user when the card is ready, so they move too early.
+- Decision (user): option 1 (hold with a clear pick-up cue) + option 4 (press-pause-move: slow deliberate movement after a short rest starts the drag; a flick scrolls). Direction-based intent rejected: route stops are reordered vertically. Spec `11_TOUCH_DRAG_INTENT.md`, plan section Phase 2b, rows B16–B20.
+- Worktree note: `NextMark-ipad/phase-5b` is now on `ipad/phase-2b-touch-intent` (the user's dev server runs there).
+
 ### 2026-10-24 — Phases 4 and 5b reviewed; full stack committed (Claude)
 
 - Final stack (linear, nothing on `main` yet): `phase-0-foundations` → `phase-0c-baseline` → `phase-1-geometry` → `phase-2-touch` → `phase-3-typography` → `phase-4-popups` → `phase-5-pwa` (+ deploy workflow cache headers) → `phase-5b-auto-update`. Test and merge from the 5b tip.

@@ -43,6 +43,11 @@ Run after every phase. Copy the table into `08_SESSION_LOG.md` under the session
 | B13 | Focusing an input does not zoom the page | |
 | B14 | Long-press on non-draggable text does not pop the system callout in shell chrome | |
 | B15 | Resizable/draggable panels (plan panel drag, split view) can be adjusted by touch | |
+| B16 | Hold a card still ~0.25 s → it squeezes while held, then the preview lifts and follows the finger (order list, route stop, settings sortable) | |
+| B17 | Press a card, pause briefly, then move slowly → drag starts without waiting for the full hold | |
+| B18 | Quick swipe starting on cards (order list, route stops, settings lists) → the list scrolls; no drag, no squeeze flash | |
+| B19 | Reorder route stops up and down by hold and by press-pause-move; drop on nothing → nothing changes | |
+| B20 | Long press on a draggable never shows the iOS callout or selects text | |
 
 ## C. Installed app (standalone)
 

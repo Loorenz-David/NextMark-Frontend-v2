@@ -174,6 +174,14 @@ Spec: `10_AUTO_UPDATE.md` (user requirement 2026-10-24: every deploy reaches ins
 
 ---
 
+## Phase 2b — Touch drag intent (1 session) — stacked after 5b
+
+Spec: `11_TOUCH_DRAG_INTENT.md` (user decision 2026-10-24: hold with a clear cue + press-pause-move; direction-based intent rejected because route stops reorder vertically). A custom dnd-kit touch sensor on the public sensor API with a pure, tested gesture state machine; one `useAppDragSensors()` hook replaces the four sensor setups; pressing/lift cues through a `data-touch-drag` attribute owned by the sensor; long-press callout and selection blocked.
+
+**Acceptance:** rows B16–B20; `11` §4; desktop mouse drag unchanged (E1–E3); gates green. Before merging to `main`, revert the temporary dev logger commit (`TEMPORARY: log touch drag gestures…`).
+
+---
+
 ## Phase 6 — Printing from the iPad (1 session, then client decision)
 
 Per `05_PRINTING_AND_BLUETOOTH.md` §4: `features/templates/printDocument/controllers/deliverPdf.controller.ts` chooses Web Share (files) → in-app viewer → download; `downloadByEvent.flow.ts` and `PrintTemplatePreview.tsx` route through it; a small viewer popup (`FeaturePopupShell` `lg`) with the blob in an `<iframe>` and Share/Print buttons. Desktop unchanged (download). Then, per `05` §6: capability detection (`hasWebBluetooth`, `hasNativeBridge`) in `app/`, transport layer in `features/templates/printDocument/transports/`, and printer-language renderers (ZPL/ESC-POS/TSPL) for the client's model once known. The **NextMark Bridge** native app (WKWebView + WebBLE polyfill + `nextmarkBridge` for MFi/TCP) is **deferred until the whole iPad refactor is done** (user decision 2026-10-24, D6): it will serve several of the user's PWAs and deserves its own exploration. Phase 6 therefore ships only the share/AirPrint transport and leaves the transport port ready for `webBluetooth` / `nativeBridge` implementations.
