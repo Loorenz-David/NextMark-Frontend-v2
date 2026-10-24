@@ -3,6 +3,7 @@ import './index.css'
 import App from './App.tsx'
 import { AppProviders } from './app/providers/AppProviders'
 import { APP_BUILD_ID, APP_BUILD_TIMESTAMP, startAppVersionMonitor } from './app/version'
+import { installDndTouchDebug, isDndDebugRequested } from './app/debug/dndTouchDebug'
 
 const buildInfo = {
   buildId: APP_BUILD_ID,
@@ -110,6 +111,12 @@ const installRuntimeAssetDiagnostics = () => {
 
 installRuntimeAssetDiagnostics()
 startAppVersionMonitor()
+
+// TEMPORARY: touch drag diagnostics, dev only, `?dndDebug=1`. Read the flag
+// synchronously: the router may drop the query string before an async import.
+if (import.meta.env.DEV && isDndDebugRequested()) {
+  installDndTouchDebug()
+}
 
 createRoot(document.getElementById('root')!).render(
 
