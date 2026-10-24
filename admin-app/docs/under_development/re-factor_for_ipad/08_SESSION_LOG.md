@@ -40,6 +40,41 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-24 — Phase 0 committed, next phases opened (Claude)
+
+- No iPad available today; the user moves on and verifies Phase 0 on the device tomorrow. Phase 0 code committed on `ipad/phase-0-foundations` as **device-unverified**; if the device rows fail, fix on that branch and rebase the downstream branches.
+- File-overlap check: 0c, 1 and 2 can run in parallel; Phase 3 waits for them (plan updated, "Parallel run" in `06`).
+- Branches created from the Phase 0 tip: `ipad/phase-0c-baseline`, `ipad/phase-1-geometry`, `ipad/phase-2-touch`.
+- Without an iPad, geometry is checked in Chrome device mode with `?viewport=tablet&pointer=coarse` at 1024×768, 1180×820, 1366×1024; touch rows stay pending until the device is back.
+
+### 2026-10-24 — Review of Phase 0 (Claude)
+
+- Verified independently: `npm run build` ✅, `check:popup-contract` ✅, `theme:regression` ✅, `check:external-form-pwa` ✅, `git diff --check` ✅, ESLint on every changed file ✅. `eslint .` = 207 errors / 54 warnings in 110 files, none of them touched by Phase 0 → pre-existing debt, scheduled as **Phase 0c** in `06`. `npm test` = 89/97, the 8 failures are legacy tests in untouched code paths (5 assertion failures that may be real bugs, 3 map tests with environment problems) → also Phase 0c.
+- Diff review against the Phase 0 plan: viewport size class + `isStandalone` + dev override ✅ (`isStandalone` read once at mount, no `app/pwa` → `app/viewport` cycle); pointer-scoped CSS baseline ✅; `h-screen` → `h-dvh` in the three files ✅; BottomSheet drag moved to the 44px handle with `useDragControls`, `dragListener={false}`, `touch-none` ✅; notification dismiss visible when `!hasHover` ✅; `PlanCard` / `ItemTypeCountsPill` now read the viewport owner ✅; `--vh` writer removed ✅; vitest + glob runner ✅; theme gate fixed at the cause (stale line overrides, stale allowlist counts tightened, `text-white` / `bg-yellow-300` replaced by `@theme inline` tokens).
+- Nit, not blocking: the new `--color-notification-badge-ink`, `--color-missing-info-badge(-ink)` tokens are fixed hex values in `@theme inline`, not tied to the light/dark variables (same as the palette classes they replaced, so no visual change). Consider mapping them to theme variables in Phase 3.
+- Verdict: ready for the device rows B6, B9, B11, B12, B13 and desktop E1/E2. Commit after the device pass.
+
+### 2026-10-24 — Session 1: Phase 0 foundations (Codex)
+
+- Branch: `ipad/phase-0-foundations`; no commit. The user reconfirmed the 1440px desktop boundary.
+- Scope: fixed the theme regression baseline; added viewport size class, standalone fact, coarse-pointer CSS, dynamic viewport height, handle-only BottomSheet drag, visible notification dismissal without hover, and a development-only tablet/coarse override. Replaced the two remaining local touch media queries with the viewport owner. Removed the unused `--vh` writer.
+- Vitest: installed as a dev dependency; one glob runner invokes all 96 legacy test files, including the one with top-level assertions. Added a viewport boundary test. Vitest's include list names the runner and `*.vitest.test.ts` because including all legacy `*.test.ts` as independent Vitest files would report “No test suite found” for each file.
+- Files: `package.json`, `package-lock.json`, `vitest.config.ts`, `src/tests/legacy-runner.test.ts`, `src/app/viewport/*`, `src/app/pwa/index.ts`, `src/index.css`, `src/main.tsx`, `src/app/router/AppRouterSkeleton.tsx`, `src/features/home-app/pages/HomeAppPage.tsx`, `src/features/settings/pages/SettingsPage.tsx`, `src/shared/overlays/bottomSheet/BottomSheet.tsx`, `src/realtime/notifications/AdminNotificationItem.tsx`, the two local touch-detection components, theme map/allowlist, and the three theme-gate component files. This log, README and plan status were updated.
+- Gates: `npm run build` ✅; `npm run lint` ❌ (208 errors, 54 warnings across the repository; scoped ESLint on all touched TS/TSX files ✅); `npm run check:popup-contract` ✅; `npm run theme:regression` ✅ (initially failed at stale `OrderCard` override and three stale color counts, then exposed additional stale override lines, four notification `text-white` values, two colors and two radii); `npm run check:external-form-pwa` ✅. `git diff --check` ✅. Acceptance grep for `innerWidth|matchMedia` is limited to the allowed locations.
+- New test runner: 89/97 tests pass; eight legacy tests fail in customer form submit, order map markers, order delivery windows, order form submit, plan date filter, and three map tests. Two map tests require `document` despite the planned Node environment; one map test reads a missing internal `layers` property. These failures are exposed by running legacy tests for the first time; the Phase 0 code does not change those paths. No assertions were weakened.
+- Decision: left the unrelated repository lint errors and legacy test failures for a separately scoped cleanup. They keep the full gate set from being green. Device and visual verification remain pending; iPad model/iPadOS/trackpad status have not been recorded yet.
+
+| Device matrix row | Result |
+|---|---|
+| B6 three-dot menu tap and items | ⏳ user iPad check pending |
+| B9 notification dismissal | ⏳ user iPad check pending |
+| B11 button/tab double-tap zoom and tap flash | ⏳ user iPad check pending |
+| B12 popup scroll containment and document rubber-band | ⏳ user iPad check pending |
+| B13 input focus zoom | ⏳ user iPad check pending |
+| E1 desktop home comparison at 1440/1920 | ⏳ desktop visual check pending |
+| E2 desktop popups, sections, settings | ⏳ desktop visual check pending |
+| E3 automated gates | ❌ lint baseline; other four gates ✅ |
+
 ### 2026-10-24 — Session 0: analysis and context vault (Claude)
 
 - Built this folder. No source code changed.

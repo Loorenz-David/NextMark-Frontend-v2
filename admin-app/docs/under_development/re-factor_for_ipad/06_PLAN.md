@@ -1,6 +1,6 @@
 # 06 — Implementation plan: admin-app usable on iPad landscape
 
-**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 ready to start. Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
+**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 code implemented, device verification pending, repository lint baseline unresolved. Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
 
 Paths relative to `Front_end/admin-app/src` unless stated. Line numbers are in `02`/`03`; re-grep before editing.
 
@@ -19,12 +19,14 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 | `isStandalone` (new, from `app/pwa` `isStandaloneDisplay`) | `navigator.standalone` / `display-mode` | safe areas, history back layers, status bar |
 
 - `isMobile` stays `sizeClass === 'phone'`; no existing call site changes meaning.
-- A 1280px laptop window will receive the `tablet` geometry. That is acceptable (the map is 380px there today) and keeps monitors ≥ 1440 pixel-identical. **Confirm the 1440 boundary with the user in Phase 0**; if they want laptops untouched, set `tablet` = `1000–1279` and accept that the 12.9" iPad (1366) gets desktop geometry with touch fixes only.
+- A 1280px laptop window will receive the `tablet` geometry. That is acceptable (the map is 380px there today) and keeps monitors ≥ 1440 pixel-identical. **The user confirmed the 1440px boundary in Phase 0.**
 - Never branch geometry on `isCoarsePointer`, never branch touch behaviour on width.
 
 ---
 
 ## Phase 0 — Foundations and the two blocking bugs (1 session)
+
+**Status (2026-10-24):** code implemented on `ipad/phase-0-foundations`; device rows and desktop visual comparison await the user; repository-wide lint fails on 208 existing errors. No commit made, per K1.
 
 **Goal:** one source of truth for size class and standalone; tablet-wide touch CSS baseline; fix the two defects that break touch everywhere.
 
@@ -53,6 +55,18 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 **Acceptance:** `grep -rn "innerWidth\|matchMedia" src` shows only `app/viewport`, `app/pwa`, `lib/utils/useMediaQuery.ts`, `ZoneDetailsPopover.tsx`, `prefersReducedMotion.flow.ts`. Device rows B6, B11, B12, B13, B9. Desktop E1–E3. Gates green (record pre-existing failures).
 
 ---
+
+## Phase 0c — Lint and legacy-test baseline cleanup (1 session, mechanical, any model)
+
+**Found during Phase 0 (2026-10-24):** `npm run lint` fails on `main` with 207 errors in 110 files that Phase 0 did not touch (70 `no-explicit-any`, 65 `no-unused-vars`, 43 `react-refresh/only-export-components`, 8 `rules-of-hooks`, 7 `no-unused-expressions`, 5 `prefer-const`, …). The new vitest runner also exposes 8 legacy test failures that had never run: `costumerFormSubmit.actions`, `orderMapMarkers.flow`, `orderFormDeliveryWindows.flow`, `orderFormSubmit.controller`, `planDateFilter.utils` (assertion failures — each may be a stale test **or a real bug**, decide per case), and three `shared/map` tests (`circleSelection` needs `document`, `layers` reads a missing internal property, `markerLayerManager.dotContent`).
+
+**Goal:** make `npm run lint` and `npm test` green on `main` so later phases have a real gate. No behaviour changes except where a legacy test reveals an actual bug (then fix the bug, log it in `08`).
+
+- Lint: fix by rule family; `no-explicit-any` gets real types, not `unknown` casts; `only-export-components` splits non-component exports into sibling files; `rules-of-hooks` violations are reviewed one by one (they can be real bugs). Do not add eslint-disable comments and do not weaken `eslint.config.js`.
+- Tests: for each failing legacy test, read the test and the code; if the code is right, fix the test; if the test is right, fix the code; for the two DOM-dependent map tests, give them a `// @vitest-environment jsdom` file pragma (add `jsdom` as a dev dependency) or convert them to `*.vitest.test.ts` with that environment.
+- Branch `ipad/phase-0c-baseline`. Can run in parallel with Phases 1–3; merge before Phase 4.
+
+**Acceptance:** `npm run lint` 0 errors (warnings may remain, record the count); `npm test` 97/97; build and the three check scripts green.
 
 ## Phase 1 — Home geometry for tablets (1–2 sessions)
 
@@ -162,6 +176,7 @@ Per `05_PRINTING_AND_BLUETOOTH.md` §4: `features/templates/printDocument/contro
 | Phase | Sessions | Depends on | Device time |
 |---|---|---|---|
 | 0 Foundations + 2 bugs | 1 | — | 20 min |
+| 0c Lint + legacy-test baseline | 1 (cheap model) | 0 | — |
 | 1 Home geometry | 1–2 | 0 | 45 min |
 | 1b Content priority decisions (user) + 6b content variants (code) | user + 1–2 sessions | 0–5 done | 30 min |
 | 2 Touch parity | 1–2 | 0 | 45 min |
@@ -172,7 +187,11 @@ Per `05_PRINTING_AND_BLUETOOTH.md` §4: `features/templates/printDocument/contro
 | 7 Optional | — | 1, 2 | — |
 | Bridge app (native, separate repo) | later | all phases done | — |
 
-Phases 1, 2 and 3 are independent of each other and **will run as parallel sessions** on branches `ipad/phase-1-geometry`, `ipad/phase-2-touch`, `ipad/phase-3-typography` (user decision K6), each inside its file list; merge 1 before 4. Branch naming: `ipad/phase-N-<slug>`; commits only when the user asks (K1).
+**Parallel run (revised 2026-10-24 after measuring file overlap):** Phases **0c, 1 and 2** run in parallel on `ipad/phase-0c-baseline`, `ipad/phase-1-geometry`, `ipad/phase-2-touch`, all branched from `ipad/phase-0-foundations`. Overlap is small: 1 and 2 share 4 files (`OrderMarkerGroupOverlay`, `MapMultiSelectOverlay`, `ZoneMapOverlay`, `HomeDesktopView`); 0c shares 3 with them (`MapInstanceManager` with 11 lint errors, `RouteGroupOrderGroupCard`, `DeliveryWindowCalendarCalendar`). **Phase 3 runs after they merge**, not in parallel: its codemod rewrites 115 files, 10 of them in Phase 1/2 lists, and must also catch literals Phases 1/2 add. Writing the codemod script early is fine; applying it happens on top of the merged result.
+
+**Merge order:** 0 → 0c → 1 → 2 (rebase on 1, resolve the 4 shared files) → 3 → 4 → 5. Each branch merges only after its device rows pass.
+
+**Parallel sessions need separate working trees.** Two agents in one checkout overwrite each other's files. Use `git worktree add` per phase branch, each with its own `npm ci` in `admin-app` (≈400 MB each). Branch naming: `ipad/phase-N-<slug>`; commits only when the user asks (K1).
 
 ## Session protocol (every implementing session)
 
