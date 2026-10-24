@@ -45,8 +45,24 @@ jobs:
 
           npm run build
 
-      - name: Sync build to S3
-        run: aws s3 sync dist/ s3://delivery-frontend-app --delete
+      # Hashed assets go first and are never deleted, so a page still running the
+      # previous build can lazy-load its chunks, and a new index.html never points
+      # at files that are not uploaded yet. Their names change every build, so
+      # caching them forever is safe.
+      - name: Upload hashed assets (cache forever)
+        run: aws s3 sync dist/assets s3://delivery-frontend-app/assets --cache-control "public, max-age=31536000, immutable"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-north-1
+
+      # Entry files must always revalidate, or Safari keeps serving an old
+      # index.html to installed iPad/iPhone apps. cp (not sync) rewrites the
+      # metadata of unchanged files such as icons and the service worker too.
+      - name: Upload entry files (always revalidate)
+        run: |
+          aws s3 cp dist/ s3://delivery-frontend-app/ --recursive --exclude "assets/*" --exclude "*.webmanifest" --cache-control "no-cache"
+          aws s3 cp dist/ s3://delivery-frontend-app/ --recursive --exclude "*" --include "*.webmanifest" --cache-control "no-cache" --content-type "application/manifest+json"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
