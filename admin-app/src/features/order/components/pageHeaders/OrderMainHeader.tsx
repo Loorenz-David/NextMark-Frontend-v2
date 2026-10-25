@@ -2,12 +2,10 @@ import { CloseIcon, OrderIcon, PlusIcon } from "@/assets/icons";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import type {
   OrderQueryFilters,
-  OrderStats,
 } from "../../types/orderMeta";
 import { SearchFilterBar } from "@/shared/searchBars";
 import { useSectionPanel } from "@/shared/section-panel/SectionPanelContext";
 import { type RefObject, useEffect, useMemo } from "react";
-import { pluralLabel } from "@shared-utils";
 import { ThreeDotMenu } from "@/shared/buttons/ThreeDotMenu";
 import { InfoHover } from "@/shared/layout/InfoHover";
 import { ORDER_MAIN_HEADER_INFO } from "../../info/orderMainHeader.info";
@@ -28,7 +26,6 @@ type OrderMainHeaderProps = {
   isSelectionMode: boolean;
   applySearch: (input: string) => void;
   onOpenFilters: () => void;
-  orderStats?: OrderStats;
   query: {
     q: string;
     filters: OrderQueryFilters;
@@ -70,7 +67,6 @@ export const OrderMainHeader = ({
   applySearch,
   onOpenFilters,
   query,
-  orderStats,
   actionStackRef,
   useFloatingActionStack = false,
   isActionStackVisible = true,
@@ -85,19 +81,11 @@ export const OrderMainHeader = ({
   );
 
   useEffect(() => {
-    const ordersCount = orderStats?.orders?.total ?? 0;
-    const itemsCount = orderStats?.items?.total ?? 0;
-
+    // Counts live at the top of the list (OrderListSummary), not here.
     const title = (
-      <div>
-        <div className="flex items-center gap-2">
-          <span>Orders</span>
-          <InfoHover content={ORDER_MAIN_HEADER_INFO} />
-        </div>
-        <span className="text-xs flex text-[var(--color-muted)] font-normal">
-          {ordersCount} {pluralLabel("order", ordersCount)} • {itemsCount}{" "}
-          {pluralLabel("item", itemsCount)}
-        </span>
+      <div className="flex items-center gap-2">
+        <span>Orders</span>
+        <InfoHover content={ORDER_MAIN_HEADER_INFO} />
       </div>
     );
     setHeader({
@@ -109,7 +97,7 @@ export const OrderMainHeader = ({
     return () => {
       setHeader(null);
     };
-  }, [orderStats, setHeader, isMobile, onCreate, isSelectionMode, onEnterSelectionMode, onExitSelectionMode]);
+  }, [setHeader, isMobile, onCreate, isSelectionMode, onEnterSelectionMode, onExitSelectionMode]);
 
   // Active filters show only as the count on the filter button (user, D11).
   const searchAndFilters = (

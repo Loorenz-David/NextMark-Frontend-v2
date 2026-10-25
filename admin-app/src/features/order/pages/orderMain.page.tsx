@@ -9,6 +9,7 @@ import { OrderLoadingList } from "@/shared/loadingCards/order";
 
 import { OrderMainHeader } from "../components/pageHeaders/OrderMainHeader";
 import { OrderList } from "../components/lists/OrderList";
+import { OrderListSummary } from "../components/lists/OrderListSummary";
 import { OrderProvider } from "../context/OrderProvider";
 import { useOrderContext } from "../context/OrderContext";
 import type { Order } from "../types/order";
@@ -112,7 +113,6 @@ const OrderMainContent = ({
         applySearch={orderActions.applySearch}
         onOpenFilters={orderActions.openFilterPanel}
         query={query}
-        orderStats={orderStats}
         actionStackRef={actionStackRef}
         useFloatingActionStack={isDesktopActionBarBehaviorEnabled}
         isActionStackVisible={isActionBarVisible}
@@ -141,9 +141,9 @@ const OrderMainContent = ({
             applySearch={orderActions.applySearch}
             onOpenFilters={orderActions.openFilterPanel}
                 query={query}
-            orderStats={orderStats}
             isMobile={true}
           />}
+          {!isInitialLoading && <OrderListSummary orderStats={orderStats} />}
           {isInitialLoading ? (
             <OrderLoadingList variant="orderMain" count={6} />
           ) : (
