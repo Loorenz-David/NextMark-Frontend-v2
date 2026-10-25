@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 
-import { ThunderIcon } from '@/assets/icons'
 import { RouteGroupEditFormFeature } from '@/features/plan/routeGroup/forms/routeGroupEditForm/RouteGroupEditForm'
 import { RouteGroupEditFormDesktopLayout } from '@/features/plan/routeGroup/forms/routeGroupEditForm/views/desktop/RouteGroupEditFormDesktop.layout'
 import { RouteGroupEditFormMobileLayout } from '@/features/plan/routeGroup/forms/routeGroupEditForm/views/mobile/RouteGroupEditFormMobile.layout'

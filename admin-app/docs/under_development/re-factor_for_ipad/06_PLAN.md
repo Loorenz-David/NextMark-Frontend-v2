@@ -1,6 +1,6 @@
 # 06 — Implementation plan: admin-app usable on iPad landscape
 
-**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phase 0 ready to start. Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
+**Created:** 2026-10-24. **Status:** architecture decision approved by the user 2026-10-24; Phases 0, 0c, 1, 2, 3, 4, 5 and 5b committed and stacked (0 → 0c → 1 → 2 → 3 → 4 → 5 → 5b), all automated gates green on the tip; all device rows pending (session log 2026-10-24). Phases are ordered by value ÷ risk and are independently shippable. Each phase is sized for one or two focused agent sessions and ends with the gates in `00_GOAL_AND_CONSTRAINTS.md` §4 plus the device rows named below (from `07_DEVICE_TEST_MATRIX.md`).
 
 Paths relative to `Front_end/admin-app/src` unless stated. Line numbers are in `02`/`03`; re-grep before editing.
 
@@ -19,12 +19,14 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 | `isStandalone` (new, from `app/pwa` `isStandaloneDisplay`) | `navigator.standalone` / `display-mode` | safe areas, history back layers, status bar |
 
 - `isMobile` stays `sizeClass === 'phone'`; no existing call site changes meaning.
-- A 1280px laptop window will receive the `tablet` geometry. That is acceptable (the map is 380px there today) and keeps monitors ≥ 1440 pixel-identical. **Confirm the 1440 boundary with the user in Phase 0**; if they want laptops untouched, set `tablet` = `1000–1279` and accept that the 12.9" iPad (1366) gets desktop geometry with touch fixes only.
+- A 1280px laptop window will receive the `tablet` geometry. That is acceptable (the map is 380px there today) and keeps monitors ≥ 1440 pixel-identical. **The user confirmed the 1440px boundary in Phase 0.**
 - Never branch geometry on `isCoarsePointer`, never branch touch behaviour on width.
 
 ---
 
 ## Phase 0 — Foundations and the two blocking bugs (1 session)
+
+**Status (2026-10-24):** code implemented on `ipad/phase-0-foundations`; device rows and desktop visual comparison await the user; repository-wide lint fails on 208 existing errors. No commit made, per K1.
 
 **Goal:** one source of truth for size class and standalone; tablet-wide touch CSS baseline; fix the two defects that break touch everywhere.
 
@@ -53,6 +55,20 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 **Acceptance:** `grep -rn "innerWidth\|matchMedia" src` shows only `app/viewport`, `app/pwa`, `lib/utils/useMediaQuery.ts`, `ZoneDetailsPopover.tsx`, `prefersReducedMotion.flow.ts`. Device rows B6, B11, B12, B13, B9. Desktop E1–E3. Gates green (record pre-existing failures).
 
 ---
+
+## Phase 0c — Lint and legacy-test baseline cleanup (1 session, mechanical, any model)
+
+**Status (2026-10-24):** code complete on `ipad/phase-0c-baseline`; lint has 0 errors / 52 warnings, tests pass 97/97, build and all three checks pass. Chrome viewport verification is pending because the browser connection fails during setup; iPad touch rows remain pending. No commit made.
+
+**Found during Phase 0 (2026-10-24):** `npm run lint` fails on `main` with 207 errors in 110 files that Phase 0 did not touch (70 `no-explicit-any`, 65 `no-unused-vars`, 43 `react-refresh/only-export-components`, 8 `rules-of-hooks`, 7 `no-unused-expressions`, 5 `prefer-const`, …). The new vitest runner also exposes 8 legacy test failures that had never run: `costumerFormSubmit.actions`, `orderMapMarkers.flow`, `orderFormDeliveryWindows.flow`, `orderFormSubmit.controller`, `planDateFilter.utils` (assertion failures — each may be a stale test **or a real bug**, decide per case), and three `shared/map` tests (`circleSelection` needs `document`, `layers` reads a missing internal property, `markerLayerManager.dotContent`).
+
+**Goal:** make `npm run lint` and `npm test` green on `main` so later phases have a real gate. No behaviour changes except where a legacy test reveals an actual bug (then fix the bug, log it in `08`).
+
+- Lint: fix by rule family; `no-explicit-any` gets real types, not `unknown` casts; `only-export-components` splits non-component exports into sibling files; `rules-of-hooks` violations are reviewed one by one (they can be real bugs). Do not add eslint-disable comments and do not weaken `eslint.config.js`.
+- Tests: for each failing legacy test, read the test and the code; if the code is right, fix the test; if the test is right, fix the code; for the two DOM-dependent map tests, give them a `// @vitest-environment jsdom` file pragma (add `jsdom` as a dev dependency) or convert them to `*.vitest.test.ts` with that environment.
+- Branch `ipad/phase-0c-baseline`. Can run in parallel with Phases 1–3; merge before Phase 4.
+
+**Acceptance:** `npm run lint` 0 errors (warnings may remain, record the count); `npm test` 97/97; build and the three check scripts green.
 
 ## Phase 1 — Home geometry for tablets (1–2 sessions)
 
@@ -89,6 +105,8 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 
 ## Phase 2 — Touch parity, tap targets, drag tuning (1–2 sessions)
 
+**Status (2026-10-24):** partial source changes on `ipad/phase-2-touch`, uncommitted. Build, popup, theme and PWA gates pass; repository lint remains at the known 207 errors/54 warnings and legacy tests at 89/97. Phase 0c owns those failures. Chrome device-mode connection failed; all geometry and finger rows remain unverified. Continue only after the baseline gate is green.
+
 **Goal:** every action reachable by tap; primary controls ≥ 44px on coarse pointers; drags start on purpose and land where the finger is.
 
 **Hover-only → tap** (`03` §3): `plan/routeGroup/components/cards/RouteGroupOrderGroupCard.tsx` warning popover (toggle on tap when `!hasHover`); `order/components/OrderMissingInfoNotifier.tsx` (tap shows popover first, second tap opens form; fix the copy "Click"); `DeliveryWindowCalendarCalendar.tsx` day popover (tap toggles); `plan/routeGroup/flows/routeGroupMap.flow.ts` driver-live marker `onClick` opens the preview; `order/flows/orderDriverLiveMap.flow.ts` tap = preview, second tap = navigate; `PlanCard.tsx` and `ItemTypeCountsPill.tsx` replace their private `matchMedia` with `useViewport()`. `map.css` `:hover` scale rules wrapped in `@media (hover: hover)`.
@@ -104,6 +122,8 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 ---
 
 ## Phase 3 — Typography and density tokens (1 session + codemod)
+
+**Status (2026-10-24):** implemented, uncommitted on `ipad/phase-3-typography`. The codemod and all automated gates pass (lint 0 errors / 52 warnings, tests 97/97). A1–A7 readability and E1–E2 desktop visual checks remain pending; E3 automated checks pass. Exact desktop sizes are retained through value-specific aliases for fractional rem and nonstandard px utilities, rather than rounding those values to the three named sizes.
 
 **Goal:** text never below 12px and icons never below 14px on coarse pointers, with zero visual change on desktop.
 
@@ -122,6 +142,8 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 
 ## Phase 4 — Popups, forms and settings at tablet height (1 session)
 
+**Status (2026-10-24):** implemented, uncommitted on `ipad/phase-4-popups`. All automated gates are green: lint 0 errors / 52 warnings, tests 97/97, build, popup contract, theme regression, external-form PWA, `git diff --check`. Rows A6–A8, D1 and E1–E2 are pending; C2 needs the installed app (Phase 5). Per-popup `FeaturePopupShell` decisions are in `08`: all 11 users stay centred, and `lg`/`full` go full screen on tablet. Deviations: the order-form inset sits on the overlay, not the footer; the customer and route-group edit shells were added because row A7 names them.
+
 - `OrderFormShell.tsx` `w-[950px]` → `w-[min(950px, calc(100vw - 2rem))]`, inner `OrderFormDesktop.layout.tsx` 560 column → `minmax(0, 560px)`; heights `min(92vh, 900)` → `min(92dvh, 900px)`; footer `.safe-bottom` when `isStandalone`.
 - `shared/popups/MainPopup/layoutVariants/ClassicLayout.tsx`: on `tablet` wrap in `p-4`, `max-h-[calc(100dvh-2rem)]`, `min-w-[min(500px, 100%)]`; `PopupBody.tsx` fix `const { isMobile } = useMobile()`; `PopupFooter.tsx` safe-area bottom inset.
 - `FeaturePopupShell.tsx`: sizes already `min()`; on `tablet` prefer `variant='fullscreen'` for `lg`/`full` popups (decide per popup; 11 users).
@@ -134,9 +156,53 @@ Today `ViewportProvider` exposes `isMobile` (< 1000px), `isCoarsePointer`, `hasH
 
 ## Phase 5 — Installable admin PWA and standalone behaviour (1 session)
 
+**Status (2026-10-24):** implemented on `ipad/phase-5-pwa`, uncommitted. All automated gates green (lint 0 errors / 52 existing warnings; tests 97/97); C1–C6 and D2–D3 await iPad verification.
+
 Follow `04_PWA_AND_PLATFORM.md` §3–5: `public/admin.webmanifest` + icons in `public/pwa/admin/`; `app/pwa/domain/adminPwa.ts` with `ADMIN_MANIFEST_CONTRACT` and head tags; `resolvePwaHeadState` picks form vs admin by pathname (extend `domain/tests/externalFormPwa.test.ts`); extend `scripts/check-external-form-pwa.mjs` (or add `check-admin-pwa.mjs` and wire into `package.json`) to assert the admin manifest and still forbid a caching SW; rename `ExternalFormPwaProvider` → `PwaProvider` only with the user's agreement. History integration for tablet layers: reuse `useBackLayerRegistration` from `shared/overlays/bottomSheet` for popups and section stack on `isStandalone && isTablet` so the iPad edge-swipe closes the top layer (`04` §5). Status bar style `default` first.
 
 **Acceptance:** rows C1–C6, D2, D3. `npm run check:external-form-pwa` green. Form install still contained (C5).
+
+---
+
+## Phase 5b — Silent auto-update for the installed app (1 session)
+
+**Status (2026-10-24):** app side (`10` §3, §3.1, §3.2, §5 build stamp) implemented on `ipad/phase-5b-auto-update`, uncommitted; all automated gates green. Hosting side (`10` §4, `deploy-admin.yml`) **not started — awaits the user's confirmation**. C9–C12 await a real deploy (C12's "old chunk still loads" path needs §4).
+
+Spec: `10_AUTO_UPDATE.md` (user requirement 2026-10-24: every deploy reaches installed apps automatically, no prompt, reliable on Mac, iPad and iPhone). App side: build emits `/version.json`; `src/app/version/` checks it (no-store) on resume, `pageshow`, `online`, `focus` and every 5 min while visible; reloads silently at a safe moment (reload-blocker registry wired into dirty forms, drags, focused inputs), refetching `index.html` with `cache: 'reload'` first; `vite:preloadError` reloads once per build; the notification SW gets `registration.update()`. Hosting side: `deploy-admin.yml` uploads `assets/` first with immutable caching and without `--delete`, then entry files with `no-cache` — **CI/CD change, confirm with the user before editing**.
+
+**Acceptance:** rows C9–C12; `dist/version.json` id equals the running build id; vitest cases in `10` §3.2; gates green.
+
+---
+
+## Phase 2b — Touch drag intent (1 session) — stacked after 5b
+
+**Status (2026-10-24):** implemented, uncommitted on `ipad/phase-2b-touch-intent`. Pure intent state machine and eight vitest cases, public-API touch sensor, one shared sensor hook at all four contexts, dev intent logging and touch cues are in place. Automated gates green (lint 0 errors / 52 existing warnings, tests 151/151, build, popup contract, theme regression, external-form PWA, diff check). B16–B20 and E1–E2 device/visual checks remain pending; E3 automated checks pass. The temporary dev logger remains for the device pass.
+
+Spec: `11_TOUCH_DRAG_INTENT.md` (user decision 2026-10-24: hold with a clear cue + press-pause-move; direction-based intent rejected because route stops reorder vertically). A custom dnd-kit touch sensor on the public sensor API with a pure, tested gesture state machine; one `useAppDragSensors()` hook replaces the four sensor setups; pressing/lift cues through a `data-touch-drag` attribute owned by the sensor; long-press callout and selection blocked.
+
+**Acceptance:** rows B16–B20; `11` §4; desktop mouse drag unchanged (E1–E3); gates green. Before merging to `main`, revert the temporary dev logger commit (`TEMPORARY: log touch drag gestures…`).
+
+---
+
+## Restyle R1 — Order card redesign (1 session) — stacked after 2b
+
+**Status (2026-10-25):** implemented, uncommitted on `ipad/r1-order-cards`. Standard and route-stop cards share the new layout; preview summary has six Vitest cases. Lint has 0 errors (52 existing warnings); 160 tests, build, popup contract, theme regression and external-form PWA gates pass. Desktop, iPad and phone visual/device checks in `12` §5 remain pending. Panel widths remain unchanged; the temporary dev logger is retained.
+
+Spec: `12_ORDER_CARD_REDESIGN.md` (decision D9). One card design for the main list, plan lists and route stops on every size; external source, address and route-stop extras removed; larger number, item rows and menu tap area; preview arithmetic moved into a tested domain function.
+
+**Acceptance:** `12` §5.
+
+## Restyle R2 — Order panel header (1 session) — stacked after R1
+
+**Status (2026-10-25):** implemented, uncommitted on `ipad/r2-order-panel-header`. The shared header slot and compact opt-in panel header are in place; order search, filters and pills render in the top header on desktop/iPad, and the phone row scrolls with the list. Automated gates pass (lint 0 errors, 161 tests, build, popup contract, theme regression, external-form PWA, diff check). Visual/device checks and before/after visible-card counts remain pending without Chrome tooling.
+
+Spec: `13_ORDER_PANEL_HEADER.md` (decision D11). Search, filter button and pills move to the top header (desktop/iPad, route operations only) through a shared header slot; "+ Order" and the menu move to a compact order panel header; on the phone the action row scrolls with the list.
+
+**Acceptance:** `13` §3.
+
+## Restyle R3 — Panel widths after the new card (planned)
+
+Input: the narrowest comfortable card width the user measures after R1. Narrow the order-list rail (desktop 450, tablet 420) and the nested order lists in the plan panels (desktop 550, tablet 560) on every size class. The vertical route timeline (stop number, ETA, warnings) is designed with this panel refactor.
 
 ---
 
@@ -162,6 +228,7 @@ Per `05_PRINTING_AND_BLUETOOTH.md` §4: `features/templates/printDocument/contro
 | Phase | Sessions | Depends on | Device time |
 |---|---|---|---|
 | 0 Foundations + 2 bugs | 1 | — | 20 min |
+| 0c Lint + legacy-test baseline | 1 (cheap model) | 0 | — |
 | 1 Home geometry | 1–2 | 0 | 45 min |
 | 1b Content priority decisions (user) + 6b content variants (code) | user + 1–2 sessions | 0–5 done | 30 min |
 | 2 Touch parity | 1–2 | 0 | 45 min |
@@ -172,7 +239,13 @@ Per `05_PRINTING_AND_BLUETOOTH.md` §4: `features/templates/printDocument/contro
 | 7 Optional | — | 1, 2 | — |
 | Bridge app (native, separate repo) | later | all phases done | — |
 
-Phases 1, 2 and 3 are independent of each other and **will run as parallel sessions** on branches `ipad/phase-1-geometry`, `ipad/phase-2-touch`, `ipad/phase-3-typography` (user decision K6), each inside its file list; merge 1 before 4. Branch naming: `ipad/phase-N-<slug>`; commits only when the user asks (K1).
+**Parallel run (revised 2026-10-24 after measuring file overlap):** Phases **0c, 1 and 2** run in parallel on `ipad/phase-0c-baseline`, `ipad/phase-1-geometry`, `ipad/phase-2-touch`, all branched from `ipad/phase-0-foundations`. Overlap is small: 1 and 2 share 4 files (`OrderMarkerGroupOverlay`, `MapMultiSelectOverlay`, `ZoneMapOverlay`, `HomeDesktopView`); 0c shares 3 with them (`MapInstanceManager` with 11 lint errors, `RouteGroupOrderGroupCard`, `DeliveryWindowCalendarCalendar`). **Phase 3 runs after they merge**, not in parallel: its codemod rewrites 115 files, 10 of them in Phase 1/2 lists, and must also catch literals Phases 1/2 add. Writing the codemod script early is fine; applying it happens on top of the merged result.
+
+**Merge order:** 0 → 0c → 1 → 2 (rebase on 1, resolve the 4 shared files) → 3 → 4 → 5. Each branch merges only after its device rows pass.
+
+**Second wave (2026-10-24, after 0c/1/2 were stacked):** Phases **3 and 5** run in parallel from the `ipad/phase-2-touch` tip (Phase 5 touches `public/`, `app/pwa`, `index.html`, scripts and back-layer wiring; Phase 3 touches `index.css` tokens and class literals). **Phase 4** branches from Phase 3's tip. With the baseline green, every phase must leave the full gates green.
+
+**Parallel sessions need separate working trees.** Two agents in one checkout overwrite each other's files. Use `git worktree add` per phase branch, each with its own `npm ci` in `admin-app` (≈400 MB each). Branch naming: `ipad/phase-N-<slug>`; commits only when the user asks (K1).
 
 ## Session protocol (every implementing session)
 

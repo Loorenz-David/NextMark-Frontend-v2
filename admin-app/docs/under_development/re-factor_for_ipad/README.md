@@ -13,6 +13,10 @@ Everything a session (Claude or Codex) needs to make `Front_end/admin-app` fully
 | `04_PWA_AND_PLATFORM.md` | Existing external-form PWA, guard script, admin manifest design, SW decision, standalone behaviours, how to verify on the iPad | Phase 5 (and `.safe-*` work in 0/4) |
 | `05_PRINTING_AND_BLUETOOTH.md` | What prints today, iPad constraints (no Web Bluetooth, blob download broken in standalone), options ranked, recommendation, sources | Phase 6 |
 | `09_CONTENT_PRIORITY.md` | Element-by-element inventory of the key surfaces with the user's Keep / Collapse / Hide decision per row; spec for tablet content variants | Phase 1b (decide), Phases 3–4 (implement) |
+| `10_AUTO_UPDATE.md` | Silent auto-update for installed apps: why Apple devices go stale, version check + safe reload, S3/CloudFront cache headers (Phase 5b) |
+| `11_TOUCH_DRAG_INTENT.md` | Touch drag: why drags failed (logged evidence), hold-with-cue + press-pause-move design, custom dnd-kit sensor spec (Phase 2b) |
+| `12_ORDER_CARD_REDESIGN.md` | Order card redesign: target screenshot, decisions, components in scope, layout spec, preview rule (Restyle R1) |
+| `13_ORDER_PANEL_HEADER.md` | Order search to the top header via a header slot, actions to a compact panel header, phone row scrolls with the list (Restyle R2) |
 | `06_PLAN.md` | Architecture decision (size class + input class), Phases 0–7 with file lists and acceptance, sequencing, session protocol | always (your phase) |
 | `07_DEVICE_TEST_MATRIX.md` | Manual checks A–E to run on the iPad and on desktop after each phase | end of every phase |
 | `08_SESSION_LOG.md` | Decision register, open client questions, append-only session entries | start and end of every session |
@@ -21,13 +25,19 @@ Everything a session (Claude or Codex) needs to make `Front_end/admin-app` fully
 
 | Phase | Status | Session |
 |---|---|---|
-| 0 Foundations + BottomSheet scroll trap + hover-reveal bug | not started | |
-| 1 Home geometry for tablets | not started | |
+| 0 Foundations + BottomSheet scroll trap + hover-reveal bug | committed on `ipad/phase-0-foundations`; device check pending; lint baseline moved to Phase 0c | Session 1 |
+| 0c Lint + legacy-test baseline cleanup | committed on `ipad/phase-0c-baseline`; lint 0 errors, tests 97/97, all gates green | 2026-10-24 Codex |
+| 1 Home geometry for tablets | committed on `ipad/phase-1-geometry` (stacked on 0c); Chrome geometry + iPad rows pending | 2026-10-24 Codex + Claude review |
 | 1b Content priority decisions (user, after Phase 5) → 6b tablet content variants | inventory done; decisions deferred until the iPad is usable | |
-| 2 Touch parity, tap targets, drag tuning | not started | |
-| 3 Typography and density tokens | not started | |
-| 4 Popups, forms, settings at tablet height | not started | |
-| 5 Installable admin PWA | not started | |
+| 2 Touch parity, tap targets, drag tuning | committed on `ipad/phase-2-touch` (stacked on 1); Chrome + iPad rows pending | 2026-10-24 Codex + Claude review |
+| 3 Typography and density tokens | committed on `ipad/phase-3-typography`; A/E visual rows and iPad pending | 2026-10-24 Codex + Claude review |
+| 4 Popups, forms, settings at tablet height | committed on `ipad/phase-4-popups` (stacked on 3); A6–A8, D1, C2, E rows pending | 2026-10-24 Claude session + review |
+| 5 Installable admin PWA | committed on `ipad/phase-5-pwa` (stacked on 4) + deploy workflow cache headers (user-approved); C/D rows pending | 2026-10-24 Codex + Claude review |
+| 5b Silent auto-update (`10_AUTO_UPDATE.md`) | committed on `ipad/phase-5b-auto-update` (stacked on 5); C9–C12 need a deploy or `npm run preview` | 2026-10-24 Claude session + review |
+| 2b Touch drag intent (`11_TOUCH_DRAG_INTENT.md`) | committed on `ipad/phase-2b-touch-intent` (stacked on 5b; carries the temporary dev logger); cue on every pointer (D8); B16–B20 pending | 2026-10-24 Codex |
+| R1 Order card redesign (`12_ORDER_CARD_REDESIGN.md`) | committed on `ipad/r1-order-cards`, plus D10 (info buttons hidden on phone/iPad); visual rows pending | 2026-10-25 Codex + Claude review |
+| R2 Order panel header (`13_ORDER_PANEL_HEADER.md`) | committed on `ipad/r2-order-panel-header` (+ review changes: no pills, compact search, search above the order panel); visual rows pending | 2026-10-25 Codex + Claude |
+| R3 Panel widths | branch `ipad/r3-order-panel-width`: main order panel knob `ORDER_PANEL_WIDTH_FACTOR` = 0.7 (user tuning); plan nested lists next | 2026-10-25 Claude |
 | 6 Printing from the iPad | not started | |
 | 7 Optional (map drawing, AI panel, timeline) | not started | |
 

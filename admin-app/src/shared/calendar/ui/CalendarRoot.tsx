@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import type { FocusEvent } from 'react'
 
-import { CalendarProvider } from '../model/CalendarContext'
+import { CalendarProvider } from '../model/CalendarContext-components'
 import type { CalendarRootProps, DayRenderParams } from '../model/calendar.types'
 import { getCalendarDayKey } from '../domain/dayKey.utils'
 import { isSameDay } from '../domain/comparison.utils'

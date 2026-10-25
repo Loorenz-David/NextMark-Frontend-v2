@@ -21,7 +21,12 @@ type PlanCalendarBodyProps = {
 const NO_PLANS: DeliveryPlan[] = [];
 
 /** Week-number gutter + 7 day columns. */
-const GRID_TEMPLATE_COLUMNS = "28px repeat(7, minmax(0, 1fr))";
+const GRID_TEMPLATE_COLUMNS = "28px repeat(7, minmax(44px, 1fr))";
+
+/** Past a month's worth of weeks (a long date filter) rows stop shrinking
+ * and the grid scrolls instead. */
+const MAX_FITTED_WEEKS = 6;
+const SCROLLING_WEEK_MIN_HEIGHT = "96px";
 
 export const PlanCalendarBody = ({
   cells,
@@ -41,21 +46,24 @@ export const PlanCalendarBody = ({
   // Day overlays are portaled to the body; this is the box they must stay
   // inside so they never spill over the column to the calendar's right.
   const overlayBoundaryRef = useRef<HTMLDivElement | null>(null);
+  const isScrolling = weeks.length > MAX_FITTED_WEEKS;
 
   return (
     <div
       ref={overlayBoundaryRef}
-      className="flex min-h-0 flex-1 flex-col gap-2 px-4 pb-4 pt-3"
+      className={`flex min-h-0 min-w-0 flex-1 flex-col gap-2 px-4 pb-4 pt-3 ${
+        isScrolling ? "overflow-auto scroll-thin" : "overflow-x-auto"
+      }`}
     >
       <div
-        className="grid shrink-0 gap-2"
+        className="grid min-w-[392px] shrink-0 gap-2"
         style={{ gridTemplateColumns: GRID_TEMPLATE_COLUMNS }}
       >
         <span aria-hidden="true" />
         {CALENDAR_WEEKDAY_LABELS.map((label) => (
           <span
             key={label}
-            className="text-center font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--color-muted)]/80"
+            className="text-center font-mono text-micro uppercase tracking-[0.08em] text-[var(--color-muted)]/80"
           >
             {label}
           </span>
@@ -63,10 +71,14 @@ export const PlanCalendarBody = ({
       </div>
 
       <div
-        className="grid min-h-0 flex-1 gap-2"
+        className={`grid min-w-[392px] gap-2 ${
+          isScrolling ? "shrink-0" : "min-h-0 flex-1"
+        }`}
         style={{
           gridTemplateColumns: GRID_TEMPLATE_COLUMNS,
-          gridAutoRows: "minmax(0, 1fr)",
+          gridAutoRows: isScrolling
+            ? `minmax(${SCROLLING_WEEK_MIN_HEIGHT}, auto)`
+            : "minmax(0, 1fr)",
         }}
       >
         {weeks.map((week) => {
@@ -74,7 +86,7 @@ export const PlanCalendarBody = ({
           return [
             <span
               key={`week-${week[0]?.dateKey}`}
-              className="flex min-h-0 items-center justify-center font-mono text-[10px] uppercase tracking-[0.06em] text-[var(--color-muted)]/70"
+              className="flex min-h-0 items-center justify-center font-mono text-micro uppercase tracking-[0.06em] text-[var(--color-muted)]/70"
               title={weekNumber != null ? `Week ${weekNumber}` : undefined}
             >
               {weekNumber != null ? `V${weekNumber}` : ""}

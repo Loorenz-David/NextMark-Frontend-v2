@@ -12,9 +12,8 @@ type IntegrationConfigContextValue = {
   setters: IntegrationConfigSetters
 }
 
-const IntegrationConfigContext = createContext<IntegrationConfigContextValue | null>(null)
+export const IntegrationConfigContext = createContext<IntegrationConfigContextValue | null>(null)
 
-export const IntegrationConfigContextProvider = IntegrationConfigContext.Provider
 
 export const useIntegrationConfig = () => {
   const context = useContext(IntegrationConfigContext)

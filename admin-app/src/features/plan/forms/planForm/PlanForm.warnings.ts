@@ -8,15 +8,18 @@ import {
 export const usePlanFormWarnings = () => {
   const planNameWarning = useInputWarning(
     "Plan must have a name",
-    (value: string) => validateString(value),
+    (value) => typeof value === 'string' && validateString(value),
   );
 
   const planStartDateWarning = useInputWarning(
     "Plan must have a start date",
-    (
-      { start_date, end_date }: { start_date: string; end_date: string },
-      setWarningMessage,
-    ) => {
+    (value, setWarningMessage) => {
+      if (
+        typeof value !== 'object' || value === null ||
+        !('start_date' in value) || typeof value.start_date !== 'string' ||
+        !('end_date' in value) || typeof value.end_date !== 'string'
+      ) return false
+      const { start_date, end_date } = value
       if (!validateString(start_date)) {
         setWarningMessage("Plan must have a start date");
         return false;

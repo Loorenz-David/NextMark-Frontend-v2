@@ -12,7 +12,7 @@ type Props ={
 }
 
 export const  DateRangeCard = (props:Props) => {
-    let { dateLabel, dateLabelClass, containerClass, ...rest } = props
+    const { dateLabel, dateLabelClass, containerClass, ...rest } = props
     return ( 
         <div className={`flex flex-col  ${containerClass ?? defaultContainerClass}`}>
             <span className={dateLabelClass ?? defaultDateLabelClass}>

@@ -30,4 +30,6 @@ export type SearchFilterBarProps = {
   hideFilteredIcon?: boolean
   placeholder?: string
   searchValue?: string
+  /** `compact` matches the 32px toolbar buttons (top header); `default` is unchanged. */
+  size?: 'default' | 'compact'
 }

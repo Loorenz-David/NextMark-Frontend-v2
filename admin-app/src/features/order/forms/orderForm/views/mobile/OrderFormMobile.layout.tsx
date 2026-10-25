@@ -48,8 +48,8 @@ export const OrderFormMobileLayout = ({
               }}
               deleteContent="Delete order"
               confirmContent="Tap again to delete"
-              deleteClassName="flex h-12 w-full items-center justify-center rounded-2xl border border-danger-border bg-danger-bg text-[15px] font-medium text-danger"
-              confirmClassName="flex h-12 w-full items-center justify-center rounded-2xl bg-danger-solid text-[15px] font-medium text-danger-on-solid"
+              deleteClassName="flex h-12 w-full items-center justify-center rounded-2xl border border-danger-border bg-danger-bg text-px-15 font-medium text-danger"
+              confirmClassName="flex h-12 w-full items-center justify-center rounded-2xl bg-danger-solid text-px-15 font-medium text-danger-on-solid"
             />
           ) : null}
         </div>

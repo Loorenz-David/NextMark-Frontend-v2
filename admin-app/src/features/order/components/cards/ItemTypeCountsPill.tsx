@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ItemIcon } from "@/assets/icons";
 import { FloatingPopover } from "@/shared/popups/FloatingPopover/FloatingPopover";
+import { useViewport } from "@/app/viewport";
 
 type ItemTypeCountsPillProps = {
   itemCount: number;
@@ -26,7 +27,8 @@ export const ItemTypeCountsPill = ({
   );
   const hasItemTypeCounts = itemTypeCountEntries.length > 0;
   const [itemTypePopoverOpen, setItemTypePopoverOpen] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const { isCoarsePointer, hasHover } = useViewport();
+  const isTouchDevice = isCoarsePointer || !hasHover;
   const itemTypePopoverDelayTimeoutRef = useRef<ReturnType<
     typeof setTimeout
   > | null>(null);
@@ -57,27 +59,6 @@ export const ItemTypeCountsPill = ({
     if (!hasItemTypeCounts || !isTouchDevice) return;
     setItemTypePopoverOpen((current) => !current);
   };
-
-  useEffect(() => {
-    if (
-      typeof window === "undefined" ||
-      typeof window.matchMedia !== "function"
-    ) {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia("(hover: none), (pointer: coarse)");
-    const syncDeviceType = () => {
-      setIsTouchDevice(mediaQuery.matches);
-    };
-
-    syncDeviceType();
-    mediaQuery.addEventListener("change", syncDeviceType);
-
-    return () => {
-      mediaQuery.removeEventListener("change", syncDeviceType);
-    };
-  }, []);
 
   useEffect(
     () => () => {
@@ -115,7 +96,7 @@ export const ItemTypeCountsPill = ({
         }
       >
         <div className="admin-glass-popover min-w-[11rem] rounded-lg border border-border bg-[rgba(var(--theme-surface-popover-r),0.92)] px-3 py-2 shadow-[var(--shadow-panel-popover)] backdrop-blur-md">
-          <div className="mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted)]/90">
+          <div className="mb-1 text-micro uppercase tracking-[0.14em] text-[var(--color-muted)]/90">
             Item Types
           </div>
           <div className="space-y-1">

@@ -11,7 +11,7 @@ type OrderCaseOrderCasesPayload = {
   orderReference: string
 }
 
-const CaseOrderPageContent = ({ orderId, orderReference }: { orderId: number; orderReference?: string }) => {
+const CaseOrderPageContent = ({ orderId }: { orderId: number }) => {
   const { caseOrderActions, cases, casesStats } = useCaseOrderContext()
 
   return (
@@ -39,7 +39,6 @@ const CaseOrderPageContent = ({ orderId, orderReference }: { orderId: number; or
 
 export const CaseOrderPage = ({ payload, onClose }: StackComponentProps<OrderCaseOrderCasesPayload>) => {
   const orderId = payload?.orderId
-  const orderReference = payload?.orderReference
 
   if (!orderId) {
     return (
@@ -51,7 +50,7 @@ export const CaseOrderPage = ({ payload, onClose }: StackComponentProps<OrderCas
 
   return (
     <CaseOrderProvider orderId={orderId} onClose={onClose}>
-      <CaseOrderPageContent orderId={orderId} orderReference={orderReference} />
+      <CaseOrderPageContent orderId={orderId} />
     </CaseOrderProvider>
   )
 }

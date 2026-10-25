@@ -1,12 +1,4 @@
-import { Field } from "@/shared/inputs/FieldContainer";
-import {
-  InputField,
-  PLAIN_INPUT_CLASS,
-  PLAIN_INPUT_CONTAINER_CLASS,
-} from "@/shared/inputs/InputField";
 
-import { useCreateRouteGroupForm } from "../CreateRouteGroupForm.context";
-import { CreateRouteGroupFormZoneSelector } from "./CreateRouteGroupFormZoneSelector";
 
 export const CreateRouteGroupFormFields = () => {
   return (

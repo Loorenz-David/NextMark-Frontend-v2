@@ -34,7 +34,7 @@ export const CostumerFormHeader = ({
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-[var(--color-text)]">{label}</h2>
-          <p className="text-[11px] text-[var(--color-muted)]">{modeSubtitle(mode)}</p>
+          <p className="text-2xs text-[var(--color-muted)]">{modeSubtitle(mode)}</p>
         </div>
 
         <BasicButton

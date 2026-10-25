@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 import { useMemo } from 'react'
 
 import type { StackComponentProps } from '@/shared/stack-manager/types'
-import { ResourcesManagerProvider } from '@/shared/resource-manager/ResourceManagerContext'
+import { ResourcesManagerProvider } from '@/shared/resource-manager/ResourceManagerContext-components'
 import {
   AdminNotificationClickBridge,
   AdminNotificationsActiveViewBridge,

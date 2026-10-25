@@ -19,12 +19,8 @@ import {
 import { normalizeRouteGroupEditFormToSettingsPayload } from "@/features/plan/routeGroup/api/mappers/routeGroupSettings.mapper";
 import { normalizeByClientIdArray } from "@/features/plan/routeGroup/api/mappers/routeSolutionPayload.mapper";
 import { applyRoutePlanTargetPatch } from "@/features/plan/routeGroup/domain/applyRoutePlanTargetPatch";
-import {
-  serviceTimeMinutesToSeconds,
-  serviceTimeSecondsToMinutes,
-} from "@/features/plan/routeGroup/domain/serviceTimeUnits";
+import { serviceTimeSecondsToMinutes } from "@/features/plan/routeGroup/domain/serviceTimeUnits";
 import type { DeliveryPlan } from "@/features/plan/types/plan";
-import type { RouteGroup } from "@/features/plan/routeGroup/types/routeGroup";
 import type { RouteSolution } from "@/features/plan/routeGroup/types/routeSolution";
 import type { RouteGroupEditFormState } from "@/features/plan/routeGroup/forms/routeGroupEditForm/RouteGroupEditForm.types";
 

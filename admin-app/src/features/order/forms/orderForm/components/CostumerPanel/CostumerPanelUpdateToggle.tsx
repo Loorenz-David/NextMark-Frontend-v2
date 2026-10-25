@@ -10,7 +10,7 @@ export const CostumerPanelUpdateToggle = ({
   onChange,
 }: CostumerPanelUpdateToggleProps) => (
   <div className="flex min-w-0 items-center gap-1.5">
-    <span className="truncate text-[10px] font-medium text-[var(--color-muted)]">
+    <span className="truncate text-micro font-medium text-[var(--color-muted)]">
       Update profile
     </span>
     <Switch

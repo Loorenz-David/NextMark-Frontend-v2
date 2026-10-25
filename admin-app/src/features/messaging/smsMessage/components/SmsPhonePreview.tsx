@@ -45,10 +45,10 @@ export const SmsPhonePreview = ({
 
             <div className="ml-auto w-[82%] rounded-3xl rounded-br-md border border-[var(--accent)]/20 bg-[linear-gradient(145deg,var(--sms-preview-bubble-start),rgba(67,118,123,0.8))] p-3 text-text shadow-[var(--shadow-panel-subtle-color)]">
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-muted">
+                <span className="text-rem-0_62 font-semibold uppercase tracking-[0.2em] text-muted">
                   Live message
                 </span>
-                <span className="text-[0.68rem] font-medium text-faint">Sent SMS</span>
+                <span className="text-rem-0_68 font-medium text-faint">Sent SMS</span>
               </div>
               <SlateEditor
                 key={JSON.stringify(value)}
@@ -58,7 +58,7 @@ export const SmsPhonePreview = ({
                 renderElement={renderElement}
                 placeholder={placeholder}
                 onKeyDown={onKeyDown}
-                className="min-h-[120px] border-0 bg-transparent px-0 py-0 text-[15px] leading-7 text-text shadow-none placeholder:text-faint"
+                className="min-h-[120px] border-0 bg-transparent px-0 py-0 text-px-15 leading-7 text-text shadow-none placeholder:text-faint"
               />
             </div>
           </div>

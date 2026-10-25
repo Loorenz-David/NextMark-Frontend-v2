@@ -14,9 +14,8 @@ type ItemStateFormContextValue = {
   handleDelete: () => void
 }
 
-const ItemStateFormContext = createContext<ItemStateFormContextValue | null>(null)
+export const ItemStateFormContext = createContext<ItemStateFormContextValue | null>(null)
 
-export const ItemStateFormContextProvider = ItemStateFormContext.Provider
 
 export const useItemStateForm = () => {
   const context = useContext(ItemStateFormContext)

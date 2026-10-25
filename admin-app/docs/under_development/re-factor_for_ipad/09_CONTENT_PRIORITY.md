@@ -109,11 +109,11 @@ Card: avatar, label, date and state on top, a five-stat row below. Header: title
 | 14 | Header: plan icon tile | static | h-8 w-8 | always | PMH:50-52 |  |
 | 15 | Header: "Plans" title | static | text-lg semibold | always | PMH:131-133 |  |
 | 16 | Header: info hover | PLAN_MAIN_HEADER_INFO | default | always | PMH:134 |  |
-| 17 | Header: "N plans • N orders • N items" | planStats.*.total | text-xs | always | PMH:124-149 |  |
+| 17 | Header: "N plans • N orders • N items" | planStats.*.total | text-xs | always | PMH:124-149 | Hidden (D12) |
 | 18 | "fold" side tab (close) | onRequestClose | text-[9px] uppercase + chevron h-5 | showCloseButton | PMH:56-58,99-121 |  |
-| 19 | "+ Plan" button (also a drop target that creates a plan) | onCreate / isCreatePlanOver | icon h-4 w-4 | always | PMH:63-79 |  |
+| 19 | "+ Plan" button (also a drop target that creates a plan) | onCreate / isCreatePlanOver | icon h-4 w-4 | always | PMH:63-79 | Menu "Create plan"; drop target only during drag (D12) |
 | 20 | Unschedule drop slot ("Unschedule" / "N moved") | drag state / unscheduleDropFeedback | text-xs uppercase, min-w-[132px] | order drag active or feedback | PMH:88; UDT:48,64-84,96-105 |  |
-| 21 | Calendar / List toggle | planCalendar.store containerView | text-[12.5px] | desktop list view | PMH:89; PCVT:22-36; PDS:27-33 |  |
+| 21 | Calendar / List toggle | planCalendar.store containerView | text-[12.5px] | desktop list view | PMH:89; PCVT:22-36; PDS:27-33 | Menu "Show as calendar" (D12) |
 | 22 | Date filter: previous arrow | goToPrevious | h-8 w-8, icon h-4 | mode ≠ range | PDFB:62-71 |  |
 | 23 | Date filter: date label (opens calendar picker) | displayLabel | text-sm medium | mode ≠ range | PDFB:74-105 |  |
 | 24 | Date filter: range start "|" range end | displayRangeLabel | text-xs | mode = range | PDFB:106-171 |  |
@@ -128,13 +128,13 @@ Header with stepper, toggle and create; 7-column month grid with week gutter; on
 |---|---|---|---|---|---|---|
 | 1 | Plan icon tile | static | 42px tile, icon h-5 | always | PCH:30-32 |  |
 | 2 | "Plans" title | static | text-[19px] bold | always | PCH:35-37 |  |
-| 3 | "N plans · N orders · N items" | stats.* | text-[12.5px] truncate | always | PCH:38-42 |  |
+| 3 | "N plans · N orders · N items" | stats.* | text-[12.5px] truncate | always | PCH:38-42 | Hidden (D12) |
 | 4 | Unschedule drop slot | as §3 #20 | text-xs | during order drag | PCH:48 |  |
 | 5 | Previous month | onStepPrevious | h-7 w-7, icon h-4 | always | PCH:51-58 |  |
 | 6 | Month title (tap goes to today) | title | text-sm semibold, min-w-[96px] | always | PCH:59-66 |  |
 | 7 | Next month | onStepNext | h-7 w-7 | always | PCH:67-74 |  |
-| 8 | Calendar / List toggle | viewToggle | text-[12.5px] | always | PCH:77; PCP:62 |  |
-| 9 | "+ Plan" button | onCreatePlan | text-[13px], icon h-3.5 | always | PCH:79-90 |  |
+| 8 | Calendar / List toggle | viewToggle | text-[12.5px] | always | PCH:77; PCP:62 | Menu "Show as list" (D12) |
+| 9 | "+ Plan" button | onCreatePlan | text-[13px], icon h-3.5 | always | PCH:79-90 | Menu "Create plan" (D12) |
 | 10 | Weekday labels row | CALENDAR_WEEKDAY_LABELS | text-[10px] mono uppercase | always | PCB:55-62 |  |
 | 11 | Week-number gutter "V##" | getRoutePlanIsoWeekNumber | text-[10px] mono, 28px column | per week | PCB:24,73-81 |  |
 | 12 | Day number (today as filled chip) | dayNumber / isToday / inMonth | text-[12px] mono, 22px | always | PCDC:125-137 |  |

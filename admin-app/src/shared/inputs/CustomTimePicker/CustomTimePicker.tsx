@@ -63,7 +63,7 @@ export const CustomTimePicker = ({
     }
 
     if (!parseHHmm(selectedTime)) {
-      // eslint-disable-next-line no-console
+
       console.warn('CustomTimePicker received invalid time', selectedTime)
     }
   }, [selectedTime])

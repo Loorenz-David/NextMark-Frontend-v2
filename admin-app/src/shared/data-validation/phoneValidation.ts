@@ -1,5 +1,5 @@
 import type { Phone } from '@/types/phone'
-import { EMPTY_VALUE } from '@/shared/layout/LabelValue'
+import { EMPTY_VALUE } from '@/shared/layout/labelValue.domain'
 import { DEFAULT_PREFIX } from '@/constants/dropDownOptions'
 
 export const isPhone = (v: unknown): v is Phone =>

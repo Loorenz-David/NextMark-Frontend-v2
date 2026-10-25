@@ -214,7 +214,6 @@ const buildGaussianCards = ({
   vehicleMaxVolumeCm3?: number | null
   vehicleMaxWeightG?: number | null
 }): RouteGroupGaussianMetricCard[] => {
-  const seed = totalStops + completedOrders + failedOrders
   const normalizedVehicleMaxVolumeCm3 = toNonNegativeNumber(vehicleMaxVolumeCm3)
   const normalizedVehicleMaxWeightG = toNonNegativeNumber(vehicleMaxWeightG)
   const hasVehicleVolumeLimit = normalizedVehicleMaxVolumeCm3 > 0

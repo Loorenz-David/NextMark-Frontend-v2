@@ -12,9 +12,8 @@ type InviteMemberContextValue = {
   handleSave: () => void
 }
 
-const InviteMemberContext = createContext<InviteMemberContextValue | null>(null)
+export const InviteMemberContext = createContext<InviteMemberContextValue | null>(null)
 
-export const InviteMemberContextProvider = InviteMemberContext.Provider
 
 export const useInviteMember = () => {
   const context = useContext(InviteMemberContext)

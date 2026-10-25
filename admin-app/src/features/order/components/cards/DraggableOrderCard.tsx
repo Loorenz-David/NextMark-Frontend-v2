@@ -134,7 +134,7 @@ export const DraggableOrderCard = ({
       {isSelectionMode ? (
         <button
           type="button"
-          className={`absolute left-1 top-1 z-20 h-5 w-5 rounded-full border text-[10px] font-semibold ${
+          className={`touch-hit-area absolute left-1 top-1 z-20 h-5 w-5 rounded-full border text-micro font-semibold ${
             isSelected
               ? 'border-[var(--color-light-blue)] bg-[var(--color-dark-blue)] text-white'
               : 'border-[var(--color-border)] bg-white text-[var(--color-muted)]'

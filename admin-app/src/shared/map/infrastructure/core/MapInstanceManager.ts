@@ -3,22 +3,26 @@ import { loadGoogleMaps } from '@shared-google-maps'
 import type { MapConfig } from '../../domain/types'
 
 type MapsLibrary = {
-  Map: any
-  marker: any
-  Polyline: any
-  LatLngBounds: any
+  Map: typeof google.maps.Map
+  Polyline: typeof google.maps.Polyline
+  LatLngBounds: typeof google.maps.LatLngBounds
 }
 
 type MarkerLibrary = {
-  AdvancedMarkerElement: any
+  AdvancedMarkerElement: typeof google.maps.marker.AdvancedMarkerElement
+}
+
+type MapRuntime = google.maps.Map & {
+  panBy?: (x: number, y: number) => void
+  setOptions: (options: Partial<google.maps.MapOptions> & { padding?: { top: number; right: number; bottom: number; left: number } }) => void
 }
 
 export class MapInstanceManager {
-  private map: any = null
-  private MapCtor: any = null
-  private PolylineCtor: any = null
-  private LatLngBoundsCtor: any = null
-  private AdvancedMarkerCtor: any = null
+  private map: google.maps.Map | null = null
+  private MapCtor: typeof google.maps.Map | null = null
+  private PolylineCtor: typeof google.maps.Polyline | null = null
+  private LatLngBoundsCtor: typeof google.maps.LatLngBounds | null = null
+  private AdvancedMarkerCtor: typeof google.maps.marker.AdvancedMarkerElement | null = null
   private loadMapsClient: typeof loadGoogleMaps
 
   constructor(loadMapsClient: typeof loadGoogleMaps = loadGoogleMaps) {
@@ -26,19 +30,19 @@ export class MapInstanceManager {
   }
 
   async initialize(container: HTMLElement, options?: MapConfig) {
-    const google = (await this.loadMapsClient()) as any
-    const mapsLibrary = google.maps?.importLibrary
-      ? ((await google.maps.importLibrary('maps')) as MapsLibrary)
+    const client = await this.loadMapsClient()
+    const mapsLibrary = client.maps?.importLibrary
+      ? ((await client.maps.importLibrary('maps')) as MapsLibrary)
       : null
-    const markerLibrary = google.maps?.importLibrary
-      ? ((await google.maps.importLibrary('marker')) as MarkerLibrary)
+    const markerLibrary = client.maps?.importLibrary
+      ? ((await client.maps.importLibrary('marker')) as MarkerLibrary)
       : null
 
-    this.MapCtor = mapsLibrary?.Map ?? google.maps?.Map ?? null
-    this.PolylineCtor = mapsLibrary?.Polyline ?? google.maps?.Polyline ?? null
-    this.LatLngBoundsCtor = mapsLibrary?.LatLngBounds ?? google.maps?.LatLngBounds ?? null
+    this.MapCtor = mapsLibrary?.Map ?? (client.maps?.Map as typeof google.maps.Map | undefined) ?? null
+    this.PolylineCtor = mapsLibrary?.Polyline ?? (client.maps?.Polyline as typeof google.maps.Polyline | undefined) ?? null
+    this.LatLngBoundsCtor = mapsLibrary?.LatLngBounds ?? (client.maps?.LatLngBounds as typeof google.maps.LatLngBounds | undefined) ?? null
     this.AdvancedMarkerCtor =
-      markerLibrary?.AdvancedMarkerElement ?? google.maps?.marker?.AdvancedMarkerElement ?? null
+      markerLibrary?.AdvancedMarkerElement ?? (client.maps?.marker?.AdvancedMarkerElement as typeof google.maps.marker.AdvancedMarkerElement | undefined) ?? null
 
     if (!this.MapCtor) {
       throw new Error('Google Maps Map constructor is unavailable.')
@@ -54,12 +58,13 @@ export class MapInstanceManager {
       center,
       zoom,
       mapId: options?.mapId,
+      gestureHandling: 'greedy',
       disableDefaultUI: options?.disableDefaultUI ?? true,
     })
   }
 
   getMap() {
-    return this.map
+    return this.map as MapRuntime | null
   }
 
   getPolylineCtor() {

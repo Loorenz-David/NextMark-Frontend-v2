@@ -1,16 +1,9 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext } from 'react'
 
 import type { OrderFormFormSlice } from '../state/OrderForm.types'
 
-const OrderFormFormContext = createContext<OrderFormFormSlice | null>(null)
+export const OrderFormFormContext = createContext<OrderFormFormSlice | null>(null)
 
-export const OrderFormFormContextProvider = ({
-  value,
-  children,
-}: {
-  value: OrderFormFormSlice
-  children: ReactNode
-}) => <OrderFormFormContext.Provider value={value}>{children}</OrderFormFormContext.Provider>
 
 export const useOrderFormFormSlice = () => {
   const context = useContext(OrderFormFormContext)

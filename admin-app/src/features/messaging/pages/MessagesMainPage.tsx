@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 
-import type { StackComponentProps } from '@/shared/stack-manager/types'
 import { MessageIcon } from '@/assets/icons'
 import { DEFAULT_PLAN_TYPE, type RoutePlanObjective } from '@/features/plan'
 
@@ -39,10 +38,10 @@ const MessagesMainContent = () => {
             <MessageIcon className="h-9 w-9" />
           </div>
           <div className="flex flex-col gap-1">
-            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-[var(--color-muted)]">
+            <p className="text-rem-0_62 font-semibold uppercase tracking-[0.3em] text-[var(--color-muted)]">
               Message Automations
             </p>
-            <h1 className="text-[2rem] font-semibold leading-none text-[var(--color-text)]">
+            <h1 className="text-rem-2 font-semibold leading-none text-[var(--color-text)]">
               SMS and email templates
             </h1>
             <p className="text-sm text-[var(--color-muted)]">
@@ -64,4 +63,4 @@ const MessagesMainContent = () => {
   )
 }
 
-export const MessagesMainPage = (_: StackComponentProps<undefined>) => <MessagesMainContent />
+export const MessagesMainPage = () => <MessagesMainContent />

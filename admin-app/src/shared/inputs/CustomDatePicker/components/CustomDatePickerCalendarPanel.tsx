@@ -187,7 +187,7 @@ export const CustomDatePickerCalendarPanel = ({
                   <BackArrowIcon2 className='h-4 w-4 rotate-180 text-[var(--color-text)]' />
                 </button>
               </div>
-              <div className='grid grid-cols-7 gap-0.5 text-center text-[10px] uppercase tracking-wide text-[var(--color-muted)]/80'>
+              <div className='grid grid-cols-7 gap-0.5 text-center text-micro uppercase tracking-wide text-[var(--color-muted)]/80'>
                 {WEEKDAY_LABELS.map((label) => (
                   <span key={label}>{label}</span>
                 ))}

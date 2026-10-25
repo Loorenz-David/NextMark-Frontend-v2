@@ -132,6 +132,7 @@ export const runOrderMapMarkersFlowTests = () => {
         createOrder({
           client_id: 'group-a',
           id: 101,
+          operation_type: 'pickup',
           client_address: {
             street_address: 'Same Address',
             coordinates: { lat: 25.7617, lng: -80.1918 },
@@ -140,6 +141,7 @@ export const runOrderMapMarkersFlowTests = () => {
         createOrder({
           client_id: 'group-b',
           id: 102,
+          operation_type: 'dropoff',
           client_address: {
             street_address: 'Same Address',
             coordinates: { lat: 25.761704, lng: -80.191804 },

@@ -17,8 +17,6 @@ export const TwilioIntegrationForm = ({
     formSetters,
     formState 
 }: IntegrationFormProps) => {
-    formSetters
-    formState 
 
     return ( 
         <div className="flex flex-col gap-4 pb-20">

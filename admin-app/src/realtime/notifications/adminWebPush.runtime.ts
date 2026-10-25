@@ -63,6 +63,17 @@ export const getAdminNotificationsServiceWorkerRegistration = async () => {
   return registerAdminNotificationsServiceWorker();
 };
 
+// Lookup only: the version check runs for every user, and must never be what
+// installs the worker for someone who did not enable notifications.
+export const refreshAdminNotificationsServiceWorker = async () => {
+  if (!isAdminWebPushSupported()) return;
+
+  const existing = await navigator.serviceWorker.getRegistration(
+    ADMIN_NOTIFICATIONS_SERVICE_WORKER_PATH,
+  );
+  await existing?.update();
+};
+
 export const getExistingAdminPushSubscription = async () => {
   const registration = await getAdminNotificationsServiceWorkerRegistration();
   if (!registration) return null;

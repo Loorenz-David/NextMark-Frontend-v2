@@ -33,7 +33,7 @@ export const RouteGroupBoundaryLocationCard = ({
       className={`admin-glass-panel admin-surface-compact flex justify-between rounded-2xl border border-border p-4 transition-all duration-200 hover:border-border-accent hover:bg-surface-hover ${containerClassName ?? ''}`}
     >
       <div className="flex min-w-0 flex-col gap-1">
-        <span className="text-[0.6rem] font-semibold uppercase tracking-wide text-[var(--color-text)]/78">
+        <span className="text-rem-0_6 font-semibold uppercase tracking-wide text-[var(--color-text)]/78">
           {label}
         </span>
         <span className="truncate text-xs text-[var(--color-muted)]/95">{streetAddress}</span>

@@ -50,7 +50,7 @@ export const DeliveryWindowCalendarDayPopover = ({
         {kind === 'closed-warning' ? (
           <div className="p-2 text-xs text-[var(--color-text)]">
             <div className="mb-1 font-semibold">Date unavailable</div>
-            <p className="text-[11px] text-[var(--color-muted)]">
+            <p className="text-2xs text-[var(--color-muted)]">
               This date is closed by costumer operating hours.
             </p>
           </div>
@@ -65,7 +65,7 @@ export const DeliveryWindowCalendarDayPopover = ({
                       key={row.key}
                       className="flex items-center justify-between border-b border-b-white/[0.08] px-2 py-2 last:border-b-0 "
                     >
-                      <span className="text-[11px] text-[var(--color-text)]">
+                      <span className="text-2xs text-[var(--color-text)]">
                         {row.start} - {row.end}
                       </span>
                       <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export const DeliveryWindowCalendarDayPopover = ({
                             onClick: () => onEditWindow(row),
                             style:{padding:'5px 8px'},
                             className:
-                              'text-[10px] border-none',
+                              'text-micro border-none',
                           }}
                         >
                           Edit
@@ -86,7 +86,7 @@ export const DeliveryWindowCalendarDayPopover = ({
                             onClick: () => onRemoveWindow(row),
                             style:{padding:'5px 8px'},
                             className:
-                              'text-[10px] border-none font-normal normal-case tracking-normal text-danger hover:bg-danger-bg ',
+                              'text-micro border-none font-normal normal-case tracking-normal text-danger hover:bg-danger-bg ',
                           }}
                         >
                           Remove
@@ -96,7 +96,7 @@ export const DeliveryWindowCalendarDayPopover = ({
                   ))}
                 </div>
               ) : (
-                <div className="px-1 py-2 text-[11px] text-[var(--color-muted)]">No windows for this day.</div>
+                <div className="px-1 py-2 text-2xs text-[var(--color-muted)]">No windows for this day.</div>
               )}
             </div>
             <div className="flex items-center justify-between border-t border-[var(--color-border-accent)] px-2 py-2">
@@ -104,7 +104,7 @@ export const DeliveryWindowCalendarDayPopover = ({
                 type="button"
                 disabled={disableAdd}
                 onClick={() => onAddWindow(localDate)}
-                className="w-full rounded-md border-1 border-[var(--color-border-accent)] border-dashed px-2 py-1 text-[10px] text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:bg-surface-hover"
+                className="w-full rounded-md border-1 border-[var(--color-border-accent)] border-dashed px-2 py-1 text-micro text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:bg-surface-hover"
               >
                 Add time window
               </button>

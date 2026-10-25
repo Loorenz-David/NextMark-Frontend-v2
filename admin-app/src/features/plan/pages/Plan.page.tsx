@@ -1,20 +1,19 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useVisibleRoutePlans } from "../store/useRoutePlan.selector";
 
 import { PlanList, PlanLoadingList, PlanMainHeader } from "../components";
 import { usePlanHeaderAction } from "../actions/usePlanActions";
-import { useRoutePlanListStats } from "../store/routePlanList.selector";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { usePlanPaginationController } from "../hooks/usePlanPaginationController";
 import type { PlanDateFilterPayload } from "../components/planDateFilter";
 import type { PlanQueryFilters } from "../types/planMeta";
+import { usePlanCalendarPeriodController } from "../calendar/controllers/usePlanCalendarPeriod.controller";
+import { PlanCalendarDateControl } from "../calendar/components/PlanCalendarDateControl";
 
 type RoutePlanPageProps = {
-  onRequestClose?: () => void;
-  showCloseButton?: boolean;
-  /** Optional control forwarded into the header (e.g. calendar/list toggle). */
-  headerAccessory?: ReactNode;
+  /** Add the calendar/list switch to the header menu. */
+  showViewSwitch?: boolean;
 };
 
 const mergePlanQuery = (
@@ -49,13 +48,13 @@ const queryEquals = (
   return JSON.stringify(left ?? {}) === JSON.stringify(right ?? {});
 };
 
-export const RoutePlanPage = ({
-  onRequestClose,
-  showCloseButton,
-  headerAccessory,
-}: RoutePlanPageProps) => {
+export const RoutePlanPage = ({ showViewSwitch }: RoutePlanPageProps) => {
+  // In the plan column the list shares the calendar's period and date control,
+  // so switching views keeps the same dates. The phone has no calendar and
+  // keeps its own date filter.
+  const period = usePlanCalendarPeriodController();
   const [activeQuery, setActiveQuery] = useState<PlanQueryFilters | undefined>(
-    undefined,
+    () => (showViewSwitch ? period.listFilters : undefined),
   );
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const handleScrollToTop = useCallback(() => {
@@ -64,7 +63,6 @@ export const RoutePlanPage = ({
     }
   }, []);
   const plans = useVisibleRoutePlans();
-  const plansStats = useRoutePlanListStats();
   const planActions = usePlanHeaderAction();
   const handleFilterSelection = useCallback(
     (payload: PlanDateFilterPayload) => {
@@ -88,6 +86,11 @@ export const RoutePlanPage = ({
     });
   }, []);
 
+  useEffect(() => {
+    if (!showViewSwitch) return;
+    handleFiltersChange(period.listFilters);
+  }, [showViewSwitch, period.listFilters, handleFiltersChange]);
+
   const {
     hasMore,
     isLoadingPage,
@@ -108,13 +111,22 @@ export const RoutePlanPage = ({
     <div className="flex h-full min-h-0 w-full flex-col">
       <PlanMainHeader
         onCreate={planActions.onCreatePlan}
-        onRequestClose={onRequestClose}
-        showCloseButton={showCloseButton}
-        planStats={plansStats}
         applySearch={() => {}}
         applyFilters={handleFiltersChange}
         applyFilterSelection={handleFilterSelection}
-        headerAccessory={headerAccessory}
+        showViewSwitch={showViewSwitch}
+        dateControl={
+          showViewSwitch ? (
+            <PlanCalendarDateControl
+              title={period.title}
+              dateFilter={period.dateFilter}
+              onDateFilterChange={period.setDateFilter}
+              onStepPrevious={period.stepPrevious}
+              onStepNext={period.stepNext}
+              onGoToToday={period.goToToday}
+            />
+          ) : undefined
+        }
       />
       <div
         ref={scrollContainerRef}

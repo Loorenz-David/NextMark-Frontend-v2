@@ -5,6 +5,7 @@ import {
   isExternalFormPath,
   resolvePwaHeadState,
 } from '../externalFormPwa'
+import { ADMIN_MANIFEST_CONTRACT, ADMIN_MANIFEST_PATH } from '../adminPwa'
 import {
   createManagedHead,
   type ManagedHeadPort,
@@ -106,8 +107,8 @@ export const runExternalFormPwaTests = () => {
     )
   }
 
-  // 3. Ordinary admin routes advertise nothing — including a route that merely
-  //    starts with the same characters.
+  // 3. Other routes advertise the admin install, including a route that merely
+  //    starts with the same characters as the form route.
   {
     for (const pathname of [
       '/',
@@ -117,10 +118,15 @@ export const runExternalFormPwaTests = () => {
     ]) {
       const state = resolvePwaHeadState(pathname)
       assert(
-        state.tags.length === 0 && state.title === null,
-        `${pathname} must not advertise the external-form manifest`,
+        state.tags.find((tag) => tag.key === 'manifest')?.attributes.href === ADMIN_MANIFEST_PATH && state.title === 'NextMark',
+        `${pathname} must advertise the admin manifest`,
       )
     }
+  }
+
+  {
+    assert(ADMIN_MANIFEST_CONTRACT.scope === '/' && ADMIN_MANIFEST_CONTRACT.start_url === '/', 'admin install must own the root route')
+    assert(ADMIN_MANIFEST_CONTRACT.display === 'standalone', 'admin install must launch standalone')
   }
 
   // 4. The manifest contract is standalone and starts on the form.
@@ -169,15 +175,15 @@ export const runExternalFormPwaTests = () => {
       'moving between form routes should leave the head untouched',
     )
 
-    // Leaving the family must take every tag back out and restore the title.
+    // Leaving the family replaces the form metadata with the admin metadata.
     managed.apply(resolvePwaHeadState('/settings'))
     assert(
-      head.keys().length === 0,
+      head.find('manifest')?.attributes.href === ADMIN_MANIFEST_PATH,
       'an admin route must not inherit the form install metadata',
     )
     assert(
-      head.title() === 'delivery app',
-      'the document title should be handed back as it was found',
+      head.title() === 'NextMark',
+      'the document title should switch to the admin title',
     )
 
     // Re-entering rebuilds it, and unmounting cleans up again.

@@ -7,13 +7,13 @@ export interface InputWarningController {
   showWarning: (message?: string) => void
   hideWarning: () => void
   setWarningMessage: (message?: string) => void
-  validate: (value: any ) => boolean
+  validate: (value: unknown) => boolean
   hasWarningActive: ()=> boolean
 }
 
 export function useInputWarning(
   initialMessage?: string,
-  setValidate?: (value:any, setWarningMessage: (value: string)=>void ) => boolean
+  setValidate?: (value: unknown, setWarningMessage: (value: string)=>void ) => boolean
 ): InputWarningController {
   const [warning, setWarning] = useState<InputWarningState>({
     message: initialMessage,
@@ -44,7 +44,7 @@ export function useInputWarning(
     }))
   }, [])
 
-  const validate = (value:any ) =>{
+  const validate = (value: unknown) =>{
     let outcome: boolean
     if( setValidate ){
       outcome = setValidate( value, setWarningMessage )
@@ -52,7 +52,8 @@ export function useInputWarning(
       outcome = value ? true : false
     }
 
-    outcome ?  hideWarning() : showWarning() 
+    if (outcome) hideWarning()
+    else showWarning()
     return outcome 
   }
   const hasWarningActive = ()=>{

@@ -19,7 +19,7 @@ const LegendItem = ({
   label: string
   compact: boolean
 }) => (
-  <div className={`${compact ? 'gap-1 text-[10px]' : 'gap-1.5 text-[11px] md:gap-2 md:text-xs'} flex items-center text-[var(--color-muted)]`}>
+  <div className={`${compact ? 'gap-1 text-micro' : 'gap-1.5 text-2xs md:gap-2 md:text-xs'} flex items-center text-[var(--color-muted)]`}>
     {marker}
     <span>{label}</span>
   </div>
@@ -47,7 +47,7 @@ export const DeliveryWindowCalendarLegend = ({
             compact={isCompact}
           />
           <LegendItem
-            marker={<span className={`${isCompact ? 'h-4 min-w-4 rounded-md px-1 text-[9px]' : 'h-5 min-w-5 rounded-lg px-1.5 text-[10px] md:h-6 md:min-w-6 md:rounded-xl md:px-2 md:text-xs'} flex items-center justify-center bg-[var(--color-primary)]/15 font-semibold text-[var(--color-primary)]`}>2</span>}
+            marker={<span className={`${isCompact ? 'h-4 min-w-4 rounded-md px-1 text-nano' : 'h-5 min-w-5 rounded-lg px-1.5 text-micro md:h-6 md:min-w-6 md:rounded-xl md:px-2 md:text-xs'} flex items-center justify-center bg-[var(--color-primary)]/15 font-semibold text-[var(--color-primary)]`}>2</span>}
             label="Has time windows"
             compact={isCompact}
           />

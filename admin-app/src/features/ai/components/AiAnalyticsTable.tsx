@@ -29,7 +29,7 @@ function AiAnalyticsTableComponent({ data }: AiAnalyticsTableProps) {
     <div className="admin-glass-panel admin-surface-compact overflow-hidden rounded-lg border border-border">
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse text-left text-xs text-[var(--color-text)]">
-          <thead className="bg-surface-raised text-[0.65rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <thead className="bg-surface-raised text-rem-0_65 uppercase tracking-[0.14em] text-[var(--color-muted)]">
             <tr>
               {data.columns.map((column) => (
                 <th

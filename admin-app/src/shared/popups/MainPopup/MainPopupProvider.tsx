@@ -1,6 +1,6 @@
 // PopupProvider.tsx
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { PopupContextProvider } from './PopupContext'
+import { PopupContextProvider } from './PopupContext-components'
 import { useCloseGuard } from './useCloseGuard'
 import type { parentParams, PropsHeaderConfig } from './MainPopup.types'
 import { useMobile } from '@/app/viewport'

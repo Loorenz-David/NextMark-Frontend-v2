@@ -59,12 +59,12 @@ export const ManualMessageEventCard = ({
           <span className="truncate text-sm text-[var(--color-text)]">
             {row.label}
           </span>
-          <span className="shrink-0 text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <span className="shrink-0 text-micro uppercase tracking-[0.14em] text-[var(--color-muted)]">
             {row.channels.join(" · ")}
           </span>
         </span>
         {row.detail ? (
-          <span className="mt-0.5 block truncate text-[11px] text-[var(--color-muted)]">
+          <span className="mt-0.5 block truncate text-2xs text-[var(--color-muted)]">
             {row.detail}
           </span>
         ) : null}
@@ -76,7 +76,7 @@ export const ManualMessageEventCard = ({
         <span
           // last_error is raw backend text — kept to a tooltip, never primary copy.
           title={row.error ?? undefined}
-          className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] ${STATUS_TONE_CLASS[row.status]}`}
+          className={`shrink-0 rounded-full border px-2 py-0.5 text-micro font-medium uppercase tracking-[0.12em] ${STATUS_TONE_CLASS[row.status]}`}
         >
           {statusLabel}
         </span>

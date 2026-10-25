@@ -181,7 +181,7 @@ export class MarkerLayerManager {
           ? clusterMarkerZIndex()
           : markerZIndex(order.status)
 
-        let contentEl = existing.el
+        const contentEl = existing.el
         if (isCluster) {
           applyClusterMarkerAppearance(contentEl, clusterRecord)
         } else {

@@ -25,7 +25,7 @@ export const SmsTemplateEditor = ({ value, onChange }: SmsTemplateEditorProps) =
   return (
     <section className="admin-glass-panel-strong rounded-3xl p-6 shadow-none">
       <div className="mb-5 flex flex-col gap-2">
-        <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
+        <p className="text-rem-0_62 font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
           SMS content
         </p>
         <p className="text-sm text-[var(--color-muted)]">
@@ -37,12 +37,12 @@ export const SmsTemplateEditor = ({ value, onChange }: SmsTemplateEditorProps) =
       <div className="mb-5 rounded-3xl border border-border bg-[linear-gradient(180deg,rgba(var(--theme-surface-editor-top-r),0.8),var(--glass-overlay))] px-4 py-3">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text)]">
-            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[var(--accent)]/28 bg-[var(--accent)]/14 px-1.5 text-[0.7rem] font-semibold text-[var(--accent-ink)]">
+            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[var(--accent)]/28 bg-[var(--accent)]/14 px-1.5 text-rem-0_7 font-semibold text-[var(--accent-ink)]">
               1
             </span>
             <span>Write inside the live message bubble</span>
             <span className="px-1 text-faint">→</span>
-            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[var(--accent)]/28 bg-[var(--accent)]/14 px-1.5 text-[0.7rem] font-semibold text-[var(--accent-ink)]">
+            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[var(--accent)]/28 bg-[var(--accent)]/14 px-1.5 text-rem-0_7 font-semibold text-[var(--accent-ink)]">
               2
             </span>
             <span>Tap a label to insert it at the current cursor</span>

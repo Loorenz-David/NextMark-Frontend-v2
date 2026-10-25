@@ -1,5 +1,9 @@
+// @vitest-environment jsdom
+import { it } from 'vitest'
+
 import { MAP_MARKER_LAYERS } from '../domain/constants/markerLayers'
 import type { MapOrder } from '../domain/entities/MapOrder'
+import { MapInstanceManager } from '../infrastructure/core/MapInstanceManager'
 import { MarkerLayerManager } from '../infrastructure/markers/MarkerLayerManager'
 
 const assert = (condition: boolean, message: string) => {
@@ -29,11 +33,14 @@ const buildOrder = (id: string, overrides?: Partial<MapOrder>): MapOrder => ({
   ...overrides,
 })
 
-const createManager = () =>
-  new MarkerLayerManager({
+const createManager = () => {
+  const mapInstanceManager = new MapInstanceManager()
+  Object.assign(mapInstanceManager, {
     getMap: () => ({ id: 'mock-map' }),
     getAdvancedMarkerCtor: () => MockAdvancedMarker,
-  } as any)
+  })
+  return new MarkerLayerManager(mapInstanceManager)
+}
 
 const getMarkerElement = (manager: MarkerLayerManager, layerId: string, markerId: string): HTMLElement => {
   const markerElement = manager.getLayer(layerId)?.markers.get(markerId)?.el
@@ -41,7 +48,7 @@ const getMarkerElement = (manager: MarkerLayerManager, layerId: string, markerId
   return markerElement!
 }
 
-export const runMarkerLayerManagerDotContentTests = () => {
+it('marker layer content updates and layer isolation', () => {
   {
     const manager = createManager()
     manager.setLayerMarkers(MAP_MARKER_LAYERS.orders, [buildOrder('order-1')])
@@ -115,4 +122,4 @@ export const runMarkerLayerManagerDotContentTests = () => {
       'orders layer marker should keep dot after local delivery layer is toggled off',
     )
   }
-}
+})

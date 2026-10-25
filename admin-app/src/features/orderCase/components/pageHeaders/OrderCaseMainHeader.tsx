@@ -98,10 +98,10 @@ const HeaderTitle = ({orderCaseStats}:{orderCaseStats?:OrderCaseStats})=>{
   const resolvingCount = orderCaseStats?.resolving_cases.total  ?? 0
   return (
     <div className="flex min-w-0 flex-col">
-      <span className="text-[0.98rem] font-semibold tracking-tight text-[var(--color-text)]">
+      <span className="text-rem-0_98 font-semibold tracking-tight text-[var(--color-text)]">
         Order Cases
       </span>
-      <div className="mt-0.5 flex flex-wrap items-center gap-1 text-[0.72rem] text-[var(--color-muted)]">
+      <div className="mt-0.5 flex flex-wrap items-center gap-1 text-rem-0_72 text-[var(--color-muted)]">
         <span>{caseCount} {pluralLabel('case',caseCount)} •</span>
         <span>{openCount} {pluralLabel('open',openCount)} •</span>
         <span>{resolvingCount} {pluralLabel('resolving',resolvingCount)}</span>

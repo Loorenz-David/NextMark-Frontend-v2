@@ -3,9 +3,10 @@ import { useCallback, useEffect } from "react";
 
 import { DndContext, DragOverlay, MeasuringStrategy } from "@dnd-kit/core";
 
-import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext";
+import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext-components";
 import { preloadMapExtras, useMap } from "@/shared/map";
-import { useMobile } from "@/app/viewport";
+import { useViewport } from "@/app/viewport";
+import { useReloadBlocker } from "@/app/version";
 
 import { homeCollisionDetection } from "../dnd/collisionStrategies";
 import { useRouteOperationsDndController } from "../hooks/useRouteOperationsDndController";
@@ -24,7 +25,7 @@ export function HomeRouteOperationsManagersProvider({
 }: {
   children: ReactNode;
 }) {
-  const { isMobile } = useMobile();
+  const { isMobile, isCoarsePointer } = useViewport();
   useRouteOperationsFixtureBootstrap();
 
   const mapManager = useMap();
@@ -93,6 +94,7 @@ export function HomeRouteOperationsManagersProvider({
     routeReorderPreview: null,
     sensors: [],
   };
+  useReloadBlocker(Boolean(activeDrag), "home-route-operations-drag");
 
   return (
     <ResourcesManagerProvider
@@ -113,8 +115,8 @@ export function HomeRouteOperationsManagersProvider({
         measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
         autoScroll={{
           enabled: true,
-          threshold: { x: 0.1, y: 0.2 },
-          acceleration: 12,
+          threshold: { x: 0.1, y: isCoarsePointer ? 0.12 : 0.2 },
+          acceleration: isCoarsePointer ? 6 : 12,
           interval: 8,
         }}
         onDragStart={onDragStart}
@@ -127,8 +129,10 @@ export function HomeRouteOperationsManagersProvider({
         {/* No drop animation: every drop commits optimistically, so the real
             card is already in its final slot the moment the drag ends. The
             default animation would fly the overlay back to the source's
-            measured rect — the hidden card at the drag's origin. */}
-        <DragOverlay dropAnimation={null}>
+            measured rect — the hidden card at the drag's origin. The overlay
+            lets the pointer through so collisions can tell which target is
+            really under it (rankedPointerCollision). */}
+        <DragOverlay dropAnimation={null} className="pointer-events-none">
           <RouteOperationsDragOverlay activeDrag={activeDrag} />
         </DragOverlay>
       </DndContext>

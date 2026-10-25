@@ -14,8 +14,6 @@ export const ShopifyIntegrationForm = ({
   formSetters,
   formState,
 }: IntegrationFormProps) => {
-  formSetters;
-  formState;
 
   return (
     <div className="flex flex-col items-center justify-center h-full ">

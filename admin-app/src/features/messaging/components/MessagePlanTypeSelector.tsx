@@ -12,7 +12,7 @@ type MessagePlanTypeSelectorProps = {
  */
 export const MessagePlanTypeSelector = ({ value, onChange }: MessagePlanTypeSelectorProps) => (
   <div className="flex flex-wrap items-center gap-3">
-    <span className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
+    <span className="text-rem-0_62 font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
       Plan type
     </span>
     <div

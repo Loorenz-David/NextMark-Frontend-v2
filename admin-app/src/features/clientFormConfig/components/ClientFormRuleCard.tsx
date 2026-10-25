@@ -39,7 +39,7 @@ export const ClientFormRuleCard = ({
       <div className="flex items-center gap-2">
         <p className="truncate text-sm font-semibold text-[var(--color-text)]">{rule.title}</p>
         {rule.icon ? (
-          <span className="rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <span className="rounded-full border border-border bg-surface-raised px-2 py-0.5 text-rem-0_6 uppercase tracking-[0.14em] text-[var(--color-muted)]">
             {rule.icon}
           </span>
         ) : null}

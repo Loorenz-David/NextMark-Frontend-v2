@@ -25,7 +25,7 @@ type OrderFormCostumerSectionMobileProps = {
 
 const DetailLine = ({ label, value }: { label: string; value: string }) => (
   <div className="flex min-w-0 flex-col">
-    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--color-muted)]">
+    <span className="text-micro font-semibold uppercase tracking-[0.12em] text-[var(--color-muted)]">
       {label}
     </span>
     <span className="min-w-0 break-words text-sm text-[var(--color-text)]">{value}</span>

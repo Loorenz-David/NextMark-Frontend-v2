@@ -9,6 +9,7 @@ const assert = (condition: boolean, message: string) => {
 export const runHomeDesktopLayoutDomainTests = () => {
   {
     const tracks = resolveHomeDesktopTracks({
+      sizeClass: 'desktop',
       viewMode: 'rail',
       isPlanVisible: true,
       isMapVisible: true,
@@ -25,6 +26,7 @@ export const runHomeDesktopLayoutDomainTests = () => {
 
   {
     const tracks = resolveHomeDesktopTracks({
+      sizeClass: 'desktop',
       viewMode: 'rail',
       isPlanVisible: true,
       isMapVisible: true,
@@ -36,6 +38,7 @@ export const runHomeDesktopLayoutDomainTests = () => {
 
   {
     const list = resolveHomeDesktopTracks({
+      sizeClass: 'desktop',
       viewMode: 'rail',
       isPlanVisible: true,
       isMapVisible: false,
@@ -43,6 +46,7 @@ export const runHomeDesktopLayoutDomainTests = () => {
       railColumnWidth: 450,
     })
     const calendar = resolveHomeDesktopTracks({
+      sizeClass: 'desktop',
       viewMode: 'rail',
       isPlanVisible: true,
       isMapVisible: false,
@@ -63,6 +67,7 @@ export const runHomeDesktopLayoutDomainTests = () => {
 
   {
     const tracks = resolveHomeDesktopTracks({
+      sizeClass: 'desktop',
       viewMode: 'rail',
       isPlanVisible: false,
       isMapVisible: true,
@@ -76,6 +81,7 @@ export const runHomeDesktopLayoutDomainTests = () => {
 
   {
     const tracks = resolveHomeDesktopTracks({
+      sizeClass: 'desktop',
       viewMode: 'split',
       isPlanVisible: true,
       isMapVisible: true,
@@ -88,6 +94,7 @@ export const runHomeDesktopLayoutDomainTests = () => {
 
   {
     const tracks = resolveHomeDesktopTracks({
+      sizeClass: 'desktop',
       viewMode: 'split',
       isPlanVisible: true,
       isMapVisible: false,
@@ -100,6 +107,7 @@ export const runHomeDesktopLayoutDomainTests = () => {
 
   {
     const tracks = resolveHomeDesktopTracks({
+      sizeClass: 'desktop',
       viewMode: 'split',
       isPlanVisible: false,
       isMapVisible: true,
@@ -108,5 +116,50 @@ export const runHomeDesktopLayoutDomainTests = () => {
     })
     assert(tracks.mapRowHeight === 100 && tracks.planRowHeight === 0, 'folded plan gives the map full height')
     assert(!tracks.canToggleMap, 'map cannot fold in split mode while the plan is folded')
+  }
+
+  // Tablet: the map and the plan never share the center. Whichever is open
+  // takes the whole width beside the rail (420 order list, 560 open plan), so
+  // at 1024px the narrowest center is 464px, wider than a phone panel.
+  for (const railColumnWidth of [420, 560]) {
+    for (const planContainerView of ['calendar', 'list'] as const) {
+      for (const isMapVisible of [false, true]) {
+        const tracks = resolveHomeDesktopTracks({
+          sizeClass: 'tablet',
+          viewMode: 'rail',
+          isPlanVisible: true,
+          isMapVisible,
+          planContainerView,
+          railColumnWidth,
+        })
+        assert(
+          tracks.planColumnWidth === `calc(100vw - ${railColumnWidth}px)`,
+          `tablet ${planContainerView} rail ${railColumnWidth}: an open plan owns the center`,
+        )
+      }
+
+      const mapOnly = resolveHomeDesktopTracks({
+        sizeClass: 'tablet',
+        viewMode: 'rail',
+        isPlanVisible: false,
+        isMapVisible: true,
+        planContainerView,
+        railColumnWidth,
+      })
+      assert(mapOnly.planColumnWidth === 0, `tablet ${planContainerView}: a folded plan gives the map the center`)
+      assert(!mapOnly.canToggleMap, 'tablet map cannot fold while the plan is folded')
+    }
+  }
+
+  {
+    const tracks = resolveHomeDesktopTracks({
+      sizeClass: 'desktop',
+      viewMode: 'rail',
+      isPlanVisible: true,
+      isMapVisible: true,
+      planContainerView: 'calendar',
+      railColumnWidth: 550,
+    })
+    assert(tracks.planColumnWidth === 'calc(100vw - 320px - 550px)', 'desktop calendar keeps the 320px map rail')
   }
 }

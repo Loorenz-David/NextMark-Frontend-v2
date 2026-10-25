@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
+import { useViewport } from '@/app/viewport'
 
 import { useOrderStateRegistry } from '@/features/order'
 import type { Order } from '@/features/order/types/order'
@@ -103,6 +104,7 @@ export const useRouteGroupMapFlow = ({
   isActive,
   boundaryLocations, 
 }: RouteGroupMapParams) => {
+  const { hasHover } = useViewport()
   const mapManager = useMapManager()
   const sectionManager = useSectionManager()
   const orderStateRegistry = useOrderStateRegistry()
@@ -355,8 +357,19 @@ export const useRouteGroupMapFlow = ({
     const driverMarkers = buildRouteGroupDriverLocationMarkers({
       positions: liveDriverPositions,
       selectedDriverId,
-      onClick: () => undefined,
+      onClick: (event) => {
+        if (hasHover) return
+        const markerAnchorEl = event.currentTarget as HTMLElement | null
+        const position = liveDriverPositions.find((entry) => entry.driver_id === selectedDriverId)
+        if (!markerAnchorEl || !position) return
+        openOverlay({
+          markerId: `driver-live:route-group:${position.driver_id}`,
+          markerAnchorEl,
+          position,
+        })
+      },
       onMouseEnter: (event, position) => {
+        if (!hasHover) return
         const markerAnchorEl = event.currentTarget as HTMLElement | null
         if (!markerAnchorEl) return
 
@@ -367,7 +380,7 @@ export const useRouteGroupMapFlow = ({
         })
       },
       onMouseLeave: () => {
-        closeOverlay()
+        if (hasHover) closeOverlay()
       },
     })
 
@@ -383,6 +396,7 @@ export const useRouteGroupMapFlow = ({
     isActive,
     isDriverLiveVisible,
     liveDriverPositions,
+    hasHover,
     mapManager,
     selectedRouteSolution?.driver_id,
   ])

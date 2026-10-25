@@ -9,12 +9,12 @@ import { HOME_WORKSPACE_OPTIONS } from '../../domain/homeWorkspace.types'
 import { useHomeApp } from '../../providers/HomeAppProvider'
 
 const rowClass =
-  'flex min-h-13 w-full cursor-pointer items-center gap-3 px-4 text-left text-[0.95rem] text-[var(--color-text)] transition-colors active:bg-surface-hover'
+  'flex min-h-13 w-full cursor-pointer items-center gap-3 px-4 text-left text-rem-0_95 text-[var(--color-text)] transition-colors active:bg-surface-hover'
 
 const groupClass = 'admin-glass-panel overflow-hidden rounded-2xl border border-[var(--color-border)]'
 
 const sectionLabelClass =
-  'px-3 pb-1.5 pt-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]'
+  'px-3 pb-1.5 pt-4 text-micro font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]'
 
 /**
  * The Settings tab: everything the desktop header offers that is not a
@@ -77,7 +77,7 @@ export const HomeMobileSettingsPage = () => {
 
         <div className={sectionLabelClass}>App</div>
         <div className={groupClass}>
-          <div className="flex min-h-13 items-center gap-3 px-4 text-[0.95rem] text-[var(--color-text)]">
+          <div className="flex min-h-13 items-center gap-3 px-4 text-rem-0_95 text-[var(--color-text)]">
             <span className="min-w-0 flex-1">Theme</span>
             <ThemeToggle />
           </div>

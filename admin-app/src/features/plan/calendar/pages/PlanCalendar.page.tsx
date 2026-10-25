@@ -7,7 +7,6 @@ import { usePlanCalendarController } from "../controllers/usePlanCalendarControl
 import { usePlanCalendarStore } from "../store/planCalendar.store";
 import { PlanCalendarHeader } from "../components/PlanCalendarHeader";
 import { PlanCalendarBody } from "../components/PlanCalendarBody";
-import { PlanContainerViewToggle } from "../components/PlanContainerViewToggle";
 
 /** How long a drag-opened day overlay lingers after the drag ends, so the
  * drop feedback on the receiving plan card stays visible. */
@@ -23,8 +22,9 @@ export const PlanCalendarPage = () => {
     cells,
     plansByDay,
     volumeCapacityByPlanId,
-    stats,
     title,
+    dateFilter,
+    setDateFilter,
     isFetchingRange,
     stepPrevious,
     stepNext,
@@ -54,12 +54,12 @@ export const PlanCalendarPage = () => {
     <div className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-[var(--color-page)]">
       <PlanCalendarHeader
         title={title}
-        stats={stats}
+        dateFilter={dateFilter}
+        onDateFilterChange={setDateFilter}
         onStepPrevious={stepPrevious}
         onStepNext={stepNext}
         onGoToToday={goToToday}
         onCreatePlan={() => openCreatePlanForm()}
-        viewToggle={<PlanContainerViewToggle />}
       />
 
       <div

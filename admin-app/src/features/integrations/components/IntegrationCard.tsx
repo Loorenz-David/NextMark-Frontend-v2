@@ -32,12 +32,12 @@ export const IntegrationCard = ({
           </div>
           <div className="pt-1">
             {isActive ? (
-              <span className="inline-flex items-center gap-2 rounded-full border border-success-border bg-success-bg px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-success">
+              <span className="inline-flex items-center gap-2 rounded-full border border-success-border bg-success-bg px-3 py-1 text-rem-0_65 font-semibold uppercase tracking-[0.18em] text-success">
                 <span className="h-1.5 w-1.5 rounded-full bg-success" />
                 Active
               </span>
             ) : (
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-raised px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-raised px-3 py-1 text-rem-0_65 font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                 Available
               </span>
             )}
@@ -45,7 +45,7 @@ export const IntegrationCard = ({
         </div>
 
         <div>
-          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
+          <p className="text-rem-0_62 font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
             Integration
           </p>
           <p className="mt-2 text-xl font-semibold text-[var(--color-text)]">{definition.name}</p>
@@ -54,7 +54,7 @@ export const IntegrationCard = ({
 
         <div className="flex flex-1 items-center">
           <div className="w-full rounded-3xl border border-dashed border-border bg-surface-subtle px-4 py-5">
-            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
+            <p className="text-rem-0_62 font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
               Status overview
             </p>
             <p className="mt-2 text-sm text-[var(--color-text)]">

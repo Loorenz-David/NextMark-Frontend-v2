@@ -2,10 +2,12 @@ import { Suspense, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { useViewport } from "@/app/viewport";
 import { BackArrowIcon2 } from "@/assets/icons";
 import { useLoginMutations } from "@/features/auth/login/hooks/useLoginMutations";
 
 import type { SectionKey } from "../registry/sectionRegistry";
+import { SettingsBuildStamp } from "../components/SettingsBuildStamp";
 import { SettingsSectionSkeleton } from "../components/SettingsSectionSkeleton";
 import {
   SETTINGS_ROUTE_MAP,
@@ -17,6 +19,8 @@ export const SettingsDesktopView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logOutDevice } = useLoginMutations();
+  const { isTablet, isCoarsePointer, isStandalone } = useViewport();
+  const touchRowClass = isCoarsePointer ? " min-h-11" : "";
   const [expandedKey, setExpandedKey] = useState<
     SectionKey | "no-section" | null
   >(null);
@@ -68,24 +72,32 @@ export const SettingsDesktopView = () => {
 
   return (
     <div className="flex h-full w-full bg-[var(--color-page)]">
-      <aside className="admin-glass-panel-strong relative flex h-full w-72 min-w-72 flex-col border-r border-[var(--color-border)]/70 px-4 py-6">
+      <aside
+        className={`admin-glass-panel-strong relative flex h-full flex-col border-r border-[var(--color-border)]/70 px-4 py-6 ${
+          isTablet ? "w-60 min-w-60" : "w-72 min-w-72"
+        }`}
+      >
         <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-surface-raised" />
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm text-[var(--color-muted)] transition-colors hover:border-border hover:bg-surface-raised hover:text-[var(--color-text)]"
+          className={`flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm text-[var(--color-muted)] transition-colors hover:border-border hover:bg-surface-raised hover:text-[var(--color-text)]${touchRowClass}`}
         >
           <BackArrowIcon2 className="h-4 w-4" />
           Back
         </button>
 
-        <div className="mt-6 flex flex-1 flex-col gap-2">
+        <div
+          className={`mt-6 flex flex-1 flex-col gap-2${
+            isTablet ? " min-h-0 overflow-y-auto overscroll-contain scroll-thin" : ""
+          }`}
+        >
           {sidebarOptions.map((option) => (
             <div key={option.key} className="flex flex-col gap-1">
               <button
                 type="button"
                 onClick={() => handleToggleSection(option)}
-                className={`flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-colors ${
+                className={`flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-colors${touchRowClass} ${
                   isRouteActive(option.key)
                     ? "border-[var(--color-border)] bg-surface-hover text-[var(--color-text)] shadow-[inset_0_1px_0_var(--paper-raised)]"
                     : "border-transparent text-[var(--color-text)] hover:border-border hover:bg-surface-raised"
@@ -107,7 +119,7 @@ export const SettingsDesktopView = () => {
                         key={subSection.key}
                         type="button"
                         onClick={() => handleSelectSection(subSection.key)}
-                        className={`flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-2 text-left text-xs transition-colors ${
+                        className={`flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-2 text-left text-xs transition-colors${touchRowClass} ${
                           isRouteActive(subSection.key, { exact: true })
                             ? "border-[var(--color-light-blue-r)]/40 bg-[rgb(var(--color-light-blue-r),0.12)] text-[rgb(var(--color-light-blue-r))]"
                             : "border-transparent text-[var(--color-muted)] hover:border-border-subtle hover:bg-surface-subtle hover:text-[var(--color-text)]"
@@ -123,14 +135,19 @@ export const SettingsDesktopView = () => {
           ))}
         </div>
 
-        <div className="border-t border-[var(--color-border)]/70 pt-4">
+        <div
+          className={`border-t border-[var(--color-border)]/70 pt-4${
+            isStandalone ? " safe-bottom" : ""
+          }`}
+        >
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-transparent px-3 py-2 text-left text-sm text-[var(--color-text)] transition-colors hover:border-danger-border hover:bg-danger-bg hover:text-danger"
+            className={`flex w-full cursor-pointer items-center justify-between rounded-xl border border-transparent px-3 py-2 text-left text-sm text-[var(--color-text)] transition-colors hover:border-danger-border hover:bg-danger-bg hover:text-danger${touchRowClass}`}
           >
             Log out
           </button>
+          <SettingsBuildStamp className="mt-3 px-3" />
         </div>
       </aside>
 

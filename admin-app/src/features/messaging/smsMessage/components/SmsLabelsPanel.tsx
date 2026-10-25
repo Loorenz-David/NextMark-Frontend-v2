@@ -11,7 +11,7 @@ export const SmsLabelsPanel = ({ labels, onSelect }: SmsLabelsPanelProps) => {
     <aside className="admin-glass-panel-strong rounded-3xl bg-[linear-gradient(180deg,rgba(var(--theme-surface-shell-top-r),0.98),rgba(var(--theme-surface-shell-mid-r),0.98))] p-5 shadow-none">
       <div className="rounded-2xl border border-[var(--accent)]/12 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_8%,transparent),rgba(var(--accent-r),0.04))] px-4 py-3">
         <div className="flex items-center gap-2 text-sm text-[var(--color-text)]">
-          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[var(--accent)]/28 bg-[var(--accent)]/16 px-1.5 text-[0.7rem] font-semibold text-[var(--accent-ink)]">
+          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[var(--accent)]/28 bg-[var(--accent)]/16 px-1.5 text-rem-0_7 font-semibold text-[var(--accent-ink)]">
             +
           </span>
           <span className="font-medium">Tap a label and it appears inside the live SMS bubble.</span>
@@ -19,7 +19,7 @@ export const SmsLabelsPanel = ({ labels, onSelect }: SmsLabelsPanelProps) => {
       </div>
 
       <div className="mt-4 flex flex-col gap-2">
-        <p className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
+        <p className="text-rem-0_62 font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
           Labels
         </p>
         <h3 className="text-lg font-semibold text-[var(--color-text)]">Insert dynamic values</h3>

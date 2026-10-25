@@ -13,7 +13,7 @@ export const RouteGroupEditFormSectionGroup = ({
 }) => (
   <div className="flex flex-col gap-1 rounded-lg shadow-md p-4 border-1 border-[var(--color-border)] bg-[var(--control-bg)]">
     <div className="flex items-center gap-2">
-      <span className="text-[13px] font-semibold text-[var(--color-muted)]">
+      <span className="text-px-13 font-semibold text-[var(--color-muted)]">
         {label}
       </span>
       {info ? <InfoHover content={info} /> : null}

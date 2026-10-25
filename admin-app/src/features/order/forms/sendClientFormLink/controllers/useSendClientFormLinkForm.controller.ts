@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 
+import { useReloadBlocker } from '@/app/version'
 import { useSendClientFormLink } from '@/features/order/api/clientFormLink.api'
 import { useClientFormRecipientFieldsController } from '@/features/order/controllers/useClientFormRecipientFields.controller'
 import { useMessageHandler } from '@shared-message-handler'
@@ -22,6 +23,12 @@ export const useSendClientFormLinkFormController = ({
     initialPhone: payload.initialPhone,
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  useReloadBlocker(
+    isSubmitting ||
+      recipientsController.email !== (payload.initialEmail ?? '') ||
+      recipientsController.phone.number !== (payload.initialPhone?.number ?? ''),
+    'send-client-form-link',
+  )
 
   const canSubmit =
     payload.hasGeneratedLink &&

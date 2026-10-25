@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { makeInitialFormCopy } from '@shared-domain'
 
-import { IntegrationConfigContextProvider } from './IntegrationConfig.context'
+import { IntegrationConfigContextProvider } from './IntegrationConfig.context-provider'
 import type { InitialFormState, IntegrationConfigPayload } from './IntegrationConfig.types'
 import { useIntegrationConfigValidation } from './IntegrationConfig.validation'
 import { useIntegrationConfigLoader } from './useIntegrationConfigLoader'

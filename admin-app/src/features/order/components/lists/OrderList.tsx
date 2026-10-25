@@ -40,7 +40,6 @@ export const OrderList = ({
   hoveredClientIds,
   onOrderMouseEnter,
   onOrderMouseLeave,
-  scrollContainerRef: _scrollContainerRef,
 }: OrderListProps) => {
   const groups = useMemo(() => buildOrderAddressGroups(orders), [orders])
   const expandedGroupsByKey = useOrderGroupUIStore((state) => state.expandedGroupsByKey)

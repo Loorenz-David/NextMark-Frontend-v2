@@ -46,12 +46,12 @@ export const InlineRouteMetric = ({
           {resolvedValue}
         </motion.span>
         {metric.delta ? (
-          <span className="shrink-0 text-[10px] font-medium text-muted">
+          <span className="shrink-0 text-micro font-medium text-muted">
             {metric.delta}
           </span>
         ) : null}
       </div>
-      <span className="truncate text-[11px] font-medium uppercase tracking-[0.08em] text-muted">
+      <span className="truncate text-2xs font-medium uppercase tracking-[0.08em] text-muted">
         {metric.label || " "}
         {isEstimated ? " est." : ""}
       </span>

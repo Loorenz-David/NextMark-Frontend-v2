@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import type { DraggableAttributes } from '@dnd-kit/core'
+import type { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core'
 
 import { BoldArrowIcon } from '@/assets/icons'
 
@@ -26,7 +26,7 @@ type OrderAddressGroupCardProps = {
   onOrderMouseEnter?: (order: Order) => void
   onOrderMouseLeave?: () => void
   dragAttributes?: DraggableAttributes
-  dragListeners?: any
+  dragListeners?: DraggableSyntheticListeners
 }
 
 export const OrderAddressGroupCard = ({

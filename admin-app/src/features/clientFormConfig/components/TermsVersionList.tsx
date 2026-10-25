@@ -59,7 +59,7 @@ export const TermsVersionList = ({
                   Version {version.version_number}
                 </p>
                 {version.is_active ? (
-                  <span className="rounded-full border border-success-border bg-success-bg px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-success">
+                  <span className="rounded-full border border-success-border bg-success-bg px-2 py-0.5 text-rem-0_6 uppercase tracking-[0.14em] text-success">
                     Live
                   </span>
                 ) : null}
@@ -67,12 +67,12 @@ export const TermsVersionList = ({
               <button
                 type="button"
                 onClick={() => onLoadVersion(version)}
-                className="shrink-0 rounded-full border border-border bg-surface-raised px-3 py-1 text-[0.65rem] text-[var(--color-muted)] hover:text-[var(--color-text)]"
+                className="shrink-0 rounded-full border border-border bg-surface-raised px-3 py-1 text-rem-0_65 text-[var(--color-muted)] hover:text-[var(--color-text)]"
               >
                 Load into editor
               </button>
             </div>
-            <p className="text-[0.65rem] text-[var(--color-muted)]/70">
+            <p className="text-rem-0_65 text-[var(--color-muted)]/70">
               {formatCreatedAt(version.created_at)}
             </p>
             {preview ? (

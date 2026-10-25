@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 
+import { useReloadBlocker } from '@/app/version'
+
 import type { PopupCloseController, UseFeaturePopupCloseControllerInput } from './types'
 
 const resolveCanClose = async (canClose?: () => boolean | Promise<boolean>) => {
@@ -19,6 +21,8 @@ export const useFeaturePopupCloseController = ({
 }: UseFeaturePopupCloseControllerInput): PopupCloseController => {
   const [closeState, setCloseState] = useState<'idle' | 'confirming'>('idle')
   const closingRef = useRef(false)
+  // The same edits the close prompt protects must survive a silent update.
+  useReloadBlocker(hasUnsavedChanges, 'feature-popup-unsaved')
 
   const closeNow = useCallback(async () => {
     if (closingRef.current) return

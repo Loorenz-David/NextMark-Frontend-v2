@@ -28,6 +28,6 @@ const variantMap = {
     },
     small:{
         containerClass:'h-5 w-5',
-        text:'text-[10px]'
+        text:'text-micro'
     }
 }

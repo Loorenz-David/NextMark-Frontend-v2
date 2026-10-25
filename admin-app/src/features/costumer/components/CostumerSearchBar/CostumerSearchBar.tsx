@@ -2,15 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { SearchFilterBar } from '@/shared/searchBars'
 import { AnimationRenderer } from '@/shared/spiners'
 
-import { runCostumerQueryFlow } from '../../flows/costumerQuery.flow'
+import { useCostumerQueryFlow } from '../../flows/costumerQuery.flow'
 
 
 import { useCostumerSearch } from '../../flows/useCostumerSearch.flow'
 import { PlusIcon } from '@/assets/icons'
 import type { CostumerSearchBarProps } from './CostumerSearchBar.types'
+import { shouldRunCostumerQuery } from '../../domain/shouldRunCostumerQuery'
 
-
-export const shouldRunCostumerQuery = (input: string): boolean => input.trim().length > 0
 
 const SEARCH_DEBOUNCE_MS = 400
 const MIN_SEARCH_LOADING_MS = 1000
@@ -25,7 +24,7 @@ export const CostumerSearchBar = ({
 }: CostumerSearchBarProps) => {
   
   
-  const {queryCostumers , visibleCostumers, isLoading, error} = runCostumerQueryFlow()
+  const {queryCostumers , visibleCostumers, isLoading, error} = useCostumerQueryFlow()
   const [showLoading, setShowLoading] = useState(false)
   const [isDebouncing, setIsDebouncing] = useState(false)
   const loadingStartAtRef = useRef<number | null>(null)
@@ -97,7 +96,7 @@ export const CostumerSearchBar = ({
           <div className="p-1 border-1 border-dashed border-[var(--color-muted)]/80 rounded-full">
             <PlusIcon className="h-3 w-3 text-[var(--color-muted)]/80"/>
           </div>
-            <span className="text-[12px] text-[var(--color-muted)]"> 
+            <span className="text-px-12 text-[var(--color-muted)]">
               Create Costumer
             </span>
           </div>
@@ -148,12 +147,12 @@ export const CostumerSearchBar = ({
                       {fullName}
                     </span>
                     {isSelected ? (
-                      <span className="ml-1 shrink-0 self-start rounded-full border border-blue-200 bg-blue-100 px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-blue-700">
+                      <span className="ml-1 shrink-0 self-start rounded-full border border-blue-200 bg-blue-100 px-2 py-0.5 text-px-8 font-semibold uppercase tracking-wide text-blue-700">
                         Selected
                       </span>
                     ) : null}
                   </div>
-                  <span className="text-[11px] text-[var(--color-muted)]">{costumer.email ?? 'No email'}</span>
+                  <span className="text-2xs text-[var(--color-muted)]">{costumer.email ?? 'No email'}</span>
                 </button>
               )
             })}

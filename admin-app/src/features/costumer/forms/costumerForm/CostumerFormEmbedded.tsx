@@ -59,7 +59,7 @@ const CostumerFormEmbeddedBody = ({
               <InfoHover content={COSTUMER_FORM_EMBEDDED_INFO} />
             </div>
             {headerSubtitle ? (
-              <p className="text-[11px] text-[var(--color-muted)]">{headerSubtitle}</p>
+              <p className="text-2xs text-[var(--color-muted)]">{headerSubtitle}</p>
             ) : null}
           </div>
 

@@ -1,12 +1,17 @@
 import type { RefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 
+import { useViewport } from "@/app/viewport";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { useScrollHideActionBar } from "@/shared/hooks/useScrollHideActionBar";
 import { OrderLoadingList } from "@/shared/loadingCards/order";
 
-import { OrderMainHeader } from "../components/pageHeaders/OrderMainHeader";
+import {
+  OrderMainHeader,
+  OrderMainSearch,
+} from "../components/pageHeaders/OrderMainHeader";
 import { OrderList } from "../components/lists/OrderList";
+import { OrderListSummary } from "../components/lists/OrderListSummary";
 import { OrderProvider } from "../context/OrderProvider";
 import { useOrderContext } from "../context/OrderContext";
 import type { Order } from "../types/order";
@@ -34,6 +39,7 @@ const OrderMainContent = ({
     isLoadingNextPage,
     loadNextPage,
   } = useOrderContext();
+  const { isMobile, isStandalone } = useViewport();
   const actionStackRef = useRef<HTMLDivElement | null>(null);
   const [actionStackHeight, setActionStackHeight] = useState(0);
 
@@ -74,7 +80,7 @@ const OrderMainContent = ({
     isDesktopActionBarBehaviorEnabled,
     handleScroll,
   } = useScrollHideActionBar({
-    enabled: true,
+    enabled: isSelectionMode && !isMobile,
     expandedHeight: actionStackHeight,
   });
 
@@ -95,7 +101,7 @@ const OrderMainContent = ({
 
   return (
     <div className="relative flex h-full w-full flex-col bg-[var(--color-primary)]/5">
-      <OrderMainHeader
+      {!isMobile && <OrderMainHeader
         onCreate={() => orderActions.openOrderForm({ mode: "create" })}
         onEnterSelectionMode={orderSelectionActions.handleEnterSelectionMode}
         onExitSelectionMode={orderSelectionActions.handleExitSelectionMode}
@@ -104,13 +110,12 @@ const OrderMainContent = ({
         isSelectionMode={isSelectionMode}
         applySearch={orderActions.applySearch}
         onOpenFilters={orderActions.openFilterPanel}
-        onRemoveFilter={orderActions.removeFilter}
         query={query}
-        orderStats={orderStats}
         actionStackRef={actionStackRef}
         useFloatingActionStack={isDesktopActionBarBehaviorEnabled}
         isActionStackVisible={isActionBarVisible}
-      />
+        isMobile={false}
+      />}
       <div
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto scroll-thin"
@@ -124,6 +129,27 @@ const OrderMainContent = ({
             transition: "padding-top 220ms cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
+          {isMobile && <OrderMainHeader
+            onCreate={() => orderActions.openOrderForm({ mode: "create" })}
+            onEnterSelectionMode={orderSelectionActions.handleEnterSelectionMode}
+            onExitSelectionMode={orderSelectionActions.handleExitSelectionMode}
+            onSelectAllFiltered={orderSelectionActions.handleSelectAllFiltered}
+            onClearSelection={orderSelectionActions.handleClearSelection}
+            isSelectionMode={isSelectionMode}
+            applySearch={orderActions.applySearch}
+            onOpenFilters={orderActions.openFilterPanel}
+                query={query}
+            isMobile={true}
+          />}
+          {!isMobile && (
+            <OrderMainSearch
+              applySearch={orderActions.applySearch}
+              onOpenFilters={orderActions.openFilterPanel}
+              query={query}
+              isMobile={false}
+            />
+          )}
+          {!isInitialLoading && <OrderListSummary orderStats={orderStats} />}
           {isInitialLoading ? (
             <OrderLoadingList variant="orderMain" count={6} />
           ) : (
@@ -144,26 +170,33 @@ const OrderMainContent = ({
               onOrderMouseLeave={handleOrderRowMouseLeave}
             />
           )}
+          {/* Next page loads from the end of the list, after the last card. */}
+          {!isInitialLoading &&
+            !isRefreshingOrders &&
+            (isLoadingNextPage || hasMorePages) && (
+              <div
+                className={`flex justify-center  px-4 pt-0 ${
+                  isStandalone && !isMobile
+                    ? "pb-[calc(1rem+env(safe-area-inset-bottom,0px))]"
+                    : "pb-4"
+                }`}
+              >
+                <BasicButton
+                  params={{
+                    onClick: () => {
+                      void loadNextPage();
+                    },
+                    disabled: isLoadingNextPage || !hasMorePages,
+                    variant: "secondary",
+                    ariaLabel: "Load next page of orders",
+                  }}
+                >
+                  {isLoadingNextPage ? "Loading…" : "Show more"}
+                </BasicButton>
+              </div>
+            )}
         </div>
       </div>
-      {!isInitialLoading &&
-        !isRefreshingOrders &&
-        (isLoadingNextPage || hasMorePages) && (
-          <div className="flex justify-center  px-4 pb-4 pt-3">
-            <BasicButton
-              params={{
-                onClick: () => {
-                  void loadNextPage();
-                },
-                disabled: isLoadingNextPage || !hasMorePages,
-                variant: "secondary",
-                ariaLabel: "Load next page of orders",
-              }}
-            >
-              {isLoadingNextPage ? "Loading…" : "Show more"}
-            </BasicButton>
-          </div>
-        )}
     </div>
   );
 };

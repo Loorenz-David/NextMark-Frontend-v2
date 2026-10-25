@@ -1,23 +1,10 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext } from "react";
 
 import type { CreateRouteGroupFormContextValue } from "./CreateRouteGroupForm.types";
 
-type ProviderProps = {
-  value: CreateRouteGroupFormContextValue;
-  children: ReactNode;
-};
-
-const CreateRouteGroupFormContext =
+export const CreateRouteGroupFormContext =
   createContext<CreateRouteGroupFormContextValue | null>(null);
 
-export const CreateRouteGroupFormContextProvider = ({
-  value,
-  children,
-}: ProviderProps) => (
-  <CreateRouteGroupFormContext.Provider value={value}>
-    {children}
-  </CreateRouteGroupFormContext.Provider>
-);
 
 export const useCreateRouteGroupForm = () => {
   const context = useContext(CreateRouteGroupFormContext);

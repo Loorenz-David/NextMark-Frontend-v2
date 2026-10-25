@@ -1,5 +1,4 @@
-import { createContext, useContext, useMemo } from "react";
-import type { ReactNode } from "react";
+import { createContext } from "react";
 
 import type { StackActionManager } from "../stack-manager/StackActionManager";
 import type { BaseControls } from "./types";
@@ -39,26 +38,3 @@ export type ResourceRegistry<
 export const ResourcesManagerContext = createContext<ResourceRegistry | null>(
   null,
 );
-
-interface ResourcesManagerProviderProps<
-  T extends Record<string, unknown> = KnownResourceRegistry,
-> {
-  managers: ResourceRegistry<T>;
-  children: ReactNode;
-}
-
-export function ResourcesManagerProvider<
-  T extends Record<string, unknown> = KnownResourceRegistry,
->({ managers, children }: ResourcesManagerProviderProps<T>) {
-  const parentManagers = useContext(ResourcesManagerContext);
-  const mergedManagers = useMemo(
-    () => ({ ...parentManagers, ...managers }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [parentManagers, managers],
-  );
-  return (
-    <ResourcesManagerContext.Provider value={mergedManagers}>
-      {children}
-    </ResourcesManagerContext.Provider>
-  );
-}

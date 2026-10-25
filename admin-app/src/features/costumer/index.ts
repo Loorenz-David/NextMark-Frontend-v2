@@ -5,7 +5,7 @@ export { CostumerSearchBar } from './components'
 export type { CostumerSearchBarProps } from './components'
 export { CostumerFormEmbedded } from './forms/costumerForm/CostumerFormEmbedded'
 export {
-  runCostumerQueryFlow,
+  useCostumerQueryFlow,
 } from './flows/costumerQuery.flow'
 export { normalizeCostumerPayload } from './domain/normalizeCostumerPayload'
 export {

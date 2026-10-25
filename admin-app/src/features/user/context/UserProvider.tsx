@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react'
 import { useMemo } from 'react'
 
 import { useCurrentUser } from '../store/user.store'
-import { UserContextProvider } from './UserContext'
+import { UserContextProvider } from './UserContext-components'
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
   const user = useCurrentUser()

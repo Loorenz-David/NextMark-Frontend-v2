@@ -108,13 +108,13 @@ export const RouteSolutionWarnings = ({
       >
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-3">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-warning">
+            <div className="text-micro font-semibold uppercase tracking-[0.2em] text-warning">
               Route warning
             </div>
             {resolvableWarnings.length > 0 && (
               <button
                 type="button"
-                className="rounded-full border border-warning-border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-warning transition-colors hover:bg-warning-bg disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full border border-warning-border px-2.5 py-0.5 text-micro font-semibold uppercase tracking-[0.12em] text-warning transition-colors hover:bg-warning-bg disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={handleResolve}
                 disabled={isResolving}
               >
@@ -130,11 +130,11 @@ export const RouteSolutionWarnings = ({
                 key={`${warning.type ?? 'warning'}-${index}`}
                 className="rounded-2xl border border-warning-border bg-shade p-2.5"
               >
-                <div className="text-[0.85rem] font-medium text-warning">
+                <div className="text-rem-0_85 font-medium text-warning">
                   {message}
                 </div>
                 {meta.length > 0 && (
-                  <div className="mt-2 space-y-1 text-[0.72rem] text-warning">
+                  <div className="mt-2 space-y-1 text-rem-0_72 text-warning">
                     {meta.map((item) => (
                       <div key={item.label} className="flex w-full justify-between">
                         <span>{item.label}:</span>

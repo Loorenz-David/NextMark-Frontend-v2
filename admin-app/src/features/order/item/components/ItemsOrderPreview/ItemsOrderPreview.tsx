@@ -9,10 +9,9 @@ import {
   useItemFlow,
 } from "../../hooks/useItemFlow";
 import type { Item } from "../../types";
-import { ItemCard } from "../ItemCard";
 import { ItemsOrderPreviewDefaultLayout } from "./ItemsOrderPreviewDefault.layout";
+import { ItemsOrderPreviewDetailLayout } from "./ItemsOrderPreviewDetail.layout";
 import { ItemsOrderPreviewScrollLayout } from "./ItemsOrderPreviewScroll.layout";
-import { ItemsOrderPreviewStickyLayout } from "./ItemsOrderPreviewSticky.layout";
 import { useDownloadTemplateByEventFlow } from "@/features/templates/printDocument/flows";
 import { usePrintTemplates } from "@/features/templates/printDocument/store";
 import { startItemLabelDownload } from "../../flows/startItemLabelDownload.flow";
@@ -29,7 +28,8 @@ export type ItemsOrderPreviewProps = {
   onAddItem?: () => void;
   onEditItem?: (item: Item) => void;
   onDeleteItem?: (item: Item) => void;
-  stickyHeader?: boolean;
+  /** Order detail page: title row on the page background, dashed add button. */
+  detailLayout?: boolean;
   scrollBody?: boolean;
 };
 
@@ -44,7 +44,7 @@ export const ItemsOrderPreview = ({
   onEditItem,
   onDeleteItem,
   scrollBody = false,
-  stickyHeader = false,
+  detailLayout = false,
 }: ItemsOrderPreviewProps) => {
   const waitForNextPaint = async () => {
     await new Promise<void>((resolve) => {
@@ -238,13 +238,8 @@ export const ItemsOrderPreview = ({
     testNodes: [],
   };
 
-  if (stickyHeader) {
-    return (
-      <ItemsOrderPreviewStickyLayout
-        {...commonLayoutProps}
-        enableScrollBody={scrollBody}
-      />
-    );
+  if (detailLayout) {
+    return <ItemsOrderPreviewDetailLayout {...commonLayoutProps} />;
   }
 
   if (scrollBody) {

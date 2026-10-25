@@ -7,7 +7,7 @@ import { normalizeItemTypeLabelMultiplier } from '../../domain/itemTypeLabelMult
 import { useItemTypeByClientId } from '../../hooks/useItemSelectors'
 import { useItemPropertyFlow } from '../../hooks/useItemPropertyFlow'
 
-import { ItemTypeFormContextProvider } from './ItemTypeForm.context'
+import { ItemTypeFormContextProvider } from './ItemTypeForm.context-provider'
 import type { ItemTypeFormPayload, ItemTypeFormState } from './ItemTypeForm.types'
 import { useItemTypeFormWarnings } from './ItemTypeForm.warnings'
 import { useItemTypeFormValidation } from './ItemTypeForm.validation'

@@ -29,6 +29,7 @@ import {
   isEndDateInFuture,
 } from '@/features/plan/routeGroup/utils/routeOptimizationGuard'
 import { getPlanEndDateByRouteSolutionId } from '@/features/plan/routeGroup/store/routeSolution.store'
+import type { RouteSolutionStop } from '@/features/plan/routeGroup/types/routeSolutionStop'
 
 const resolveError = (error: unknown, fallback: string) => ({
   message: error instanceof ApiError ? error.message : fallback,
@@ -40,9 +41,15 @@ const createRouteStopOptimisticSnapshot = () => ({
   stops: getRouteSolutionStopSnapshot(),
 })
 
+const isRouteStopOptimisticSnapshot = (
+  value: unknown,
+): value is ReturnType<typeof createRouteStopOptimisticSnapshot> =>
+  typeof value === 'object' && value !== null && 'solutions' in value && 'stops' in value
+
 const restoreRouteStopOptimisticSnapshot = (
-  snapshot: any,
+  snapshot: unknown,
 ) => {
+  if (!isRouteStopOptimisticSnapshot(snapshot)) return
   restoreRouteSolutionSnapshot(snapshot.solutions)
   restoreRouteSolutionStopSnapshot(snapshot.stops)
 }
@@ -51,7 +58,7 @@ const toStopOrder = (value: number | null | undefined) =>
   typeof value === 'number' ? value : Number.POSITIVE_INFINITY
 
 const reorderStopBlockByPosition = (
-  sortedStops: any[],
+  sortedStops: RouteSolutionStop[],
   routeStopIds: number[],
   position: number,
 ) => {

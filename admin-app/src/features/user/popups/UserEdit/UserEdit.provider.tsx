@@ -6,7 +6,7 @@ import { makeInitialFormCopy } from '@shared-domain'
 import { useCurrentUser } from '../../store/user.store'
 import type { User } from '../../types/user'
 
-import { UserEditContextProvider } from './UserEdit.context'
+import { UserEditContextProvider } from './UserEdit.context-components'
 import type { UserEditFormState } from './UserEdit.types'
 import { useUserEditWarnings } from './UserEdit.warnings'
 import { useUserEditValidation } from './UserEdit.validation'

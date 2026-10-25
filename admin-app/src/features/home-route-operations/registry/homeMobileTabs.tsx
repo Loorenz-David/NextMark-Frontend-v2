@@ -10,6 +10,6 @@ import { RoutePlanPage } from '@/features/plan/pages/Plan.page'
  * their scroll position and filters across tab switches.
  */
 export const homeMobileTabRegistry: Record<HomeMobileWorkspaceTabId, ComponentType> = {
-  plans: () => <RoutePlanPage showCloseButton={false} />,
+  plans: RoutePlanPage,
   orders: OrderMainPage,
 }

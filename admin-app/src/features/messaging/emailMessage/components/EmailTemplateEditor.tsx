@@ -19,7 +19,6 @@ import type {
 } from "../types/emailTemplate";
 import { EmailLabelsPanel } from "./EmailLabelsPanel";
 import { EmailPrimaryCtaEditor } from "./EmailPrimaryCtaEditor";
-import { EmailSubjectEditor } from "./EmailSubjectEditor";
 import { EmailTemplatePreviewCanvas } from "./EmailTemplatePreviewCanvas";
 
 type EmailTemplateEditorProps = {

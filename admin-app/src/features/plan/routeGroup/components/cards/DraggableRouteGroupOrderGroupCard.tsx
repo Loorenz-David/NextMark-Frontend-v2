@@ -10,7 +10,6 @@ type DraggableRouteGroupOrderGroupCardProps = {
   onToggleExpanded: () => void;
   planStartDate?: string | null;
   routeGroupId?: number | null;
-  projectedStopOrderByClientId?: Map<string, number> | null;
   allOrderedStopClientIds: string[];
 };
 
@@ -20,7 +19,6 @@ export const DraggableRouteGroupOrderGroupCard = ({
   onToggleExpanded,
   planStartDate,
   routeGroupId,
-  projectedStopOrderByClientId,
   allOrderedStopClientIds,
 }: DraggableRouteGroupOrderGroupCardProps) => {
   const rowId = `route_stop_group:${group.key}`;
@@ -65,27 +63,25 @@ export const DraggableRouteGroupOrderGroupCard = ({
     },
   });
 
-  // The DragOverlay tracks the pointer. Sibling rows keep their transform so
-  // the list reflows around the drag, but the active row must not apply it —
-  // at 45% opacity it would otherwise ride along the pointer as a full-size
-  // mirror of the card for the whole drag. It stays dimmed in place instead.
+  // Same as DraggableRouteGroupOrderCard: the active group rides the
+  // strategy's transform to its drop slot with its cards hidden and its
+  // timeline slices kept.
   const style = {
-    transform: isDragging ? undefined : CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(transform),
     // Transition only while sorting; see DraggableRouteGroupOrderCard.
     transition: isSorting ? transition : undefined,
-    opacity: isDragging ? 0.45 : 1,
     cursor: "grab",
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={setNodeRef} style={style} data-route-timeline-source>
       <RouteGroupOrderGroupCard
         group={group}
         expanded={expanded}
         onToggleExpanded={onToggleExpanded}
         planStartDate={planStartDate}
         routeGroupId={routeGroupId}
-        projectedStopOrderByClientId={projectedStopOrderByClientId}
+        contentHidden={isDragging}
         dragAttributes={attributes}
         dragListeners={listeners}
       />

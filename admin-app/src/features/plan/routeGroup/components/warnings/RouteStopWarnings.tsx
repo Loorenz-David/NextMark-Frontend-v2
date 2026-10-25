@@ -58,21 +58,21 @@ export const RouteStopWarnings = ({ stop, planStartDate }: RouteStopWarningsProp
             >
                 {stop?.reason_was_skipped && (
                     <div className="mb-3">
-                        <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-warning">
+                        <div className="text-micro font-semibold uppercase tracking-[0.2em] text-warning">
                             Skipped
                         </div>
-                        <div className="mt-1 text-[0.85rem] text-warning">
+                        <div className="mt-1 text-rem-0_85 text-warning">
                             {stop.reason_was_skipped}
                         </div>
                     </div>
                 )}
                 {(constraintWarnings.length > 0 || stop?.has_constraint_violation) && (
                     <div className="space-y-2">
-                        <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-warning">
+                        <div className="text-micro font-semibold uppercase tracking-[0.2em] text-warning">
                             Violation
                         </div>
                         {constraintWarnings.length === 0 && (
-                            <div className="rounded-2xl border border-warning-border bg-shade p-2.5 text-[0.85rem] text-warning">
+                            <div className="rounded-2xl border border-warning-border bg-shade p-2.5 text-rem-0_85 text-warning">
                                 Constraint violation detected.
                             </div>
                         )}
@@ -84,11 +84,11 @@ export const RouteStopWarnings = ({ stop, planStartDate }: RouteStopWarningsProp
                                     key={`${payload.type ?? 'warning'}-${index}`}
                                     className="rounded-2xl border border-warning-border bg-shade p-2.5"
                                 >
-                                    <div className="text-[0.85rem] font-medium text-warning">
+                                    <div className="text-rem-0_85 font-medium text-warning">
                                         {payload.message ?? 'Constraint violation'}
                                     </div>
                                     {meta.length > 0 && (
-                                        <div className="mt-2 space-y-1 text-[0.72rem] text-warning">
+                                        <div className="mt-2 space-y-1 text-rem-0_72 text-warning">
                                             {meta.map((item) => (
                                                 <div key={item.label} className="flex w-full justify-between">
                                                     <span>{item.label}:</span>

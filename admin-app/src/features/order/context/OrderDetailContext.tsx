@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext } from "react";
 
 import type { Order } from "../types/order";
 import type { OrderState } from "../types/orderState";
@@ -28,19 +28,8 @@ export type OrderDetailContextValue = {
   advanceDetailOrderState: AdvanceOrderState;
 };
 
-const OrderDetailContext = createContext<OrderDetailContextValue | null>(null);
+export const OrderDetailContext = createContext<OrderDetailContextValue | null>(null);
 
-export const OrderDetailContextProvider = ({
-  value,
-  children,
-}: {
-  value: OrderDetailContextValue;
-  children: ReactNode;
-}) => (
-  <OrderDetailContext.Provider value={value}>
-    {children}
-  </OrderDetailContext.Provider>
-);
 
 export const useOrderDetailContext = () => {
   const context = useContext(OrderDetailContext);

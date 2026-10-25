@@ -4,7 +4,7 @@ import type {
   DragEndEvent,
   DragOverEvent,
 } from "@dnd-kit/core";
-import { useSensor, useSensors, MouseSensor, TouchSensor } from "@dnd-kit/core";
+import { useAppDragSensors } from "@/shared/dnd/useAppDragSensors";
 import {
   useOrderClientFormHandoffController,
   type LinkedDeviceOrderFormAvailability,
@@ -117,15 +117,7 @@ export const usePlanOrderDndController = () => {
   const clientFormHandoffController = useOrderClientFormHandoffController();
   const openCreatePlanForm = useOpenCreatePlanFormAction();
 
-  const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
-    // Touch: hold ~250ms to pick up; moving >8px before that aborts so the
-    // list keeps scrolling. TouchSensor cancels native panning once active,
-    // which PointerSensor cannot (iOS fires pointercancel and the drag dies).
-    useSensor(TouchSensor, {
-      activationConstraint: { delay: 250, tolerance: 8 },
-    }),
-  );
+  const sensors = useAppDragSensors();
 
   const setPlanDropFeedbackWithTimeout = (
     feedback: PlanDropFeedback,

@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'framer-motion'
+import { AnimatePresence, motion, useDragControls, useReducedMotion, type PanInfo } from 'framer-motion'
 
 import { CloseIcon } from '@/assets/icons'
 
@@ -32,6 +32,7 @@ export const BottomSheet = ({
   const sheetId = useId()
   const titleId = `${sheetId}-title`
   const prefersReducedMotion = useReducedMotion()
+  const dragControls = useDragControls()
   const onCloseRef = useRef(onClose)
   onCloseRef.current = onClose
 
@@ -80,12 +81,17 @@ export const BottomSheet = ({
                 : { type: 'spring', stiffness: 380, damping: 36 }
             }
             drag="y"
+            dragControls={dragControls}
+            dragListener={false}
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.6 }}
             dragMomentum={false}
             onDragEnd={handleDragEnd}
           >
-            <div className="flex shrink-0 justify-center pb-1 pt-2.5">
+            <div
+              className="flex min-h-11 shrink-0 cursor-grab touch-none items-center justify-center active:cursor-grabbing"
+              onPointerDown={(event) => dragControls.start(event)}
+            >
               <span className="h-1.5 w-10 rounded-full bg-[var(--color-muted)]/40" aria-hidden="true" />
             </div>
 

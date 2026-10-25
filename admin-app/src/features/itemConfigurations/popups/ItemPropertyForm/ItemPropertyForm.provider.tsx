@@ -6,7 +6,7 @@ import { makeInitialFormCopy } from '@shared-domain'
 import { useItemPropertyByClientId } from '../../hooks/useItemSelectors'
 import { useItemTypeFlow } from '../../hooks/useItemTypeFlow'
 
-import { ItemPropertyFormContextProvider } from './ItemPropertyForm.context'
+import { ItemPropertyFormContextProvider } from './ItemPropertyForm.context-provider'
 import type { ItemPropertyFormPayload, ItemPropertyFormState } from './ItemPropertyForm.types'
 import { useItemPropertyFormWarnings } from './ItemPropertyForm.warnings'
 import { useItemPropertyFormValidation } from './ItemPropertyForm.validation'

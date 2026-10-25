@@ -16,11 +16,7 @@ import type {
 
 
 import { useCostumerStore } from '../store/costumer.store'
-import {
-  removeCostumerByClientId,
-  upsertCostumer,
-  upsertCostumers,
-} from '../store/costumer.upserters'
+import { removeCostumerByClientId, upsertCostumer } from '../store/costumer.upserters'
 
 
 export const useCostumerController = () => {

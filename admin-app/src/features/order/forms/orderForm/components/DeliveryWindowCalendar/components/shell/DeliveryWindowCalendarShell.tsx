@@ -8,7 +8,7 @@ import {
   type DeliveryWindowCalendarShellSizePreset,
   type DeliveryWindowCalendarShellViewMode,
 } from '../../DeliveryWindowCalendarShell.flow'
-import { DeliveryWindowCalendarShellScaleProvider } from './DeliveryWindowCalendarShell.context'
+import { DeliveryWindowCalendarShellScaleProvider } from './DeliveryWindowCalendarShell.context-provider'
 
 type DeliveryWindowCalendarShellRenderArgs = {
   resolvedViewMode: Exclude<DeliveryWindowCalendarShellViewMode, 'auto'>

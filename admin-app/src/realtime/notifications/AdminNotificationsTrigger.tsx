@@ -116,7 +116,7 @@ export function AdminNotificationsTrigger() {
     }
 
     return (
-      <div className="admin-glass-popover admin-surface-compact max-h-[420px] w-[360px] overflow-y-auto rounded-2xl p-2">
+      <div className="admin-glass-popover admin-surface-compact max-h-[420px] [@media(pointer:coarse)]:max-h-[min(420px,70dvh)] w-[360px] overflow-y-auto rounded-2xl p-2">
         <div className="admin-glass-divider flex items-center justify-between border-b px-3 py-3">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-semibold text-[var(--color-text)]">
@@ -157,7 +157,7 @@ export function AdminNotificationsTrigger() {
     <FloatingPopover
       open={isOpen}
       onOpenChange={setIsOpen}
-      placement="bottom-end"
+      placement="bottom-start"
       renderInPortal
       closeOnInsideClick
       floatingClassName="drop-shadow-[var(--shadow-panel-notifications)]"
@@ -208,7 +208,7 @@ export function AdminNotificationsTrigger() {
                 isIncomingPulseActive ? { scale: [1, 1.22, 1] } : { scale: 1 }
               }
               transition={{ duration: 0.55, ease: "easeOut" }}
-              className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[rgb(var(--color-danger-r))] px-1 text-[10px] font-semibold text-danger-on-solid"
+              className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[rgb(var(--color-danger-r))] px-1 text-micro font-semibold text-danger-on-solid"
             >
               {unreadCount > 99 ? "99+" : unreadCount}
             </motion.span>

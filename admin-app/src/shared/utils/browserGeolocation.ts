@@ -90,7 +90,7 @@ export const mapBrowserGeolocationError = (error: unknown) => {
       return new Error("Geolocation position unavailable");
     case GEOLOCATION_TIMEOUT:
       return new Error("Geolocation timeout");
-    default:
+    default: {
       if (error instanceof Error) {
         return error;
       }
@@ -100,5 +100,6 @@ export const mapBrowserGeolocationError = (error: unknown) => {
           ? (error as GeolocationLikeError).message
           : null;
       return new Error(message || "Geolocation failed");
+    }
   }
 };

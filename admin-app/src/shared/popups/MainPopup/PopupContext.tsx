@@ -1,5 +1,4 @@
 import { createContext, useContext } from 'react'
-import type { ReactNode } from 'react'
 import type { parentParams, PropsHeaderConfig } from './MainPopup.types'
 
 
@@ -22,13 +21,6 @@ export type PropsPopupContext = {
 
 export const PopupContext = createContext<PropsPopupContext | null>(null)
 
-interface PropsPopupContextProvider{
-    value: PropsPopupContext,
-    children: ReactNode
-}
-export const PopupContextProvider = ({value, children}: PropsPopupContextProvider) =>{
-    return <PopupContext.Provider value={value} > {children} </PopupContext.Provider>
-}
 
 export const usePopupContext = ()=>{
     const ctx = useContext( PopupContext )

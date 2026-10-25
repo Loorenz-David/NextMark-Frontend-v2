@@ -1,5 +1,4 @@
 
-import { useSectionManager } from '@/shared/resource-manager/useResourceManager'
 import { BasicButton } from '@/shared/buttons/BasicButton'
 import {useSectionPanel} from '../../../shared/section-panel/SectionPanelContext'
 import { useEffect } from 'react';
@@ -8,20 +7,14 @@ import {InfoIcon, LayersIcon, StatsIcon, MessageIcon} from '@/assets/icons';
 
 type Props = {
     onClose: () => void;
-    payload?: any;
 }
 
-const OrdersSection = ({onClose, payload}: Props) => {
+const OrdersSection = ({onClose}: Props) => {
     const {setHeader} = useSectionPanel();
-    const sectionManager = useSectionManager()
 
     const closing = ()=>{
         onClose();
 
-    }
-
-    const openNext = ()=>{
-        sectionManager.open({key:'OrdersSection'})
     }
 
     useEffect(() => {

@@ -2,21 +2,11 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { AppProviders } from './app/providers/AppProviders'
-
-declare const __APP_BUILD_ID__: string
-declare const __APP_BUILD_TIMESTAMP__: string
-
-// listener for setting the dynamic height on mobile browsers
-function updateVH() {
-  document.documentElement.style.setProperty(
-    '--vh',
-    `${window.innerHeight * 0.01}px`
-  )
-}
+import { APP_BUILD_ID, APP_BUILD_TIMESTAMP, startAppVersionMonitor } from './app/version'
 
 const buildInfo = {
-  buildId: __APP_BUILD_ID__,
-  buildTimestamp: __APP_BUILD_TIMESTAMP__,
+  buildId: APP_BUILD_ID,
+  buildTimestamp: APP_BUILD_TIMESTAMP,
   mode: import.meta.env.MODE,
   href: window.location.href,
 }
@@ -118,9 +108,8 @@ const installRuntimeAssetDiagnostics = () => {
   }).__NEXTMARK_BUILD_INFO__ = buildInfo
 }
 
-window.addEventListener('resize', updateVH)
-updateVH()
 installRuntimeAssetDiagnostics()
+startAppVersionMonitor()
 
 createRoot(document.getElementById('root')!).render(
 

@@ -64,7 +64,7 @@ export const OrderCaseChatList = ({ chats, currentUserId }: OrderCaseChatListPro
             <div className={`max-w-[85%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
               <div className={`flex w-full items-end gap-2 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
                 <div
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-surface-raised text-[10px] font-semibold text-[var(--color-text)]"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-surface-raised text-micro font-semibold text-[var(--color-text)]"
                   title={displayName}
                 >
                   {initials}
@@ -76,7 +76,7 @@ export const OrderCaseChatList = ({ chats, currentUserId }: OrderCaseChatListPro
                     : 'border-border bg-surface-raised'
                 }`}>
                   {!isMine ? (
-                    <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                    <p className="mb-1 text-micro font-medium uppercase tracking-[0.18em] text-[var(--color-muted)]">
                       {displayName}
                     </p>
                   ) : null}
@@ -86,8 +86,8 @@ export const OrderCaseChatList = ({ chats, currentUserId }: OrderCaseChatListPro
                 </div>
               </div>
 
-              <div className={`mt-1 flex w-full gap-2 text-[10px] text-[var(--color-muted)] ${isMine ? 'justify-end pr-10' : 'justify-start pl-10'}`}>
-                <span className="text-[9px]">{creationDate ?? chat.creation_date}</span>
+              <div className={`mt-1 flex w-full gap-2 text-micro text-[var(--color-muted)] ${isMine ? 'justify-end pr-10' : 'justify-start pl-10'}`}>
+                <span className="text-nano">{creationDate ?? chat.creation_date}</span>
               </div>
             </div>
           </div>

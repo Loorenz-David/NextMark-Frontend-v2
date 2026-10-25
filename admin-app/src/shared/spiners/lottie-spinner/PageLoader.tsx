@@ -5,7 +5,7 @@ import sandClockAnimation from './SandClock.json'
 interface LoaderParams{
   size?:number
   loadingText?:string
-  containerStyle?:Record<string,any>
+  containerStyle?:React.CSSProperties
   animation?:  keyof typeof animationMap
   inline?:boolean
 }

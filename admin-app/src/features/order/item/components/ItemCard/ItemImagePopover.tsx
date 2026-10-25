@@ -5,17 +5,21 @@ import { RemoteImage } from "@/shared/media/RemoteImage";
 
 const ITEM_CARD_IMAGE_WIDTHS = [56, 112, 168];
 const ITEM_CARD_IMAGE_SIZES = "56px";
+const ORDER_CARD_IMAGE_WIDTHS = [64, 128, 192];
+const ORDER_CARD_IMAGE_SIZES = "64px";
 const ITEM_IMAGE_PREVIEW_WIDTHS = [400, 800];
 const ITEM_IMAGE_PREVIEW_SIZES = "400px";
 
 type ItemImagePopoverProps = {
   imageUrls: string[];
   itemType: string;
+  thumbnailClassName?: string;
 };
 
 export const ItemImagePopover = ({
   imageUrls,
   itemType,
+  thumbnailClassName,
 }: ItemImagePopoverProps) => {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -26,6 +30,7 @@ export const ItemImagePopover = ({
   );
   const activeImage = images[activeIndex] ?? images[0];
   const hasMultipleImages = images.length > 1;
+  const thumbnailClasses = thumbnailClassName ?? "h-14 w-14";
 
   useEffect(() => {
     if (activeIndex <= images.length - 1) return;
@@ -50,8 +55,8 @@ export const ItemImagePopover = ({
     <FloatingPopover
       open={open}
       onOpenChange={setOpen}
-      classes="h-14 w-14 shrink-0 !flex-none"
-      referenceCLassName="h-14 w-14"
+      classes={`${thumbnailClasses} shrink-0 !flex-none`}
+      referenceCLassName={thumbnailClasses}
       offSetNum={10}
       placement="right-start"
       renderInPortal={true}
@@ -60,7 +65,7 @@ export const ItemImagePopover = ({
       reference={
         <button
           type="button"
-          className="h-14 w-14 overflow-hidden rounded-md border border-border bg-surface-raised focus:outline-none focus:ring-2 focus:ring-[var(--color-turques)]/60"
+          className={`${thumbnailClasses} overflow-hidden ${thumbnailClassName ? '' : 'rounded-md'} border border-border bg-surface-raised focus:outline-none focus:ring-2 focus:ring-[var(--color-turques)]/60`}
           aria-label="Open item images"
           onClick={(event) => {
             event.stopPropagation();
@@ -73,8 +78,8 @@ export const ItemImagePopover = ({
           <RemoteImage
             imageUrl={activeImage}
             alt={itemType ? `${itemType} item` : "Item image"}
-            widths={ITEM_CARD_IMAGE_WIDTHS}
-            sizes={ITEM_CARD_IMAGE_SIZES}
+            widths={thumbnailClassName ? ORDER_CARD_IMAGE_WIDTHS : ITEM_CARD_IMAGE_WIDTHS}
+            sizes={thumbnailClassName ? ORDER_CARD_IMAGE_SIZES : ITEM_CARD_IMAGE_SIZES}
             className="h-full w-full"
           />
         </button>

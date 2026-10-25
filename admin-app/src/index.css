@@ -40,6 +40,9 @@
   --ink-soft: rgba(206, 220, 224, 0.68);
   --ink-faint: rgba(255, 255, 255, 0.45);
   --ink-inverse: #182224;
+  --notification-badge-ink: #ffffff;
+  --missing-info-badge: #fde047;
+  --missing-info-badge-ink: #713f12;
 
   --rule-subtle: rgba(255, 255, 255, 0.06);
   --rule: rgba(255, 255, 255, 0.12);
@@ -271,7 +274,6 @@
   font-family: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--color-text);
   background-color: var(--color-page);
-  --vh: 100%;
 }
 
 [data-theme="light"] {
@@ -305,6 +307,9 @@
   --ink-soft: #6b7280;
   --ink-faint: #9ca3af;
   --ink-inverse: #ffffff;
+  --notification-badge-ink: var(--accent-on-solid);
+  --missing-info-badge: #fde047;
+  --missing-info-badge-ink: #713f12;
 
   --rule-subtle: #f0f0f0;
   --rule: #e5e5e5;
@@ -522,6 +527,8 @@
 }
 
 @theme inline {
+  --radius-calendar-plan-chip: 10px;
+  --radius-calendar-day-number: 7px;
   --color-page: var(--paper);
   --color-surface: var(--surface);
   --color-surface-subtle: var(--paper-subtle);
@@ -569,7 +576,68 @@
   --color-info-ink: var(--info-ink);
   --color-info-bg: var(--info-bg);
   --color-info-border: var(--info-border);
+  --color-notification-badge-ink: var(--notification-badge-ink);
+  --color-missing-info-badge: var(--missing-info-badge);
+  --color-missing-info-badge-ink: var(--missing-info-badge-ink);
   --color-foreground-mark: var(--foreground-mark);
+}
+
+/* Arbitrary utility sizes retain their exact desktop values. */
+@theme {
+  --text-nano: 0.5625rem;
+  --text-micro: 0.625rem;
+  --text-2xs: 0.6875rem;
+  --text-px-8: 8px;
+  --text-px-9: 9px;
+  --text-px-12: 12px;
+  --text-px-10_5: 10.5px;
+  --text-px-12_5: 12.5px;
+  --text-px-13: 13px;
+  --text-px-14: 14px;
+  --text-px-15: 15px;
+  --text-px-19: 19px;
+  --text-rem-0_54: 0.54rem;
+  --text-rem-0_55: 0.55rem;
+  --text-rem-0_58: 0.58rem;
+  --text-rem-0_6: 0.6rem;
+  --text-rem-0_62: 0.62rem;
+  --text-rem-0_64: 0.64rem;
+  --text-rem-0_65: 0.65rem;
+  --text-rem-0_66: 0.66rem;
+  --text-rem-0_68: 0.68rem;
+  --text-rem-0_7: 0.7rem;
+  --text-rem-0_72: 0.72rem;
+  --text-rem-0_8: 0.8rem;
+  --text-rem-0_82: 0.82rem;
+  --text-rem-0_85: 0.85rem;
+  --text-rem-0_95: 0.95rem;
+  --text-rem-0_98: 0.98rem;
+  --text-rem-2: 2rem;
+  --text-rem-2_8: 2.8rem;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --text-nano: 0.75rem;
+    --text-micro: 0.75rem;
+    --text-2xs: 0.75rem;
+    --text-xs: 0.8125rem;
+    --text-px-8: 0.75rem;
+    --text-px-9: 0.75rem;
+    --text-px-10_5: 0.75rem;
+    --text-px-12: 0.75rem;
+    --text-rem-0_54: 0.75rem;
+    --text-rem-0_55: 0.75rem;
+    --text-rem-0_58: 0.75rem;
+    --text-rem-0_6: 0.75rem;
+    --text-rem-0_62: 0.75rem;
+    --text-rem-0_64: 0.75rem;
+    --text-rem-0_65: 0.75rem;
+    --text-rem-0_66: 0.75rem;
+    --text-rem-0_68: 0.75rem;
+    --text-rem-0_7: 0.75rem;
+    --text-rem-0_72: 0.75rem;
+  }
 }
 
 * {
@@ -691,6 +759,88 @@ select:focus {
   user-select: none;
   -webkit-touch-callout: none;
   touch-action: manipulation;
+}
+
+/* Order card content sizes = the R1 design × --order-card-scale, set on the
+   card from ORDER_CARD_SCALE (features/order/components/cards/orderCardScale.ts). */
+.order-card {
+  padding: calc(1rem * var(--order-card-scale, 1));
+  gap: calc(0.75rem * var(--order-card-scale, 1));
+}
+.order-card-number { font-size: calc(1.5rem * var(--order-card-scale, 1)); }
+.order-card-items { gap: calc(0.75rem * var(--order-card-scale, 1)); }
+.order-card-item { gap: calc(0.75rem * var(--order-card-scale, 1)); }
+.order-card-thumb {
+  width: calc(4rem * var(--order-card-scale, 1));
+  height: calc(4rem * var(--order-card-scale, 1));
+}
+.order-card-article { font-size: calc(1.125rem * var(--order-card-scale, 1)); }
+.order-card-meta {
+  font-size: calc(0.875rem * var(--order-card-scale, 1));
+  line-height: 1.4;
+}
+.order-card-more {
+  padding-left: calc(4.75rem * var(--order-card-scale, 1));
+  font-size: calc(0.875rem * var(--order-card-scale, 1));
+}
+.order-card-bleed {
+  margin-inline: calc(-1rem * var(--order-card-scale, 1));
+  margin-bottom: calc(-1rem * var(--order-card-scale, 1));
+}
+@media (pointer: coarse) {
+  .order-card-meta,
+  .order-card-more { font-size: max(0.75rem, calc(0.875rem * var(--order-card-scale, 1))); }
+}
+
+/* Drag cue for every pointer (user decision 2026-10-24): the held card
+   squeezes, then the drag preview lifts in. Attribute set by the sensors in
+   shared/dnd (dragCue.ts). `scale` composes with dnd-kit's inline transform. */
+[data-drag-cue="pressing"] {
+  scale: 0.97;
+  transition: scale 140ms ease-out;
+}
+
+[data-drag-cue="active"] {
+  scale: 1.03;
+  box-shadow: var(--shadow-panel-overlay-strong);
+  animation: drag-cue-lift 160ms ease-out;
+}
+
+body:has([data-drag-cue="active"]) .drag-preview-lift {
+  animation: drag-cue-lift 160ms ease-out both;
+}
+
+/* Every drag preview card has a rounded 1px border; darken it while lifted
+   rather than framing the card with an extra outline. */
+body:has([data-drag-cue="active"]) .drag-preview-lift > * {
+  border-color: var(--color-border-emphasis);
+  box-shadow: var(--shadow-panel-overlay-strong);
+}
+
+@keyframes drag-cue-lift {
+  0% { scale: 0.97; }
+  60% { scale: 1.03; }
+  100% { scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:has([data-drag-cue="active"]) .drag-preview-lift { animation: none; }
+  [data-drag-cue="active"] { animation: none; }
+  [data-drag-cue="pressing"] { transition: none; }
+  [data-route-timeline-source][data-drag-cue="pressing"] [data-route-timeline-content] { transition: none; }
+}
+
+/* A dragged route stop keeps its slice of the timeline in the list
+   (RouteTimelineRow), so the row itself never scales or lifts — that would
+   shift the line sideways. Only the card squeezes on press. */
+[data-route-timeline-source][data-drag-cue] {
+  scale: none;
+  box-shadow: none;
+  animation: none;
+}
+[data-route-timeline-source][data-drag-cue="pressing"] [data-route-timeline-content] {
+  scale: 0.97;
+  transition: scale 140ms ease-out;
 }
 
 /* Firefox */
@@ -1238,6 +1388,8 @@ textarea:focus {
 /* ------------------------------------------------------------------------ */
 @theme {
   --breakpoint-desk: 1000px;
+  --breakpoint-tablet: 1000px;
+  --breakpoint-wide: 1440px;
 }
 
 /* Safe-area helpers for fixed chrome (top bars, tab bars, sticky footers). */
@@ -1250,6 +1402,16 @@ textarea:focus {
 .safe-x {
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
+}
+/* `p-4` for overlay containers in the installed app: each side pads by the
+   larger of 1rem and its safe-area inset, so a centred popup never sits under
+   the status bar or the home indicator. */
+.safe-p-4 {
+  padding:
+    max(1rem, env(safe-area-inset-top, 0px))
+    max(1rem, env(safe-area-inset-right, 0px))
+    max(1rem, env(safe-area-inset-bottom, 0px))
+    max(1rem, env(safe-area-inset-left, 0px));
 }
 
 /* Expands a small visual control to a finger-sized hit area without
@@ -1279,7 +1441,27 @@ textarea:focus {
   }
 }
 
-@media (max-width: 999px) and (pointer: coarse) {
+@media (pointer: coarse) {
+  :is(button, [role="button"], a, label, summary) svg:is([class~="h-2"], [class~="h-2.5"]) {
+    min-width: 14px;
+    min-height: 14px;
+  }
+
+  :is(button, [role="button"], a, label, summary) svg[class~="h-3"] {
+    min-width: 16px;
+    min-height: 16px;
+  }
+
+  html, body, #root {
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button, [role="button"], a, label, summary {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+  }
+
   /* iOS Safari zooms the page when a focused field is smaller than 16px. */
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
   select,

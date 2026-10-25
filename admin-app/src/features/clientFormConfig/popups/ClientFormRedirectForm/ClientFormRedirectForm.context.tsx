@@ -17,11 +17,10 @@ type ClientFormRedirectFormContextValue = {
   handleDelete: () => void
 }
 
-const ClientFormRedirectFormContext = createContext<ClientFormRedirectFormContextValue | null>(
+export const ClientFormRedirectFormContext = createContext<ClientFormRedirectFormContextValue | null>(
   null,
 )
 
-export const ClientFormRedirectFormContextProvider = ClientFormRedirectFormContext.Provider
 
 export const useClientFormRedirectForm = () => {
   const context = useContext(ClientFormRedirectFormContext)

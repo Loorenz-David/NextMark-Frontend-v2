@@ -134,7 +134,7 @@ export const CustomNumberPicker = ({
       <div className="flex flex-col gap-3 p-3">
         {usesLargeRangeInput ? (
           <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+            <label className="text-micro font-semibold uppercase tracking-wide text-[var(--color-muted)]">
               {label}
             </label>
             <input

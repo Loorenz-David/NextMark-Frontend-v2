@@ -6,20 +6,17 @@ import {
 
 import { RouteGroupOrderCard } from "./cards/RouteGroupOrderCard";
 import { DraggableRouteGroupOrderCard } from "./cards/DraggableRouteGroupOrderCard";
-import { RouteGroupBoundaryLocationCard } from "./cards/RouteGroupBoundaryLocationCard";
+import { RouteTimelineEdge, RouteTimelineRow } from "./timeline";
+import { RouteSolutionWarnings } from "./warnings/RouteSolutionWarnings";
 import { useRouteGroupPageContext } from "../context/useRouteGroupPageContext";
 import { useRouteGroupStopOrdering } from "../hooks/useRouteGroupStopOrdering";
-import { useRouteGroupDndProjectionFlow } from "../flows/routeGroupDndProjection.flow";
-import { formatRouteTime } from "@/features/plan/routeGroup/utils/formatRouteTime";
+import { formatRouteTimelineTime } from "@/features/plan/routeGroup/utils/formatRouteTime";
 import { buildRouteGroupStopAddressGroups } from "../domain/routeGroupAddressGroup.flow";
 import { DraggableRouteGroupOrderGroupCard } from "./cards/DraggableRouteGroupOrderGroupCard";
 import {
   useOrderGroupUIActions,
   useOrderGroupUIStore,
 } from "@/features/order/store/orderGroupUI.store";
-import { useResourceManager } from "@/shared/resource-manager/useResourceManager";
-import type { RouteReorderPreview } from "@/features/plan/dnd/controller/resolveDropIntent";
-import { RouteGroupReadyFooter } from "./RouteGroupReadyFooter";
 import { OrderLoadingCard } from "@/shared/loadingCards/order";
 
 type RouteGroupOrderListProps = {
@@ -40,9 +37,6 @@ export const RouteGroupOrderList = ({
   bottomReservedOffset = 0,
   scrollsWithParent = false,
 }: RouteGroupOrderListProps) => {
-  const { routeReorderPreview } = useResourceManager<{
-    routeReorderPreview?: RouteReorderPreview | null;
-  }>();
   const {
     orders,
     planStartDate,
@@ -53,12 +47,9 @@ export const RouteGroupOrderList = ({
     selectedRouteSolution,
     routeSolutionWarningRegistry,
     routeGroupPageActions,
-    routeGroupState,
     incomingPendingOrderPlaceholderKeys,
   } = useRouteGroupPageContext();
 
-  const isRouteGroupOpen =
-    (routeGroupState?.name ?? "").trim().toLowerCase() === "open";
 
   const { sortedEntries, missingOrders, sortableIds } =
     useRouteGroupStopOrdering(
@@ -67,11 +58,6 @@ export const RouteGroupOrderList = ({
       stopByOrderId,
       ordersById,
     );
-  const { projectedStopOrderByClientId } = useRouteGroupDndProjectionFlow(
-    sortedEntries,
-    routeReorderPreview ?? null,
-    selectedRouteSolution?.id ?? null,
-  );
   const groupedStops = useMemo(
     () => buildRouteGroupStopAddressGroups(sortedEntries),
     [sortedEntries],
@@ -104,8 +90,8 @@ export const RouteGroupOrderList = ({
     selectedRouteSolution?.route_end_strategy,
   );
   const activeRouteGroupId = selectedRouteSolution?.route_group_id ?? null
-  const startLocationLabel = `${strategyLabel} · ${boundaryLocations.start.label}`;
-  const endLocationLabel = `${strategyLabel} · ${boundaryLocations.end.label}`;
+  const startLocationLabel = `Start · ${strategyLabel}`;
+  const endLocationLabel = `End · ${strategyLabel}`;
 
   return (
     <div
@@ -118,13 +104,15 @@ export const RouteGroupOrderList = ({
       <div
         className={
           scrollsWithParent
-            ? "px-4"
-            : "flex-1 min-h-0 overflow-y-auto scroll-thin px-4"
+            ? "pl-1 pr-4"
+            : "flex-1 min-h-0 overflow-y-auto scroll-thin pl-1 pr-4"
         }
         onScroll={scrollsWithParent ? undefined : onScrollContainer}
       >
         <div
-          className="flex min-h-full flex-col gap-4"
+          // No gap: rows carry their own spacing so the timeline runs
+          // unbroken from start to end, also while rows shift under a drag.
+          className="flex min-h-full flex-col"
           style={{
             paddingTop: topReservedOffset
               ? `${topReservedOffset}px`
@@ -136,14 +124,19 @@ export const RouteGroupOrderList = ({
           }}
         >
           {boundaryLocations.start.location && (
-            <RouteGroupBoundaryLocationCard
-              label={startLocationLabel}
-              address={boundaryLocations.start.location}
-              time={formatRouteTime(boundaryLocations.start.time, "today")}
-              warnings={boundaryLocations.start.warnings}
-              planStartDate={planStartDate}
-              warningRegistry={routeSolutionWarningRegistry}
-              routeGroupActions={routeGroupPageActions}
+            <RouteTimelineEdge
+              edge="start"
+              title={startLocationLabel}
+              address={boundaryLocations.start.location.street_address ?? "—"}
+              time={formatRouteTimelineTime(
+                boundaryLocations.start.time,
+                planStartDate,
+              )}
+              continues={
+                groupedStops.length > 0 ||
+                missingOrders.length > 0 ||
+                incomingPendingOrderPlaceholderKeys.length > 0
+              }
             />
           )}
           <SortableContext
@@ -159,11 +152,6 @@ export const RouteGroupOrderList = ({
                     key={entry.stop.client_id}
                     order={entry.order}
                     stop={entry.stop}
-                    displayStopOrder={
-                      projectedStopOrderByClientId?.get(entry.stop.client_id) ??
-                      entry.stop.stop_order ??
-                      null
-                    }
                     planStartDate={planStartDate}
                     routeGroupId={activeRouteGroupId}
                     allOrderedStopClientIds={allOrderedStopClientIds}
@@ -182,44 +170,50 @@ export const RouteGroupOrderList = ({
                   onToggleExpanded={() => toggleGroup(uiKey)}
                   planStartDate={planStartDate}
                   routeGroupId={activeRouteGroupId}
-                  projectedStopOrderByClientId={projectedStopOrderByClientId}
                   allOrderedStopClientIds={allOrderedStopClientIds}
                 />
               );
             })}
           </SortableContext>
           {missingOrders.map((order) => (
-            <RouteGroupOrderCard
-              key={order.client_id}
-              order={order}
-              stop={null}
-              planStartDate={planStartDate}
-              routeGroupId={activeRouteGroupId}
-            />
+            <RouteTimelineRow key={order.client_id} time={{ status: "none" }}>
+              <RouteGroupOrderCard
+                order={order}
+                planStartDate={planStartDate}
+                routeGroupId={activeRouteGroupId}
+              />
+            </RouteTimelineRow>
           ))}
           {incomingPendingOrderPlaceholderKeys.map((placeholderKey) => (
-            <OrderLoadingCard key={placeholderKey} variant="routeGroup" />
+            <RouteTimelineRow
+              key={placeholderKey}
+              time={{ status: "loading" }}
+            >
+              <OrderLoadingCard variant="routeGroup" />
+            </RouteTimelineRow>
           ))}
           {boundaryLocations.end.location && groupedStops.length > 0 && (
             <div className="pb-10">
-              <RouteGroupBoundaryLocationCard
-                label={endLocationLabel}
-                address={boundaryLocations.end.location}
-                time={formatRouteTime(boundaryLocations.end.time, "today")}
-                warnings={boundaryLocations.end.warnings}
-                planStartDate={planStartDate}
-                warningRegistry={routeSolutionWarningRegistry}
-                routeGroupActions={routeGroupPageActions}
-                containerClassName={" mt-4"}
+              <RouteTimelineEdge
+                edge="end"
+                title={endLocationLabel}
+                address={boundaryLocations.end.location.street_address ?? "—"}
+                time={formatRouteTimelineTime(
+                  boundaryLocations.end.time,
+                  planStartDate,
+                )}
+                addon={
+                  <RouteSolutionWarnings
+                    warnings={boundaryLocations.end.warnings}
+                    planStartDate={planStartDate}
+                    registry={routeSolutionWarningRegistry}
+                    routeGroupActions={routeGroupPageActions}
+                  />
+                }
               />
             </div>
           )}
           {/* <div className="flex h-[800px] bg-black"></div> */}
-          {isRouteGroupOpen && orders.length > 0 ? (
-            <RouteGroupReadyFooter
-              onReadyForDelivery={routeGroupPageActions.routeReadyForDelivery}
-            />
-          ) : null}
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ export const DeliveryWindowCalendarWarningNotice = ({
     return (
       <div
         className={`rounded-2xl border border-[var(--danger-notice-border)]/32 bg-[linear-gradient(135deg,rgba(var(--danger-highlight-r),0.14),rgba(var(--danger-highlight-r),0.05))] px-3 py-2 font-medium text-[var(--danger-notice-ink)] shadow-[var(--shadow-panel-notice)] backdrop-blur-md ${
-          compact ? 'text-[10px]' : 'text-xs'
+          compact ? 'text-micro' : 'text-xs'
         }`}
       >
         {message}
@@ -23,7 +23,7 @@ export const DeliveryWindowCalendarWarningNotice = ({
 
   return (
     <div className="overflow-x-auto">
-      <p className={`text-[var(--color-muted)] ${compact ? 'text-[10px]' : 'text-xs'}`}>
+      <p className={`text-[var(--color-muted)] ${compact ? 'text-micro' : 'text-xs'}`}>
         {helperText}
       </p>
     </div>

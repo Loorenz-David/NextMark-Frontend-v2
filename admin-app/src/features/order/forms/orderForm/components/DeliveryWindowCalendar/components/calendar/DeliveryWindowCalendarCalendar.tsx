@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
+import { useViewport } from '@/app/viewport'
 import {
   CalendarRoot,
   type CalendarModel,
 } from '@/shared/calendar'
 import type { CostumerOperatingHours } from '@/features/costumer'
-import { BackArrowIcon, BoldArrowIcon } from '@/assets/icons'
+import { BoldArrowIcon } from '@/assets/icons'
 import type { DeliveryWindowDisplayRow } from '../../../../flows/orderFormDeliveryWindows.flow'
 import { formatDateInTimeZone, isDayClosedByOperatingHours } from '../../../../flows/orderFormDeliveryWindows.flow'
 import { WEEKDAY_LABELS } from '../../DeliveryWindowCalendarLayout.flow'
@@ -53,6 +54,7 @@ export const DeliveryWindowCalendarCalendar = ({
   disableAddWindow,
   footer,
 }: DeliveryWindowCalendarCalendarProps) => {
+  const { hasHover } = useViewport()
   const shellScale = useDeliveryWindowCalendarShellScale()
   const { calendar } = shellScale
   const visibleDaysMatrix = model.daysMatrix.filter((weekRow) =>
@@ -152,10 +154,15 @@ export const DeliveryWindowCalendarCalendar = ({
                   onSelect={() => {
                     onMarkSelectionInteraction()
                     if (closedByHours) {
-                      onOpenClosedWarningPopover(dayKey)
+                      if (hasHover || !isPopoverOpen) onOpenClosedWarningPopover(dayKey)
+                      else onClosePopoverNow()
                       return
                     }
                     params.onSelect()
+                    if (!hasHover && windowCount > 0 && !isPopoverBlocked) {
+                      if (isPopoverOpen) onClosePopoverNow()
+                      else onOpenWindowsPopover(dayKey)
+                    }
                   }}
                   onMouseEnter={() => {
                     params.onMouseEnter?.()

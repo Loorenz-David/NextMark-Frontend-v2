@@ -153,7 +153,10 @@ const normalizeHhmm = (value: string) => {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
 }
 
-const isUtcHhmm = (_value: string) => true
+const isUtcHhmm = (value: string) => {
+  void value
+  return true
+}
 
 const resolveReferenceDate = (value?: string | Date | null) => {
   if (!value) {

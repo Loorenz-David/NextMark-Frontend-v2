@@ -12,6 +12,7 @@ import {
   type ClientFormOptions,
 } from '@client-form-kit'
 
+import { useReloadBlocker } from '@/app/version'
 import { useExternalFormRealtime } from '@/realtime/externalForm/useExternalFormRealtime'
 import type { ExternalFormRequestedPayload } from '@/realtime/externalForm/externalForm.realtime'
 
@@ -104,6 +105,13 @@ export const ExternalCustomerFormPage = () => {
   const { handleStateChange } = useExternalFormLiveProgressEmitter({
     active: screen === 'collecting',
   })
+
+  // A customer is mid-form (or reading the confirmation). The idle signage
+  // screen is the counter tablet's moment to pick up a new build.
+  useReloadBlocker(
+    screen === 'preparing' || screen === 'collecting' || screen === 'submitted',
+    'external-client-form',
+  )
 
   // The media is signage: it runs while the device sits idle at the counter,
   // with no form session behind it, so the configuration is read at mount and

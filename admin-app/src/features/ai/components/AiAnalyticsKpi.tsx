@@ -54,7 +54,7 @@ function AiAnalyticsKpiComponent({ title, subtitle, data }: AiAnalyticsKpiProps)
   return (
     <div className="admin-glass-panel admin-surface-compact flex min-h-[140px] flex-col gap-3 rounded-lg border border-border p-4">
       <div className="flex flex-col gap-1">
-        <div className="text-[0.68rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+        <div className="text-rem-0_68 uppercase tracking-[0.14em] text-[var(--color-muted)]">
           {title ?? data.metric_name ?? 'Metric'}
         </div>
         {subtitle ? (
@@ -75,7 +75,7 @@ function AiAnalyticsKpiComponent({ title, subtitle, data }: AiAnalyticsKpiProps)
         </div>
       ) : null}
       {confidenceLabel ? (
-        <div className="text-[0.68rem] uppercase tracking-[0.14em] text-[var(--color-muted)]/80">
+        <div className="text-rem-0_68 uppercase tracking-[0.14em] text-[var(--color-muted)]/80">
           {confidenceLabel}
         </div>
       ) : null}

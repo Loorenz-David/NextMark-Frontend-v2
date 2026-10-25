@@ -101,13 +101,13 @@ export const RouteGroupMarkerGroupOverlay = () => {
                 >
                   <div className="flex items-center justify-between gap-2">
                     <p className="truncate text-sm font-semibold text-[var(--color-text)]">{orderLabel}</p>
-                    <span className="rounded-full bg-[var(--color-primary)]/10 px-2 py-0.5 text-[11px] font-semibold text-[var(--color-primary)]">
+                    <span className="rounded-full bg-[var(--color-primary)]/10 px-2 py-0.5 text-2xs font-semibold text-[var(--color-primary)]">
                       {stopOrder}
                     </span>
                   </div>
                   <div className="mt-1 flex items-center justify-between gap-3">
                     <p className="truncate text-xs text-[var(--color-muted)]">{address}</p>
-                    <div className="flex items-center gap-3 text-[11px] text-[var(--color-muted)]">
+                    <div className="flex items-center gap-3 text-2xs text-[var(--color-muted)]">
                       <div className="flex items-center gap-1">
                         <ItemIcon className="h-3 w-3 app-icon" />
                         <span>{itemCount}</span>

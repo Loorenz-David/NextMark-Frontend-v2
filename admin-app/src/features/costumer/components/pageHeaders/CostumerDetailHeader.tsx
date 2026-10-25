@@ -29,8 +29,8 @@ export const CostumerDetailHeader = ({ onClose, onEdit }: CostumerDetailHeaderPr
             <DocumentIcon className="h-6 w-6 text-[var(--color-page)]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-md font-semibold text-[var(--color-page)]/85">Costumer Details</span>
-            <span className="text-[10px] font-normal text-[var(--color-page)]/80">
+            <span className="text-base/normal font-semibold text-[var(--color-page)]/85">Costumer Details</span>
+            <span className="text-micro font-normal text-[var(--color-page)]/80">
               Costumer information and related orders
             </span>
           </div>

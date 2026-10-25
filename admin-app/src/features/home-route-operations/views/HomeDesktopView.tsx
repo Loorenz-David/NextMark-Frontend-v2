@@ -1,5 +1,6 @@
 import { useCallback, useRef, useEffect, type CSSProperties } from "react";
 import { BasicButton } from "@/shared/buttons/BasicButton";
+import { useViewport } from "@/app/viewport";
 import {
   useSectionManager,
   useMapManager,
@@ -34,13 +35,6 @@ import { MapToggleTab } from "../components/MapToggleTab";
 import { FOLD_TAB_SURFACE_STYLE } from "../layout/foldTab.styles";
 
 const SAFE_GUTTER = 24;
-const DEFAULT_VIEWPORT_INSETS = {
-  top: SAFE_GUTTER,
-  right: SAFE_GUTTER,
-  bottom: SAFE_GUTTER,
-  left: SAFE_GUTTER,
-};
-
 const PLAN_TOGGLE_BUTTON_STYLE: CSSProperties = {
   ...FOLD_TAB_SURFACE_STYLE,
   padding: "29px 6px",
@@ -54,6 +48,7 @@ const PLAN_TOGGLE_BUTTON_SPLIT_STYLE: CSSProperties = {
 };
 
 export function HomeDesktopView() {
+  const { isTablet, isCoarsePointer } = useViewport();
   const { resize, setViewportInsets, reframeToVisibleArea } = useMapManager();
   const { routeOperationsActiveDrag, planDropFeedback } = useResourceManager();
   const sectionManager = useSectionManager();
@@ -159,8 +154,9 @@ export function HomeDesktopView() {
   }, []);
 
   useEffect(() => {
-    setViewportInsets(DEFAULT_VIEWPORT_INSETS);
-  }, [setViewportInsets]);
+    const gutter = isTablet ? 16 : SAFE_GUTTER;
+    setViewportInsets({ top: gutter, right: gutter, bottom: gutter, left: gutter });
+  }, [isTablet, setViewportInsets]);
 
   const { handleRailLayoutChange, handleRailTransitionEnd } =
     useHomeDesktopRailSettleFlow({
@@ -217,10 +213,7 @@ export function HomeDesktopView() {
           )
         }
         plan={
-          <PlanDesktopShell
-            onRequestClose={layout.closePlan}
-            viewMode={layout.viewMode}
-          />
+          <PlanDesktopShell viewMode={layout.viewMode} />
         }
         base={
           <div
@@ -268,7 +261,9 @@ export function HomeDesktopView() {
                 ariaLabel: "Toggle delivery plan",
                 style: splitMode
                   ? PLAN_TOGGLE_BUTTON_SPLIT_STYLE
-                  : PLAN_TOGGLE_BUTTON_STYLE,
+                  : isCoarsePointer
+                    ? { ...PLAN_TOGGLE_BUTTON_STYLE, minWidth: 44 }
+                    : PLAN_TOGGLE_BUTTON_STYLE,
               }}
             >
               <ChevronDownIcon
@@ -289,11 +284,13 @@ export function HomeDesktopView() {
         isMapVisible={layout.isMapVisible}
         buttonToggleMap={
           layout.canToggleMap || !layout.isMapVisible ? (
-            <MapToggleTab
-              isMapVisible={layout.isMapVisible}
-              splitMode={splitMode}
-              onToggle={layout.toggleMap}
-            />
+            <div className={isCoarsePointer ? "[&>button]:min-w-11" : undefined}>
+              <MapToggleTab
+                isMapVisible={layout.isMapVisible}
+                splitMode={splitMode}
+                onToggle={layout.toggleMap}
+              />
+            </div>
           ) : null
         }
       />

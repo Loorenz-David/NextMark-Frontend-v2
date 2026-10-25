@@ -10,14 +10,6 @@ export type PanFormContextProvider =  {
 
 export const PlanFormContext = createContext< PropsPlanFormContext | null >( null )
 
-export const PlanFormContextProvider = ({value, children}: PanFormContextProvider)=>{
-
-    return (
-        <PlanFormContext.Provider value={value}>
-            {children}
-        </PlanFormContext.Provider>
-    )
-}
 
 export const usePlanForm = ()=>{
     const ctx = useContext( PlanFormContext )

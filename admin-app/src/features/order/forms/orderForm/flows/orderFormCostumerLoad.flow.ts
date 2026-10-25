@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from "react"
+import { useEffect } from "react"
 import type { Order } from '@/features/order/types/order'
-import { selectCostumerByServerId, useCostumerByServerId, type Costumer } from "@/features/costumer"
+import { useCostumerByServerId, type Costumer } from "@/features/costumer"
 import { useCostumerQueries } from "@/features/costumer/controllers/costumerQueries.controller"
 
 type Props = {

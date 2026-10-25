@@ -33,8 +33,8 @@ export const TemplateTriggerCard = ({
         <span
           className={
             isEnabled
-              ? "inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-bg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-success"
-              : "rounded-full border border-border bg-surface-raised px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]"
+              ? "inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-bg px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.18em] text-success"
+              : "rounded-full border border-border bg-surface-raised px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]"
           }
         >
           {isEnabled ? (

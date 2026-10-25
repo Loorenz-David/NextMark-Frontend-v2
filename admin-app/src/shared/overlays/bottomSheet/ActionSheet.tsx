@@ -52,7 +52,7 @@ const ActionSheetRow = ({
       disabled={option.disabled}
       aria-disabled={option.disabled}
       onClick={handleTap}
-      className={`flex min-h-12 w-full cursor-pointer items-center gap-3 rounded-xl px-3 text-left text-[0.95rem] transition-colors active:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50 ${tone} ${
+      className={`flex min-h-12 w-full cursor-pointer items-center gap-3 rounded-xl px-3 text-left text-rem-0_95 transition-colors active:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50 ${tone} ${
         isConfirming ? 'bg-danger-bg' : ''
       }`}
     >

@@ -17,7 +17,7 @@ export const UserSubscriptionCard = () => (
     <div className="relative flex flex-col gap-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
+          <p className="text-rem-0_62 font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
             Subscription
           </p>
           <p className="mt-2 text-xl font-semibold text-[var(--color-text)]">Starter Plan</p>
@@ -25,7 +25,7 @@ export const UserSubscriptionCard = () => (
             Active • Renews monthly
           </p>
         </div>
-        <span className="rounded-full border border-[var(--accent)]/34 bg-[var(--accent)]/16 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--accent-ink)] shadow-[var(--shadow-button-badge)] backdrop-blur-md">
+        <span className="rounded-full border border-[var(--accent)]/34 bg-[var(--accent)]/16 px-3 py-1 text-rem-0_7 font-semibold uppercase tracking-[0.16em] text-[var(--accent-ink)] shadow-[var(--shadow-button-badge)] backdrop-blur-md">
           Current
         </span>
       </div>
@@ -44,7 +44,7 @@ export const UserSubscriptionCard = () => (
 
       <div className="flex items-end justify-between gap-4 rounded-2xl border border-border-subtle bg-surface-subtle px-4 py-4">
         <div>
-          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
+          <p className="text-rem-0_62 font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
             Next invoice
           </p>
           <p className="mt-2 text-lg font-semibold text-[var(--color-text)]">$ / month</p>
@@ -71,7 +71,7 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
           <div className="flex items-center gap-4">
             <MemberAvatar username={username} className="text-xl ring-1 ring-border" />
             <div className="flex flex-col gap-1">
-              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)]">
+              <p className="text-rem-0_62 font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)]">
                 Personal profile
               </p>
               <p className="text-xl font-semibold text-[var(--color-text)]">{capitalize(username)}</p>
@@ -79,7 +79,7 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="rounded-full border border-border bg-surface-raised px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+            <span className="rounded-full border border-border bg-surface-raised px-3 py-1 text-rem-0_7 font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
               Active profile
             </span>
             <BasicButton
@@ -102,7 +102,7 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
                 <UserIcon className="h-5 w-5" />
               </div>
-              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
+              <p className="text-rem-0_62 font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
                 Username
               </p>
             </div>
@@ -114,7 +114,7 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
                 <MailIcon className="h-5 w-5" />
               </div>
-              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
+              <p className="text-rem-0_62 font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
                 Email
               </p>
             </div>
@@ -126,7 +126,7 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
                 <MessageIcon className="h-5 w-5" />
               </div>
-              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
+              <p className="text-rem-0_62 font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
                 Phone
               </p>
             </div>
@@ -138,7 +138,7 @@ export const UserProfileCard = ({ user, onEdit }: UserProfileCardProps) => {
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface-raised text-[rgb(var(--color-light-blue-r))]">
                 <UserIcon className="h-5 w-5" />
               </div>
-              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
+              <p className="text-rem-0_62 font-semibold uppercase tracking-[0.26em] text-[var(--color-muted)]">
                 Role
               </p>
             </div>

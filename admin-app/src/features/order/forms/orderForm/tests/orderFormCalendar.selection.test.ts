@@ -1,4 +1,4 @@
-import { resolveCalendarSelectionToBoundaryValues } from '../components/OrderFormDeliveryWindowCalendar'
+import { resolveCalendarSelectionToBoundaryValues } from '../components/DeliveryWindowCalendar/DeliveryWindowCalendar.flow'
 
 const assert = (condition: boolean, message: string) => {
   if (!condition) {

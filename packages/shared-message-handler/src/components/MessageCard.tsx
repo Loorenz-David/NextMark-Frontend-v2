@@ -203,7 +203,7 @@ export function MessageCard({
         </div>
         <button
           aria-label="Dismiss message"
-          className="absolute right-3 top-2 rounded-full p-1 text-white/80 transition hover:bg-white/15 hover:text-white"
+          className="absolute right-3 top-2 rounded-full p-1 text-white/80 transition hover:bg-white/15 hover:text-white after:absolute after:-inset-2 after:content-['']"
           onClick={(event) => {
             event.stopPropagation();
             onDismiss();

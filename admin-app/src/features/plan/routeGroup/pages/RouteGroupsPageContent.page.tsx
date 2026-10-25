@@ -1,22 +1,13 @@
-import { RouteGroupOrderList, RouteGroupsActionBar } from "../components";
+import { RouteGroupOrderList } from "../components";
 import { useRouteGroupPageContext } from "../context/useRouteGroupPageContext";
-import { useRouteGroupActionBarVisibility } from "../hooks/useRouteGroupActionBarVisibility";
 import { OrderLoadingList } from "@/shared/loadingCards/order";
 
 type RouteGroupsPageContentProps = {
-  showOptimizeRow: boolean;
   hasActiveRouteGroup: boolean;
-  /** Phone layout: the parent scrolls, so this content flows instead of filling the height. */
-  scrollsWithParent?: boolean;
 };
 
-const ACTION_BAR_HEIGHT_WITH_OPTIMIZE = 138;
-const ACTION_BAR_HEIGHT_WITHOUT_OPTIMIZE = 82;
-
 export const RouteGroupsPageContent = ({
-  showOptimizeRow,
   hasActiveRouteGroup,
-  scrollsWithParent = false,
 }: RouteGroupsPageContentProps) => {
   const { orderCount, routeGroup, routeSolutionStops, selectedRouteSolution } =
     useRouteGroupPageContext();
@@ -37,31 +28,9 @@ export const RouteGroupsPageContent = ({
     (selectedRouteSolution == null ||
       !hasFullSelectedSolution ||
       !hasHydratedStops);
-  const {
-    isActionBarVisible,
-    actionBarReservedHeight,
-    isDesktopActionBarBehaviorEnabled,
-    handleScroll,
-  } = useRouteGroupActionBarVisibility({
-    enabled: !isLoading,
-    expandedHeight: showOptimizeRow
-      ? ACTION_BAR_HEIGHT_WITH_OPTIMIZE
-      : ACTION_BAR_HEIGHT_WITHOUT_OPTIMIZE,
-  });
 
   return (
-    <div
-      className={`admin-route-groups-page-content relative flex w-full min-w-0 flex-col bg-[var(--color-primary)]/5 ${
-        scrollsWithParent ? "" : "h-full overflow-hidden"
-      }`}
-    >
-      {hasActiveRouteGroup ? (
-        <RouteGroupsActionBar
-          useFloatingActionBar={isDesktopActionBarBehaviorEnabled}
-          isActionBarVisible={isActionBarVisible}
-          showOptimizeRow={showOptimizeRow}
-        />
-      ) : null}
+    <div className="admin-route-groups-page-content relative flex h-full w-full min-w-0 flex-col overflow-hidden bg-[var(--color-primary)]/5">
       {!hasActiveRouteGroup ? (
         <div className="flex flex-1 items-center justify-center px-6 py-10">
           <div className="max-w-md rounded-xl border border-border bg-surface-raised p-6 text-center">
@@ -69,44 +38,24 @@ export const RouteGroupsPageContent = ({
               Select a Route Group
             </h3>
             <p className="mt-2 text-sm text-muted">
-              Choose a zone from the rail to open its route, review the stop
-              order, and edit it from the action panel.
+              Choose a zone from the menu to open its route, review the stop
+              order, and run its actions.
             </p>
           </div>
         </div>
       ) : !isLoading || isLoading === "isOptimizing" ? (
-        <div
-          className={`relative flex flex-col ${
-            scrollsWithParent ? "" : "min-h-0 flex-1 overflow-hidden"
-          }`}
-        >
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
           {isLoading === "isOptimizing" ? (
-            <div className="pt-35">
+            <div className="pt-3">
               <OrderLoadingList
                 variant="routeGroup"
                 count={optimizationLoadingCount}
-                topReservedOffset={
-                  isDesktopActionBarBehaviorEnabled
-                    ? actionBarReservedHeight
-                    : 0
-                }
               />
             </div>
           ) : isHydratingRouteGroupOrders ? (
-            <OrderLoadingList
-              variant="routeGroup"
-              topReservedOffset={
-                isDesktopActionBarBehaviorEnabled ? actionBarReservedHeight : 0
-              }
-            />
+            <OrderLoadingList variant="routeGroup" />
           ) : (
-            <RouteGroupOrderList
-              onScrollContainer={handleScroll}
-              topReservedOffset={
-                isDesktopActionBarBehaviorEnabled ? actionBarReservedHeight : 0
-              }
-              scrollsWithParent={scrollsWithParent}
-            />
+            <RouteGroupOrderList />
           )}
         </div>
       ) : null}

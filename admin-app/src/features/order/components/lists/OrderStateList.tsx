@@ -79,7 +79,7 @@ export const OrderStateList = ({ order }: OrderStateListProps) => {
             <div className="flex items-center gap-2">
               <span>{state.name}</span>
               {isCurrent ? (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--color-muted)]/20 text-[var(--color-muted)]">
+                <span className="text-micro px-2 py-0.5 rounded-full bg-[var(--color-muted)]/20 text-[var(--color-muted)]">
                   Current
                 </span>
               ) : null}

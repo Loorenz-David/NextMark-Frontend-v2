@@ -42,15 +42,15 @@ export const ClientFormMediaCard = ({
           {media.description}
         </p>
       ) : null}
-      <p className="truncate text-[0.65rem] text-[var(--color-muted)]/70">{media.url}</p>
+      <p className="truncate text-rem-0_65 text-[var(--color-muted)]/70">{media.url}</p>
       <div className="flex flex-wrap items-center gap-2 pt-1">
         {media.link_url ? (
-          <span className="rounded-full border border-border bg-surface-raised px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <span className="rounded-full border border-border bg-surface-raised px-2 py-0.5 text-rem-0_6 uppercase tracking-[0.14em] text-[var(--color-muted)]">
             Links out
           </span>
         ) : null}
         {media.alt_text ? null : (
-          <span className="rounded-full border border-warning-border bg-warning-bg px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-warning">
+          <span className="rounded-full border border-warning-border bg-warning-bg px-2 py-0.5 text-rem-0_6 uppercase tracking-[0.14em] text-warning">
             No alt text
           </span>
         )}

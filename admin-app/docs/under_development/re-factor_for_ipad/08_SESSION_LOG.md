@@ -11,6 +11,14 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | D3 | 2026-10-24 | **Revised by the user.** Safari cannot do Bluetooth, so Bluetooth printing goes through a **native bridge app** we build and sideload (wrapper shell with a `navigator.bluetooth` polyfill, WebBLE Apache-2.0 as the base; `nextmarkBridge` for MFi/TCP). The web app keeps a transport layer: share/AirPrint first (works everywhere), bridge transports when present. Parallel native project, separate repo. | WebKit does not ship Web Bluetooth/Serial/USB; a sideloaded WKWebView app can. | `05_PRINTING_AND_BLUETOOTH.md` §6 |
 | D4 | 2026-10-24 | Service worker stays notification-only; admin PWA gets a second manifest with `scope: "/"`. | Guard script + live-deployment requirement. | `04_PWA_AND_PLATFORM.md` |
 | D5 | 2026-10-24 | Desktop ≥ 1440px must stay pixel-identical unless a phase says otherwise. | Client also works on monitors. | `00_GOAL_AND_CONSTRAINTS.md` |
+| D15 | 2026-10-25 | **Order detail has one scroll area.** The carousel is replaced by the Details / Notes / Windows / History switcher the phone already used (now `OrderDetailSections` on every size). The four cards lost their fixed 420px height and inner scroll and grow with their content. History shows the 5 newest events with "Show all N events" / "Show fewer"; a focused event (notification deep link) past the first 5 opens the full list and the page scrolls to it. Items now come before the sections (user). The item header restyle waits for the user's design. | A card scrolling inside the scrolling page trapped swipes on the way to the items (user). | `order/pages/orderDetail.page.tsx`, `order/components/OrderDetailSections.tsx`, `order/domain/orderEventTimeline.domain.ts` (`limitTimelineGroups`) |
+| D14 | 2026-10-25 | **Order detail restyled to the user's mockup** for the narrower panel (desktop/iPad): header card with a large `#id` (now the drag handle onto plans, replacing the icon tile), round 44px edit and close buttons, plan name and date on two lines, and a full-width pill state button. Customer card is one column of divided rows (Name, Email, Phone, Second phone only when set, Address, Tracking when set) with "Created <date>" in the footer. Cards use 16px inner padding. Phone header unchanged apart from `#id` spacing; the phone shares the new customer card. | The two-column card grid and side buttons no longer fit the narrower panel (user mockup). | `order/components/pageHeaders/OrderDetailHeader.tsx`, `order/components/OrderDetailSummary.tsx`, `shared/buttons/DropdownButton.tsx` (`shape="pill"`) |
+| D13 | 2026-10-25 | **Calendar date filter.** Tapping the month in the calendar header opens From / To (optional) date inputs. From alone shows that day's week; From + To shows the weeks covering the range; days outside the filter are greyed like out-of-month days. While filtered, the month arrows hide and an × clears the filter (back to the month view); "Today" clears and jumps to this month. More than 6 weeks scroll. The month stepper is wider (36px arrows, 44px touch area). | The user expected the date tap to filter by a date or a range; the old tap only jumped to today. | `plan/calendar/components/PlanCalendarDateFilterPanel.tsx`, `calendar/domain/planCalendar.domain.ts` (`buildDateFilterGrid`) |
+| D12 | 2026-10-25 | **Plan panel headers get a three-dot menu** (list and calendar views alike): "Create plan" and the calendar/list switch move into it ("Show as list" / "Show as calendar"; the switch only where the calendar exists, so not on phone). The plan/order/item counts are hidden. In the list view the "+ Plan" button was also the drop target that creates a plan from dragged orders; that target now appears only during an order drag, next to "Unschedule". | Less header chrome, same pattern as the order panel (user). Dropping orders to create a plan must keep working. | `plan/components/headers/PlanHeaderMenu.tsx`, `plan/components/CreatePlanDropTarget.tsx` |
+| D11 | 2026-10-25 | **Order search moves to the top header** (centred) on desktop and iPad, with the filter button and pills; "+ Order" and the menu move to the compact order panel header. Phone keeps its row, inside the list's scroll container. The header search shows only in route operations. | More vertical room for orders. The ambiguity of a search far from its results is known and deferred. | `13_ORDER_PANEL_HEADER.md` |
+| D10 | 2026-10-25 | **Info (i) buttons are removed from the phone and iPad interfaces**: `InfoHover` renders nothing when the layout is phone or the pointer is coarse (iPad at any width). Desktop and narrow laptop windows with a mouse keep them. | Not needed on those views (user). One shared component, so every form field, header and popup follows. | `shared/layout/InfoHover/InfoHover.tsx` |
+| D9 | 2026-10-25 | **Restyling starts before the iPad test**, beginning with the order card redesign (R1, `12_ORDER_CARD_REDESIGN.md`), applied to phone, iPad and desktop. External source chip and street address leave the card; route-stop number, ETA and warnings leave the card for a later vertical timeline. Panel widths follow as R2 after the user measures the new card. | The user already knows the target design and wants the process moving; the narrower card frees panel width on every size. | `12`, `06_PLAN.md` R1/R2 |
+| D8 | 2026-10-24 | The drag **press and lift cue** (squeeze while held, preview lifts with shadow and accent ring) applies to **every pointer, desktop included**. Mouse **activation** is unchanged (press and move 6px, no hold). | The user liked the cue on touch and wants the same feel on PC. A hold for the mouse was not adopted: no scroll conflict to solve, and it would swallow slow clicks. | `11_TOUCH_DRAG_INTENT.md` §6, `shared/dnd/CueMouseSensor.ts` |
 | D7 | 2026-10-24 | Content-priority decisions (`09`) are made **after Phases 0–5**, when the user can use the app on the iPad; implemented as Phase 6b before the bridge project. | Decisions need the real device experience. | `06_PLAN.md` Phase 1b/6b |
 | D6 | 2026-10-24 | The native bridge app is **deferred to after the full iPad refactor**. The web app ships share/AirPrint printing and keeps a transport port open for it. | The user wants to explore the bridge as a reusable project for several PWAs. | `06_PLAN.md` Phase 6, `05` §6 |
 
@@ -39,6 +47,365 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | K8 | Phase 6 | Printer | **Deferred by the user** until the printing phase. Test with "Save to Files" meanwhile. |
 
 ## Session entries
+
+### 2026-10-25 — Release to main: temporary drag logger removed (Claude)
+- Scope: user — the visual refactor is complete (iPad behaviour verified by the user in Chrome DevTools, iPad mini); merge to main and push, which runs `deploy-admin.yml`.
+- Reverted `0bae682` (TEMPORARY dev touch-drag logger: `app/debug/*`, its `main.tsx` install and `DndDebugMonitor` mount) as its commit message required, plus the dev-only `onIntentDecision` hookup in `shared/dnd/useAppDragSensors.ts` that fed it (added in `d282b8b`); the touch sensor's optional callback stays.
+- The release includes phase 5's `deploy-admin.yml` change (`a7f6ff0`): hashed assets uploaded first and kept, entry files `no-cache`, manifest content type.
+- Gates before merge: lint 0 errors (52 warnings), tests 207, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Plan list shares the calendar's date control and period; Zones button clears the plan tab (Claude)
+- Scope: user (screenshot) — in the map view the Zones button sat against the folded plan tab. Then: the list view's date control differed from the calendar's; the list should have the same one.
+- Zones: `ZoneMapOverlay` button and zone panel `right-10` → `right-16`, clearing the 44px touch tab that hangs in from the map's right edge (≈20px gap; checked in Chrome).
+- Date control: the calendar's month stepper + date filter panel moved out of `PlanCalendarHeader` into `calendar/components/PlanCalendarDateControl.tsx`; the period logic (title, step, today, date filter) into `calendar/controllers/usePlanCalendarPeriod.controller.ts`, used by `usePlanCalendarController` and by `RoutePlanPage`. In the plan column (`showViewSwitch`) the list renders that control and takes its query from the calendar period (`domain/planCalendarListPeriod.ts`: month → whole month, one day → `date`, range → `range`; tested), so switching views keeps the same dates. The phone Plans tab keeps `PlanDateFilterBar` (no calendar there).
+- Checked in Chrome (`?viewport=tablet&pointer=coarse`): calendar → list shows the same control ("October 2026"); next → "November 2026" with no plans (none exist), previous → October's plans back; the title opens the same From/To/Today panel. Not checked live: a date filter applied from the list.
+- Gates: lint 0 errors (52 warnings), tests 207, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Plan list view gets the calendar's single-row header (Claude)
+- Scope: user — switching the plan column to list put the date filter and the three-dot menu on a row below the header; keep them in the header like the calendar view, and drop the "fold" button (the map's fold-out tab covers it), so both views share one header.
+- `PlanMainHeader`: with `showViewSwitch` (the iPad/desktop plan column) it renders the calendar header's row — same container, icon box and title — with the date filter, drop targets and menu on the right. While an order is dragged the date filter is hidden (not unmounted, so it keeps its dates) and the New plan / Unschedule targets take its place. The phone Plans tab keeps its two-row header (one row cannot fit the 200px filter beside the title on a phone; the phone has no calendar view).
+- Fold button removed with the props that fed it: `onRequestClose`/`showCloseButton` gone from `RoutePlanPage`, `PlanMainHeader` and `PlanDesktopShell`; `HomeDesktopView` no longer passes `layout.closePlan` (the layout still uses it internally); the phone tab registers `RoutePlanPage` directly.
+- Checked in Chrome (`?viewport=tablet&pointer=coarse`): calendar → "Show as list" from the menu sheet → list header matches the calendar's row; phone Plans tab unchanged; no console errors. Not checked live: the header during an order drag.
+- Gates: lint 0 errors (52 warnings), tests 203, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Top bar folds on any click outside it, starts folded (Claude)
+- Scope: user — an interaction outside the top bar closes it ("gives immediate more room and aligns with user intention"); no need to remember the state.
+- `HomeDesktopHeader`: while open, a capture-phase `click` listener on the document folds the bar when the click lands outside it. Click rather than pointerdown so a drag or scroll that starts outside does not fold it mid-gesture (the 50px shift would move the panels under the finger). Clicks inside portaled popovers (`[data-floating-popover-root]`, e.g. the notifications list opened from the bar) count as inside. The chevron in the bar still folds it too.
+- `homeTopBar.store.ts`: starts folded, no persistence; `homeTopBar.storage.ts` removed (the user asked not to remember it).
+- Checked in Chrome (`?viewport=tablet&pointer=coarse`): loads folded; strip opens; notifications popover opens and a click inside it keeps the bar; a click on the calendar folds the bar and closes the popover. Gates green (lint 0 errors / 52 warnings, tests 203, build, popup contract, theme regression, PWA checks, `git diff --check`).
+
+### 2026-10-25 — Top bar folds away; order search back in the order panel (Claude)
+- Scope: user — the top bar (theme, acting user, notifications, Settings) is the least used part of the screen; it should hide and be revealable, giving its height to the panels. User picked option 1 of five presented (collapsible bar with a reveal strip; others: floating account button, icon rail, hide-on-scroll, hover reveal). The order search moves back into the order panel, under its header, in the scroll area.
+- `HomeDesktopHeader`: a chevron button on the right folds the bar (grid-rows 1fr→0fr, 200ms, `inert` while folded); a 16px strip with a grab handle (finger-sized via `touch-hit-area`) brings it back and shows a red dot while notifications are unread (`useAdminNotificationUnreadCount`, new in `realtime/notifications`). The bar stays mounted so the notifications trigger keeps chiming. Folded state remembered per device (`home-app/stores/homeTopBar.store.ts` + `.storage.ts`, key `home.topBar.hidden.v1`).
+- Order search: `OrderMainSearch` (in `OrderMainHeader.tsx`) renders at the top of the order list's scroll area on iPad/desktop (phone unchanged, with its actions beside it). The header-slot portal and the panel width measurement that lined the search up with the bar are gone; `HomeAppPage` no longer mounts `HeaderSlotProvider`. `shared/layout/headerSlot` is now unused (deletion needs the user's OK).
+- Checked in Chrome with `?viewport=tablet&pointer=coarse` (forces the tablet layout in the 768px window): search at the top of the Orders panel, fold, reload keeps it folded, strip tap reveals; no console errors. Unread dot not seen live (no unread notifications in the dev data).
+- Gates: lint 0 errors (52 warnings), tests 203, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Route timeline moves to the left of the cards (Claude)
+- Scope: user — "place the timeline on the left side instead".
+- `RouteTimelineRow` / `RouteTimelineEdge`: timeline slice first, card or start/end text after (`pl-1`); list padding `pl-1 pr-4`. An empty route no longer trails a line below the start (`continues` on the edge/marker).
+- Checked in Chrome at phone width (Oct 27 plan, 3 stops; Oct 19 now empty); view only, no drags. Gates green (lint 0 errors / 52 warnings, tests 203, build, popup contract, theme regression, PWA checks, `git diff --check`).
+- User report, since resolved: moving the first stop of a route to another plan left it showing in the source route; later stops were fine. After the drag-target fix and a reload the user no longer sees it, so it was not reproduced (window stuck at 768px; dev data in use). Unconfirmed backend observation: Lead: in `update_order_route_plan.py` the first bundle's `order_stops`/`route_solution` from the destination are overwritten by the old route's (`bundle.update(old_local_delivery_bundle)`).
+
+### 2026-10-25 — Route plan: arrival timeline beside the stops; drags over the panel stay in the panel (Claude)
+- Scope: user — a modern, simple arrival timeline on the right of the order cards (driver app style, order card unchanged); the line breaks around each stop's time, level with the card; moving an order moves its time; start and end are the two ends of the line, no cards. "Reliable and not buggy."
+- Timeline (`plan/routeGroup/components/timeline/`): `RouteTimelineRow` (card + 44px timeline slice), `RouteTimelineMarker` (line / time / line; dot at start and end; day stacked over time off the plan day; shimmer while the server recalculates; "--" with no time), `RouteTimelineEdge` (start/end as plain text: "Start · Round trip" + street; end keeps the route warnings). Time label logic in `domain/routeTimeline.domain.ts` (tested), bound to the plan date by `formatRouteTimelineTime`.
+- List: rows carry their own spacing (no flex gap) so the line never breaks, also while rows shift under a drag; list padding `pl-4 pr-1`. Address groups: collapsed shows the first arrival; expanded, each stop below has its own time and the branch lines end level with it. Orders without a stop show "--"; incoming placeholders show the shimmer.
+- Drag: the dragged row now takes the sortable strategy's transform, so it moves to the slot it will drop into with its card hidden and its timeline slice kept — the stop's time (highlighted) shows where it will land and the line has no gap. The shared drag lift cue (`[data-drag-cue]`, scale + shadow) is turned off for these rows in `index.css` (it would shift the line); only the card squeezes on press.
+- Bug found while testing (pre-existing): the plan list stays laid out under the open plan panel on every size, and its cards stayed live drop targets — a stop dragged over the panel could resolve to a hidden plan card and be reassigned to that plan (`ASSIGN_ORDERS_TO_PLAN_BATCH`). Fix: `PlanWorkspacePanel` marks itself a drop surface; `rankedPointerCollision` keeps only targets inside the surface under the pointer (`domain/dropSurface.ts`, tested; DOM membership, not paint, so rows shifted mid-drag stay valid). The drag overlay is `pointer-events-none` so the pointer's surface can be found. Same effect for orders dragged over the open panel: they no longer land on a hidden plan.
+- `RouteGroupBoundaryLocationCard.tsx` is now unused (with the four files listed below); deletion needs the user's OK.
+- Checked in Chrome at phone width (window would not resize; Oct 19 plan, 3 stops): start, times beside each card, end; scripted mouse drag of the first stop over the second → the second slides up, the open slot shows 09:47 highlighted on an unbroken line, the target is the stop (before the fix it flickered to hidden plan cards); cancelled with Escape (no data change) and the list returned to normal. Not checked live: address groups (none in the dev data), iPad width, a real drop.
+- Gates: lint 0 errors (52 warnings), tests 203, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Container plans (store pickup, international shipping) get the same panel interface (Claude)
+- Scope: user — the other plan types follow the route plan panel "given their capabilities": round close button, three-dot menu, narrow width.
+- Shared: `shared/popups/PanelMenu` (`PanelMenu` — round trigger with optional attention dot, popover on fine pointers / bottom sheet on coarse, free-form body; `PanelMenuRow`, `PANEL_MENU_ROW_CLASS_NAME`, `PanelMenuAttentionDot`) and `shared/buttons/RoundIconButton`. `RouteGroupMenu` and the route header now use them (no behaviour change).
+- `features/plan/components/ContainerPlanActionsMenu.tsx`: now a `PanelMenu` with the plan's counts and state chip on top and "Delete plan" (two-tap confirm kept) below. Container plans have no other actions today, so none were invented.
+- `StorePickupPlanHeader` / `InternationalShippingPlanHeader`: state chip moved into the menu; "Close" text → round ×.
+- Width: `routePlanPanelWidth.ts` renamed `planPanelWidth.ts` (`PLAN_PANEL_WIDTH_FACTOR = 1.05`); `useHomeDesktopLayout` uses it for every plan type (the `isRoutePlanWorkspace` flag is gone).
+- Checked in Chrome: phone layout (window came up at 768px) for store pickup (Oct 14: header, popover menu with counts + Open + Delete plan) and the route plan (Oct 19: back, menu with hint dot); iPad layout for international shipping (Oct 13: narrow panel, round menu + ×, sheet with counts + state). Delete not clicked. No console errors.
+- Gates: lint 0 errors (52 warnings), tests 195, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Route plan (local delivery) panel: zone tabs menu, narrower panel (Claude)
+- Scope: user — the panel took too much width. Header gets a round close button and a three-dot menu; zones are picked in the menu (user chose tabs like the order detail switcher); the route group actions (add order, edit, optimize, ready for delivery, download, import CSV) move into the menu under the selected zone; panel width = order panel × 1.05 (room for the arrival time flow later). Same menu on phone (user choice).
+- Shared (`c4cfc11`): the order detail tab row moved to `shared/layout/slidingTabs` (`SlidingTabRow`, `slidingTabWindow.domain.ts` + tests, moved from the order domain); `OrderDetailSections` uses it.
+- Route group: `RouteGroupMenu` (popover on fine pointers, bottom sheet on coarse) with zone tabs, a zone summary + state chip, actions, route variants only when there is more than one (`RouteSolutionVariantList`, extracted from the optimize dropdown), "New route group" at the bottom. Optimize hint: dot on the menu button and an accented "Optimize route" row when the route is not optimized or has warnings (`routeGroupMenu.domain.ts`, tested). "Ready for delivery" only for an open route group with orders (same rule as the old footer, now in the domain). `useRouteGroupRail.controller`: `handleSelectRouteGroup` (no deselect toggle) replaces the click toggle.
+- Drag onto a zone kept: `RouteGroupDropStrip` lays the other zones' droppable avatars over the top of the list only while an order/stop drag is in flight (same ids and drop type as the rail).
+- Layout: `RouteGroups.page` is one layout for all sizes (no rail column, no action bar); `RouteGroupsPageContent` lost the action bar and its reserved offsets; `RouteGroupOrderList` lost the ready footer.
+- Width: `home-route-operations/domain/routePlanPanelWidth.ts` (`ROUTE_PLAN_PANEL_WIDTH_FACTOR = 1.05`, tested); `useHomeDesktopLayout` takes `isRoutePlanWorkspace` — tablet 309px / desktop 331px at order factor 0.7. Store pickup and international shipping keep 560/550.
+- Follow-up (user): "New route group" moved from the bottom of the menu to a "+" at the end of the zone tab row (`SlidingTabRow` gained a `trailing` slot). Rechecked in Chrome (popover); gates green.
+- Left unused, deletion needs the user's OK: `RouteGroupReadyFooter.tsx`, `RouteOptimizationDropdownButton.tsx`, `routeGroupRail/RouteGroupRail.tsx`, `hooks/useRouteGroupActionBarVisibility.ts`.
+- Checked in Chrome at tablet width (Oct 19 plan, one zone): narrow panel, header, menu as sheet (coarse) and popover (fine), hint dot, order detail tabs unchanged; no console errors. Not checked live: multi-zone tab sliding and the drag strip (no plan with several zones in the dev data), phone width (window would not resize).
+- Gates: lint 0 errors (52 warnings), tests 195, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Order detail: blocks separated by divider lines (Claude)
+- Scope: user — full-width cards felt tight; the header, items and sections are no longer cards but full-width blocks separated by divider lines.
+- `OrderDetailHeader` / `OrderDetailHeaderMobile`: no glass card, rounding or shadow; texture and wash kept; `border-b` below. `ItemsOrderPreviewDetail.layout.tsx` and `OrderDetailSections.tsx`: plain blocks, their grey header strips kept. `orderDetail.page.tsx`: body is `divide-y divide-border` with no gaps or top padding; the no-server-id placeholder and refreshing text are plain padded text.
+- Checked in Chrome at tablet width on #4498 (top and scrolled); gates green (lint 0 errors / 52 warnings, tests 187, build, popup contract, theme regression, PWA checks, `git diff --check`).
+
+### 2026-10-25 — Order detail: items as a bounded card, full-width containers (Claude)
+- Scope: user mockup — the items get a card like the sections (header strip with title, totals and menu; items and the dashed add button in the body), and the page drops its side padding so the containers fill the panel width.
+- `ItemsOrderPreviewDetail.layout.tsx`: card `admin-glass-panel rounded-3xl shadow-md!`, header strip `border-b bg-surface-subtle px-4 py-3`, body `p-4 gap-3`.
+- `orderDetail.page.tsx`: no gutter around the items and sections cards (the refreshing text keeps one); `OrderDetailHeader` / `OrderDetailHeaderMobile` lose their `px-5` / `px-3`. Vertical spacing unchanged. Applies to phone too.
+- Checked in Chrome at tablet width on #4498; gates green (lint 0 errors / 52 warnings, tests 187, build, popup contract, theme regression, PWA checks, `git diff --check`).
+
+### 2026-10-25 — Order detail items preview restyled (Claude)
+- Scope: user mockup — the items header sits on the page background (no separate card); item cards show thumbnail, name, "article · Qty N" and the state chip; a dashed "Add item" button ends the list.
+- `ItemsOrderPreviewSticky.layout.tsx` (only the detail page used it) renamed to `ItemsOrderPreviewDetail.layout.tsx`; prop `stickyHeader` → `detailLayout`. Header: "Items" + "N item(s) · kg · m³" and a round three-dot menu holding "Print labels" (hidden when no print template; a progress ring replaces it while printing). The page wraps it in the normal gutter and drops the tinted band.
+- `ItemCard.tsx` (shared with the order form previews): flat card, 64px thumbnail with a striped placeholder when there is no photo, position moved to the expanded details only, focus ring on keyboard focus only.
+- Check data kept in step: `theme-map.json` ItemCard override line 136 → 143 (same class required); `theme-functional-color-allowlist.json` `0,0,0,0.04` 4 → 3 (the removed card gradient).
+- Checked in Chrome at tablet width (#4498, 2 items; #2549, empty): matches the mockup; expand/collapse; menu sheet shows Print labels; no console errors.
+- Follow-up (user): "Add item" also in the three-dot menu (first, before Print labels; the menu now always shows); "Items" title down to `text-base font-semibold`; an empty order shows only the dashed Add item button (no "No items yet."). Rechecked in Chrome on #4498 and #2549; gates green.
+- Gates: lint 0 errors (52 warnings), tests 187, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Order detail sections as one card with a tab header (Claude)
+- Scope: user mockup — the tab row is the header of the sections card; the per-section headers go; the order state moves to the details footer beside "Created".
+- `OrderDetailSections.tsx` now renders the card: underline tabs on a subtle header strip, labels at natural width (measured, so "Windows" never truncates in the narrow panel), at most 3 visible with the next one peeking through a fade, chevron slides the row and back, underline glides to the active label. Labels faded out past the peek do not take taps.
+- Sections are plain content now: `OrderDetailSummary` (flags row only when "Missing order info" / help to carry apply; footer = Created + state pill), `OrderDetailNotesTab`, `OrderDetailTimeWindows` (route stop warnings as a row above the windows), `OrderDetailEventHistory` (event count + refresh as a slim top row). Loading / not-found placeholders in `orderDetail.page.tsx` are plain text inside the card.
+- Checked in Chrome at tablet width: matches the mockup; slide both ways; History and Windows content; no console errors.
+- Gates: lint 0 errors (52 warnings), tests 187, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Order detail section switcher restyled (Claude)
+- Scope: user request — nicer switcher, smooth interaction, at most 3 labels with a control to slide to the rest (more sections may come).
+- `OrderDetailSections.tsx`: rounded-full segmented control; a pill slides under the active label; with more than `ORDER_DETAIL_SECTIONS_VISIBLE` (3) sections a chevron slides the row a page forward and, at the end, back to the start (chevron flips). Opening on a hidden section (history deep link) starts the row where that label is visible. Section content fades in from the side you moved towards. Reduced motion turns the animations off.
+- Window logic is pure: `resolveSectionWindowStart`, `nextSectionWindowStart` in `orderDetailSections.domain.ts`, tests in `domain/tests/orderDetailSections.vitest.test.ts`.
+- Checked in Chrome at tablet width: Details/Notes/Windows + chevron → Notes/Windows/History + back chevron; selecting History moves the pill and content; back again.
+- Gates: lint 0 errors (52 warnings), tests 187, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Order detail: single scroll, items first (Claude)
+- Scope: user report — swipes got stuck in the scrolling detail cards on the way to the items. Decision D15.
+- Files: `orderDetail.page.tsx` (one layout for phone and desktop: header, items, sections); `OrderDetailMobileSections.tsx` → `OrderDetailSections.tsx` and `orderDetailMobileSections.domain.ts` → `orderDetailSections.domain.ts` (renamed, height workaround removed); `OrderDetailSummary.tsx`, `OrderDetailNotesTab.tsx`, `OrderDetailTimeWindows.tsx`, `OrderDetailEventHistory.tsx` (no fixed height or inner scroll; history preview + toggle; focus uses `scrollIntoView` now that no carousel track can move); `orderEventTimeline.domain.ts` + `tests/orderEventTimelineLimit.vitest.test.ts`.
+- `SlideCarousel` stays (customer detail and `InfoHover` still use it).
+- Checked in Chrome at tablet width: wheel over the history card scrolls the page; 5 events + "Show all 9 events" → all 9 + "Show fewer"; no console errors.
+- Gates: lint 0 errors (52 warnings), tests 178, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Order detail restyle, header and customer card (Claude)
+- Scope: user mockup for the order detail in the narrower panel. Decision D14.
+- Files: `OrderDetailHeader.tsx` (hero title variant, round icon buttons, pill state button), `DraggableOrderDetailIcon.tsx` renamed to `DraggableOrderDetailHandle.tsx` (wraps any children; the `#id` is the handle now, same drag id and data), `OrderDetailSummary.tsx` (rows), `shared/buttons/DropdownButton.tsx` (opt-in `shape="pill"`; other callers unchanged).
+- Checked in Chrome at tablet width: matches the mockup; "Mark as Confirmed" fits on one line, longer labels truncate.
+- Revision (user, same day): the plan lines sit under the id/buttons row at full card width and wrap instead of truncating; the external-source badge is no longer shown in the detail header (desktop and phone).
+- Not changed: notes, time windows and history slides (still 20px padding, fixed 420px slide height kept so the carousel does not jump).
+- Gates: lint 0 errors (52 warnings), tests 173, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Calendar date filter and wider month stepper (Claude)
+- Scope: user request — bigger month stepper; the date tap should open a filter with a From date and optional To date; clearing returns to the month. Decision D13.
+- Files: new `calendar/components/PlanCalendarDateFilterPanel.tsx`, `calendar/domain/tests/planCalendarDateFilter.vitest.test.ts`; modified `calendar/domain/planCalendar.domain.ts`, `calendar/store/planCalendar.store.ts` (`dateFilter`), `calendar/controllers/usePlanCalendarController.ts`, `calendar/components/PlanCalendarHeader.tsx`, `calendar/components/PlanCalendarBody.tsx`, `calendar/pages/PlanCalendar.page.tsx`.
+- Checked in Chrome at tablet + coarse pointer: single day, a range across months, × clear, no console errors.
+- Known: the shared `CustomDatePicker` opens its calendar on the first tap and takes typing on a second tap into the field (same everywhere it is used; not changed). Its glass calendar panel lets the filter panel show through behind it.
+- Gates: lint 0 errors (52 warnings), tests 173, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — Plan panel header menu (Claude)
+- Scope: user request — move the calendar/list toggle and "+ Plan" into a three-dot menu in the plans header; hide the counts. Decision D12.
+- Files: new `plan/components/headers/PlanHeaderMenu.tsx`, `plan/components/CreatePlanDropTarget.tsx`, `plan/domain/orderDragActivity.ts` (drag guard shared with `UnscheduleDropTarget.tsx`); modified `PlanMainHeader.tsx`, `Plan.page.tsx` (`headerAccessory` → `showViewSwitch`), `PlanDesktopShell.tsx`, `calendar/components/PlanCalendarHeader.tsx`, `calendar/pages/PlanCalendar.page.tsx`, `calendar/controllers/usePlanCalendarController.ts` (stats no longer computed), `assets/icons/index.ts` (`ListIcon` export).
+- Left in place, unused: `calendar/components/PlanContainerViewToggle.tsx` (delete pending the user's OK), `computeCalendarRangeStats` and `useRoutePlanListStats` (kept so the counts can return).
+- Gates: lint 0 errors (52 warnings), tests 162, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
+### 2026-10-25 — R3 started: main order panel width knob, 40% narrower (Claude)
+
+- Branch `ipad/r3-order-panel-width` (stacked on R2). The user tunes the width by trial, so it is one knob: `features/home-route-operations/domain/orderPanelWidth.ts` → `ORDER_PANEL_WIDTH_FACTOR` (now 0.6) × pre-redesign widths (desktop 450, tablet 420) = 270 / 252. Both the rail (`BASE_WIDTH`) and the panel inside it (`planWidth`, which on desktop used to borrow `DESKTOP_PLAN_WIDTH`) use it; the plan column, plan overlay (550/560) and stacked section panels keep their widths. The header search follows by measurement. Vitest for the resolver.
+- Watch item: at 270 the compact order panel header (icon, title + counts, "+ Order", menu ≈ 320 px) does not fit its 238 px content box. Revisit once the user settles the width (options: icon-only "+", counts under the title, smaller icon box).
+- User tuning: 0.6 was too narrow; factor set to **0.7** (desktop 315, tablet 294).
+- Still open in R3: the nested order lists in the plan panels.
+
+### 2026-10-25 — R2 reviewed; pills removed, header padding raised (Claude)
+
+- Codex R2 matches `13`: header slot (provider/target/portal, no feature imports, jsdom test), search projected into the top header, compact opt-in `SectionPanel` header with "+ Order" and the 44px menu, phone row inside the scroll container. "Auto create plans" was already a no-op before R2 (unchanged; needs its own contract).
+- User review: remove the filter pills (count on the filter button is enough) and give the order panel header more vertical padding. Done: pills and their props removed from `OrderMainHeader` and both call sites in `orderMain.page.tsx`; compact header `py-2` → `py-3.5`. `formatOrderFilterPill` is now unused (delete pending user OK).
+
+### 2026-10-25 — Restyle R2 implemented (Codex)
+
+- Branch `ipad/r2-order-panel-header`, stacked on R1; uncommitted. Re-grepped the header, order panel, search, selection bar, slot, SectionPanel and test symbols before editing. Kept the temporary dev logger commit and all panel widths intact.
+- Added `shared/layout/headerSlot` with a provider, registered target and portal, with no feature imports. The desktop/tablet home shell owns the provider and target; the order feature owns search and filter state and renders those controls into the top header. Store pickup and international shipping leave that target empty.
+- The order panel opts into the compact `SectionPanel` header and holds "+ Order" plus the existing menu options. The desktop/iPad in-panel stack holds only the selection bar. On phone, the search/action row, pills and selection bar are inside the order-list scroll container. Other panels retain the default header styling. Added a jsdom Vitest case for absent, registered and replaced targets.
+- Automated gates: lint 0 errors (52 existing warnings); tests 161/161; build, popup contract, theme regression, external-form PWA and `git diff --check` passed. No check or lint rule changed. Chrome was not used. The desktop 1440, iPad 1024 and phone 390 visual/device checks and before/after visible-card counts are pending.
+- Existing behavior retained: the "Auto create plans" menu item is a no-op in the source before and after R2; selection mode works. Wiring an auto-plan operation needs its own behavior contract, so the `13` §3 wording that both options work is not verified for that item.
+
+### 2026-10-25 — Restyle R2 (order panel header) specified (Claude)
+
+- User: move the order search (with filter button and pills) to the top header, centred, on desktop and iPad; "+ Order" and the menu to the right of a compact order panel header; phone keeps its row but inside the scroll container; header centre empty outside route operations. Decision D11.
+- Design: a shared header slot (portal target) so the order feature renders into the home header without cross-feature imports or moving search state; a `compact` size for `SectionPanel` headers, opt-in. Spec `13_ORDER_PANEL_HEADER.md`; branch `ipad/r2-order-panel-header` (stacked on R1). Panel widths renumbered to R3.
+
+### 2026-10-25 — R1 reviewed and committed; info buttons removed on phone and iPad (Claude)
+
+- R1 review: matches `12`; `RouteGroupOrderCard` is now a wrapper around `OrderCard`; opt-in sizes keep `StateCard`'s 18 other users unchanged; preview summary tested. Gates green (tests 160/160). Committed `1acef93`.
+- D10: `InfoHover` (15 users, including `Field`'s `info` prop) is now a wrapper that returns nothing on the phone layout or a coarse pointer, and renders the unchanged view otherwise. The check sits in the wrapper so crossing a breakpoint never changes the view's hook order. No info trigger uses the text variant, so no visible text is lost. Device row B21.
+
+### 2026-10-25 — Restyle R1 implemented (Codex)
+
+- Branch `ipad/r1-order-cards`, stacked on Phase 2b; no commit. Re-grepped card symbols and call sites before editing. Left panel widths and the temporary dev logger commit intact.
+- Rebuilt `OrderCard` to the target layout for phone, iPad and desktop. Removed the source chip and street address; kept external reference number label logic, archive, missing-info banner, notes tray and drag cue. Route-stop cards now wrap `OrderCard`, retaining route-context order opening while removing stop number, ETA and warnings from the card. Item rows are larger, capped at two, and keep `Position` on the third line. Added opt-in `md` sizes to the badge and state pill and an opt-in 64px image thumbnail; defaults stay as before. Updated the drag overlay typography, radius and thumbnails.
+- Added `resolveOrderItemPreviewSummary` with six Vitest cases. Updated the theme codemod's line references for the two unchanged confirmation button tokens after the card shifted; no check or lint rule was relaxed.
+- Automated gates: lint 0 errors (52 existing warnings), tests 160/160, build, popup contract, theme regression and external-form PWA checks passed. Desktop 1440, iPad 1024 coarse-pointer and phone 390 visual/device checks remain pending without Chrome tooling. The user still needs to measure the narrowest comfortable card width for R2.
+
+### 2026-10-25 — Restyle R1 (order cards) specified (Claude)
+
+- User sent the target card (`assets/order-card-target.png`) and asked to start restyling before the iPad test. Mapped every order card: `OrderCard` (main, store pickup, international shipping, customer history, address-group children) and `RouteGroupOrderCard` (route stops), sharing `OrderCardItemPreviews`.
+- Answers: remove the address everywhere; keep `Position`; route-stop number, ETA and warnings leave the card (a vertical timeline will bring them back). Decision D9. With the extras gone, `RouteGroupOrderCard` becomes a wrapper around `OrderCard`.
+- Spec `12_ORDER_CARD_REDESIGN.md`; branch `ipad/r1-order-cards` in the `NextMark-ipad/phase-5b` worktree (stacked on 2b; the user's dev server runs there).
+
+### 2026-10-24 — Phase 2b reviewed; drag cue extended to desktop (Claude)
+
+- Phase 2b review: sensor on the public dnd-kit API, pure decision with 8 cases, direction-free, cue attribute owned by the sensor, mouse unchanged, null drop is a no-op. Gates green; committed.
+- User tested in Chrome emulation: "looks great". Decision D8: keep the cue on PC and wide screens.
+- Implemented: `shared/dnd/dragCue.ts` (one `data-drag-cue` attribute + `PRESS_CUE_DELAY_MS` 80), `shared/dnd/CueMouseSensor.ts` (MouseSensor with the cue, added by wrapping the public sensor callbacks; activation unchanged), the touch sensor now uses the same helper, CSS moved out of `(pointer: coarse)` and renamed (`data-drag-cue`, `.drag-preview-lift`, `drag-cue-lift`), the home preview lifts for every pointer (the up-left offset stays touch-only). Tests: `CueMouseSensor.vitest.test.ts` (no flash on quick clicks, press → active → cleared, 6px activation unchanged).
+- Desktop watch item (E rows): a click held longer than 80 ms shows a brief squeeze before the card opens; raise `PRESS_CUE_DELAY_MS` if it feels busy.
+
+### 2026-10-24 — Phase 2b touch drag intent (Codex)
+
+- Branch `ipad/phase-2b-touch-intent`; no commit. Re-grepped the drag sensor, draggable cue, overlay, logger and drop symbols before editing. Kept the temporary dev logger and wired `onIntentDecision` to its `intent` entries in dev.
+- Added `shared/dnd/domain/touchDragIntent.ts` and eight vitest cases for hold timing, tolerance, flick, press-pause-move in both vertical directions, rest-then-flick, non-cancelable movement, post-decision behavior and sparse samples. Direction is absent from the decision rule. The speed helper uses recent sampled movement, so a late flick is not diluted by the earlier rest.
+- Added `PressIntentTouchSensor` against dnd-kit 6.3.1's public sensor contract, without subclassing its sensors or reading private members. It decides on the first move outside tolerance, prevents that move only for an activation, aborts pending gestures on scroll, suppresses long-press native actions, and owns the press/active attribute. All four drag contexts use `useAppDragSensors`; MouseSensor remains at distance 6. Added the source and overlay cues with reduced-motion handling; kept the Phase 2 preview offset. Home `onDragEnd` returns without a change when `over` is null.
+- Values retained from `11`: hold 220 ms, tolerance 8 px, dwell 120 ms, speed 0.8 px/ms, recent window 50 ms, press cue 80 ms. These need iPad tuning after B16–B20.
+- Gates: lint ✅ (0 errors, 52 existing warnings); tests ✅ (151/151); build ✅; popup contract ✅; theme regression ✅; external-form PWA ✅; `git diff --check` including untracked files ✅. No check or lint rule changed. Chrome was not used. B16–B20 and E1–E2 remain pending; E3 automated gates ✅.
+
+### 2026-10-24 — Touch drag diagnosed with logs; Phase 2b specified (Claude)
+
+- User report: in Chrome iPad mini emulation (1024 wide) taps work but drag-and-drop does not. First test ran on the wrong checkout (`ipad/phase-0-foundations` served from `NextMark-app-v2/Front_end/admin-app`); retested on the stack tip — same result.
+- Added a temporary dev-only logger (`src/app/debug/`, committed as `TEMPORARY…` on `ipad/phase-2b-touch-intent`). Evidence: the finger left the 8 px tolerance at 159–237 ms, before the 250 ms hold; dnd-kit cancelled, the browser took the pan (`pointercancel`, later moves non-cancelable). Holding still ≥ 250 ms works (`dnd:start` at 253 ms, moves `defaultPrevented`). A long press also fired `selectstart`/`contextmenu`.
+- Root cause: not a wiring bug — the hold works, but nothing tells the user when the card is ready, so they move too early.
+- Decision (user): option 1 (hold with a clear pick-up cue) + option 4 (press-pause-move: slow deliberate movement after a short rest starts the drag; a flick scrolls). Direction-based intent rejected: route stops are reordered vertically. Spec `11_TOUCH_DRAG_INTENT.md`, plan section Phase 2b, rows B16–B20.
+- Worktree note: `NextMark-ipad/phase-5b` is now on `ipad/phase-2b-touch-intent` (the user's dev server runs there).
+
+### 2026-10-24 — Phases 4 and 5b reviewed; full stack committed (Claude)
+
+- Final stack (linear, nothing on `main` yet): `phase-0-foundations` → `phase-0c-baseline` → `phase-1-geometry` → `phase-2-touch` → `phase-3-typography` → `phase-4-popups` → `phase-5-pwa` (+ deploy workflow cache headers) → `phase-5b-auto-update`. Test and merge from the 5b tip.
+- Gates on the tip: lint 0 errors / 52 warnings, tests 143/143, build, popup contract, theme regression, PWA checks, `git diff --check` ✅. `dist/version.json` id equals the id inlined in the bundle.
+- Phase 4 review: desktop keeps the original `FeaturePopupShell`/`ClassicLayout` trees and classes; tablet-only branches add the gutter, scrollable overlay and full-screen rule; `vh`→`dvh` is identical on desktop browsers. No changes needed.
+- Phase 5b review: never reloads on a failed/malformed check or a failed `index.html` refetch; blockers re-checked after the refetch; loop guard per target build; service worker only gets `update()`. No changes needed.
+- Deploy workflow (§4 of `10`) approved by the user and committed on `ipad/phase-5-pwa`: assets first, immutable, no `--delete`; entry files `no-cache`; manifests with the manifest content type. Separate buckets for driver/external apps, so nothing else deletes kept assets. After the first deploy from `main`, check:
+  - `curl -sI https://<admin-host>/ | grep -i cache-control` → `no-cache`
+  - `curl -sI https://<admin-host>/version.json | grep -i cache-control` → `no-cache`
+  - `curl -sI https://<admin-host>/assets/<any file>.js | grep -i cache-control` → `immutable`
+  - `curl -sI https://<admin-host>/external-form/x | grep -i cache-control` (CloudFront error-page fallback; note the result)
+- Later: S3 lifecycle rule to expire old `assets/` objects after ~30 days.
+- Install icons replaced (user: reuse the driver-app icon): source is the 1024px PNG inside `driver-app/public/pwa-icon.svg`, cropped to the dark tile and made full-bleed (corners filled from the adjacent gradient) so iOS applies its own rounding instead of showing a white square; `maskable-512.png` has the artwork at 80% so the logo stays inside the launcher safe zone.
+- Open for the user: device rows for every phase; removal of the finished worktrees.
+
+### 2026-10-24 — Phase 5b silent auto-update, app side (Claude)
+
+- Scope: `10_AUTO_UPDATE.md` §3, §3.1, §3.2 and the optional §5 build stamp. Branch `ipad/phase-5b-auto-update`; no commit. **`.github/workflows/deploy-admin.yml` (§4) untouched** — it needs the user's confirmation. Symbols re-grepped before every edit. Chrome not used.
+- New `src/app/version/`: `domain/appVersion.ts` (`parseVersionPayload`, `shouldApplyUpdate`, throttle, editable-element check), `domain/buildStamp.ts`, `reloadBlockers.ts` (`registerReloadBlocker` / subscribe), `useReloadBlocker.ts`, `appVersionChecker.ts` (throttle, deferral, loop guard; ports injected so it runs without a DOM), `appVersion.runtime.ts` (`startAppVersionMonitor`: browser listeners, fetches, storage), `buildInfo.ts`, `index.ts`. Started from `main.tsx`; it returns at once unless `import.meta.env.PROD`, so dev does nothing. `main.tsx` now reads the build id from `buildInfo.ts` instead of declaring the globals itself.
+- `vite.config.ts`: build-only plugin emits `dist/version.json` `{ buildId, builtAt }` from the same constants as `define`. Verified: `dist/version.json` id `1792864634402` equals the id inlined in `dist/assets/index-*.js` (the value `window.__NEXTMARK_BUILD_INFO__.buildId` reports).
+- Behaviour: checks on visible, `pageshow` (persisted), `online`, `focus`, every 5 min while visible, and **once at start** (a cold launch can itself come from a stale cached `index.html`). 30 s throttle; a throttled trigger still applies an update an earlier check found. Fetch `no-store`/`credentials: 'omit'`; any failure, non-OK, empty, HTML or malformed body → no reload. A failed check also does not apply an earlier finding. Before reloading: refetch `/` with `cache: 'reload'` (must be OK or **no reload**, so an offline installed app never lands on an error page), current deep path best-effort; blockers re-checked after the refetch. Loop guard in `sessionStorage` `beyo.admin.version.reload-target` (memory fallback when storage throws); at boot logs `[app-version] reload did not take effect` or clears the marker. `vite:preloadError` → `preventDefault()` + forced check through the same path. All three router lazy routes are wrapped in `__vitePreload` in the build, so their failures reach that event — no extra router catch added. The notification worker only gets `getRegistration()` + `update()` (`refreshAdminNotificationsServiceWorker` in `adminWebPush.runtime.ts`, lookup only); no fetch handler, no cache.
+- Blockers wired: order form (`OrderForm.provider.tsx`, `hasUnsavedChanges`); every feature popup that reports unsaved changes via the shared `useFeaturePopupCloseController` (covers ItemForm, plan and route-group forms, order filter); `EditOrderNotePopup`, `FailureNotePopup` and the send-client-form-link controller (they pass `hasUnsavedChanges: false` to the close prompt, so they block on their own text/submit state; close-prompt behaviour unchanged); external form while preparing/collecting/submitted (idle signage reloads); home drag (`HomeRouteOperationsManagersProvider`, `activeDrag`); settings sortables in `ItemStatesPage`, `ClientFormRulesPage`, `ClientFormMediaPlacementGroup`. Generic: focused editable element; file-input click or print within 10 s.
+- Judgment calls: (1) when the last registered blocker clears, the retry waits 5 s (`BLOCKER_RELEASE_SETTLE_MS`) so a save sent as the form closes can finish — for C10 this means a reload ≈5 s after saving/closing if an update was already found, otherwise on the next trigger. (2) Clearing a focused field does not trigger a retry by itself; the next trigger applies it. (3) The share sheet (`navigator.share`, Phase 6) is not detected as a system dialog yet.
+- Build stamp: `SettingsBuildStamp` ("Build 634402 · 2026-10-24 17:57 UTC") under Log out in the desktop sidebar and the phone settings index. Adds one small line to desktop Settings (E-row watch item).
+- Tests: `src/app/version/domain/appVersion.vitest.test.ts` (truth table incl. loop guard, 13 malformed payloads incl. captive-portal HTML, throttle window, editable check, stamp) and `appVersionChecker.vitest.test.ts` (two triggers in 30 s → one fetch, in-flight sharing, forced check, failed check/refetch never reloads, deferral + retry, blocker appearing during refetch, loop guard, registry counting). Mutations of the loop guard, the post-refetch blocker re-check and the failed-check rule each fail the suite.
+- Gates: `npm run lint` ✅ (0 errors, 52 existing warnings); `npm test` ✅ (143/143, was 97); `npm run build` ✅ with `dist/version.json`; `check:popup-contract` ✅; `theme:regression` ✅; `check:external-form-pwa` ✅; `git diff --check` ✅ with new files included via intent-to-add. No check or lint rule changed.
+- Device matrix: C9–C12 ⏳ need a real deploy. Until §4 lands, uploads still carry no `Cache-Control` and `--delete` removes old chunks, so C12 can only pass via "reloads once", and the `cache: 'reload'` refetch is what keeps C9 honest.
+- Left for next: user decision on §4 `deploy-admin.yml`, then post-deploy `curl -sI` header checks from §4; commit when the user asks.
+
+### 2026-10-24 — Phases 3 and 5 reviewed and stacked; Phase 4 and 5b opened (Claude)
+
+- Stack now: 0 → 0c → 1 → 2 → 3 (`ipad/phase-3-typography`) → 5 (`ipad/phase-5-pwa`, rebased on 3). Gates on the Phase 5 tip: lint 0 errors, tests 97/97, build, popup contract, theme regression, PWA checks, `git diff --check` ✅.
+- Phase 3 review fixes and Phase 5 logo issue: see their entries below.
+- User requirement (2026-10-24): installed apps must update automatically on every deploy, with no prompt, reliably on Apple devices. Hosting verified as S3 `delivery-frontend-app` + CloudFront `E16F4UEPFT2P6Y` via `Front_end/.github/workflows/deploy-admin.yml` (not nginx; the EC2 nginx only serves the API). Spec written: `10_AUTO_UPDATE.md`; plan section Phase 5b; device rows C9–C12.
+- Opened `ipad/phase-4-popups` (from Phase 3 tip) and `ipad/phase-5b-auto-update` (from Phase 5 tip), worktrees `NextMark-ipad/phase-4` and `phase-5b`. They run in parallel; merge order 4 → 5 (rebased on 4) → 5b.
+
+### 2026-10-24 — Phase 5 admin PWA (Codex)
+
+- Branch `ipad/phase-5-pwa`; no commit. Re-grepped PWA, viewport and back-layer symbols before editing. Phase 3 typography and `index.css` remain untouched.
+- Added `admin.webmanifest` and favicon-derived admin icons, a root admin contract and route-aware head selection. The form manifest and `/external-form` containment remain scoped. Kept `ExternalFormPwaProvider` as named. The admin head uses `default` status bar style and the dark page tone `#182224`.
+- Extended `check:external-form-pwa` to verify the admin contract, icons and root scope while retaining the notification-only service-worker guard. Added standalone tablet history handling for popup, section and sheet stacks by reusing the phone shell's stack-count/back flow; no second history owner or service worker was added. This uses the existing stack registry rather than individual `useBackLayerRegistration` calls because the managers already expose all popup and section entries to that flow.
+- Gates: `npm run lint` ✅ (0 errors, 52 existing warnings); `npm test` ✅ (97/97); `npm run build` ✅; `check:popup-contract` ✅; `theme:regression` ✅; `check:external-form-pwa` ✅; `git diff --check` ✅ with new files included via intent-to-add. No check or lint rule changed.
+- Device matrix: C1–C6 and D2–D3 ⏳ pending on the iPad. C3 requires logging in once inside the installed app because iPadOS partitions its storage from Safari. C6 requires the installed app's push permission tap and a delivered push. Chrome was not used.
+- Claude review (2026-10-24): manifest, head tags, guard-script extension and the standalone-tablet back flow match `04` §3–5; the service worker is still notification-only. **Open asset issue:** the admin icons are a small low-resolution logo on a white square inside a dark frame, and `maskable-512.png` is a byte copy of `icon-512.png` (no safe-zone padding). Needs a proper source logo (SVG or ≥1024px PNG) from the user before the client installs it. Silent auto-update follows as Phase 5b (`10_AUTO_UPDATE.md`).
+### 2026-10-24 — Phase 4 popups, forms and settings at tablet height (Claude)
+
+- Branch: `ipad/phase-4-popups` (from the Phase 3 tip `9952997`); no commit. Re-grepped every symbol before editing. Geometry keys off `isTablet`, touch off `isCoarsePointer`, insets off `isStandalone`; no new `text-[Npx]` literals.
+- **Inset rule used throughout:** whatever touches the screen edge takes the inset. Centred popups get it on their overlay container through a new `.safe-p-4` helper (`index.css`, next to `.safe-*`: each side pads by `max(1rem, inset)`). `.safe-bottom` is unlayered CSS and *replaces* Tailwind bottom padding, so surfaces that already have bottom padding use `pb-[calc(N+env(safe-area-inset-bottom,0px))]` (the existing `FeaturePopupFooter` pattern). Home surfaces add the inset only when `isStandalone && !isMobile`, because the phone tab bar already owns it.
+- Order form (`OrderFormShell.tsx`): `w-[min(950px,calc(100vw-2rem))]`, `h-[min(92dvh,900px)]`, plus `max-h-full` on tablet; the overlay uses `safe-p-4` when standalone. `OrderFormDesktop.layout.tsx`: the 560 column is `shrink` instead of `shrink-0`. This is the flex equivalent of `minmax(0,560px)`, and it has no effect while the shell is 950 wide. The same dvh, standalone and tablet `max-h-full` treatment goes on `CostumerFormShell.tsx` and `RouteGroupEditFormShell.tsx`. They are outside the plan's file list, but row A7 names them.
+- MainPopup (`ClassicLayout.tsx`, Settings popups): on tablet the container gets `p-4` (`safe-p-4` when standalone), so `h-full max-h-[800px]` resolves to `min(800px, 100dvh-2rem)`. `autoHeight` uses `max-h-full`, and the min width is `min(500px,100%)`. Desktop classes are unchanged. `PopupFooter.tsx` adds the bottom inset only in the phone full-screen branch, the one place the footer touches the edge; line 31 stays put for the `theme-map.json` anchor. `PopupBody.tsx` already destructures `const { isMobile } = useMobile()`, so it needed no fix.
+- `FeaturePopupShell.tsx`: the size map uses `dvh`. On tablet, `lg`/`full` go full screen, and centred popups sit in a scroll-safe overlay: `fixed inset-0 overflow-y-auto overscroll-contain` › `relative flex min-h-full items-center justify-center p-4` › backdrop + panel. A content-sized (`mdNoHeight`) popup taller than the screen scrolls with its footer reachable instead of being clipped at both ends, and it stays centred when it fits. Desktop keeps the original tree and classes.
+- **Per-popup tablet decisions (11 users, all `variant="center"`; none is `lg`/`full`):**
+
+| Popup | Size | Tablet | Why |
+|---|---|---|---|
+| `EditOrderNotePopup` | sm | centred | `min(86dvh,760px)` = 640px at 744 tall; short note form |
+| `SendClientFormLinkPopup` | sm | centred | same height; short form |
+| `ItemForm` | md | centred | `min(88dvh,820px)` = 655px at 744 tall; body scrolls inside |
+| `FailureNotePopup` | mdNoHeight | centred | one note field |
+| `OrderFilterPopup` | mdNoHeight | centred | its body caps itself at `min(70vh,640px)` |
+| `SwitchActingUserPopup` | mdNoHeight | centred | short user list |
+| `PlanObjectiveMismatchPopup` | mdNoHeight | centred | decision prompt |
+| `OrderAssignmentContactWarningPopup` | mdNoHeight | centred | choice prompt; the overlay scroll covers its longer views |
+| `PlanFormPopup` | mdNoHeight | centred | content-sized form, 600px wide; full screen would stretch fields to ~1150px; the overlay scroll covers short screens |
+| `CreateRouteGroupFormPopup` | mdNoHeight | centred | same reasoning as the plan form |
+| `ZoneForm` | mdNoHeight | centred | small form; zone drawing stays desktop-only (Q4) |
+| *(rule)* any `lg`/`full` | lg/full | **full screen** | no current user; the Phase 6 PDF viewer (`lg`) will get it |
+
+- Settings (`SettingsDesktopView.tsx`): on tablet the sidebar is `w-60` and its nav list scrolls (`min-h-0 overflow-y-auto`), so Log out stays on screen at 744 tall. Back, nav rows, sub-rows and Log out are `min-h-11` on coarse pointers, and the Log out block is `.safe-bottom` when standalone.
+- Bottom insets when standalone (tablet/desktop branch): `RouteGroupStatsOverlayShell.tsx` (both states; the map-inset observer measures the extra padding), `RouteGroupReadyFooter.tsx` (`pb-25` → `calc(6.25rem+inset)`), `OrderLinkedDeviceLiveWidget.tsx` (`bottom-4` → `calc(1rem+inset)`) and the order list "Show more" pager in `orderMain.page.tsx`.
+- Plan deviation: the order-form footer did not get `.safe-bottom`. On tablet the modal never reaches the bottom edge (it leaves at least 30px at 744 tall), so the inset goes on its overlay instead. The unconditional `vh` → `dvh` changes render identically on desktop browsers.
+- Gates: `npm run lint` ✅ (0 errors, 52 existing warnings); `npm test` ✅ (97/97); `npm run build` ✅ (Tailwind emits every new arbitrary class, checked in `dist`); `check:popup-contract` ✅; `theme:regression` ✅ (typography codemod `--check` 0 replacements); `check:external-form-pwa` ✅; `git diff --check` ✅ (no untracked files). No check or lint rule was changed.
+- Device matrix: A6–A8 ⏳, D1 ⏳, C2 ⏳ (needs the installed app, so it can only run after Phase 5 is merged), E1–E2 ⏳ desktop visual comparison. Chrome was not used, as directed. E3 ✅.
+- Left for the next session / device watch items: D1 depends on Safari scrolling the focused field into view; no keyboard-specific code was added. A8: Phase 3 already capped the notifications list height; its `w-[360px]` popover position was not in the Phase 4 list. `RouteGroupStatsOverlayShell` `max-h-[40vh]` was left as is. On the iPad, check that a tall `PlanFormPopup` scrolls with a finger dragged in the side margins.
+
+### 2026-10-24 — Phase 3 typography and density tokens (Codex)
+
+- Branch: `ipad/phase-3-typography`; no commit. Re-grepped typography, icon-size, height and badge tokens before editing. Source changes stay in the Phase 3 surfaces and codemod-eligible files.
+- Added `text-nano`, `text-micro`, `text-2xs` and exact-value aliases for existing arbitrary px/rem sizes. Desktop values remain unchanged; coarse pointers raise sub-12px text to 12px and `text-xs` to 13px. The codemod replaced 295 uses across 134 files; its `--check` runs in `theme:regression`. Removed all nine no-op `text-md` uses. Interactive SVGs with `h-2`/`h-2.5`/`h-3` have coarse-pointer minimums of 14/14/16px.
+- Added coarse-pointer viewport-height caps to the four order-detail panels, delivery-window calendar and notifications list, preserving their desktop heights. Moved the three Phase 0 badge colors to light/dark theme variables.
+- Judgment: the plan's nearest-token rem conversion would slightly change desktop sizes, so fractional sizes keep exact desktop values through aliases. The two no-op `text-md` spans and raw button use `text-base/normal` to preserve inherited 16px with normal line height; BasicButton cases use its existing `text-sm` size.
+- Gates: `npm run lint` ✅ (0 errors, 52 existing warnings); `npm test` ✅ (97/97); `npm run build` ✅; `npm run check:popup-contract` ✅; `npm run theme:regression` ✅; `npm run check:external-form-pwa` ✅; codemod `--check` ✅; `git diff --check` ✅ including the new script. No check or lint rule was relaxed.
+- Device matrix: A1–A7 readability ⏳; E1–E2 desktop visual comparison ⏳. Chrome was not used, as directed; iPad device review remains pending. E3 automated gates ✅.
+- Claude review (2026-10-24): codemod mapping verified value-for-value (295 replacements, 195 colour classes intact, no `text-[Npx|rem]` left outside the excluded folders). Two desktop regressions fixed: the light theme's missing-info badge had moved to `--warning-soft`/`--ink` (amber/near-black instead of the original yellow/brown) — restored the original values in the light block; `--text-nano/micro/2xs--line-height: normal` made converted text stop inheriting its line height — removed, so the utilities emit font-size only, exactly like the arbitrary classes they replace. Desktop watch item for E1: the nine `text-md` no-ops now resolve to `text-sm`/`text-base`.
+
+### 2026-10-24 — Stack committed, second wave opened (Claude)
+
+- Committed and stacked in merge order: `ipad/phase-0-foundations` → `ipad/phase-0c-baseline` (0c) → `ipad/phase-1-geometry` (1) → `ipad/phase-2-touch` (2). Nothing merged to `main`; that waits for the iPad rows.
+- Integration found two defects the separate branches could not show, fixed in the commit that caused them: 0c's typed `MapInstanceManager` rejected Phase 1's `gestureHandling` because the repo's own Maps typings (`packages/shared-google-maps/googleMaps.globals.ts`) lacked the field — added to the Phase 1 commit; a 0c file had trailing whitespace (`git diff --check` ignores untracked files) — fixed in the 0c commit.
+- Gates on the stack tip: lint 0 errors / 52 warnings ✅, tests 97/97 ✅, build ✅, popup contract ✅, theme regression ✅, external-form PWA ✅, `git diff --check` ✅. Phase 1 builds on its own ✅.
+- **Gate rule from now on:** the baseline is green, so every phase must leave the full gates green. A failure in a file outside the phase list is reported, not fixed.
+- Second wave: **Phase 3** (`ipad/phase-3-typography`) and **Phase 5** (`ipad/phase-5-pwa`) run in parallel from the stack tip; **Phase 4** (`ipad/phase-4-popups`) starts from Phase 3's tip because the codemod rewrites the same popup files. Merge order stays 3 → 4 → 5 (5 rebases last).
+- Codex's Chrome tool fails on setup (`node:process` in `node_repl`); sessions skip it and leave Chrome rows pending for Claude or the user.
+- Device check (user, next day): Phase 0 rows first, then A/B rows for 1 and 2 on the stack tip, then whatever of 3–5 is committed.
+
+### 2026-10-24 — Phase 2 touch (Codex, reviewed by Claude)
+
+- Branch: `ipad/phase-2-touch`; no commit. Re-grepped the Phase 2 symbols before editing and kept source edits to the named Phase 2 files. `PlanCard` and `ItemTypeCountsPill` already use `useViewport()` from Phase 0.
+- Implemented tap paths for the route-group warning, missing-info notifier, delivery-window days, and driver markers; coarse-pointer button and listed small-control hit areas; settings drag-source callout suppression and Edit event isolation; calmer coarse-pointer auto-scroll, lifted drag previews, longer calendar drag dwell/grace, and scroll-idle snapping fallback. Scoped map hover styles to hover-capable input. This is partial and has not passed device review.
+- Gates: `npm run build` ✅; `npm run check:popup-contract` ✅; `npm run theme:regression` ✅; `npm run check:external-form-pwa` ✅; `git diff --check` ✅. `npm run lint` ❌: 207 errors and 54 warnings, the same recorded Phase 0c repository baseline. `npm test -- --run` ❌: 89/97, the same eight legacy failures recorded for Phase 0c. No check or lint rule was changed.
+- Chrome device-mode geometry at 1024×768, 1180×820 and 1366×1024: ⏳ unverified. The browser connection failed at setup (`Importing module "node:process" is not allowed in node_repl`), before navigation. No iPad available; finger checks remain pending. Desktop E1–E2 visual comparison pending; E3 fails on lint.
+- Left for continuation after Phase 0c: finish the Phase 2 file-list audit, run the required visual and finger rows, and verify the touch-specific behavior on an iPad. `SlideCarouselDots` is decorative and has no click handler to enlarge. The package `MessageCard` close control received a local pseudo-element hit-area because package CSS cannot depend on the admin app stylesheet.
+- Claude review (2026-10-24): code complete against the Phase 2 list; the stop was the inherited baseline, cleared by 0c. Changed-file lint adds no new errors. Driver-marker tap ids checked against `realtime/driverLive/driverLive.map.ts`. Acceptance greps pass (`matchMedia` in features: only reduced-motion; the one `group-hover` reveal is the hover-gated Phase 0 fix). Merged a duplicate `@/app/viewport` import. Device watch item: every `BasicButton` is ≥ 40px tall on coarse pointers, so check crowded headers on the iPad.
+
+| Device matrix row | Result |
+|---|---|
+| B1–B9, B14, B15 finger interactions | ⏳ iPad unavailable; no touch pass claimed |
+| A1–A9 at 1024×768, 1180×820, 1366×1024 | ⏳ Chrome connection failed before navigation |
+| E1–E2 desktop visual comparison | ⏳ Chrome connection failed before navigation |
+| E3 automated gates | ❌ lint baseline; build, popup, theme and PWA ✅ |
+### 2026-10-24 — Phase 1 geometry (Codex, reviewed by Claude)
+
+- Branch: `ipad/phase-1-geometry`; no commit. Re-grepped each edited symbol and kept source edits within the Phase 1 files.
+- Implemented tablet track calculation, 420px base rail / 560px plan rail, initial map fold when no saved preference, reciprocal map/plan folding, 16px tablet map inset, coarse-pointer fold-tab width, calendar day minimum width with horizontal scroll, bounded map overlay widths, and greedy map gesture handling. Desktop track formulas and widths stay unchanged. Added domain cases for 1024, 1180, 1366, 1440 and 1920.
+- Gates: build ✅; popup contract ✅; theme regression ✅; external-form PWA ✅; full lint ❌ 207 errors / 54 warnings (unchanged Phase 0c baseline); npm test ❌ 89/97 (same eight Phase 0c legacy failures). Changed-file ESLint is clear apart from the 11 pre-existing `no-explicit-any` errors in `MapInstanceManager.ts`, also assigned to Phase 0c. No check or lint rule was relaxed.
+- Chrome device-mode geometry at 1024×768, 1180×820, 1366×1024: ⏳ pending. The browser connection failed during initialization (`Importing module "node:process" is not allowed in node_repl`), before any page opened. A1–A5, B10, and desktop E1 remain unverified; touch rows await the iPad.
+- Stopped because the required lint gate cannot be made green within the Phase 1 file list. Phase 0c owns the repository baseline. Follow-up: merge/rebase the completed Phase 0c cleanup, rerun all gates, complete Chrome geometry and desktop comparisons, then review the Phase 1 changes before marking this phase implemented.
+- Claude review (2026-10-24): code complete against the Phase 1 list; the stop was the inherited baseline, now cleared by 0c. Reverted the four map popup width changes (`min(Npx, calc(100% - 2rem))` can shrink content-sized popups on desktop, and the tablet map is never narrower than 464px when shown, so the popups already fit). Moved the saved-preference check into `homeDesktopLayout.storage.ts`. Replaced the domain test's viewport loop (width was not an input) with rail 420/560 cases. Chosen tablet widths: order rail 420, plan rail 560, map inset 16.
+### 2026-10-24 — Phase 0c lint and legacy-test baseline cleanup (Codex)
+
+- Branch: `ipad/phase-0c-baseline`; no commit. Worked within the Phase 0c lint/test baseline scope.
+- Lint: fixed type, hook, unused-code, and React-refresh violations without changing lint rules or adding suppressions. Split non-component context and helper exports into sibling files, preserving package and feature boundaries. `npm run lint`: 0 errors / 52 warnings (down from 207 errors / 54 warnings).
+- Tests: `npm test` passes 97/97. Updated stale legacy fixtures and three map tests for the current map manager and a jsdom environment; added `jsdom` as a dev dependency. Fixed a real order-form submit bug: missing item IDs are rejected before the submit continues.
+- Gates: `npm run build`, `npm run check:popup-contract`, `npm run theme:regression`, `npm run check:external-form-pwa`, and `git diff --check` pass. The theme map's PlanForm line anchor moved from 118 to 114 after unused-import cleanup; the exact color assertion remains unchanged.
+- Chrome geometry at 1024×768, 1180×820, and 1366×1024 with `?viewport=tablet&pointer=coarse`: pending. Chrome browser setup failed before navigation with `Importing module "node:process" is not allowed in node_repl`. No iPad is available today; touch rows remain pending.
+
+### 2026-10-24 — Phase 0 committed, next phases opened (Claude)
+
+- No iPad available today; the user moves on and verifies Phase 0 on the device tomorrow. Phase 0 code committed on `ipad/phase-0-foundations` as **device-unverified**; if the device rows fail, fix on that branch and rebase the downstream branches.
+- File-overlap check: 0c, 1 and 2 can run in parallel; Phase 3 waits for them (plan updated, "Parallel run" in `06`).
+- Branches created from the Phase 0 tip: `ipad/phase-0c-baseline`, `ipad/phase-1-geometry`, `ipad/phase-2-touch`.
+- Without an iPad, geometry is checked in Chrome device mode with `?viewport=tablet&pointer=coarse` at 1024×768, 1180×820, 1366×1024; touch rows stay pending until the device is back.
+
+### 2026-10-24 — Review of Phase 0 (Claude)
+
+- Verified independently: `npm run build` ✅, `check:popup-contract` ✅, `theme:regression` ✅, `check:external-form-pwa` ✅, `git diff --check` ✅, ESLint on every changed file ✅. `eslint .` = 207 errors / 54 warnings in 110 files, none of them touched by Phase 0 → pre-existing debt, scheduled as **Phase 0c** in `06`. `npm test` = 89/97, the 8 failures are legacy tests in untouched code paths (5 assertion failures that may be real bugs, 3 map tests with environment problems) → also Phase 0c.
+- Diff review against the Phase 0 plan: viewport size class + `isStandalone` + dev override ✅ (`isStandalone` read once at mount, no `app/pwa` → `app/viewport` cycle); pointer-scoped CSS baseline ✅; `h-screen` → `h-dvh` in the three files ✅; BottomSheet drag moved to the 44px handle with `useDragControls`, `dragListener={false}`, `touch-none` ✅; notification dismiss visible when `!hasHover` ✅; `PlanCard` / `ItemTypeCountsPill` now read the viewport owner ✅; `--vh` writer removed ✅; vitest + glob runner ✅; theme gate fixed at the cause (stale line overrides, stale allowlist counts tightened, `text-white` / `bg-yellow-300` replaced by `@theme inline` tokens).
+- Nit, not blocking: the new `--color-notification-badge-ink`, `--color-missing-info-badge(-ink)` tokens are fixed hex values in `@theme inline`, not tied to the light/dark variables (same as the palette classes they replaced, so no visual change). Consider mapping them to theme variables in Phase 3.
+- Verdict: ready for the device rows B6, B9, B11, B12, B13 and desktop E1/E2. Commit after the device pass.
+
+### 2026-10-24 — Session 1: Phase 0 foundations (Codex)
+
+- Branch: `ipad/phase-0-foundations`; no commit. The user reconfirmed the 1440px desktop boundary.
+- Scope: fixed the theme regression baseline; added viewport size class, standalone fact, coarse-pointer CSS, dynamic viewport height, handle-only BottomSheet drag, visible notification dismissal without hover, and a development-only tablet/coarse override. Replaced the two remaining local touch media queries with the viewport owner. Removed the unused `--vh` writer.
+- Vitest: installed as a dev dependency; one glob runner invokes all 96 legacy test files, including the one with top-level assertions. Added a viewport boundary test. Vitest's include list names the runner and `*.vitest.test.ts` because including all legacy `*.test.ts` as independent Vitest files would report “No test suite found” for each file.
+- Files: `package.json`, `package-lock.json`, `vitest.config.ts`, `src/tests/legacy-runner.test.ts`, `src/app/viewport/*`, `src/app/pwa/index.ts`, `src/index.css`, `src/main.tsx`, `src/app/router/AppRouterSkeleton.tsx`, `src/features/home-app/pages/HomeAppPage.tsx`, `src/features/settings/pages/SettingsPage.tsx`, `src/shared/overlays/bottomSheet/BottomSheet.tsx`, `src/realtime/notifications/AdminNotificationItem.tsx`, the two local touch-detection components, theme map/allowlist, and the three theme-gate component files. This log, README and plan status were updated.
+- Gates: `npm run build` ✅; `npm run lint` ❌ (208 errors, 54 warnings across the repository; scoped ESLint on all touched TS/TSX files ✅); `npm run check:popup-contract` ✅; `npm run theme:regression` ✅ (initially failed at stale `OrderCard` override and three stale color counts, then exposed additional stale override lines, four notification `text-white` values, two colors and two radii); `npm run check:external-form-pwa` ✅. `git diff --check` ✅. Acceptance grep for `innerWidth|matchMedia` is limited to the allowed locations.
+- New test runner: 89/97 tests pass; eight legacy tests fail in customer form submit, order map markers, order delivery windows, order form submit, plan date filter, and three map tests. Two map tests require `document` despite the planned Node environment; one map test reads a missing internal `layers` property. These failures are exposed by running legacy tests for the first time; the Phase 0 code does not change those paths. No assertions were weakened.
+- Decision: left the unrelated repository lint errors and legacy test failures for a separately scoped cleanup. They keep the full gate set from being green. Device and visual verification remain pending; iPad model/iPadOS/trackpad status have not been recorded yet.
+
+| Device matrix row | Result |
+|---|---|
+| B6 three-dot menu tap and items | ⏳ user iPad check pending |
+| B9 notification dismissal | ⏳ user iPad check pending |
+| B11 button/tab double-tap zoom and tap flash | ⏳ user iPad check pending |
+| B12 popup scroll containment and document rubber-band | ⏳ user iPad check pending |
+| B13 input focus zoom | ⏳ user iPad check pending |
+| E1 desktop home comparison at 1440/1920 | ⏳ desktop visual check pending |
+| E2 desktop popups, sections, settings | ⏳ desktop visual check pending |
+| E3 automated gates | ❌ lint baseline; other four gates ✅ |
 
 ### 2026-10-24 — Session 0: analysis and context vault (Claude)
 

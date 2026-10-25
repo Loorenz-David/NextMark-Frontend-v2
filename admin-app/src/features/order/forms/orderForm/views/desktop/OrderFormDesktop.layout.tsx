@@ -24,7 +24,7 @@ export const OrderFormDesktopLayout = ({
   return (
     <div className="flex h-full min-h-0 w-full min-w-0 gap-6 max-w-[950px] overflow-hidden">
       <motion.div
-        className="relative flex h-full w-[560px] min-w-0 shrink-0 flex-col overflow-hidden rounded-xl border border-[var(--color-border)]/60 bg-[var(--color-page)]"
+        className="relative flex h-full w-[560px] min-w-0 shrink flex-col overflow-hidden rounded-xl border border-[var(--color-border)]/60 bg-[var(--color-page)]"
         layout
         animate={{
           opacity: layoutMode === "customer-expanded" ? 0 : 1,

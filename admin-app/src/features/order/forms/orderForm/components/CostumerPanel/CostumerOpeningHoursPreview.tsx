@@ -38,11 +38,11 @@ const PreviewDayRow = ({
 
     return (
         <div className="grid grid-cols-[auto_1fr] gap-x-2">
-            <span className=" font-semibold text-[10px] text-[var(--color-muted)]">
+            <span className=" font-semibold text-micro text-[var(--color-muted)]">
                 {date}
             </span>
             <div className="flex justify-end">
-                <span className={`text-[10px] ${timeColor} text-nowrap`}>
+                <span className={`text-micro ${timeColor} text-nowrap`}>
                     {time}
                 </span>
             </div>

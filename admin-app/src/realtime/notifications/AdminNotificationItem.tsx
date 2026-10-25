@@ -11,6 +11,7 @@ import {
   ThunderIcon,
 } from "@/assets/icons";
 import { formatIsoDateRelative } from "@/shared/utils/formatIsoDate";
+import { useViewport } from "@/app/viewport";
 
 import type {
   AdminNotificationActorViewModel,
@@ -39,11 +40,11 @@ const BADGE_ICON: Record<
 
 const BADGE_TONE_CLASS: Record<AdminNotificationBadge, string> = {
   created: "bg-success text-success-on-solid",
-  updated: "bg-info text-white",
-  status: "bg-warning text-white",
+  updated: "bg-info text-notification-badge-ink",
+  status: "bg-warning text-notification-badge-ink",
   deleted: "bg-danger text-danger-on-solid",
-  message: "bg-info text-white",
-  route: "bg-info text-white",
+  message: "bg-info text-notification-badge-ink",
+  route: "bg-info text-notification-badge-ink",
   generic: "bg-border-accent text-text",
 };
 
@@ -86,6 +87,7 @@ export const AdminNotificationItem = ({
   onOpen,
   onDismiss,
 }: AdminNotificationItemProps) => {
+  const { hasHover } = useViewport();
   const timeLabel = formatIsoDateRelative(item.occurredAt) ?? item.occurredAt;
 
   return (
@@ -127,7 +129,7 @@ export const AdminNotificationItem = ({
             </div>
           ) : null}
 
-          <p className="mt-1 flex min-w-0 items-center gap-1.5 text-[0.68rem]">
+          <p className="mt-1 flex min-w-0 items-center gap-1.5 text-rem-0_68">
             <span className="shrink-0 font-medium text-info">{timeLabel}</span>
             {!item.headline && item.actor.kind !== "system" ? (
               <>
@@ -153,7 +155,7 @@ export const AdminNotificationItem = ({
 
       <button
         aria-label="Mark notification as read"
-        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full text-muted opacity-0 transition hover:bg-surface-hover hover:text-text focus-visible:opacity-100 group-hover:opacity-100"
+        className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full text-muted transition hover:bg-surface-hover hover:text-text focus-visible:opacity-100 ${hasHover ? "opacity-0 group-hover:opacity-100" : "opacity-100"}`}
         onClick={() => onDismiss(item.id)}
         type="button"
       >

@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import type { address } from '@/types/address'
 
 import type { EnsureGooglePlacesServicesResult } from '@shared-google-maps'
 import { getPlaceDetailsQuery } from '@shared-google-maps'

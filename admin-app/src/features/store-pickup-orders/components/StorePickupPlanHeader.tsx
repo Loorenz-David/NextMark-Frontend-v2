@@ -5,9 +5,9 @@ import {
 } from '@/features/plan'
 import { useRoutePlanStateByServerId } from '@/features/plan/store/useRoutePlanState.selector'
 import { useMobile } from '@/app/viewport'
-import { BasicButton } from '@/shared/buttons/BasicButton'
+import { CloseIcon } from '@/assets/icons'
 import { PageBackButton } from '@/shared/buttons/PageBackButton'
-import { StateCard } from '@/shared/layout/StateCard'
+import { RoundIconButton } from '@/shared/buttons/RoundIconButton'
 
 import type { StorePickupPlanSummary } from '../domain/storePickupPlanSummary'
 
@@ -43,36 +43,30 @@ export const StorePickupPlanHeader = ({
             <span className="truncate text-lg font-semibold text-[var(--color-text)]">
               {summary.label}
             </span>
-            <p className="truncate text-[11px] font-normal text-[var(--color-muted)]">
+            <p className="truncate text-2xs font-normal text-[var(--color-muted)]">
               {PLAN_TYPE_LABELS.store_pickup} • {summary.dateLabel}
             </p>
-            <p className="truncate text-[11px] font-normal text-[var(--color-muted)]/80">
+            <p className="truncate text-2xs font-normal text-[var(--color-muted)]/80">
               {summary.orderCount} orders • {summary.itemCount} items
             </p>
           </div>
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          {planState ? (
-            <StateCard
-              label={planState.name}
-              color={planState.color ? planState.color : '#2f2f2fff'}
-            />
-          ) : null}
-          {/* Deleting is the only action a container plan offers today; the
-              panel closes with the plan it was showing. */}
-          <ContainerPlanActionsMenu planId={planId} onDeleted={onRequestClose} />
+          {/* The plan's state and counts live in the menu with its actions;
+              the panel closes with the plan it was showing on delete. */}
+          <ContainerPlanActionsMenu
+            planId={planId}
+            orderCount={summary.orderCount}
+            itemCount={summary.itemCount}
+            stateLabel={planState?.name ?? null}
+            stateColor={planState?.color || '#2f2f2fff'}
+            onDeleted={onRequestClose}
+          />
           {onRequestClose && !isMobile ? (
-            <BasicButton
-              params={{
-                variant: 'text',
-                onClick: onRequestClose,
-                ariaLabel: 'Close store pickup plan',
-                className: 'shrink-0',
-              }}
-            >
-              Close
-            </BasicButton>
+            <RoundIconButton ariaLabel="Close store pickup plan" onClick={onRequestClose}>
+              <CloseIcon className="h-3.5 w-3.5 text-[var(--color-text)]" />
+            </RoundIconButton>
           ) : null}
         </div>
       </div>

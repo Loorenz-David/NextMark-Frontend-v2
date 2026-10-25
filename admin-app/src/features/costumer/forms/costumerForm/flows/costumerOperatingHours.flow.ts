@@ -191,8 +191,8 @@ export const toOperatingHoursComparableKey = (entries: CostumerOperatingHours[])
       .map((entry) => ({
         weekday: entry.weekday,
         is_closed: Boolean(entry.is_closed),
-        open_time: Boolean(entry.is_closed) ? null : entry.open_time ?? null,
-        close_time: Boolean(entry.is_closed) ? null : entry.close_time ?? null,
+        open_time: entry.is_closed ? null : entry.open_time ?? null,
+        close_time: entry.is_closed ? null : entry.close_time ?? null,
       })),
   )
 

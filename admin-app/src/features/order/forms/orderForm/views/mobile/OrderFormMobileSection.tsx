@@ -14,7 +14,7 @@ export const OrderFormMobileSection = ({
 }: OrderFormMobileSectionProps) => (
   <section className="flex flex-col gap-2">
     <div className="flex min-h-6 items-center justify-between gap-3 px-1">
-      <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+      <h3 className="text-2xs font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
         {title}
       </h3>
       {action ?? null}

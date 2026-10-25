@@ -14,6 +14,7 @@
  */
 
 import type { ManagedHeadTag } from './managedHead'
+import { ADMIN_PWA_HEAD_TAGS } from './adminPwa'
 
 export const EXTERNAL_FORM_PATH = '/external-form'
 
@@ -116,10 +117,10 @@ export type PwaHeadState = {
 }
 
 /**
- * The whole route-awareness rule: on the form, advertise the form; anywhere
- * else in the admin console, advertise nothing.
+ * The form route advertises its scoped install; every other route advertises
+ * the admin install.
  */
 export const resolvePwaHeadState = (pathname: string): PwaHeadState =>
   isExternalFormPath(pathname)
     ? { tags: EXTERNAL_FORM_PWA_HEAD_TAGS, title: EXTERNAL_FORM_DOCUMENT_TITLE }
-    : { tags: [], title: null }
+    : { tags: ADMIN_PWA_HEAD_TAGS, title: 'NextMark' }

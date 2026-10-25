@@ -26,7 +26,7 @@ export const SortableClientFormRow = ({
       type="button"
       aria-label="Reorder"
       disabled={disabled}
-      className={`mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-surface-raised text-[var(--color-muted)] ${
+      className={`dnd-touch-source touch-hit-area mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-surface-raised text-[var(--color-muted)] ${
         disabled ? 'cursor-not-allowed opacity-40' : 'cursor-grab active:cursor-grabbing'
       }`}
       {...attributes}

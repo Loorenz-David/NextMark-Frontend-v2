@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { shouldRunCostumerQuery } from "../components/CostumerSearchBar"
+import { shouldRunCostumerQuery } from "../domain/shouldRunCostumerQuery"
 import { setCostumerListError, setCostumerListLoading } from "../store/costumerList.store"
 import { setVisibleCostumerIds } from "../store/costumer.patchers"
 import type { CostumerMap, CostumerQueryFilters } from "../dto/costumer.dto"

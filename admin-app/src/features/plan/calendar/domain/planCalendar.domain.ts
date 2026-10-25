@@ -9,9 +9,16 @@ export type CalendarMonthCursor = {
   month: number;
 };
 
+/** A date filter on the calendar: one day, or `fromKey`..`toKey` inclusive. */
+export type CalendarDateFilter = {
+  fromKey: CalendarDayKey;
+  toKey: CalendarDayKey | null;
+};
+
 export type CalendarDayCellModel = {
   dateKey: CalendarDayKey;
   dayNumber: number;
+  /** Inside the period in focus: the cursor month, or the date filter. */
   inMonth: boolean;
   isToday: boolean;
   isPast: boolean;
@@ -109,6 +116,14 @@ export const toCalendarDayKey = (
   );
 };
 
+/** Local-midnight Date for a day key, for date inputs that work in local time. */
+export const toLocalDateFromDayKey = (
+  dayKey: CalendarDayKey | null | undefined,
+): Date | null => {
+  const parts = parseDayKeyParts(dayKey);
+  return parts ? new Date(parts.year, parts.month - 1, parts.day) : null;
+};
+
 /** Today's day key in the user's local timezone. */
 export const getTodayDayKey = (): CalendarDayKey => {
   const now = new Date();
@@ -159,20 +174,35 @@ const getMondayIndex = (utcDate: Date): number => (utcDate.getUTCDay() + 6) % 7;
 
 const buildCellModel = (
   utcDate: Date,
-  cursor: CalendarMonthCursor,
+  isInFocus: (dateKey: CalendarDayKey) => boolean,
   todayKey: CalendarDayKey,
 ): CalendarDayCellModel => {
   const dateKey = toDayKeyFromUtc(utcDate);
   return {
     dateKey,
     dayNumber: utcDate.getUTCDate(),
-    inMonth:
-      utcDate.getUTCFullYear() === cursor.year &&
-      utcDate.getUTCMonth() === cursor.month - 1,
+    inMonth: isInFocus(dateKey),
     isToday: dateKey === todayKey,
     isPast: dateKey < todayKey,
   };
 };
+
+const buildWeekCells = (
+  gridStart: Date,
+  totalCells: number,
+  isInFocus: (dateKey: CalendarDayKey) => boolean,
+  todayKey: CalendarDayKey,
+): CalendarDayCellModel[] =>
+  Array.from({ length: totalCells }, (_, index) => {
+    const cellDate = new Date(
+      Date.UTC(
+        gridStart.getUTCFullYear(),
+        gridStart.getUTCMonth(),
+        gridStart.getUTCDate() + index,
+      ),
+    );
+    return buildCellModel(cellDate, isInFocus, todayKey);
+  });
 
 /**
  * Full weeks (Monday-first) covering the cursor month: 35 or 42 cells,
@@ -191,17 +221,56 @@ export const buildMonthGrid = (
   ).getUTCDate();
   const leading = getMondayIndex(firstOfMonth);
   const totalCells = Math.ceil((leading + daysInMonth) / 7) * 7;
+  const monthPrefix = `${String(cursor.year).padStart(4, "0")}-${String(cursor.month).padStart(2, "0")}-`;
 
-  return Array.from({ length: totalCells }, (_, index) => {
-    const cellDate = new Date(
-      Date.UTC(
-        gridStart.getUTCFullYear(),
-        gridStart.getUTCMonth(),
-        gridStart.getUTCDate() + index,
-      ),
-    );
-    return buildCellModel(cellDate, cursor, todayKey);
-  });
+  return buildWeekCells(
+    gridStart,
+    totalCells,
+    (dateKey) => dateKey.startsWith(monthPrefix),
+    todayKey,
+  );
+};
+
+/** The filter's inclusive bounds, ordered; an empty `toKey` means one day. */
+export const resolveCalendarDateFilterBounds = (
+  filter: CalendarDateFilter,
+): { startKey: CalendarDayKey; endKey: CalendarDayKey } => {
+  const toKey = filter.toKey ?? filter.fromKey;
+  return filter.fromKey <= toKey
+    ? { startKey: filter.fromKey, endKey: toKey }
+    : { startKey: toKey, endKey: filter.fromKey };
+};
+
+/**
+ * Full weeks (Monday-first) covering the filter. Days outside the filter
+ * stay in the grid but out of focus, like out-of-month days.
+ */
+export const buildDateFilterGrid = (
+  filter: CalendarDateFilter,
+  todayKey: CalendarDayKey,
+): CalendarDayCellModel[] => {
+  const { startKey, endKey } = resolveCalendarDateFilterBounds(filter);
+  const start = parseDayKeyParts(startKey);
+  const end = parseDayKeyParts(endKey);
+  if (!start || !end) return [];
+
+  const startUtc = new Date(Date.UTC(start.year, start.month - 1, start.day));
+  const endUtc = new Date(Date.UTC(end.year, end.month - 1, end.day));
+  const gridStart = new Date(
+    Date.UTC(start.year, start.month - 1, start.day - getMondayIndex(startUtc)),
+  );
+  const gridEnd = new Date(
+    Date.UTC(end.year, end.month - 1, end.day + 6 - getMondayIndex(endUtc)),
+  );
+  const totalCells =
+    Math.round((gridEnd.getTime() - gridStart.getTime()) / 86_400_000) + 1;
+
+  return buildWeekCells(
+    gridStart,
+    totalCells,
+    (dateKey) => dateKey >= startKey && dateKey <= endKey,
+    todayKey,
+  );
 };
 
 export const getGridRangeKeys = (
@@ -219,6 +288,39 @@ const MONTH_TITLE_FORMAT = new Intl.DateTimeFormat("en-US", {
 
 export const formatMonthTitle = (cursor: CalendarMonthCursor): string =>
   MONTH_TITLE_FORMAT.format(new Date(Date.UTC(cursor.year, cursor.month - 1, 1)));
+
+const FILTER_DAY_FORMAT = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+});
+
+const FILTER_DAY_YEAR_FORMAT = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+const dayKeyToUtcDate = (dayKey: CalendarDayKey): Date | null => {
+  const parts = parseDayKeyParts(dayKey);
+  return parts ? new Date(Date.UTC(parts.year, parts.month - 1, parts.day)) : null;
+};
+
+/** "12 Oct 2026", or "12 Oct – 8 Nov 2026" (both years when they differ). */
+export const formatDateFilterTitle = (filter: CalendarDateFilter): string => {
+  const { startKey, endKey } = resolveCalendarDateFilterBounds(filter);
+  const start = dayKeyToUtcDate(startKey);
+  const end = dayKeyToUtcDate(endKey);
+  if (!start || !end) return "";
+  if (startKey === endKey) return FILTER_DAY_YEAR_FORMAT.format(start);
+
+  const startLabel =
+    start.getUTCFullYear() === end.getUTCFullYear()
+      ? FILTER_DAY_FORMAT.format(start)
+      : FILTER_DAY_YEAR_FORMAT.format(start);
+  return `${startLabel} – ${FILTER_DAY_YEAR_FORMAT.format(end)}`;
+};
 
 export const CALENDAR_WEEKDAY_LABELS = [
   "Mon",

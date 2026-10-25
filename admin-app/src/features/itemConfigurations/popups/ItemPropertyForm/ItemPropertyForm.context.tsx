@@ -18,9 +18,8 @@ type ItemPropertyFormContextValue = {
   itemTypeQuery: ReturnType<typeof usePropertyItemTypeQuery>
 }
 
-const ItemPropertyFormContext = createContext<ItemPropertyFormContextValue | null>(null)
+export const ItemPropertyFormContext = createContext<ItemPropertyFormContextValue | null>(null)
 
-export const ItemPropertyFormContextProvider = ItemPropertyFormContext.Provider
 
 export const useItemPropertyForm = () => {
   const context = useContext(ItemPropertyFormContext)

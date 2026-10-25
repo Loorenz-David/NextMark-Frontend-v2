@@ -1,3 +1,4 @@
+import { DROP_SURFACE_ATTRIBUTE } from '../domain/dropSurface'
 import type { ActivePlanWorkspace } from '../flows/useActivePlanWorkspace.flow'
 import type { PayloadBase } from '../types/types'
 
@@ -29,13 +30,17 @@ export const PlanWorkspacePanel = ({
 
   const { Workspace } = workspace
 
+  // The panel covers the plan list, whose cards stay live drop targets;
+  // marking it a drop surface keeps drags over the panel off them.
   return (
-    <Workspace
-      payload={{
-        ...payload,
-        planId: payload.planId ?? undefined,
-      }}
-      onRequestClose={onRequestClose}
-    />
+    <div className="contents" {...{ [DROP_SURFACE_ATTRIBUTE]: '' }}>
+      <Workspace
+        payload={{
+          ...payload,
+          planId: payload.planId ?? undefined,
+        }}
+        onRequestClose={onRequestClose}
+      />
+    </div>
   )
 }

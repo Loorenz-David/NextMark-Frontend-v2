@@ -61,10 +61,10 @@ export const IntegrationStatusPage = () => {
           </div>
         ) : null}
 
-        <p className="text-[0.62rem] font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)]">
+        <p className="text-rem-0_62 font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)]">
           Integration status
         </p>
-        <h1 className="mt-3 text-[2rem] font-semibold capitalize text-[var(--color-text)]">
+        <h1 className="mt-3 text-rem-2 font-semibold capitalize text-[var(--color-text)]">
           {integration} integration
         </h1>
         <p className={`mt-3 text-lg font-medium ${statusConfig.color}`}>

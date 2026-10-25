@@ -343,7 +343,7 @@ export const runOrderFormSubmitControllerTests = async () => {
     const initialState = buildBaseFormState();
     const formState = {
       ...initialState,
-      tracking_number: "NEW-TRACKING",
+      external_tracking_number: "NEW-TRACKING",
       general_note: { content: "Legacy note" } as unknown as string,
     };
 
@@ -394,7 +394,7 @@ export const runOrderFormSubmitControllerTests = async () => {
     const initialState = buildBaseFormState();
     const formState = {
       ...initialState,
-      tracking_number: "NEW-TRACKING",
+      external_tracking_number: "NEW-TRACKING",
     };
 
     const command: OrderFormSubmitCommand = {
@@ -430,7 +430,7 @@ export const runOrderFormSubmitControllerTests = async () => {
 
     assert(
       result.status === "success_edit",
-      "edit submit should return success_edit",
+      `edit submit should return success_edit, got ${JSON.stringify(result)}`,
     );
     assert(saveOrderCalls === 1, "edit submit should call saveOrder once");
   }
@@ -499,7 +499,7 @@ export const runOrderFormSubmitControllerTests = async () => {
     const initialState = buildBaseFormState();
     const formState = {
       ...initialState,
-      tracking_number: "ITEM-ONLY-CHANGE",
+      external_tracking_number: "ITEM-ONLY-CHANGE",
     };
 
     const command: OrderFormSubmitCommand = {

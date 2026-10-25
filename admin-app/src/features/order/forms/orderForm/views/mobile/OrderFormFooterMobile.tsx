@@ -63,7 +63,7 @@ export const OrderFormFooterMobile = ({
             variant: "secondary",
             onClick: openSendSheet,
             disabled: sendDisabled || sendInProgress,
-            className: "h-12 flex-1 rounded-2xl text-[15px]",
+            className: "h-12 flex-1 rounded-2xl text-px-15",
             ariaLabel: "Send form",
           }}
         >
@@ -74,7 +74,7 @@ export const OrderFormFooterMobile = ({
             variant: "primary",
             onClick: onSaveOrder,
             disabled: saveDisabled,
-            className: "h-12 flex-[1.4] rounded-2xl text-[15px]",
+            className: "h-12 flex-[1.4] rounded-2xl text-px-15",
             ariaLabel: "Save order",
           }}
         >

@@ -17,9 +17,8 @@ export const useRouteGroupRailController = (
   const orderStates = useOrderStates();
   const routeGroupStates = useRoutePlanStates();
   const activeRouteGroupId = useActiveRouteGroupId();
-  const { clearActiveRouteGroupSelection, setActiveRouteGroupId } =
+  const { setActiveRouteGroupId, rememberRouteGroupForPlan } =
     useActiveRouteGroupActions();
-  const { rememberRouteGroupForPlan } = useActiveRouteGroupActions();
 
   const railItems = useMemo<RouteGroupRailItem[]>(
     () =>
@@ -32,28 +31,21 @@ export const useRouteGroupRailController = (
     [activeRouteGroupId, orderStates, routeGroupStates, routeGroups],
   );
 
-  const handleRouteGroupClick = useCallback(
-    (item: RouteGroupRailItem) => {
-      if (item.route_group_id === activeRouteGroupId) {
-        clearActiveRouteGroupSelection();
-        return;
-      }
-      setActiveRouteGroupId(item.route_group_id);
+  // The zone tabs always keep one route group open, so re-picking the
+  // active one is a no-op rather than a deselect.
+  const handleSelectRouteGroup = useCallback(
+    (routeGroupId: number) => {
+      if (routeGroupId === activeRouteGroupId) return;
+      setActiveRouteGroupId(routeGroupId);
       if (typeof planId === "number") {
-        rememberRouteGroupForPlan(planId, item.route_group_id);
+        rememberRouteGroupForPlan(planId, routeGroupId);
       }
     },
-    [
-      activeRouteGroupId,
-      clearActiveRouteGroupSelection,
-      planId,
-      rememberRouteGroupForPlan,
-      setActiveRouteGroupId,
-    ],
+    [activeRouteGroupId, planId, rememberRouteGroupForPlan, setActiveRouteGroupId],
   );
 
   return {
     railItems,
-    handleRouteGroupClick,
+    handleSelectRouteGroup,
   };
 };

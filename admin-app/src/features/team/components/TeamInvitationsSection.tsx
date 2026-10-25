@@ -25,7 +25,7 @@ export const TeamInvitationsSection = ({
 
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
+        <h3 className="text-rem-0_7 font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
           Received
         </h3>
         <span className="rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-[var(--color-text)]">
@@ -51,7 +51,7 @@ export const TeamInvitationsSection = ({
 
     <div className="flex flex-col gap-3 ">
       <div className="flex items-center justify-between">
-        <h3 className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
+        <h3 className="text-rem-0_7 font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
           Sent
         </h3>
         <span className="rounded-full border border-border bg-surface-raised px-3 py-1 text-xs text-[var(--color-text)]">

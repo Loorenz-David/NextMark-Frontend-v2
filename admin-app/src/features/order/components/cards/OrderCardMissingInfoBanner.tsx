@@ -32,13 +32,13 @@ export const OrderCardMissingInfoBanner = ({
   return (
     <div
       className={cn(
-        "relative z-10 flex items-center justify-between gap-3 rounded-b-lg border-t border-warning-border bg-warning-bg px-4 py-2.5",
+        "relative z-10 flex items-center justify-between gap-3 rounded-b-2xl border-t border-warning-border bg-warning-bg px-4 py-2.5",
         className,
       )}
     >
       <div className="flex min-w-0 items-center gap-2">
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-yellow-300">
-          <ExclamationIcon className="h-3 w-3 text-yellow-900" />
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-missing-info-badge">
+          <ExclamationIcon className="h-3 w-3 text-missing-info-badge-ink" />
         </span>
         <span
           className="truncate text-xs font-medium text-warning"

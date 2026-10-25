@@ -68,6 +68,7 @@ export const useOrderFlow = () => {
 
   const loadOrders = useCallback(
     async (query?: OrderQueryStoreFilters, _firstLoad?: boolean) => {
+      void _firstLoad;
       const response = await loadOrdersPage(query);
       if (!response) {
         return null;

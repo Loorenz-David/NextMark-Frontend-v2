@@ -14,9 +14,8 @@ type ClientFormRuleFormContextValue = {
   handleDelete: () => void
 }
 
-const ClientFormRuleFormContext = createContext<ClientFormRuleFormContextValue | null>(null)
+export const ClientFormRuleFormContext = createContext<ClientFormRuleFormContextValue | null>(null)
 
-export const ClientFormRuleFormContextProvider = ClientFormRuleFormContext.Provider
 
 export const useClientFormRuleForm = () => {
   const context = useContext(ClientFormRuleFormContext)

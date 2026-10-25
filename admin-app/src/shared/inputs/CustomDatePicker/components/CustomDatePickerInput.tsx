@@ -64,7 +64,7 @@ export const CustomDatePickerInput = ({
         />
 
       {showTodayLabel ? (
-        <span className='shrink-0 text-[9px] font-semibold text-info'>Today</span>
+        <span className='shrink-0 text-nano font-semibold text-info'>Today</span>
       ) : null}
     </div>
   )

@@ -1,16 +1,9 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext } from 'react'
 
 import type { CostumerFormContextValue } from '../state/CostumerForm.types'
 
-const CostumerFormContext = createContext<CostumerFormContextValue | null>(null)
+export const CostumerFormContext = createContext<CostumerFormContextValue | null>(null)
 
-export const CostumerFormContextProvider = ({
-  value,
-  children,
-}: {
-  value: CostumerFormContextValue
-  children: ReactNode
-}) => <CostumerFormContext.Provider value={value}>{children}</CostumerFormContext.Provider>
 
 export const useCostumerForm = () => {
   const context = useContext(CostumerFormContext)

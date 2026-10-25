@@ -7,17 +7,7 @@ import type {
   UnscheduleDropFeedback,
 } from "@/shared/resource-manager/ResourceManagerContext";
 
-const isOrderDragActive = (activeDrag: unknown) => {
-  if (!activeDrag || typeof activeDrag !== "object") return false;
-  const dragType = String((activeDrag as { type?: unknown }).type ?? "");
-  return (
-    dragType === "order" ||
-    dragType === "order_batch" ||
-    dragType === "order_group" ||
-    dragType === "route_stop" ||
-    dragType === "route_stop_group"
-  );
-};
+import { isOrderDragActive } from "../domain/orderDragActivity";
 
 /**
  * The drop target that detaches an order from its plan. Shared by the plan list
@@ -45,7 +35,7 @@ export const UnscheduleDropTarget = ({
   return (
     <div
       ref={setNodeRef}
-      className={`min-w-[132px] rounded-xl border px-3 py-2 text-center transition-all duration-200 ${
+      className={`flex min-h-11 min-w-[132px] items-center justify-center rounded-xl border px-3 py-2 text-center transition-all duration-200 ${
         isOver || isSuccessFeedback
           ? "border-[rgb(var(--success-deep-r))]/50 bg-[rgb(var(--success-deep-r))]/12 shadow-[0_0_0_1px_rgba(var(--success-deep-r),0.2),0_0_16px_rgba(var(--success-deep-r),0.15)]"
           : isErrorFeedback

@@ -34,7 +34,7 @@ export const EmailMessageMainPage = ({ planType }: EmailMessageMainPageProps) =>
             params={{
               variant: "primary",
               onClick: () => navigate("/settings/integrations/"),
-              className: "px-4 py-2 text-md",
+              className: "px-4 py-2 text-sm",
               ariaLabel: "Go to integrations settings",
             }}
           >

@@ -10,9 +10,8 @@ import type { DeliveryPlan } from "@/features/plan/types/plan";
 import { useRoutePlanStore } from "@/features/plan/store/routePlan.slice";
 
 import {
+  buildDateFilterGrid,
   buildMonthGrid,
-  computeCalendarRangeStats,
-  formatMonthTitle,
   getAssignedVehicleVolumeCapacityCm3,
   getGridRangeKeys,
   getTodayDayKey,
@@ -21,6 +20,7 @@ import {
 } from "../domain/planCalendar.domain";
 import { hydrateCalendarVehicleAssignments } from "../flows/hydrateCalendarVehicleAssignments.flow";
 import { usePlanCalendarStore } from "../store/planCalendar.store";
+import { usePlanCalendarPeriodController } from "./usePlanCalendarPeriod.controller";
 
 const CALENDAR_RANGE_FETCH_LIMIT = 300;
 
@@ -29,12 +29,18 @@ export const usePlanCalendarController = () => {
   const { openPlanSection } = usePlanHeaderAction();
   const openCreatePlanForm = useOpenCreatePlanFormAction();
 
-  const monthCursor = usePlanCalendarStore((state) => state.monthCursor);
+  const {
+    monthCursor,
+    dateFilter,
+    setDateFilter,
+    title,
+    stepPrevious,
+    stepNext,
+    goToToday,
+  } = usePlanCalendarPeriodController();
   const isFetchingRange = usePlanCalendarStore(
     (state) => state.isFetchingRange,
   );
-  const stepMonth = usePlanCalendarStore((state) => state.stepMonth);
-  const goToToday = usePlanCalendarStore((state) => state.goToToday);
   const setIsFetchingRange = usePlanCalendarStore(
     (state) => state.setIsFetchingRange,
   );
@@ -46,8 +52,11 @@ export const usePlanCalendarController = () => {
   const todayKey = getTodayDayKey();
 
   const cells = useMemo(
-    () => buildMonthGrid(monthCursor, todayKey),
-    [monthCursor, todayKey],
+    () =>
+      dateFilter
+        ? buildDateFilterGrid(dateFilter, todayKey)
+        : buildMonthGrid(monthCursor, todayKey),
+    [dateFilter, monthCursor, todayKey],
   );
 
   const range = useMemo(() => getGridRangeKeys(cells), [cells]);
@@ -153,23 +162,6 @@ export const usePlanCalendarController = () => {
     visiblePlanIds,
   ]);
 
-  const stats = useMemo(() => {
-    const inMonthKeys = new Set(
-      cells.filter((cell) => cell.inMonth).map((cell) => cell.dateKey),
-    );
-    return computeCalendarRangeStats(plansByDay, inMonthKeys);
-  }, [cells, plansByDay]);
-
-  const title = formatMonthTitle(monthCursor);
-
-  const stepPrevious = useCallback(() => {
-    stepMonth(-1);
-  }, [stepMonth]);
-
-  const stepNext = useCallback(() => {
-    stepMonth(1);
-  }, [stepMonth]);
-
   const openPlan = useCallback(
     (plan: DeliveryPlan) => {
       openPlanSection(plan);
@@ -188,8 +180,9 @@ export const usePlanCalendarController = () => {
     cells,
     plansByDay,
     volumeCapacityByPlanId,
-    stats,
     title,
+    dateFilter,
+    setDateFilter,
     todayKey,
     isFetchingRange,
     stepPrevious,

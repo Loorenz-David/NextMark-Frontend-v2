@@ -8,7 +8,7 @@ import { selectTemplateByEventAndChannel } from '../store'
 import { usePrintTemplateForm } from '../setters/printTemplate.setters'
 import type { availableOrientations } from '../types'
 import { usePrintTemplatePageFlow } from './printTemplatePage.flow'
-import { usePrintTemplateVariantsFlow } from './printTemplateVariant.flow'
+import { resolvePrintTemplateVariants } from './printTemplateVariant.flow'
 
 const orientationOptions: Array<{ label: string; value: availableOrientations }> = [
   { label: 'vertical', value: 'vertical' },
@@ -53,7 +53,7 @@ export const usePrintTemplateConfigPageFlow = () => {
     return { viewModel: null } as const
   } 
 
-  const variantFlow = usePrintTemplateVariantsFlow(parsedParams.channel, formState.selected_variant) 
+  const variantFlow = resolvePrintTemplateVariants(parsedParams.channel, formState.selected_variant)
 
   return {
     viewModel: {

@@ -60,12 +60,12 @@ export const TrustedDeviceCard = ({
               {device.name}
             </p>
             {isThisBrowser ? (
-              <span className="rounded-full bg-[color-mix(in_srgb,var(--color-blue-500)_18%,transparent)] px-2 py-0.5 text-[11px] font-semibold text-[rgba(var(--info-r),0.95)]">
+              <span className="rounded-full bg-[color-mix(in_srgb,var(--color-blue-500)_18%,transparent)] px-2 py-0.5 text-2xs font-semibold text-[rgba(var(--info-r),0.95)]">
                 This device
               </span>
             ) : null}
             {isRevoked ? (
-              <span className="rounded-full bg-danger-bg px-2 py-0.5 text-[11px] font-semibold text-danger">
+              <span className="rounded-full bg-danger-bg px-2 py-0.5 text-2xs font-semibold text-danger">
                 {device.revoked_at ? 'Revoked' : 'Inactive'}
               </span>
             ) : null}

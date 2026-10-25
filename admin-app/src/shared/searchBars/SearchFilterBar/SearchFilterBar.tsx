@@ -59,7 +59,9 @@ export const SearchFilterBar = ({
   hideFilteredIcon = false,
   placeholder,
   searchValue = '',
+  size = 'default',
 }: SearchFilterBarProps) => {
+  const isCompact = size === 'compact'
   const [open, setOpen] = useState(false)
   const [searchInput, setSearchInput] = useState(searchValue)
   const [tempRange, setTempRange] = useState<[Date | null, Date | null]>(EMPTY_RANGE)
@@ -156,7 +158,7 @@ export const SearchFilterBar = ({
         matchReferenceWidth
         closeOnInsideClick
         reference={(
-          <div className="flex w-full items-center gap-2 rounded-full border-1 border-[var(--color-muted)]/40 bg-[var(--color-muted)]/10  py-1 pl-4 ">
+          <div className={`flex w-full items-center gap-2 rounded-full border-1 border-[var(--color-muted)]/40 bg-[var(--color-muted)]/10 ${isCompact ? 'min-h-8 py-0 pl-3' : 'py-1 pl-4'}`}>
             <div className="flex-1">
               <InputField
                 value={searchInput}
@@ -179,10 +181,12 @@ export const SearchFilterBar = ({
                     }
                     setOpen(prev => !prev)
                   },
-                  className: 'mr-1 flex items-center gap-1.5 rounded-full px-2.5 py-1.5',
+                  className: isCompact
+                    ? 'mr-0.5 flex items-center gap-1 rounded-full px-2 py-1'
+                    : 'mr-1 flex items-center gap-1.5 rounded-full px-2.5 py-1.5',
                 }}
               >
-                <FilteredIcon className="h-4 w-4 text-[rgb(var(--color-light-blue-r))]" />
+                <FilteredIcon className={`${isCompact ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-[rgb(var(--color-light-blue-r))]`} />
                 {activeFilterCount && activeFilterCount > 0 ? (
                   <span className="min-w-3 text-center text-xs font-semibold leading-none text-[rgb(var(--color-light-blue-r))]">
                     {activeFilterCount}
@@ -213,7 +217,7 @@ export const SearchFilterBar = ({
                 >
                   <span>{filter.label}</span>
                   {selected ? (
-                    <span className="rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-[rgb(var(--color-light-blue-r),0.12)] px-2 py-0.5 text-[10px] text-[rgb(var(--color-light-blue-r))]">
+                    <span className="rounded-full border border-[rgb(var(--color-light-blue-r),0.22)] bg-[rgb(var(--color-light-blue-r),0.12)] px-2 py-0.5 text-micro text-[rgb(var(--color-light-blue-r))]">
                       Selected
                     </span>
                   ) : null}

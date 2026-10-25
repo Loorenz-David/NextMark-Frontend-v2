@@ -65,7 +65,7 @@ export const PlanCalendarPlanChip = ({
   return (
     <div
       onClick={handleClick}
-      className="flex shrink-0 cursor-pointer flex-col gap-1 rounded-[10px] border px-2 py-1.5 transition-all duration-150"
+      className="flex shrink-0 cursor-pointer flex-col gap-1 rounded-calendar-plan-chip border px-2 py-1.5 transition-all duration-150"
       style={{
         backgroundColor: `color-mix(in srgb, ${stateColor} 11%, transparent)`,
         borderColor: `color-mix(in srgb, ${stateColor} 32%, transparent)`,
@@ -89,7 +89,7 @@ export const PlanCalendarPlanChip = ({
           />
         </span>
         <span
-          className="min-w-0 truncate text-[12px] font-semibold text-[var(--color-text)]"
+          className="min-w-0 truncate text-px-12 font-semibold text-[var(--color-text)]"
           title={`${orderCount} ${orderCount === 1 ? "order" : "orders"}`}
         >
           {orderCount} ord
@@ -97,7 +97,7 @@ export const PlanCalendarPlanChip = ({
         {dropFeedback ? (
           <span
             key={dropFeedback.token}
-            className={`text-[10px] font-semibold ${
+            className={`text-micro font-semibold ${
               dropFeedback.status === "error"
                 ? "text-[rgb(var(--danger-state-r))]"
                 : "text-[rgb(var(--success-deep-r))]"
@@ -120,12 +120,12 @@ export const PlanCalendarPlanChip = ({
             style={{ width: `${loadPercent}%`, backgroundColor: stateColor }}
           />
         </span>
-        <span className="shrink-0 font-mono text-[10px] text-[var(--color-muted)]">
+        <span className="shrink-0 font-mono text-micro text-[var(--color-muted)]">
           {formatMetric(plan.total_volume ?? 0, "㎥")}
         </span>
       </div>
 
-      <span className="text-[9px] leading-[1.35] text-[var(--color-muted)]">
+      <span className="text-nano leading-[1.35] text-[var(--color-muted)]">
         {itemCount} {itemCount === 1 ? "pc" : "pcs"} ·{" "}
         {formatMetric(plan.total_weight ?? 0, "kg")}
       </span>

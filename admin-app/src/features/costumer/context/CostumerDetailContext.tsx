@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext } from 'react'
 
 import type { Costumer } from '../dto/costumer.dto'
 
@@ -10,15 +10,8 @@ type CostumerDetailContextValue = {
   openOrderDetail: (payload: { clientId?: string; serverId?: number }) => void
 }
 
-const CostumerDetailContext = createContext<CostumerDetailContextValue | null>(null)
+export const CostumerDetailContext = createContext<CostumerDetailContextValue | null>(null)
 
-export const CostumerDetailContextProvider = ({
-  value,
-  children,
-}: {
-  value: CostumerDetailContextValue
-  children: ReactNode
-}) => <CostumerDetailContext.Provider value={value}>{children}</CostumerDetailContext.Provider>
 
 export const useCostumerDetailContext = () => {
   const context = useContext(CostumerDetailContext)
