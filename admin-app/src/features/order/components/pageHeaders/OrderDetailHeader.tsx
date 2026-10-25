@@ -61,31 +61,32 @@ export const OrderDetailHeader = ({
         />
         <div className="admin-header-wash pointer-events-none absolute inset-x-0 top-0 h-44" />
 
-        <div className="relative z-10 flex items-start justify-between gap-3 px-4 pb-4 pt-5">
+        <div className="relative z-10 px-4 pb-4 pt-5">
           <OrderDetailHeaderTitle
             order={order}
             headerBehavior={headerBehavior}
             contextRouteGroupId={contextRouteGroupId}
             variant="hero"
+            actions={
+              <div className="flex shrink-0 items-center gap-2">
+                <OrderDetailHeaderIconButton
+                  ariaLabel="Edit order"
+                  disabled={!order}
+                  onClick={() =>
+                    order && openOrderForm({ mode: "edit", clientId: order.client_id })
+                  }
+                >
+                  <EditIcon className="h-4.5 w-4.5 stroke-[var(--color-text)]" />
+                </OrderDetailHeaderIconButton>
+                <OrderDetailHeaderIconButton
+                  ariaLabel="Close order detail"
+                  onClick={onClose}
+                >
+                  <CloseIcon className="h-3.5 w-3.5 text-[var(--color-text)]" />
+                </OrderDetailHeaderIconButton>
+              </div>
+            }
           />
-
-          <div className="flex shrink-0 items-center gap-2">
-            <OrderDetailHeaderIconButton
-              ariaLabel="Edit order"
-              disabled={!order}
-              onClick={() =>
-                order && openOrderForm({ mode: "edit", clientId: order.client_id })
-              }
-            >
-              <EditIcon className="h-4.5 w-4.5 stroke-[var(--color-text)]" />
-            </OrderDetailHeaderIconButton>
-            <OrderDetailHeaderIconButton
-              ariaLabel="Close order detail"
-              onClick={onClose}
-            >
-              <CloseIcon className="h-3.5 w-3.5 text-[var(--color-text)]" />
-            </OrderDetailHeaderIconButton>
-          </div>
         </div>
 
         <div className="admin-glass-divider relative z-10 border-t px-4 py-4">
@@ -146,20 +147,24 @@ const OrderDetailHeaderIconButton = ({
 );
 
 /**
- * Order id, source badge and plan meta; shared by the desktop and phone
- * headers. `hero` (desktop/iPad) shows a large id that doubles as the drag
- * handle and the plan meta on two lines; `compact` (phone) keeps one line.
+ * Order id and plan meta; shared by the desktop and phone headers. `hero`
+ * (desktop/iPad) puts a large id that doubles as the drag handle beside
+ * `actions`, with the plan meta on full-width lines below; `compact` (phone)
+ * keeps one line. The external source is not shown (user, D14).
  */
 export const OrderDetailHeaderTitle = ({
   order,
   headerBehavior,
   contextRouteGroupId,
   variant = "compact",
+  actions,
 }: {
   order: Order | null;
   headerBehavior?: OrderDetailHeaderBehavior | null;
   contextRouteGroupId?: number | null;
   variant?: "hero" | "compact";
+  /** Hero only: controls on the id row's right. */
+  actions?: ReactNode;
 }) => {
   const [isSubheaderSweepActive, setIsSubheaderSweepActive] = useState(false);
   const sweepTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -219,12 +224,6 @@ export const OrderDetailHeaderTitle = ({
     ? "order-detail-subheader-sweep-text"
     : "";
   const planText = planMeta.isUnscheduled ? "Unscheduled" : planMeta.planLabel;
-  const sourceBadge = order?.external_source ? (
-    <span className="inline-flex w-fit rounded-full border border-[var(--color-border-accent)] bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] px-2 py-0.5 text-rem-0_54 font-medium uppercase tracking-[0.2em] text-[var(--color-primary)]">
-      {order.external_source}
-    </span>
-  ) : null;
-
   if (variant === "hero") {
     const titleNode = (
       <span className="text-2xl font-bold leading-tight tracking-tight text-[var(--color-text)]">
@@ -239,22 +238,24 @@ export const OrderDetailHeaderTitle = ({
       .join(" · ");
 
     return (
-      <div className="flex min-w-0 flex-col gap-3 pt-1">
-        <div className="flex flex-wrap items-center gap-2">
-          {order ? (
-            <DraggableOrderDetailHandle order={order} className="min-w-0">
-              {titleNode}
-            </DraggableOrderDetailHandle>
-          ) : (
-            titleNode
-          )}
-          {sourceBadge}
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 pt-1">
+            {order ? (
+              <DraggableOrderDetailHandle order={order}>
+                {titleNode}
+              </DraggableOrderDetailHandle>
+            ) : (
+              titleNode
+            )}
+          </div>
+          {actions}
         </div>
         {shouldRenderPlanMeta ? (
           <div className="flex min-w-0 flex-col text-sm leading-snug text-[var(--color-muted)]">
-            <span className={`truncate ${sweepClassName}`}>{planText}</span>
+            <span className={`break-words ${sweepClassName}`}>{planText}</span>
             {dateLine ? (
-              <span className={`truncate ${sweepClassName}`}>{dateLine}</span>
+              <span className={`break-words ${sweepClassName}`}>{dateLine}</span>
             ) : null}
           </div>
         ) : null}
@@ -268,7 +269,6 @@ export const OrderDetailHeaderTitle = ({
         <span className="text-rem-0_98 font-semibold tracking-tight text-[var(--color-text)]">
           {title}
         </span>
-        {sourceBadge}
       </div>
       {shouldRenderPlanMeta ? (
         <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-rem-0_72 text-[var(--color-muted)]">

@@ -51,6 +51,7 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 - Scope: user mockup for the order detail in the narrower panel. Decision D14.
 - Files: `OrderDetailHeader.tsx` (hero title variant, round icon buttons, pill state button), `DraggableOrderDetailIcon.tsx` renamed to `DraggableOrderDetailHandle.tsx` (wraps any children; the `#id` is the handle now, same drag id and data), `OrderDetailSummary.tsx` (rows), `shared/buttons/DropdownButton.tsx` (opt-in `shape="pill"`; other callers unchanged).
 - Checked in Chrome at tablet width: matches the mockup; "Mark as Confirmed" fits on one line, longer labels truncate.
+- Revision (user, same day): the plan lines sit under the id/buttons row at full card width and wrap instead of truncating; the external-source badge is no longer shown in the detail header (desktop and phone).
 - Not changed: notes, time windows and history slides (still 20px padding, fixed 420px slide height kept so the carousel does not jump).
 - Gates: lint 0 errors (52 warnings), tests 173, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
 
