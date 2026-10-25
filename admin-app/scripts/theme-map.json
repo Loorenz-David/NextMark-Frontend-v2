@@ -54,7 +54,7 @@
     },
     {
       "file": "features/order/item/components/ItemCard/ItemCard.tsx",
-      "line": 136,
+      "line": 143,
       "from": "text-white",
       "to": "text-danger-on-solid"
     },

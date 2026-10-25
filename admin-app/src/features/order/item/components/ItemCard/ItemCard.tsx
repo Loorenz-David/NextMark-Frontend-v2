@@ -13,6 +13,10 @@ import { useItemStateByServerId } from '@/features/itemConfigurations/hooks/useI
 import { StateCard } from '@/shared/layout/StateCard'
 import { ItemImagePopover } from './ItemImagePopover'
 
+// Stands in for the photo so every card keeps the same left edge.
+const ITEM_THUMBNAIL_PLACEHOLDER =
+  'repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-muted) 14%, transparent) 0 8px, transparent 8px 16px)'
+
 export type ItemCardProps = {
   item: Item
   onEdit?: () => void
@@ -64,12 +68,11 @@ export const ItemCard = ({
   }
 
   return (
-    <div className="admin-glass-panel admin-surface-compact relative shrink-0 overflow-hidden rounded-2xl border border-border p-3 px-2 transition-all duration-200 hover:border-border-accent hover:bg-surface-hover hover:shadow-[var(--shadow-panel-card)]">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,var(--glass-surface-weak),transparent_30%,transparent_72%,rgba(0,0,0,0.04))]" />
+    <div className="admin-glass-panel admin-surface-compact relative shrink-0 overflow-hidden rounded-2xl border border-border p-3 transition-colors duration-200 hover:border-border-accent">
       <div
         role="button"
         tabIndex={0}
-        className="relative z-10 flex w-full cursor-pointer items-start gap-3 px-1 py-1 text-left focus:outline-none focus:ring-2 focus:ring-[var(--color-turques)]/50"
+        className="relative z-10 flex w-full cursor-pointer items-center gap-4 rounded-xl text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-turques)]/50"
         onClick={() => {
           if (onToggleExpand) {
             onToggleExpand()
@@ -88,29 +91,33 @@ export const ItemCard = ({
         }}
       >
         {itemImages.length ? (
-          <ItemImagePopover imageUrls={itemImages} itemType={item.item_type} />
-        ) : null}
+          <ItemImagePopover
+            imageUrls={itemImages}
+            itemType={item.item_type}
+            thumbnailClassName="h-16 w-16 rounded-xl"
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="h-16 w-16 shrink-0 rounded-xl border border-border"
+            style={{ backgroundImage: ITEM_THUMBNAIL_PLACEHOLDER }}
+          />
+        )}
 
         <div className="min-w-0 flex-1">
-          <span className="block min-w-0 whitespace-normal break-words text-sm font-semibold text-[var(--color-text)]">
+          <span className="block min-w-0 whitespace-normal break-words text-base font-semibold text-[var(--color-text)]">
             {item.item_type || '—'}
           </span>
-          <span className="mt-1 block min-w-0 truncate text-xs text-[var(--color-muted)]/95">
-            {item.article_number || '—'}
+          <span className="mt-0.5 block min-w-0 truncate text-sm text-[var(--color-muted)]">
+            {item.article_number || '—'} · Qty {item.quantity}
           </span>
-          <span className="mt-1 block min-w-0 truncate text-2xs text-[var(--color-muted)]/95">
-            Position: {item.item_position ?? '—'}
-          </span>
-        </div>
-
-        <div className="flex shrink-0 flex-col items-end gap-2">
-          <StateCard
-            label={itemState ? itemState.name : 'No state'}
-            color={itemState ? itemState.color : null}
-          />
-          <span className="text-xs text-[var(--color-muted)]/95">
-            Qty: {item.quantity}
-          </span>
+          <div className="mt-2 flex">
+            <StateCard
+              size="md"
+              label={itemState ? itemState.name : 'No state'}
+              color={itemState ? itemState.color : null}
+            />
+          </div>
         </div>
       </div>
 

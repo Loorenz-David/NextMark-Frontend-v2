@@ -48,6 +48,14 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Order detail items preview restyled (Claude)
+- Scope: user mockup — the items header sits on the page background (no separate card); item cards show thumbnail, name, "article · Qty N" and the state chip; a dashed "Add item" button ends the list.
+- `ItemsOrderPreviewSticky.layout.tsx` (only the detail page used it) renamed to `ItemsOrderPreviewDetail.layout.tsx`; prop `stickyHeader` → `detailLayout`. Header: "Items" + "N item(s) · kg · m³" and a round three-dot menu holding "Print labels" (hidden when no print template; a progress ring replaces it while printing). The page wraps it in the normal gutter and drops the tinted band.
+- `ItemCard.tsx` (shared with the order form previews): flat card, 64px thumbnail with a striped placeholder when there is no photo, position moved to the expanded details only, focus ring on keyboard focus only.
+- Check data kept in step: `theme-map.json` ItemCard override line 136 → 143 (same class required); `theme-functional-color-allowlist.json` `0,0,0,0.04` 4 → 3 (the removed card gradient).
+- Checked in Chrome at tablet width (#4498, 2 items; #2549, empty): matches the mockup; expand/collapse; menu sheet shows Print labels; no console errors.
+- Gates: lint 0 errors (52 warnings), tests 187, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Order detail sections as one card with a tab header (Claude)
 - Scope: user mockup — the tab row is the header of the sections card; the per-section headers go; the order state moves to the details footer beside "Created".
 - `OrderDetailSections.tsx` now renders the card: underline tabs on a subtle header strip, labels at natural width (measured, so "Windows" never truncates in the narrow panel), at most 3 visible with the next one peeking through a fade, chevron slides the row and back, underline glides to the active label. Labels faded out past the peek do not take taps.

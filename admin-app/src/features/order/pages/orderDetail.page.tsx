@@ -119,12 +119,12 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
           }`}
         >
           {orderServerId !== null ? (
-            <div className="flex w-full flex-col bg-[var(--color-muted)]/10 [[data-theme=light]_&]:bg-transparent">
+            <div className={gutterClassName}>
               <ItemsOrderPreview
                 orderId={orderServerId}
                 expectedItemCount={order?.total_items ?? null}
                 itemsUpdatedAt={order?.items_updated_at ?? null}
-                stickyHeader
+                detailLayout
               />
             </div>
           ) : (
