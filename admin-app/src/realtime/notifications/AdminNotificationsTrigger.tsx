@@ -157,7 +157,7 @@ export function AdminNotificationsTrigger() {
     <FloatingPopover
       open={isOpen}
       onOpenChange={setIsOpen}
-      placement="bottom-end"
+      placement="bottom-start"
       renderInPortal
       closeOnInsideClick
       floatingClassName="drop-shadow-[var(--shadow-panel-notifications)]"

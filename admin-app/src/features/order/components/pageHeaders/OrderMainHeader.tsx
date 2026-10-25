@@ -13,7 +13,7 @@ import { InfoHover } from "@/shared/layout/InfoHover";
 import { ORDER_MAIN_HEADER_INFO } from "../../info/orderMainHeader.info";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { HeaderSlotPortal, HOME_HEADER_CENTER_SLOT } from "@/shared/layout/headerSlot";
+import { HeaderSlotPortal, HOME_HEADER_END_SLOT } from "@/shared/layout/headerSlot";
 import {
   countActiveOrderFilters,
   draftFromOrderQueryFilters,
@@ -37,6 +37,8 @@ type OrderMainHeaderProps = {
   useFloatingActionStack?: boolean;
   isActionStackVisible?: boolean;
   isMobile: boolean;
+  /** Width of the order panel; the header search matches it (desktop/iPad). */
+  headerSearchWidth?: number | null;
 };
 
 type OrderHeaderActionsProps = Pick<OrderMainHeaderProps, 'onCreate' | 'onEnterSelectionMode' | 'onExitSelectionMode' | 'isSelectionMode'>;
@@ -73,6 +75,7 @@ export const OrderMainHeader = ({
   useFloatingActionStack = false,
   isActionStackVisible = true,
   isMobile,
+  headerSearchWidth,
 }: OrderMainHeaderProps) => {
   const { setHeader } = useSectionPanel();
 
@@ -121,8 +124,13 @@ export const OrderMainHeader = ({
   return (
     <>
       {!isMobile && (
-        <HeaderSlotPortal name={HOME_HEADER_CENTER_SLOT}>
-          <div className="flex w-full max-w-[360px] flex-col items-center">{searchAndFilters}</div>
+        <HeaderSlotPortal name={HOME_HEADER_END_SLOT}>
+          <div
+            className={cn("flex flex-col px-4", headerSearchWidth ? undefined : "w-[360px]")}
+            style={headerSearchWidth ? { width: headerSearchWidth } : undefined}
+          >
+            {searchAndFilters}
+          </div>
         </HeaderSlotPortal>
       )}
       <motion.div

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
-export const HOME_HEADER_CENTER_SLOT = 'home-header-center'
+export const HOME_HEADER_END_SLOT = 'home-header-end'
 
 type HeaderSlotContextValue = {
   register: (name: string, element: HTMLElement | null) => void
