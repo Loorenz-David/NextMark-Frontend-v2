@@ -1,4 +1,5 @@
 import { useMobile } from '@/app/viewport'
+import { useDocumentScrollLock } from '@/shared/hooks/useDocumentScrollLock'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { PrintTemplateChannelPage } from '@/features/templates/printDocument/pages/PrintTemplateChannelPage'
@@ -12,6 +13,7 @@ import { SettingsMobileSectionList } from '../components/mobile/SettingsMobileSe
 
 const SettingsView = () => {
   const { isMobile } = useMobile()
+  useDocumentScrollLock()
 
   return (
     <div

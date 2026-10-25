@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 
 import { useMobile } from '@/app/viewport'
+import { useDocumentScrollLock } from '@/shared/hooks/useDocumentScrollLock'
 import { HomeOverlays, HomeRouteOperationsPage } from '@/features/home-route-operations'
 import { WorkspaceSkeleton } from '../components/WorkspaceSkeleton'
 import { useHomeApp } from '../providers/HomeAppProvider'
@@ -36,6 +37,7 @@ export function Home() {
 
 function HomeAppShell() {
   const { isMobile } = useMobile()
+  useDocumentScrollLock()
   const { activeWorkspace } = useHomeApp()
 
   if (isMobile) {

@@ -61,7 +61,7 @@ export const RouteGroupMenu = ({
               onClick={runAndClose(onCreateRouteGroup)}
               aria-label="New route group"
               title="New route group"
-              className="touch-hit-area flex w-11 shrink-0 cursor-pointer items-center justify-center border-l border-border transition-colors hover:bg-surface-hover active:bg-surface-hover"
+              className="flex w-11 shrink-0 cursor-pointer items-center justify-center border-l border-border transition-colors hover:bg-surface-hover active:bg-surface-hover"
             >
               <PlusIcon className="h-4 w-4 stroke-[var(--color-text)]" />
             </button>

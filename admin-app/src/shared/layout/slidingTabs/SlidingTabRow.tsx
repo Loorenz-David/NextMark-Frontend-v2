@@ -204,7 +204,7 @@ export const SlidingTabRow = ({
             setWindowStart((current) => nextTabWindowStart(current, total))
           }
           aria-label={isAtEnd ? "Show first tabs" : "Show more tabs"}
-          className="touch-hit-area flex w-11 shrink-0 cursor-pointer items-center justify-center text-[var(--color-text)] transition-colors hover:bg-surface-hover"
+          className="flex w-11 shrink-0 cursor-pointer items-center justify-center text-[var(--color-text)] transition-colors hover:bg-surface-hover"
         >
           <ChevronDownIcon
             className={`h-5 w-5 transition-transform duration-300 ${
