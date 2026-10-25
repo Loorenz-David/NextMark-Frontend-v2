@@ -10,7 +10,6 @@ import { HomeDesktopHeader } from '../components/HomeDesktopHeader'
 import { HomeMobileShell } from '../components/mobile/HomeMobileShell'
 import { OrderLinkedDeviceLiveWidget } from '@/features/order/components/linkedDeviceLive/OrderLinkedDeviceLiveWidget'
 import { useHomeTabletBackFlow } from '../flows/useHomeTabletBack.flow'
-import { HeaderSlotProvider } from '@/shared/layout/headerSlot'
 
 const HomeStorePickupPage = lazy(() =>
   import('@/features/home-store-pickup/pages/HomeStorePickupPage').then((module) => ({
@@ -52,20 +51,18 @@ function HomeAppShell() {
   }
 
   return (
-    <HeaderSlotProvider>
-      <div className="flex h-dvh w-screen flex-col overflow-hidden">
-        <HomeTabletBackBridge />
-        <HomeDesktopHeader />
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-          <ActiveWorkspaceView workspace={activeWorkspace} />
-        </div>
-        {/* Global popup render host — available across all home workspaces so the
-            account switcher (and every home popup) renders regardless of the
-            active workspace. */}
-        <HomeOverlays />
-        <OrderLinkedDeviceLiveWidget />
+    <div className="flex h-dvh w-screen flex-col overflow-hidden">
+      <HomeTabletBackBridge />
+      <HomeDesktopHeader />
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+        <ActiveWorkspaceView workspace={activeWorkspace} />
       </div>
-    </HeaderSlotProvider>
+      {/* Global popup render host — available across all home workspaces so the
+          account switcher (and every home popup) renders regardless of the
+          active workspace. */}
+      <HomeOverlays />
+      <OrderLinkedDeviceLiveWidget />
+    </div>
   )
 }
 

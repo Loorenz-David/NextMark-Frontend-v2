@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { useViewport } from "@/app/viewport";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { useScrollHideActionBar } from "@/shared/hooks/useScrollHideActionBar";
-import { useElementWidth } from "@/shared/hooks/useElementWidth";
 import { OrderLoadingList } from "@/shared/loadingCards/order";
 
-import { OrderMainHeader } from "../components/pageHeaders/OrderMainHeader";
+import {
+  OrderMainHeader,
+  OrderMainSearch,
+} from "../components/pageHeaders/OrderMainHeader";
 import { OrderList } from "../components/lists/OrderList";
 import { OrderListSummary } from "../components/lists/OrderListSummary";
 import { OrderProvider } from "../context/OrderProvider";
@@ -39,9 +41,6 @@ const OrderMainContent = ({
   } = useOrderContext();
   const { isMobile, isStandalone } = useViewport();
   const actionStackRef = useRef<HTMLDivElement | null>(null);
-  // The header search sits above this panel and takes its exact width.
-  const panelRef = useRef<HTMLDivElement | null>(null);
-  const panelWidth = useElementWidth(panelRef);
   const [actionStackHeight, setActionStackHeight] = useState(0);
 
   useEffect(() => {
@@ -101,9 +100,8 @@ const OrderMainContent = ({
   };
 
   return (
-    <div ref={panelRef} className="relative flex h-full w-full flex-col bg-[var(--color-primary)]/5">
+    <div className="relative flex h-full w-full flex-col bg-[var(--color-primary)]/5">
       {!isMobile && <OrderMainHeader
-        headerSearchWidth={panelWidth}
         onCreate={() => orderActions.openOrderForm({ mode: "create" })}
         onEnterSelectionMode={orderSelectionActions.handleEnterSelectionMode}
         onExitSelectionMode={orderSelectionActions.handleExitSelectionMode}
@@ -143,6 +141,14 @@ const OrderMainContent = ({
                 query={query}
             isMobile={true}
           />}
+          {!isMobile && (
+            <OrderMainSearch
+              applySearch={orderActions.applySearch}
+              onOpenFilters={orderActions.openFilterPanel}
+              query={query}
+              isMobile={false}
+            />
+          )}
           {!isInitialLoading && <OrderListSummary orderStats={orderStats} />}
           {isInitialLoading ? (
             <OrderLoadingList variant="orderMain" count={6} />

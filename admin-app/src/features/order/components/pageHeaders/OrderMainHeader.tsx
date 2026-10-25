@@ -5,13 +5,12 @@ import type {
 } from "../../types/orderMeta";
 import { SearchFilterBar } from "@/shared/searchBars";
 import { useSectionPanel } from "@/shared/section-panel/SectionPanelContext";
-import { type RefObject, useEffect, useMemo } from "react";
+import { type ReactNode, type RefObject, useEffect, useMemo } from "react";
 import { ThreeDotMenu } from "@/shared/buttons/ThreeDotMenu";
 import { InfoHover } from "@/shared/layout/InfoHover";
 import { ORDER_MAIN_HEADER_INFO } from "../../info/orderMainHeader.info";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { HeaderSlotPortal, HOME_HEADER_END_SLOT } from "@/shared/layout/headerSlot";
 import {
   countActiveOrderFilters,
   draftFromOrderQueryFilters,
@@ -34,8 +33,6 @@ type OrderMainHeaderProps = {
   useFloatingActionStack?: boolean;
   isActionStackVisible?: boolean;
   isMobile: boolean;
-  /** Width of the order panel; the header search matches it (desktop/iPad). */
-  headerSearchWidth?: number | null;
 };
 
 type OrderHeaderActionsProps = Pick<OrderMainHeaderProps, 'onCreate' | 'onEnterSelectionMode' | 'onExitSelectionMode' | 'isSelectionMode'>;
@@ -59,6 +56,38 @@ function OrderHeaderActions({ onCreate, onEnterSelectionMode, onExitSelectionMod
   );
 }
 
+type OrderMainSearchProps = Pick<OrderMainHeaderProps, "applySearch" | "onOpenFilters" | "query" | "isMobile"> & {
+  /** Phone only: the order actions sit beside the search. */
+  actions?: ReactNode;
+};
+
+/**
+ * Order search and filters at the top of the order list's scroll area, so it
+ * scrolls away with the list and leaves the room to the orders.
+ */
+export const OrderMainSearch = ({
+  applySearch,
+  onOpenFilters,
+  query,
+  isMobile,
+  actions,
+}: OrderMainSearchProps) => {
+  // Active filters show only as the count on the filter button (user, D11).
+  const activeFilterCount = useMemo(
+    () => countActiveOrderFilters(draftFromOrderQueryFilters(query.filters)),
+    [query.filters],
+  );
+
+  return (
+    <div className={isMobile ? "flex gap-4 p-4 pb-3 max-h-[65px] bg-[var(--color-page)]" : "px-4 pb-2 pt-3"}>
+      <div className="min-w-0 flex-1">
+        <SearchFilterBar placeholder="Search orders..." applySearch={applySearch} onOpenFilters={onOpenFilters} activeFilterCount={activeFilterCount} searchValue={query.q} size={isMobile ? "default" : "compact"} />
+      </div>
+      {actions}
+    </div>
+  );
+};
+
 export const OrderMainHeader = ({
   onCreate,
   onEnterSelectionMode,
@@ -73,14 +102,8 @@ export const OrderMainHeader = ({
   useFloatingActionStack = false,
   isActionStackVisible = true,
   isMobile,
-  headerSearchWidth,
 }: OrderMainHeaderProps) => {
   const { setHeader } = useSectionPanel();
-
-  const activeFilterCount = useMemo(
-    () => countActiveOrderFilters(draftFromOrderQueryFilters(query.filters)),
-    [query.filters],
-  );
 
   useEffect(() => {
     // Counts live at the top of the list (OrderListSummary), not here.
@@ -101,28 +124,8 @@ export const OrderMainHeader = ({
     };
   }, [setHeader, isMobile, onCreate, isSelectionMode, onEnterSelectionMode, onExitSelectionMode]);
 
-  // Active filters show only as the count on the filter button (user, D11).
-  const searchAndFilters = (
-    <div className={isMobile ? "flex gap-4 p-4 pb-3 max-h-[65px] bg-[var(--color-page)]" : "w-full"}>
-      <div className="min-w-0 flex-1">
-        <SearchFilterBar placeholder="Search orders..." applySearch={applySearch} onOpenFilters={onOpenFilters} activeFilterCount={activeFilterCount} searchValue={query.q} size={isMobile ? "default" : "compact"} />
-      </div>
-      {isMobile && <OrderHeaderActions onCreate={onCreate} onEnterSelectionMode={onEnterSelectionMode} onExitSelectionMode={onExitSelectionMode} isSelectionMode={isSelectionMode} />}
-    </div>
-  );
-
   return (
     <>
-      {!isMobile && (
-        <HeaderSlotPortal name={HOME_HEADER_END_SLOT}>
-          <div
-            className={cn("flex flex-col px-4", headerSearchWidth ? undefined : "w-[360px]")}
-            style={headerSearchWidth ? { width: headerSearchWidth } : undefined}
-          >
-            {searchAndFilters}
-          </div>
-        </HeaderSlotPortal>
-      )}
       <motion.div
         ref={actionStackRef}
         initial={false}
@@ -140,7 +143,22 @@ export const OrderMainHeader = ({
             !useFloatingActionStack || isActionStackVisible ? "auto" : "none",
         }}
       >
-        {isMobile && searchAndFilters}
+        {isMobile && (
+          <OrderMainSearch
+            applySearch={applySearch}
+            onOpenFilters={onOpenFilters}
+            query={query}
+            isMobile
+            actions={
+              <OrderHeaderActions
+                onCreate={onCreate}
+                onEnterSelectionMode={onEnterSelectionMode}
+                onExitSelectionMode={onExitSelectionMode}
+                isSelectionMode={isSelectionMode}
+              />
+            }
+          />
+        )}
         {isSelectionMode && (
           <div className="flex w-full px-2 justify-center gap-3 text-xs ">
             <BasicButton

@@ -48,6 +48,13 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Top bar folds away; order search back in the order panel (Claude)
+- Scope: user — the top bar (theme, acting user, notifications, Settings) is the least used part of the screen; it should hide and be revealable, giving its height to the panels. User picked option 1 of five presented (collapsible bar with a reveal strip; others: floating account button, icon rail, hide-on-scroll, hover reveal). The order search moves back into the order panel, under its header, in the scroll area.
+- `HomeDesktopHeader`: a chevron button on the right folds the bar (grid-rows 1fr→0fr, 200ms, `inert` while folded); a 16px strip with a grab handle (finger-sized via `touch-hit-area`) brings it back and shows a red dot while notifications are unread (`useAdminNotificationUnreadCount`, new in `realtime/notifications`). The bar stays mounted so the notifications trigger keeps chiming. Folded state remembered per device (`home-app/stores/homeTopBar.store.ts` + `.storage.ts`, key `home.topBar.hidden.v1`).
+- Order search: `OrderMainSearch` (in `OrderMainHeader.tsx`) renders at the top of the order list's scroll area on iPad/desktop (phone unchanged, with its actions beside it). The header-slot portal and the panel width measurement that lined the search up with the bar are gone; `HomeAppPage` no longer mounts `HeaderSlotProvider`. `shared/layout/headerSlot` is now unused (deletion needs the user's OK).
+- Checked in Chrome with `?viewport=tablet&pointer=coarse` (forces the tablet layout in the 768px window): search at the top of the Orders panel, fold, reload keeps it folded, strip tap reveals; no console errors. Unread dot not seen live (no unread notifications in the dev data).
+- Gates: lint 0 errors (52 warnings), tests 203, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Route timeline moves to the left of the cards (Claude)
 - Scope: user — "place the timeline on the left side instead".
 - `RouteTimelineRow` / `RouteTimelineEdge`: timeline slice first, card or start/end text after (`pl-1`); list padding `pl-1 pr-4`. An empty route no longer trails a line below the start (`continues` on the edge/marker).
