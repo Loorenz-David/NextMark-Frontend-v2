@@ -11,6 +11,7 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | D3 | 2026-10-24 | **Revised by the user.** Safari cannot do Bluetooth, so Bluetooth printing goes through a **native bridge app** we build and sideload (wrapper shell with a `navigator.bluetooth` polyfill, WebBLE Apache-2.0 as the base; `nextmarkBridge` for MFi/TCP). The web app keeps a transport layer: share/AirPrint first (works everywhere), bridge transports when present. Parallel native project, separate repo. | WebKit does not ship Web Bluetooth/Serial/USB; a sideloaded WKWebView app can. | `05_PRINTING_AND_BLUETOOTH.md` §6 |
 | D4 | 2026-10-24 | Service worker stays notification-only; admin PWA gets a second manifest with `scope: "/"`. | Guard script + live-deployment requirement. | `04_PWA_AND_PLATFORM.md` |
 | D5 | 2026-10-24 | Desktop ≥ 1440px must stay pixel-identical unless a phase says otherwise. | Client also works on monitors. | `00_GOAL_AND_CONSTRAINTS.md` |
+| D10 | 2026-10-25 | **Info (i) buttons are removed from the phone and iPad interfaces**: `InfoHover` renders nothing when the layout is phone or the pointer is coarse (iPad at any width). Desktop and narrow laptop windows with a mouse keep them. | Not needed on those views (user). One shared component, so every form field, header and popup follows. | `shared/layout/InfoHover/InfoHover.tsx` |
 | D9 | 2026-10-25 | **Restyling starts before the iPad test**, beginning with the order card redesign (R1, `12_ORDER_CARD_REDESIGN.md`), applied to phone, iPad and desktop. External source chip and street address leave the card; route-stop number, ETA and warnings leave the card for a later vertical timeline. Panel widths follow as R2 after the user measures the new card. | The user already knows the target design and wants the process moving; the narrower card frees panel width on every size. | `12`, `06_PLAN.md` R1/R2 |
 | D8 | 2026-10-24 | The drag **press and lift cue** (squeeze while held, preview lifts with shadow and accent ring) applies to **every pointer, desktop included**. Mouse **activation** is unchanged (press and move 6px, no hold). | The user liked the cue on touch and wants the same feel on PC. A hold for the mouse was not adopted: no scroll conflict to solve, and it would swallow slow clicks. | `11_TOUCH_DRAG_INTENT.md` §6, `shared/dnd/CueMouseSensor.ts` |
 | D7 | 2026-10-24 | Content-priority decisions (`09`) are made **after Phases 0–5**, when the user can use the app on the iPad; implemented as Phase 6b before the bridge project. | Decisions need the real device experience. | `06_PLAN.md` Phase 1b/6b |
@@ -41,6 +42,11 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | K8 | Phase 6 | Printer | **Deferred by the user** until the printing phase. Test with "Save to Files" meanwhile. |
 
 ## Session entries
+
+### 2026-10-25 — R1 reviewed and committed; info buttons removed on phone and iPad (Claude)
+
+- R1 review: matches `12`; `RouteGroupOrderCard` is now a wrapper around `OrderCard`; opt-in sizes keep `StateCard`'s 18 other users unchanged; preview summary tested. Gates green (tests 160/160). Committed `1acef93`.
+- D10: `InfoHover` (15 users, including `Field`'s `info` prop) is now a wrapper that returns nothing on the phone layout or a coarse pointer, and renders the unchanged view otherwise. The check sits in the wrapper so crossing a breakpoint never changes the view's hook order. No info trigger uses the text variant, so no visible text is lost. Device row B21.
 
 ### 2026-10-25 — Restyle R1 implemented (Codex)
 

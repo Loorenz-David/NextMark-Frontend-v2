@@ -48,6 +48,7 @@ Run after every phase. Copy the table into `08_SESSION_LOG.md` under the session
 | B18 | Quick swipe starting on cards (order list, route stops, settings lists) → the list scrolls; no drag, no squeeze flash | |
 | B19 | Reorder route stops up and down by hold and by press-pause-move; drop on nothing → nothing changes | |
 | B20 | Long press on a draggable never shows the iOS callout or selects text | |
+| B21 | No info (i) buttons anywhere on the iPad or phone (forms, headers, popups); desktop with a mouse still shows them | |
 
 ## C. Installed app (standalone)
 

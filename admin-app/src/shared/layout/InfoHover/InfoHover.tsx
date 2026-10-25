@@ -1,4 +1,5 @@
 import { QuestionIcon } from '@/assets/icons'
+import { useViewport } from '@/app/viewport'
 import { cn } from '@/lib/utils/cn'
 import { SlideCarousel } from '@/shared/layout/slideCarousel'
 import { FloatingPopover } from '@/shared/popups/FloatingPopover/FloatingPopover'
@@ -25,7 +26,7 @@ const renderMessageCard = (message: InfoHoverMessage) => (
   </div>
 )
 
-export const InfoHover = ({
+const InfoHoverView = ({
   content,
   triggerVariant = 'icon',
   triggerText,
@@ -122,4 +123,15 @@ export const InfoHover = ({
       </div>
     </FloatingPopover>
   )
+}
+
+/**
+ * Info buttons are a desktop aid: the phone layout and touch devices (the
+ * iPad at any width) do not show them (decision D10). The check lives in a
+ * wrapper so a breakpoint change never alters the hooks the view calls.
+ */
+export const InfoHover = (props: InfoHoverProps) => {
+  const { isMobile, isCoarsePointer } = useViewport()
+  if (isMobile || isCoarsePointer) return null
+  return <InfoHoverView {...props} />
 }
