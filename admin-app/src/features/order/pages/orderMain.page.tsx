@@ -164,32 +164,33 @@ const OrderMainContent = ({
               onOrderMouseLeave={handleOrderRowMouseLeave}
             />
           )}
+          {/* Next page loads from the end of the list, after the last card. */}
+          {!isInitialLoading &&
+            !isRefreshingOrders &&
+            (isLoadingNextPage || hasMorePages) && (
+              <div
+                className={`flex justify-center  px-4 pt-0 ${
+                  isStandalone && !isMobile
+                    ? "pb-[calc(1rem+env(safe-area-inset-bottom,0px))]"
+                    : "pb-4"
+                }`}
+              >
+                <BasicButton
+                  params={{
+                    onClick: () => {
+                      void loadNextPage();
+                    },
+                    disabled: isLoadingNextPage || !hasMorePages,
+                    variant: "secondary",
+                    ariaLabel: "Load next page of orders",
+                  }}
+                >
+                  {isLoadingNextPage ? "Loading…" : "Show more"}
+                </BasicButton>
+              </div>
+            )}
         </div>
       </div>
-      {!isInitialLoading &&
-        !isRefreshingOrders &&
-        (isLoadingNextPage || hasMorePages) && (
-          <div
-            className={`flex justify-center  px-4 pt-3 ${
-              isStandalone && !isMobile
-                ? "pb-[calc(1rem+env(safe-area-inset-bottom,0px))]"
-                : "pb-4"
-            }`}
-          >
-            <BasicButton
-              params={{
-                onClick: () => {
-                  void loadNextPage();
-                },
-                disabled: isLoadingNextPage || !hasMorePages,
-                variant: "secondary",
-                ariaLabel: "Load next page of orders",
-              }}
-            >
-              {isLoadingNextPage ? "Loading…" : "Show more"}
-            </BasicButton>
-          </div>
-        )}
     </div>
   );
 };
