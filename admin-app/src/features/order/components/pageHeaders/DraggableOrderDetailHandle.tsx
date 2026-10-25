@@ -1,15 +1,20 @@
+import type { ReactNode } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
-import { DocumentIcon } from "@/assets/icons";
 import type { Order } from "@/features/order/types/order";
 
-type DraggableOrderDetailIconProps = {
+type DraggableOrderDetailHandleProps = {
   order: Order;
+  children: ReactNode;
+  className?: string;
 };
 
-export const DraggableOrderDetailIcon = ({
+/** Makes its children a drag handle that carries the open order onto plans. */
+export const DraggableOrderDetailHandle = ({
   order,
-}: DraggableOrderDetailIconProps) => {
+  children,
+  className,
+}: DraggableOrderDetailHandleProps) => {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `order-detail-header-${order.client_id}`,
     data: {
@@ -33,11 +38,11 @@ export const DraggableOrderDetailIcon = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="dnd-touch-source inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[var(--shadow-button-accent-subtle)]"
+      className={`dnd-touch-source ${className ?? ""}`.trim()}
       {...attributes}
       {...listeners}
     >
-      <DocumentIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
+      {children}
     </div>
   );
 };

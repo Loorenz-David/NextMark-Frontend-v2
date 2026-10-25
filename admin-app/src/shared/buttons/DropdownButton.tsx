@@ -25,6 +25,8 @@ type DropdownButtonProps = {
   renderInPortal?: boolean
   placement?: Placement
   floatingClassName?: string
+  /** `pill`: a 44px rounded-full split button with a wide chevron segment. */
+  shape?: 'default' | 'pill'
 }
 
 export const DropdownButton = ({
@@ -42,7 +44,10 @@ export const DropdownButton = ({
   renderInPortal,
   placement,
   floatingClassName,
+  shape = 'default',
 }: DropdownButtonProps) => {
+  const isPill = shape === 'pill'
+
   const [isOpen, setIsOpen] = useState(false)
 
   const baseParams: ButtonParams = {
@@ -79,7 +84,11 @@ export const DropdownButton = ({
                 params={{
                   ...baseParams,
                   onClick,
-                  className: cn('rounded-r-none', fullWidth && 'w-full'),
+                  className: cn(
+                    'rounded-r-none',
+                    fullWidth && 'w-full',
+                    isPill && 'min-h-11 min-w-0 whitespace-nowrap rounded-l-full px-4 text-px-15 font-semibold',
+                  ),
                 }}
               >
                 {label}
@@ -91,15 +100,16 @@ export const DropdownButton = ({
                   onClick:() => setIsOpen((prev) => !prev),
                   className: cn(
                     `rounded-l-none border-l-[${borderColor ? borderColor : "var(--color-muted)"}] border-l-[0.5px]`,
-                    fullWidth && 'flex-1',
+                    fullWidth && !isPill && 'flex-1',
+                    isPill && 'min-h-11 w-12 shrink-0 rounded-r-full border-l-white/40',
                   ),
-                  style:{paddingInline:'2.5px', }
+                  style: isPill ? undefined : { paddingInline: '2.5px' },
                   
                 }}
               >
                 
                 <ChevronDownIcon 
-                  className={`h-4 w-4`}  
+                  className={isPill ? 'h-5 w-5' : 'h-4 w-4'}
                   style={{ color: borderColor }}
                 />
               </BasicButton>

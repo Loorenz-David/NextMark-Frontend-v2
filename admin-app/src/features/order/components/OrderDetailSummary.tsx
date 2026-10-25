@@ -15,10 +15,9 @@ type OrderDetailSummaryProps = {
   onTrackingLinkCopy?: () => void;
 };
 
-type DetailCardProps = {
+type DetailRowProps = {
   label: string;
   value: ReactNode;
-  className?: string;
 };
 
 const asText = (value?: string | null) => value || "—";
@@ -45,19 +44,17 @@ export const OrderDetailSummary = ({
 
   return (
     <div className="admin-glass-panel flex h-[420px] [@media(pointer:coarse)]:h-[min(420px,55dvh)] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
-      <div className="admin-glass-divider flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <p className="text-micro font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
-              Customer Details
-            </p>
-            {order?.help_to_carry ? (
-              <HelpToCarryIcon
-                className="h-5 w-5 text-[var(--color-muted)]"
-                aria-label="Help to carry required"
-              />
-            ) : null}
-          </div>
+      <div className="admin-glass-divider flex flex-wrap items-center justify-between gap-2 border-b px-4 py-4">
+        <div className="flex items-center gap-2">
+          <p className="text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
+            Customer
+          </p>
+          {order?.help_to_carry ? (
+            <HelpToCarryIcon
+              className="h-5 w-5 text-[var(--color-muted)]"
+              aria-label="Help to carry required"
+            />
+          ) : null}
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
           {hasMissingRequiredInfo && onMissingOrderInfoClick ? (
@@ -74,7 +71,7 @@ export const OrderDetailSummary = ({
 
           {stateName ? (
             <span
-              className="inline-flex items-center rounded-full border px-2.5 py-1 text-rem-0_64 font-medium uppercase tracking-[0.16em]"
+              className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-rem-0_64 font-medium uppercase tracking-[0.16em]"
               style={{
                 color: stateColor,
                 borderColor: `${stateColor}55`,
@@ -87,122 +84,105 @@ export const OrderDetailSummary = ({
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-5 py-4.5 scroll-thin">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <DetailCard label="Customer" value={fullName} />
-          <DetailCard
-            label="Email"
-            value={
-              order?.client_email ? (
-                <a
-                  href={`mailto:${order.client_email}`}
-                  className={detailLinkClassName}
-                >
-                  {order.client_email}
-                </a>
-              ) : (
-                "—"
-              )
-            }
-          />
-          <DetailCard
-            label="Phone"
-            value={
-              order?.client_primary_phone ? (
-                <a
-                  href={`tel:${order.client_primary_phone}`}
-                  className={detailLinkClassName}
-                >
-                  {formatPhone(order.client_primary_phone)}
-                </a>
-              ) : (
-                "—"
-              )
-            }
-          />
-          <DetailCard
+      <dl className="flex flex-1 flex-col divide-y divide-[var(--color-border)] overflow-y-auto px-4 scroll-thin">
+        <DetailRow label="Name" value={fullName} />
+        <DetailRow
+          label="Email"
+          value={
+            order?.client_email ? (
+              <a href={`mailto:${order.client_email}`} className={detailLinkClassName}>
+                {order.client_email}
+              </a>
+            ) : (
+              "—"
+            )
+          }
+        />
+        <DetailRow
+          label="Phone"
+          value={
+            order?.client_primary_phone ? (
+              <a href={`tel:${order.client_primary_phone}`} className={detailLinkClassName}>
+                {formatPhone(order.client_primary_phone)}
+              </a>
+            ) : (
+              "—"
+            )
+          }
+        />
+        {order?.client_secondary_phone ? (
+          <DetailRow
             label="Second phone"
             value={
-              order?.client_secondary_phone ? (
-                <a
-                  href={`tel:${order.client_secondary_phone}`}
-                  className={detailLinkClassName}
-                >
-                  {formatPhone(order.client_secondary_phone)}
-                </a>
-              ) : (
-                "—"
-              )
+              <a href={`tel:${order.client_secondary_phone}`} className={detailLinkClassName}>
+                {formatPhone(order.client_secondary_phone)}
+              </a>
             }
           />
-          <DetailCard
-            className="sm:col-span-2"
-            label="Address"
+        ) : null}
+        <DetailRow
+          label="Address"
+          value={
+            order?.client_address?.street_address ? (
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  order.client_address.street_address,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={detailLinkClassName}
+              >
+                {order.client_address.street_address}
+              </a>
+            ) : (
+              "—"
+            )
+          }
+        />
+
+        {hasTrackingInfo ? (
+          <DetailRow
+            label="Tracking number"
             value={
-              order?.client_address?.street_address ? (
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                    order.client_address.street_address,
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={detailLinkClassName}
-                >
-                  {order.client_address.street_address}
-                </a>
-              ) : (
-                "—"
-              )
+              <div className="flex min-w-0 items-center justify-between gap-3">
+                <span className="min-w-0 break-all font-mono">
+                  {asText(order?.tracking_number)}
+                </span>
+                {order?.tracking_link && onTrackingLinkCopy ? (
+                  <button
+                    type="button"
+                    onClick={onTrackingLinkCopy}
+                    className="inline-flex shrink-0 items-center rounded-xl border border-border bg-surface-raised px-2.5 py-1 text-xs font-medium text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)]"
+                    aria-label="Copy tracking link"
+                  >
+                    Copy
+                  </button>
+                ) : null}
+              </div>
             }
           />
+        ) : null}
+      </dl>
 
-          {hasTrackingInfo ? (
-            <DetailCard
-              className="sm:col-span-2"
-              label="Tracking number"
-              value={
-                <div className="flex min-w-0 items-center justify-between gap-3">
-                  <span className="min-w-0 break-all font-mono">
-                    {asText(order?.tracking_number)}
-                  </span>
-                  {order?.tracking_link && onTrackingLinkCopy ? (
-                    <button
-                      type="button"
-                      onClick={onTrackingLinkCopy}
-                      className="inline-flex shrink-0 items-center rounded-xl border border-border bg-surface-raised px-2.5 py-1 text-xs font-medium text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)]"
-                      aria-label="Copy tracking link"
-                    >
-                      Copy
-                    </button>
-                  ) : null}
-                </div>
-              }
-            />
-          ) : null}
-        </div>
-      </div>
-
-      <div className="admin-glass-divider border-t px-5 py-3">
-        <p className="text-rem-0_72 text-[var(--color-muted)]">
-          Created at:{" "}
-          {toDateOnly(order?.creation_date ?? null) || "missing creation date"}
+      <div className="admin-glass-divider border-t px-4 py-3">
+        <p className="text-sm text-[var(--color-muted)]">
+          Created{" "}
+          {toDateOnly(order?.creation_date ?? null) || "date missing"}
         </p>
       </div>
     </div>
   );
 };
 
-const DetailCard = ({ label, value, className }: DetailCardProps) => {
+const DetailRow = ({ label, value }: DetailRowProps) => {
   return (
-    <div
-      className={`rounded-3xl border border-border bg-surface-subtle px-4 py-3 ${className ?? ""}`}
-    >
-      <p className="text-micro font-medium uppercase tracking-[0.2em] text-[var(--color-muted)]">
+    <div className="py-3">
+      <dt className="text-micro font-medium uppercase tracking-[0.2em] text-[var(--color-muted)]/80">
         {label}
-      </p>
-      <div className="mt-1 break-words text-rem-0_98 leading-7 text-[var(--color-text)]">
+      </dt>
+      <dd className="mt-0.5 break-words text-base text-[var(--color-text)]">
         {value}
-      </div>
+      </dd>
     </div>
   );
 };

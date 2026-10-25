@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
-import { DocumentIcon, EditIcon } from "@/assets/icons";
-import { DraggableOrderDetailIcon } from "./DraggableOrderDetailIcon";
-import { BasicButton } from "@/shared/buttons/BasicButton";
+import { CloseIcon, EditIcon } from "@/assets/icons";
+import { DraggableOrderDetailHandle } from "./DraggableOrderDetailHandle";
 import { DropdownButton } from "@/shared/buttons/DropdownButton";
 import { useOrderDetailHeaderPlanMeta } from "@/features/plan";
 import {
@@ -33,6 +32,10 @@ type OrderDetailHeaderProps = {
   contextRouteGroupId?: number | null;
 };
 
+/**
+ * Desktop/iPad header card: order number (the drag handle onto plans) with
+ * round edit and close buttons, plan lines, then the full-width state button.
+ */
 export const OrderDetailHeader = ({
   openOrderForm,
   onAdvanceOrderState,
@@ -58,95 +61,105 @@ export const OrderDetailHeader = ({
         />
         <div className="admin-header-wash pointer-events-none absolute inset-x-0 top-0 h-44" />
 
-        <div className="relative z-10 flex items-start justify-between gap-4 px-5 py-4">
-          <div className="flex flex-col">
-            <div className="flex min-w-0 items-center gap-3.5">
-              {order ? (
-                <DraggableOrderDetailIcon order={order} />
-              ) : (
-                <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)] shadow-[var(--shadow-button-accent-subtle)]">
-                  <DocumentIcon className="h-[22px] w-[22px] text-[var(--color-primary)]" />
-                </div>
-              )}
-              <OrderDetailHeaderTitle
-                order={order}
-                headerBehavior={headerBehavior}
-                contextRouteGroupId={contextRouteGroupId}
-              />
-            </div>
-          </div>
+        <div className="relative z-10 flex items-start justify-between gap-3 px-4 pb-4 pt-5">
+          <OrderDetailHeaderTitle
+            order={order}
+            headerBehavior={headerBehavior}
+            contextRouteGroupId={contextRouteGroupId}
+            variant="hero"
+          />
 
-          <div className="flex shrink-0 flex-col items-end gap-2">
-            <BasicButton
-              params={{
-                variant: "toolbarSecondary",
-                onClick: onClose,
-                ariaLabel: "Close order detail",
-                className:
-                  "min-w-[116px] justify-center px-4 uppercase tracking-[0.24em] text-xs",
-              }}
+          <div className="flex shrink-0 items-center gap-2">
+            <OrderDetailHeaderIconButton
+              ariaLabel="Edit order"
+              disabled={!order}
+              onClick={() =>
+                order && openOrderForm({ mode: "edit", clientId: order.client_id })
+              }
             >
-              Close
-            </BasicButton>
-
-            <BasicButton
-              params={{
-                variant: "toolbarSecondary",
-                onClick: () =>
-                  order &&
-                  openOrderForm({ mode: "edit", clientId: order.client_id }),
-                ariaLabel: "Edit order",
-                className: "min-w-[116px] justify-center px-4 py-1.5 text-sm",
-              }}
+              <EditIcon className="h-4.5 w-4.5 stroke-[var(--color-text)]" />
+            </OrderDetailHeaderIconButton>
+            <OrderDetailHeaderIconButton
+              ariaLabel="Close order detail"
+              onClick={onClose}
             >
-              <EditIcon className="mr-2 h-4 w-4 stroke-[var(--color-text)]" />
-              Edit
-            </BasicButton>
+              <CloseIcon className="h-3.5 w-3.5 text-[var(--color-text)]" />
+            </OrderDetailHeaderIconButton>
           </div>
         </div>
 
-        <div className="admin-glass-divider relative z-10 flex flex-wrap items-center gap-3 border-t px-5 py-3">
-          <div className="flex min-w-[220px] flex-1 max-w-[270px]">
-            <DropdownButton
-              label={nextState ? `Mark as ${nextState}` : currentStateName}
-              style={{ fontSize: "14px" }}
-              variant="lightBlue"
-              fullWidth={true}
-              disabled={!order}
-              onClick={() => {
-                if (!order) return;
-                void onAdvanceOrderState(order.client_id);
-              }}
-              className="w-full"
-              renderInPortal={true}
-              removeFlip={true}
-              placement="bottom-start"
-              floatingClassName="z-[220]"
-            >
-              {order ? (
-                <OrderStateList order={order} />
-              ) : (
-                <div className="px-2 py-2 text-sm text-[var(--color-muted)]">
-                  Order not available.
-                </div>
-              )}
-            </DropdownButton>
-          </div>
+        <div className="admin-glass-divider relative z-10 border-t px-4 py-4">
+          <DropdownButton
+            label={
+              <span className="truncate">
+                {nextState ? `Mark as ${nextState}` : currentStateName}
+              </span>
+            }
+            shape="pill"
+            variant="lightBlue"
+            fullWidth={true}
+            disabled={!order}
+            onClick={() => {
+              if (!order) return;
+              void onAdvanceOrderState(order.client_id);
+            }}
+            className="w-full"
+            renderInPortal={true}
+            removeFlip={true}
+            placement="bottom-start"
+            floatingClassName="z-[220]"
+          >
+            {order ? (
+              <OrderStateList order={order} />
+            ) : (
+              <div className="px-2 py-2 text-sm text-[var(--color-muted)]">
+                Order not available.
+              </div>
+            )}
+          </DropdownButton>
         </div>
       </div>
     </div>
   );
 };
 
-/** Order id, source badge and plan meta; shared by the desktop and phone headers. */
+const OrderDetailHeaderIconButton = ({
+  ariaLabel,
+  onClick,
+  disabled,
+  children,
+}: {
+  ariaLabel: string;
+  onClick: () => void;
+  disabled?: boolean;
+  children: ReactNode;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    aria-label={ariaLabel}
+    className="inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border bg-surface-raised shadow-[var(--shadow-button-compact)] transition-colors hover:bg-surface-hover active:bg-surface-hover disabled:opacity-50"
+  >
+    {children}
+  </button>
+);
+
+/**
+ * Order id, source badge and plan meta; shared by the desktop and phone
+ * headers. `hero` (desktop/iPad) shows a large id that doubles as the drag
+ * handle and the plan meta on two lines; `compact` (phone) keeps one line.
+ */
 export const OrderDetailHeaderTitle = ({
   order,
   headerBehavior,
   contextRouteGroupId,
+  variant = "compact",
 }: {
   order: Order | null;
   headerBehavior?: OrderDetailHeaderBehavior | null;
   contextRouteGroupId?: number | null;
+  variant?: "hero" | "compact";
 }) => {
   const [isSubheaderSweepActive, setIsSubheaderSweepActive] = useState(false);
   const sweepTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -189,7 +202,7 @@ export const OrderDetailHeaderTitle = ({
     order?.external_source && order.reference_number
       ? order.reference_number
       : order?.order_scalar_id != null
-        ? `# ${order.order_scalar_id}`
+        ? `#${order.order_scalar_id}`
         : "#—";
   const shouldRenderPlanMeta = headerBehavior === "order-main-context";
   const resolvedRouteGroupId =
@@ -202,46 +215,73 @@ export const OrderDetailHeaderTitle = ({
     routeGroupId: resolvedRouteGroupId,
   });
 
+  const sweepClassName = isSubheaderSweepActive
+    ? "order-detail-subheader-sweep-text"
+    : "";
+  const planText = planMeta.isUnscheduled ? "Unscheduled" : planMeta.planLabel;
+  const sourceBadge = order?.external_source ? (
+    <span className="inline-flex w-fit rounded-full border border-[var(--color-border-accent)] bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] px-2 py-0.5 text-rem-0_54 font-medium uppercase tracking-[0.2em] text-[var(--color-primary)]">
+      {order.external_source}
+    </span>
+  ) : null;
+
+  if (variant === "hero") {
+    const titleNode = (
+      <span className="text-2xl font-bold leading-tight tracking-tight text-[var(--color-text)]">
+        {title}
+      </span>
+    );
+    const dateLine = [
+      planMeta.planDateLabel,
+      planMeta.arrivalTimeLabel ? `Arrival ${planMeta.arrivalTimeLabel}` : null,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+
+    return (
+      <div className="flex min-w-0 flex-col gap-3 pt-1">
+        <div className="flex flex-wrap items-center gap-2">
+          {order ? (
+            <DraggableOrderDetailHandle order={order} className="min-w-0">
+              {titleNode}
+            </DraggableOrderDetailHandle>
+          ) : (
+            titleNode
+          )}
+          {sourceBadge}
+        </div>
+        {shouldRenderPlanMeta ? (
+          <div className="flex min-w-0 flex-col text-sm leading-snug text-[var(--color-muted)]">
+            <span className={`truncate ${sweepClassName}`}>{planText}</span>
+            {dateLine ? (
+              <span className={`truncate ${sweepClassName}`}>{dateLine}</span>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-w-0 flex-col">
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-rem-0_98 font-semibold tracking-tight text-[var(--color-text)]">
           {title}
         </span>
-        {order?.external_source ? (
-          <span className="inline-flex w-fit rounded-full border border-[var(--color-border-accent)] bg-[color-mix(in_srgb,var(--color-primary)_14%,transparent)] px-2 py-0.5 text-rem-0_54 font-medium uppercase tracking-[0.2em] text-[var(--color-primary)]">
-            {order.external_source}
-          </span>
-        ) : null}
+        {sourceBadge}
       </div>
       {shouldRenderPlanMeta ? (
         <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-rem-0_72 text-[var(--color-muted)]">
-          <span
-            className={`truncate max-w-[150px] ${
-              isSubheaderSweepActive ? "order-detail-subheader-sweep-text" : ""
-            }`}
-          >
-            Plan: {planMeta.isUnscheduled ? "Unscheduled" : planMeta.planLabel}
+          <span className={`truncate max-w-[150px] ${sweepClassName}`}>
+            Plan: {planText}
           </span>
           {planMeta.planDateLabel ? (
-            <span
-              className={
-                isSubheaderSweepActive
-                  ? "order-detail-subheader-sweep-text"
-                  : ""
-              }
-            >
+            <span className={sweepClassName}>
               Date: {planMeta.planDateLabel}
             </span>
           ) : null}
           {planMeta.arrivalTimeLabel ? (
-            <span
-              className={
-                isSubheaderSweepActive
-                  ? "order-detail-subheader-sweep-text"
-                  : ""
-              }
-            >
+            <span className={sweepClassName}>
               Arrival: {planMeta.arrivalTimeLabel}
             </span>
           ) : null}
