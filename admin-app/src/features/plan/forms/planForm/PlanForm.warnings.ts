@@ -14,12 +14,15 @@ export const usePlanFormWarnings = () => {
   const planStartDateWarning = useInputWarning(
     "Plan must have a start date",
     (value, setWarningMessage) => {
+      // end_date is null for single-date plans; only a range carries one.
       if (
         typeof value !== 'object' || value === null ||
         !('start_date' in value) || typeof value.start_date !== 'string' ||
-        !('end_date' in value) || typeof value.end_date !== 'string'
+        !('end_date' in value) ||
+        (value.end_date !== null && typeof value.end_date !== 'string')
       ) return false
-      const { start_date, end_date } = value
+      const { start_date } = value
+      const end_date = value.end_date ?? ''
       if (!validateString(start_date)) {
         setWarningMessage("Plan must have a start date");
         return false;
