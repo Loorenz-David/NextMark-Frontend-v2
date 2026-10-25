@@ -10,8 +10,6 @@ import type { PlanDateFilterPayload } from "../components/planDateFilter";
 import type { PlanQueryFilters } from "../types/planMeta";
 
 type RoutePlanPageProps = {
-  onRequestClose?: () => void;
-  showCloseButton?: boolean;
   /** Add the calendar/list switch to the header menu. */
   showViewSwitch?: boolean;
 };
@@ -48,11 +46,7 @@ const queryEquals = (
   return JSON.stringify(left ?? {}) === JSON.stringify(right ?? {});
 };
 
-export const RoutePlanPage = ({
-  onRequestClose,
-  showCloseButton,
-  showViewSwitch,
-}: RoutePlanPageProps) => {
+export const RoutePlanPage = ({ showViewSwitch }: RoutePlanPageProps) => {
   const [activeQuery, setActiveQuery] = useState<PlanQueryFilters | undefined>(
     undefined,
   );
@@ -106,8 +100,6 @@ export const RoutePlanPage = ({
     <div className="flex h-full min-h-0 w-full flex-col">
       <PlanMainHeader
         onCreate={planActions.onCreatePlan}
-        onRequestClose={onRequestClose}
-        showCloseButton={showCloseButton}
         applySearch={() => {}}
         applyFilters={handleFiltersChange}
         applyFilterSelection={handleFilterSelection}

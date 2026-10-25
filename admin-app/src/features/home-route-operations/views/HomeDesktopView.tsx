@@ -213,10 +213,7 @@ export function HomeDesktopView() {
           )
         }
         plan={
-          <PlanDesktopShell
-            onRequestClose={layout.closePlan}
-            viewMode={layout.viewMode}
-          />
+          <PlanDesktopShell viewMode={layout.viewMode} />
         }
         base={
           <div

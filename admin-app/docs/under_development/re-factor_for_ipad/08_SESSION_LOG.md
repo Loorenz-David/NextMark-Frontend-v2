@@ -48,6 +48,13 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Plan list view gets the calendar's single-row header (Claude)
+- Scope: user — switching the plan column to list put the date filter and the three-dot menu on a row below the header; keep them in the header like the calendar view, and drop the "fold" button (the map's fold-out tab covers it), so both views share one header.
+- `PlanMainHeader`: with `showViewSwitch` (the iPad/desktop plan column) it renders the calendar header's row — same container, icon box and title — with the date filter, drop targets and menu on the right. While an order is dragged the date filter is hidden (not unmounted, so it keeps its dates) and the New plan / Unschedule targets take its place. The phone Plans tab keeps its two-row header (one row cannot fit the 200px filter beside the title on a phone; the phone has no calendar view).
+- Fold button removed with the props that fed it: `onRequestClose`/`showCloseButton` gone from `RoutePlanPage`, `PlanMainHeader` and `PlanDesktopShell`; `HomeDesktopView` no longer passes `layout.closePlan` (the layout still uses it internally); the phone tab registers `RoutePlanPage` directly.
+- Checked in Chrome (`?viewport=tablet&pointer=coarse`): calendar → "Show as list" from the menu sheet → list header matches the calendar's row; phone Plans tab unchanged; no console errors. Not checked live: the header during an order drag.
+- Gates: lint 0 errors (52 warnings), tests 203, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Top bar folds on any click outside it, starts folded (Claude)
 - Scope: user — an interaction outside the top bar closes it ("gives immediate more room and aligns with user intention"); no need to remember the state.
 - `HomeDesktopHeader`: while open, a capture-phase `click` listener on the document folds the bar when the click lands outside it. Click rather than pointerdown so a drag or scroll that starts outside does not fold it mid-gesture (the 50px shift would move the panels under the finger). Clicks inside portaled popovers (`[data-floating-popover-root]`, e.g. the notifications list opened from the bar) count as inside. The chevron in the bar still folds it too.
