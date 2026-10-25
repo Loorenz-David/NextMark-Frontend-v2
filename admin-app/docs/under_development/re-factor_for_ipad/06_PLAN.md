@@ -192,7 +192,13 @@ Spec: `12_ORDER_CARD_REDESIGN.md` (decision D9). One card design for the main li
 
 **Acceptance:** `12` §5.
 
-## Restyle R2 — Panel widths after the new card (planned)
+## Restyle R2 — Order panel header (1 session) — stacked after R1
+
+Spec: `13_ORDER_PANEL_HEADER.md` (decision D11). Search, filter button and pills move to the top header (desktop/iPad, route operations only) through a shared header slot; "+ Order" and the menu move to a compact order panel header; on the phone the action row scrolls with the list.
+
+**Acceptance:** `13` §3.
+
+## Restyle R3 — Panel widths after the new card (planned)
 
 Input: the narrowest comfortable card width the user measures after R1. Narrow the order-list rail (desktop 450, tablet 420) and the nested order lists in the plan panels (desktop 550, tablet 560) on every size class. The vertical route timeline (stop number, ETA, warnings) is designed with this panel refactor.
 

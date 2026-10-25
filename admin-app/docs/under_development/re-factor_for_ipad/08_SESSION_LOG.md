@@ -11,6 +11,7 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | D3 | 2026-10-24 | **Revised by the user.** Safari cannot do Bluetooth, so Bluetooth printing goes through a **native bridge app** we build and sideload (wrapper shell with a `navigator.bluetooth` polyfill, WebBLE Apache-2.0 as the base; `nextmarkBridge` for MFi/TCP). The web app keeps a transport layer: share/AirPrint first (works everywhere), bridge transports when present. Parallel native project, separate repo. | WebKit does not ship Web Bluetooth/Serial/USB; a sideloaded WKWebView app can. | `05_PRINTING_AND_BLUETOOTH.md` §6 |
 | D4 | 2026-10-24 | Service worker stays notification-only; admin PWA gets a second manifest with `scope: "/"`. | Guard script + live-deployment requirement. | `04_PWA_AND_PLATFORM.md` |
 | D5 | 2026-10-24 | Desktop ≥ 1440px must stay pixel-identical unless a phase says otherwise. | Client also works on monitors. | `00_GOAL_AND_CONSTRAINTS.md` |
+| D11 | 2026-10-25 | **Order search moves to the top header** (centred) on desktop and iPad, with the filter button and pills; "+ Order" and the menu move to the compact order panel header. Phone keeps its row, inside the list's scroll container. The header search shows only in route operations. | More vertical room for orders. The ambiguity of a search far from its results is known and deferred. | `13_ORDER_PANEL_HEADER.md` |
 | D10 | 2026-10-25 | **Info (i) buttons are removed from the phone and iPad interfaces**: `InfoHover` renders nothing when the layout is phone or the pointer is coarse (iPad at any width). Desktop and narrow laptop windows with a mouse keep them. | Not needed on those views (user). One shared component, so every form field, header and popup follows. | `shared/layout/InfoHover/InfoHover.tsx` |
 | D9 | 2026-10-25 | **Restyling starts before the iPad test**, beginning with the order card redesign (R1, `12_ORDER_CARD_REDESIGN.md`), applied to phone, iPad and desktop. External source chip and street address leave the card; route-stop number, ETA and warnings leave the card for a later vertical timeline. Panel widths follow as R2 after the user measures the new card. | The user already knows the target design and wants the process moving; the narrower card frees panel width on every size. | `12`, `06_PLAN.md` R1/R2 |
 | D8 | 2026-10-24 | The drag **press and lift cue** (squeeze while held, preview lifts with shadow and accent ring) applies to **every pointer, desktop included**. Mouse **activation** is unchanged (press and move 6px, no hold). | The user liked the cue on touch and wants the same feel on PC. A hold for the mouse was not adopted: no scroll conflict to solve, and it would swallow slow clicks. | `11_TOUCH_DRAG_INTENT.md` §6, `shared/dnd/CueMouseSensor.ts` |
@@ -42,6 +43,11 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | K8 | Phase 6 | Printer | **Deferred by the user** until the printing phase. Test with "Save to Files" meanwhile. |
 
 ## Session entries
+
+### 2026-10-25 — Restyle R2 (order panel header) specified (Claude)
+
+- User: move the order search (with filter button and pills) to the top header, centred, on desktop and iPad; "+ Order" and the menu to the right of a compact order panel header; phone keeps its row but inside the scroll container; header centre empty outside route operations. Decision D11.
+- Design: a shared header slot (portal target) so the order feature renders into the home header without cross-feature imports or moving search state; a `compact` size for `SectionPanel` headers, opt-in. Spec `13_ORDER_PANEL_HEADER.md`; branch `ipad/r2-order-panel-header` (stacked on R1). Panel widths renumbered to R3.
 
 ### 2026-10-25 — R1 reviewed and committed; info buttons removed on phone and iPad (Claude)
 
