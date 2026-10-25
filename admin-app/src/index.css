@@ -1469,3 +1469,12 @@ textarea:focus {
     font-size: max(16px, 1em);
   }
 }
+
+/* Screens built as one fixed frame (home, settings) scroll inside their
+   panels only; see useDocumentScrollLock. */
+html.document-scroll-locked,
+html.document-scroll-locked body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}

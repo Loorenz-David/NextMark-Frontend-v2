@@ -93,7 +93,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
       {!isMobile ? (
         <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-px bg-[var(--color-primary)]/30" />
       ) : null}
-      <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto scroll-thin">
+      <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto overflow-x-hidden scroll-thin">
         {isMobile ? (
           <OrderDetailHeaderMobile
             openOrderForm={openOrderForm}

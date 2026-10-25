@@ -48,6 +48,13 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — No page scroll on the home and settings frames; no sideways bounce in order detail (Claude)
+- Scope: user (Chrome DevTools, iPad mini) — dragging the header or other static parts scrolled the whole page and showed empty space; the order detail scrolled/bounced horizontally.
+- Production checked after the release (https://delivery.beyoworkaroundtheclock.com): `/`, `/version.json`, deep links, both manifests (`application/manifest+json`), the notifications worker and favicon are `no-cache`; hashed assets `public, max-age=31536000, immutable`; build `1792924377747`.
+- Cause of the sideways bounce: `touch-hit-area` (an `::after` reaching 10px past the control) on the `SlidingTabRow` chevron at the panel's right edge made the order detail scroll area 304px wide in a 294px box. Removed from that chevron and from the route menu's "+" (both already 44px wide and full row height); the order detail scroll area also gets `overflow-x-hidden`. Measured after: 294 = 294, no horizontal scroller on the page.
+- Page scroll: home and settings are fixed frames whose panels scroll themselves, so `useDocumentScrollLock` (`shared/hooks`) adds `document-scroll-locked` to `<html>` while they are mounted (`overflow: hidden`, `overscroll-behavior: none` on html/body, at the end of `index.css`). The external form and sign-in pages keep document scrolling. Checked in Chrome: html/body `overflow: hidden` on home.
+- Gates: lint 0 errors (52 warnings), tests 207, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Release to main: temporary drag logger removed (Claude)
 - Scope: user — the visual refactor is complete (iPad behaviour verified by the user in Chrome DevTools, iPad mini); merge to main and push, which runs `deploy-admin.yml`.
 - Reverted `0bae682` (TEMPORARY dev touch-drag logger: `app/debug/*`, its `main.tsx` install and `DndDebugMonitor` mount) as its commit message required, plus the dev-only `onIntentDecision` hookup in `shared/dnd/useAppDragSensors.ts` that fed it (added in `d282b8b`); the touch sensor's optional callback stays.
