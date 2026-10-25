@@ -48,6 +48,17 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Route plan (local delivery) panel: zone tabs menu, narrower panel (Claude)
+- Scope: user — the panel took too much width. Header gets a round close button and a three-dot menu; zones are picked in the menu (user chose tabs like the order detail switcher); the route group actions (add order, edit, optimize, ready for delivery, download, import CSV) move into the menu under the selected zone; panel width = order panel × 1.05 (room for the arrival time flow later). Same menu on phone (user choice).
+- Shared (`c4cfc11`): the order detail tab row moved to `shared/layout/slidingTabs` (`SlidingTabRow`, `slidingTabWindow.domain.ts` + tests, moved from the order domain); `OrderDetailSections` uses it.
+- Route group: `RouteGroupMenu` (popover on fine pointers, bottom sheet on coarse) with zone tabs, a zone summary + state chip, actions, route variants only when there is more than one (`RouteSolutionVariantList`, extracted from the optimize dropdown), "New route group" at the bottom. Optimize hint: dot on the menu button and an accented "Optimize route" row when the route is not optimized or has warnings (`routeGroupMenu.domain.ts`, tested). "Ready for delivery" only for an open route group with orders (same rule as the old footer, now in the domain). `useRouteGroupRail.controller`: `handleSelectRouteGroup` (no deselect toggle) replaces the click toggle.
+- Drag onto a zone kept: `RouteGroupDropStrip` lays the other zones' droppable avatars over the top of the list only while an order/stop drag is in flight (same ids and drop type as the rail).
+- Layout: `RouteGroups.page` is one layout for all sizes (no rail column, no action bar); `RouteGroupsPageContent` lost the action bar and its reserved offsets; `RouteGroupOrderList` lost the ready footer.
+- Width: `home-route-operations/domain/routePlanPanelWidth.ts` (`ROUTE_PLAN_PANEL_WIDTH_FACTOR = 1.05`, tested); `useHomeDesktopLayout` takes `isRoutePlanWorkspace` — tablet 309px / desktop 331px at order factor 0.7. Store pickup and international shipping keep 560/550.
+- Left unused, deletion needs the user's OK: `RouteGroupReadyFooter.tsx`, `RouteOptimizationDropdownButton.tsx`, `routeGroupRail/RouteGroupRail.tsx`, `hooks/useRouteGroupActionBarVisibility.ts`.
+- Checked in Chrome at tablet width (Oct 19 plan, one zone): narrow panel, header, menu as sheet (coarse) and popover (fine), hint dot, order detail tabs unchanged; no console errors. Not checked live: multi-zone tab sliding and the drag strip (no plan with several zones in the dev data), phone width (window would not resize).
+- Gates: lint 0 errors (52 warnings), tests 195, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Order detail: blocks separated by divider lines (Claude)
 - Scope: user — full-width cards felt tight; the header, items and sections are no longer cards but full-width blocks separated by divider lines.
 - `OrderDetailHeader` / `OrderDetailHeaderMobile`: no glass card, rounding or shadow; texture and wash kept; `border-b` below. `ItemsOrderPreviewDetail.layout.tsx` and `OrderDetailSections.tsx`: plain blocks, their grey header strips kept. `orderDetail.page.tsx`: body is `divide-y divide-border` with no gaps or top padding; the no-server-id placeholder and refreshing text are plain padded text.

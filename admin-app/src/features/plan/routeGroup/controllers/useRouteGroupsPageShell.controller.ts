@@ -14,10 +14,9 @@ export const useRouteGroupsPageShellController = (
     plan,
     routeGroup,
     orders,
-    orderCount,
     routeGroups,
   } = useRouteGroupPageState();
-  const { railItems, handleRouteGroupClick } =
+  const { railItems, handleSelectRouteGroup } =
     useRouteGroupRailController(planId);
   const allRouteGroups = useRouteGroupsByPlanId(planId);
 
@@ -33,8 +32,6 @@ export const useRouteGroupsPageShellController = (
   );
 
   const hasActiveRouteGroup = routeGroup != null;
-  const isLoading = routeGroup?.is_loading;
-  const showOptimizeRow = hasActiveRouteGroup && !isLoading && orderCount > 0;
 
   const handleCreateRouteGroup = () => {
     if (typeof planId !== "number") {
@@ -49,11 +46,10 @@ export const useRouteGroupsPageShellController = (
 
   return {
     railItems,
-    handleRouteGroupClick,
+    handleSelectRouteGroup,
     handleCreateRouteGroup,
     headerSummary,
     hasRouteGroups: routeGroups.length > 0,
     hasActiveRouteGroup,
-    showOptimizeRow,
   };
 };

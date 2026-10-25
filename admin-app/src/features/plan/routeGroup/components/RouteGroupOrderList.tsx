@@ -16,7 +16,6 @@ import {
   useOrderGroupUIActions,
   useOrderGroupUIStore,
 } from "@/features/order/store/orderGroupUI.store";
-import { RouteGroupReadyFooter } from "./RouteGroupReadyFooter";
 import { OrderLoadingCard } from "@/shared/loadingCards/order";
 
 type RouteGroupOrderListProps = {
@@ -47,12 +46,9 @@ export const RouteGroupOrderList = ({
     selectedRouteSolution,
     routeSolutionWarningRegistry,
     routeGroupPageActions,
-    routeGroupState,
     incomingPendingOrderPlaceholderKeys,
   } = useRouteGroupPageContext();
 
-  const isRouteGroupOpen =
-    (routeGroupState?.name ?? "").trim().toLowerCase() === "open";
 
   const { sortedEntries, missingOrders, sortableIds } =
     useRouteGroupStopOrdering(
@@ -197,11 +193,6 @@ export const RouteGroupOrderList = ({
             </div>
           )}
           {/* <div className="flex h-[800px] bg-black"></div> */}
-          {isRouteGroupOpen && orders.length > 0 ? (
-            <RouteGroupReadyFooter
-              onReadyForDelivery={routeGroupPageActions.routeReadyForDelivery}
-            />
-          ) : null}
         </div>
       </div>
     </div>

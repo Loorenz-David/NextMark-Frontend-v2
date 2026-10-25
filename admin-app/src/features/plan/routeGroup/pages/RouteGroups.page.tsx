@@ -1,7 +1,7 @@
-import { useMobile } from "@/app/viewport";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import {
-  RouteGroupRail,
+  RouteGroupDropStrip,
+  RouteGroupMenu,
   RouteGroupsPageHeader,
   type RouteGroupRailItem,
 } from "../components";
@@ -24,76 +24,42 @@ type RouteGroupsPageLayoutProps = {
   headerSummary: RouteGroupHeaderSummary;
   onRequestClose?: () => void;
   routeGroups: RouteGroupRailItem[];
-  onRouteGroupClick: (item: RouteGroupRailItem) => void;
+  onSelectRouteGroup: (routeGroupId: number) => void;
   onCreateRouteGroup: () => void;
-  showOptimizeRow: boolean;
   hasActiveRouteGroup: boolean;
 };
 
+/**
+ * Header (with the zone and action menu) above the active route group's
+ * stops. Zones are picked in the menu; while a drag is in flight the other
+ * zones appear as drop targets over the top of the list.
+ */
 export const RouteGroupsPageLayout = ({
   headerSummary,
   onRequestClose,
   routeGroups,
-  onRouteGroupClick,
+  onSelectRouteGroup,
   onCreateRouteGroup,
-  showOptimizeRow,
   hasActiveRouteGroup,
-}: RouteGroupsPageLayoutProps) => {
-  const { isMobile } = useMobile();
-
-  if (isMobile) {
-    // One scroll column: the zone rail and the action bar scroll away with
-    // the stops instead of pinning above a short list.
-    return (
-      <div className="flex h-full w-full min-w-0 flex-col overflow-hidden bg-[var(--color-primary)]/5">
-        <RouteGroupsPageHeader
-          summary={headerSummary}
-          onRequestClose={onRequestClose}
+}: RouteGroupsPageLayoutProps) => (
+  <div className="flex h-full w-full min-w-0 flex-col overflow-hidden bg-[var(--color-primary)]/5">
+    <RouteGroupsPageHeader
+      summary={headerSummary}
+      onRequestClose={onRequestClose}
+      menu={
+        <RouteGroupMenu
+          zones={routeGroups}
+          onSelectZone={onSelectRouteGroup}
+          onCreateRouteGroup={onCreateRouteGroup}
         />
-        <div className="scroll-thin flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden">
-          <div className="shrink-0 border-b border-border-subtle">
-            <RouteGroupRail
-              items={routeGroups}
-              onClick={onRouteGroupClick}
-              onCreate={onCreateRouteGroup}
-            />
-          </div>
-          <RouteGroupsPageContent
-            showOptimizeRow={showOptimizeRow}
-            hasActiveRouteGroup={hasActiveRouteGroup}
-            scrollsWithParent
-          />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex h-full w-full min-w-0 flex-col overflow-hidden bg-[var(--color-primary)]/5 md:flex-row">
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-        <RouteGroupsPageHeader
-          summary={headerSummary}
-          onRequestClose={onRequestClose}
-        />
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden md:flex-row">
-          <div className="min-h-0 min-w-0 border-b border-border-subtle md:h-full md:border-b-0 md:border-r md:border-border-subtle">
-            <RouteGroupRail
-              items={routeGroups}
-              onClick={onRouteGroupClick}
-              onCreate={onCreateRouteGroup}
-            />
-          </div>
-          <div className="h-full min-h-0 min-w-0 flex-1 overflow-hidden">
-            <RouteGroupsPageContent
-              showOptimizeRow={showOptimizeRow}
-              hasActiveRouteGroup={hasActiveRouteGroup}
-            />
-          </div>
-        </div>
-      </div>
+      }
+    />
+    <div className="relative min-h-0 min-w-0 flex-1 overflow-hidden">
+      <RouteGroupsPageContent hasActiveRouteGroup={hasActiveRouteGroup} />
+      <RouteGroupDropStrip items={routeGroups} />
     </div>
-  );
-};
+  </div>
+);
 
 export const RouteGroupsPage = ({
   payload,
@@ -124,12 +90,11 @@ const RouteGroupsPageScreen = ({
 }: RouteGroupsPageScreenProps) => {
   const {
     railItems,
-    handleRouteGroupClick,
+    handleSelectRouteGroup,
     handleCreateRouteGroup,
     headerSummary,
     hasRouteGroups,
     hasActiveRouteGroup,
-    showOptimizeRow,
   } = useRouteGroupsPageShellController(planId);
 
   if (!hasRouteGroups) {
@@ -170,9 +135,8 @@ const RouteGroupsPageScreen = ({
       headerSummary={headerSummary}
       onRequestClose={onRequestClose}
       routeGroups={railItems}
-      onRouteGroupClick={handleRouteGroupClick}
+      onSelectRouteGroup={handleSelectRouteGroup}
       onCreateRouteGroup={handleCreateRouteGroup}
-      showOptimizeRow={showOptimizeRow}
       hasActiveRouteGroup={hasActiveRouteGroup}
     />
   );

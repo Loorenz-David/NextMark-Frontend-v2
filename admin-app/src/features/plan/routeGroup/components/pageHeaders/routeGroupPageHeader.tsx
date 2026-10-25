@@ -1,121 +1,23 @@
-import { useCallback, useState } from "react";
-import { motion } from "framer-motion";
+import type { ReactNode } from "react";
 
 import { useMobile } from "@/app/viewport";
+import { CloseIcon } from "@/assets/icons";
 import { planIconTypeMap } from "@/features/plan/utils/planIconTypeMap";
-import { BasicButton, PageBackButton } from "@/shared/buttons";
-import {
-  CsvIcon,
-  EditIcon,
-  PdfIcon,
-  PlusIcon,
-  RetryIcon,
-} from "@/assets/icons";
-import { RouteOptimizationDropdownButton } from "../RouteOptimizationDropdownButton";
-import { ThreeDotMenu } from "@/shared/buttons/ThreeDotMenu";
-import { OrderImportButton } from "@/features/order/components/OrderImportButton";
-import type { OrderImportControls } from "@/features/order/components/OrderImportButton";
+import { PageBackButton } from "@/shared/buttons";
 import type { RouteGroupHeaderSummary } from "../../domain/buildRouteGroupHeaderSummary";
-import {
-  useRouteGroupPageCommands,
-  useRouteGroupPageState,
-} from "../../context/useRouteGroupPageContext";
-import { cn } from "@/lib/utils/cn";
 import { formatMetric } from "@shared-utils";
 
 type RouteGroupsPageHeaderProps = {
   summary: RouteGroupHeaderSummary;
   onRequestClose?: () => void;
-};
-
-const actionBarShellClassName =
-  "admin-glass-action-bar border-b border-[var(--color-ligth-bg)] px-5 pb-4 pt-3";
-
-type RouteGroupHeaderActionBarProps = {
-  showOptimizeRow: boolean;
-  importControls: OrderImportControls;
-  onCreateOrder: () => void;
-  onEditPlan: () => void;
-  onOptimizeRoute: () => void;
-  onPrintRoute: () => void;
-};
-
-const RouteGroupHeaderActionBar = ({
-  showOptimizeRow,
-  importControls,
-  onCreateOrder,
-  onEditPlan,
-  onOptimizeRoute,
-  onPrintRoute,
-}: RouteGroupHeaderActionBarProps) => {
-  return (
-    <div className={actionBarShellClassName}>
-      <div className="flex flex-col gap-3">
-        <div className="flex w-full items-center gap-3">
-          <BasicButton
-            params={{
-              variant: "primary",
-              onClick: onCreateOrder,
-              ariaLabel: "Create Delivery order",
-            }}
-          >
-            <PlusIcon className="mr-2 h-4 w-4 stroke-[var(--color-secondary)]" />
-            Order
-          </BasicButton>
-          <BasicButton
-            params={{
-              variant: "secondary",
-              onClick: onEditPlan,
-              ariaLabel: "Edit route group",
-            }}
-          >
-            <EditIcon className="mr-2 h-4 w-4 stroke-[var(--color-secondary)]" />
-            Edit
-          </BasicButton>
-
-          <ThreeDotMenu
-            dotWidth={3}
-            dotHeight={3}
-            dotClassName={"bg-[var(--color-muted)]"}
-            triggerClassName={
-              "p-2 w-5 rounded-full bg-[var(--color-page)] border border-[var(--color-border)] shadow-sm ml-auto cursor-pointer"
-            }
-            options={[
-              {
-                label: "Update optimization",
-                action: onOptimizeRoute,
-                icon: <RetryIcon className="h-4 w-4" />,
-              },
-              {
-                label: "Download route",
-                action: onPrintRoute,
-                icon: <PdfIcon className="h-6 w-6" />,
-              },
-              {
-                label: importControls.loading
-                  ? "Importing orders..."
-                  : "Import orders (CSV)",
-                action: importControls.triggerFileInput,
-                icon: <CsvIcon className="h-4 w-4" />,
-                disabled: importControls.disabled,
-              },
-            ]}
-          />
-        </div>
-
-        {showOptimizeRow ? (
-          <div className="flex w-full">
-            <RouteOptimizationDropdownButton className="w-full" />
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
+  /** The route plan menu (zones and route group actions). */
+  menu?: ReactNode;
 };
 
 export const RouteGroupsPageHeader = ({
   summary,
   onRequestClose,
+  menu,
 }: RouteGroupsPageHeaderProps) => {
   const PlanTypeIcon = planIconTypeMap.local_delivery;
   const { isMobile } = useMobile();
@@ -150,80 +52,22 @@ export const RouteGroupsPageHeader = ({
             </div>
           </div>
         </div>
-        {onRequestClose && !isMobile ? (
-          <BasicButton
-            params={{
-              variant: "text",
-              onClick: onRequestClose,
-              ariaLabel: "Close route groups page",
-              className: "shrink-0",
-            }}
-          >
-            Close
-          </BasicButton>
+        {menu || (onRequestClose && !isMobile) ? (
+          <div className="flex shrink-0 items-center gap-2">
+            {menu}
+            {onRequestClose && !isMobile ? (
+              <button
+                type="button"
+                onClick={onRequestClose}
+                aria-label="Close route groups page"
+                className="inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border bg-surface-raised shadow-[var(--shadow-button-compact)] transition-colors hover:bg-surface-hover active:bg-surface-hover"
+              >
+                <CloseIcon className="h-3.5 w-3.5 text-[var(--color-text)]" />
+              </button>
+            ) : null}
+          </div>
         ) : null}
       </div>
     </header>
-  );
-};
-
-export const RouteGroupsActionBar = ({
-  useFloatingActionBar = false,
-  isActionBarVisible = true,
-  showOptimizeRow: showOptimizeRowProp,
-}: {
-  useFloatingActionBar?: boolean;
-  isActionBarVisible?: boolean;
-  showOptimizeRow?: boolean;
-} = {}) => {
-  const { routeGroupPageActions } = useRouteGroupPageCommands();
-  const { plan, routeGroup, orderCount, selectedRouteSolution } =
-    useRouteGroupPageState();
-  const [importControls, setImportControls] = useState<OrderImportControls>({
-    triggerFileInput: () => undefined,
-    loading: false,
-    disabled: true,
-  });
-  const handleImportReady = useCallback((controls: OrderImportControls) => {
-    setImportControls(controls);
-  }, []);
-  const hasRouteWarnings = selectedRouteSolution?.has_route_warnings;
-  const isNotOptimize = selectedRouteSolution?.is_optimized == "not optimize";
-  const isLoading = routeGroup?.is_loading;
-  const showOptimizeRow =
-    showOptimizeRowProp ??
-    Boolean(orderCount > 0 && (isNotOptimize || hasRouteWarnings));
-
-  return (
-    <>
-      {!isLoading ? (
-        <motion.div
-          key="header-route-group-button"
-          initial={false}
-          animate={{
-            opacity: useFloatingActionBar ? (isActionBarVisible ? 1 : 0) : 1,
-            y: useFloatingActionBar ? (isActionBarVisible ? 0 : -18) : 0,
-          }}
-          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          className={cn(
-            useFloatingActionBar ? "absolute inset-x-0 top-0 z-20" : "w-full",
-          )}
-          style={{
-            pointerEvents:
-              !useFloatingActionBar || isActionBarVisible ? "auto" : "none",
-          }}
-        >
-          <RouteGroupHeaderActionBar
-            showOptimizeRow={showOptimizeRow}
-            importControls={importControls}
-            onCreateOrder={routeGroupPageActions.handleCreateOrder}
-            onEditPlan={routeGroupPageActions.handleEditLocalPlan}
-            onOptimizeRoute={routeGroupPageActions.optimizeRoute}
-            onPrintRoute={routeGroupPageActions.handlePrintRouteSolution}
-          />
-        </motion.div>
-      ) : null}
-      <OrderImportButton planId={plan?.id} onReady={handleImportReady} />
-    </>
   );
 };
