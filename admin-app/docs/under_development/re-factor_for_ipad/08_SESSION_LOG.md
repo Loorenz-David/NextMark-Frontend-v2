@@ -48,6 +48,13 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Order detail section switcher restyled (Claude)
+- Scope: user request — nicer switcher, smooth interaction, at most 3 labels with a control to slide to the rest (more sections may come).
+- `OrderDetailSections.tsx`: rounded-full segmented control; a pill slides under the active label; with more than `ORDER_DETAIL_SECTIONS_VISIBLE` (3) sections a chevron slides the row a page forward and, at the end, back to the start (chevron flips). Opening on a hidden section (history deep link) starts the row where that label is visible. Section content fades in from the side you moved towards. Reduced motion turns the animations off.
+- Window logic is pure: `resolveSectionWindowStart`, `nextSectionWindowStart` in `orderDetailSections.domain.ts`, tests in `domain/tests/orderDetailSections.vitest.test.ts`.
+- Checked in Chrome at tablet width: Details/Notes/Windows + chevron → Notes/Windows/History + back chevron; selecting History moves the pill and content; back again.
+- Gates: lint 0 errors (52 warnings), tests 187, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Order detail: single scroll, items first (Claude)
 - Scope: user report — swipes got stuck in the scrolling detail cards on the way to the items. Decision D15.
 - Files: `orderDetail.page.tsx` (one layout for phone and desktop: header, items, sections); `OrderDetailMobileSections.tsx` → `OrderDetailSections.tsx` and `orderDetailMobileSections.domain.ts` → `orderDetailSections.domain.ts` (renamed, height workaround removed); `OrderDetailSummary.tsx`, `OrderDetailNotesTab.tsx`, `OrderDetailTimeWindows.tsx`, `OrderDetailEventHistory.tsx` (no fixed height or inner scroll; history preview + toggle; focus uses `scrollIntoView` now that no carousel track can move); `orderEventTimeline.domain.ts` + `tests/orderEventTimelineLimit.vitest.test.ts`.
