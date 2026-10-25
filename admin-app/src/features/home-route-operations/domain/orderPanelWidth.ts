@@ -8,7 +8,7 @@
  */
 export const ORDER_PANEL_BASE_WIDTH = { desktop: 450, tablet: 420 } as const
 
-export const ORDER_PANEL_WIDTH_FACTOR = 0.6
+export const ORDER_PANEL_WIDTH_FACTOR = 0.7
 
 export const resolveOrderPanelWidth = (
   sizeClass: keyof typeof ORDER_PANEL_BASE_WIDTH,

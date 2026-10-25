@@ -48,6 +48,7 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 - Branch `ipad/r3-order-panel-width` (stacked on R2). The user tunes the width by trial, so it is one knob: `features/home-route-operations/domain/orderPanelWidth.ts` → `ORDER_PANEL_WIDTH_FACTOR` (now 0.6) × pre-redesign widths (desktop 450, tablet 420) = 270 / 252. Both the rail (`BASE_WIDTH`) and the panel inside it (`planWidth`, which on desktop used to borrow `DESKTOP_PLAN_WIDTH`) use it; the plan column, plan overlay (550/560) and stacked section panels keep their widths. The header search follows by measurement. Vitest for the resolver.
 - Watch item: at 270 the compact order panel header (icon, title + counts, "+ Order", menu ≈ 320 px) does not fit its 238 px content box. Revisit once the user settles the width (options: icon-only "+", counts under the title, smaller icon box).
+- User tuning: 0.6 was too narrow; factor set to **0.7** (desktop 315, tablet 294).
 - Still open in R3: the nested order lists in the plan panels.
 
 ### 2026-10-25 — R2 reviewed; pills removed, header padding raised (Claude)
