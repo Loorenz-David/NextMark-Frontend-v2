@@ -43,7 +43,7 @@ export const OrderDetailHeaderMobile = ({
       : "Unknown state";
 
   return (
-    <div className="px-3 pt-3">
+    <div className="pt-3">
       <div className="admin-glass-panel-strong relative isolate overflow-hidden rounded-3xl shadow-md!">
         <div
           aria-hidden="true"

@@ -53,7 +53,7 @@ export const OrderDetailHeader = ({
       : "Unknown state";
 
   return (
-    <div className="px-5 pt-4">
+    <div className="pt-4">
       <div className="admin-glass-panel-strong relative isolate overflow-hidden rounded-3xl shadow-md!">
         <div
           aria-hidden="true"

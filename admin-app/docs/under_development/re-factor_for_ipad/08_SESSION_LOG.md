@@ -48,6 +48,12 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Order detail: items as a bounded card, full-width containers (Claude)
+- Scope: user mockup — the items get a card like the sections (header strip with title, totals and menu; items and the dashed add button in the body), and the page drops its side padding so the containers fill the panel width.
+- `ItemsOrderPreviewDetail.layout.tsx`: card `admin-glass-panel rounded-3xl shadow-md!`, header strip `border-b bg-surface-subtle px-4 py-3`, body `p-4 gap-3`.
+- `orderDetail.page.tsx`: no gutter around the items and sections cards (the refreshing text keeps one); `OrderDetailHeader` / `OrderDetailHeaderMobile` lose their `px-5` / `px-3`. Vertical spacing unchanged. Applies to phone too.
+- Checked in Chrome at tablet width on #4498; gates green (lint 0 errors / 52 warnings, tests 187, build, popup contract, theme regression, PWA checks, `git diff --check`).
+
 ### 2026-10-25 — Order detail items preview restyled (Claude)
 - Scope: user mockup — the items header sits on the page background (no separate card); item cards show thumbnail, name, "article · Qty N" and the state chip; a dashed "Add item" button ends the list.
 - `ItemsOrderPreviewSticky.layout.tsx` (only the detail page used it) renamed to `ItemsOrderPreviewDetail.layout.tsx`; prop `stickyHeader` → `detailLayout`. Header: "Items" + "N item(s) · kg · m³" and a round three-dot menu holding "Print labels" (hidden when no print template; a progress ring replaces it while printing). The page wraps it in the normal gutter and drops the tinted band.

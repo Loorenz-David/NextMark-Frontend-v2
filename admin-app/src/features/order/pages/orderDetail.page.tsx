@@ -84,7 +84,8 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
   ];
 
   // Items come first; the section cards follow and grow with their
-  // content, so the page is the only scroll area.
+  // content, so the page is the only scroll area. Cards run the full
+  // width of the panel; only loose text keeps a gutter.
   const gutterClassName = isMobile ? "px-3" : "px-5";
 
   return (
@@ -119,32 +120,24 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
           }`}
         >
           {orderServerId !== null ? (
-            <div className={gutterClassName}>
-              <ItemsOrderPreview
-                orderId={orderServerId}
-                expectedItemCount={order?.total_items ?? null}
-                itemsUpdatedAt={order?.items_updated_at ?? null}
-                detailLayout
-              />
-            </div>
+            <ItemsOrderPreview
+              orderId={orderServerId}
+              expectedItemCount={order?.total_items ?? null}
+              itemsUpdatedAt={order?.items_updated_at ?? null}
+              detailLayout
+            />
           ) : (
-            <div
-              className={`admin-glass-panel rounded-3xl p-4 text-xs text-[var(--color-muted)] ${
-                isMobile ? "mx-3" : "mx-5"
-              }`}
-            >
+            <div className="admin-glass-panel rounded-3xl p-4 text-xs text-[var(--color-muted)]">
               Items are available after the order has a server id.
             </div>
           )}
 
-          <div className={gutterClassName}>
-            <OrderDetailSections
-              key={`${order?.client_id ?? "empty"}:${initialCarouselIndex}`}
-              initialIndex={initialCarouselIndex}
-            >
-              {sections}
-            </OrderDetailSections>
-          </div>
+          <OrderDetailSections
+            key={`${order?.client_id ?? "empty"}:${initialCarouselIndex}`}
+            initialIndex={initialCarouselIndex}
+          >
+            {sections}
+          </OrderDetailSections>
 
           {isRefreshing && order ? (
             <div className={`${gutterClassName} text-xs text-[var(--color-muted)]`}>
