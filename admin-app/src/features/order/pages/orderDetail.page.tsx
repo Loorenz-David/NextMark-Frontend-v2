@@ -47,7 +47,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
     isRefreshing && !order ? (
       <div
         key="details"
-        className="admin-glass-panel rounded-3xl p-4 text-sm text-[var(--color-muted)]"
+        className="px-4 py-6 text-sm text-[var(--color-muted)]"
       >
         Loading order details...
       </div>
@@ -63,7 +63,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
     ) : (
       <div
         key="details"
-        className="admin-glass-panel rounded-3xl p-4 text-sm text-[var(--color-muted)]"
+        className="px-4 py-6 text-sm text-[var(--color-muted)]"
       >
         Order not found.
       </div>

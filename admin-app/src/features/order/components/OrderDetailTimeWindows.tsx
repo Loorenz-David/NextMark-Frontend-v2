@@ -27,19 +27,14 @@ export const OrderDetailTimeWindows = ({ order, headerRight }: OrderDetailTimeWi
   })
 
   return (
-    <div className="admin-glass-panel flex flex-col overflow-hidden rounded-3xl border-border shadow-md!">
-      <div className="admin-glass-divider flex items-center justify-between gap-3 border-b px-5 py-4">
-        <p className="text-micro font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
-          Delivery Windows
-        </p>
-        {headerRight ? (
-          <div className="flex flex-none items-center justify-end">
-            {headerRight}
-          </div>
-        ) : null}
-      </div>
+    <div className="flex flex-col">
+      {headerRight ? (
+        <div className="flex flex-wrap items-center gap-2 px-4 pt-3">
+          {headerRight}
+        </div>
+      ) : null}
 
-      <div className="flex flex-col gap-4 px-5 py-4.5">
+      <div className="flex flex-col gap-4 px-4 py-4">
         {order && order.delivery_windows?.length
           ? order.delivery_windows.map((t, i) => {
             const serializeDate = formatIsoDateFriendly(t.start_at)

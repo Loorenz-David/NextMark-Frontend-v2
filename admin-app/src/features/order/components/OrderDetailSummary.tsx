@@ -42,21 +42,15 @@ export const OrderDetailSummary = ({
     order?.tracking_number || order?.tracking_link,
   );
 
+  // The tab row is this section's header (OrderDetailSections); flags that
+  // used to sit in a card header show as a row only when they apply.
+  const hasFlags =
+    order?.help_to_carry || (hasMissingRequiredInfo && onMissingOrderInfoClick);
+
   return (
-    <div className="admin-glass-panel flex flex-col overflow-hidden rounded-3xl border-border shadow-md!">
-      <div className="admin-glass-divider flex flex-wrap items-center justify-between gap-2 border-b px-4 py-4">
-        <div className="flex items-center gap-2">
-          <p className="text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
-            Customer
-          </p>
-          {order?.help_to_carry ? (
-            <HelpToCarryIcon
-              className="h-5 w-5 text-[var(--color-muted)]"
-              aria-label="Help to carry required"
-            />
-          ) : null}
-        </div>
-        <div className="flex flex-wrap items-center justify-end gap-2">
+    <div className="flex flex-col">
+      {hasFlags ? (
+        <div className="flex flex-wrap items-center gap-2 px-4 pt-3">
           {hasMissingRequiredInfo && onMissingOrderInfoClick ? (
             <button
               type="button"
@@ -68,21 +62,14 @@ export const OrderDetailSummary = ({
               Missing order info
             </button>
           ) : null}
-
-          {stateName ? (
-            <span
-              className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-rem-0_64 font-medium uppercase tracking-[0.16em]"
-              style={{
-                color: stateColor,
-                borderColor: `${stateColor}55`,
-                backgroundColor: `${stateColor}18`,
-              }}
-            >
-              {stateName}
+          {order?.help_to_carry ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-subtle px-2.5 py-1 text-micro font-medium uppercase tracking-[0.1em] text-[var(--color-muted)]">
+              <HelpToCarryIcon className="h-4 w-4 text-[var(--color-muted)]" aria-hidden="true" />
+              Help to carry
             </span>
           ) : null}
         </div>
-      </div>
+      ) : null}
 
       <dl className="flex flex-col divide-y divide-[var(--color-border)] px-4">
         <DetailRow label="Name" value={fullName} />
@@ -164,11 +151,23 @@ export const OrderDetailSummary = ({
         ) : null}
       </dl>
 
-      <div className="admin-glass-divider border-t px-4 py-3">
+      <div className="admin-glass-divider flex items-center justify-between gap-3 border-t px-4 py-3">
         <p className="text-sm text-[var(--color-muted)]">
           Created{" "}
           {toDateOnly(order?.creation_date ?? null) || "date missing"}
         </p>
+        {stateName ? (
+          <span
+            className="inline-flex shrink-0 items-center rounded-full border px-2.5 py-0.5 text-rem-0_64 font-medium uppercase tracking-[0.16em]"
+            style={{
+              color: stateColor,
+              borderColor: `${stateColor}55`,
+              backgroundColor: `${stateColor}18`,
+            }}
+          >
+            {stateName}
+          </span>
+        ) : null}
       </div>
     </div>
   );

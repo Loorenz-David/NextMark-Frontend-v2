@@ -126,47 +126,35 @@ export const OrderDetailEventHistory = ({
   };
 
   return (
-    <div className="admin-glass-panel flex flex-col overflow-hidden rounded-3xl border-border shadow-md!">
-      <div className="admin-glass-divider flex items-center justify-between gap-3 border-b px-5 py-4">
-        <p className="text-micro font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
-          Event History
-        </p>
-        <div className="flex items-center gap-2.5">
-          {typeof orderId === "number" ? (
-            <button
-              type="button"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              aria-label={
-                isRefreshing
-                  ? "Refreshing order events"
-                  : "Refresh order events"
-              }
-              title={
-                isRefreshing
-                  ? "Refreshing order events"
-                  : "Refresh order events"
-              }
-              className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-1 text-rem-0_62 font-medium uppercase tracking-[0.14em] text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <RetryIcon
-                aria-hidden="true"
-                className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`}
-              />
-            </button>
-          ) : null}
-
-          {typeof orderId === "number" && loaded ? (
-            <span className="text-micro font-medium uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              {visibleEventCount} events
-            </span>
-          ) : null}
+    <div className="flex flex-col">
+      {typeof orderId === "number" ? (
+        <div className="flex items-center justify-between gap-3 px-4 pt-3">
+          <span className="text-micro font-medium uppercase tracking-[0.16em] text-[var(--color-muted)]">
+            {loaded ? `${visibleEventCount} events` : "Loading events"}
+          </span>
+          <button
+            type="button"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            aria-label={
+              isRefreshing ? "Refreshing order events" : "Refresh order events"
+            }
+            title={
+              isRefreshing ? "Refreshing order events" : "Refresh order events"
+            }
+            className="touch-hit-area inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface-raised text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <RetryIcon
+              aria-hidden="true"
+              className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`}
+            />
+          </button>
         </div>
-      </div>
+      ) : null}
 
       <div
         ref={listRef}
-        className="flex flex-col px-5 py-4.5"
+        className="flex flex-col px-4 py-4"
       >
         {typeof orderId !== "number" ? (
           <div className="flex min-h-32 items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle px-4 text-center">

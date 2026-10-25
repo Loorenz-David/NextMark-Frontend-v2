@@ -48,6 +48,13 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Order detail sections as one card with a tab header (Claude)
+- Scope: user mockup — the tab row is the header of the sections card; the per-section headers go; the order state moves to the details footer beside "Created".
+- `OrderDetailSections.tsx` now renders the card: underline tabs on a subtle header strip, labels at natural width (measured, so "Windows" never truncates in the narrow panel), at most 3 visible with the next one peeking through a fade, chevron slides the row and back, underline glides to the active label. Labels faded out past the peek do not take taps.
+- Sections are plain content now: `OrderDetailSummary` (flags row only when "Missing order info" / help to carry apply; footer = Created + state pill), `OrderDetailNotesTab`, `OrderDetailTimeWindows` (route stop warnings as a row above the windows), `OrderDetailEventHistory` (event count + refresh as a slim top row). Loading / not-found placeholders in `orderDetail.page.tsx` are plain text inside the card.
+- Checked in Chrome at tablet width: matches the mockup; slide both ways; History and Windows content; no console errors.
+- Gates: lint 0 errors (52 warnings), tests 187, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Order detail section switcher restyled (Claude)
 - Scope: user request — nicer switcher, smooth interaction, at most 3 labels with a control to slide to the rest (more sections may come).
 - `OrderDetailSections.tsx`: rounded-full segmented control; a pill slides under the active label; with more than `ORDER_DETAIL_SECTIONS_VISIBLE` (3) sections a chevron slides the row a page forward and, at the end, back to the start (chevron flips). Opening on a hidden section (history deep link) starts the row where that label is visible. Section content fades in from the side you moved towards. Reduced motion turns the animations off.

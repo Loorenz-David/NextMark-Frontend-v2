@@ -1,4 +1,12 @@
-import { Children, useMemo, useState, type ReactNode } from "react";
+import {
+  Children,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 import { ChevronDownIcon } from "@/assets/icons";
@@ -16,17 +24,33 @@ type OrderDetailSectionsProps = {
   children: ReactNode;
 };
 
-const SLIDE_TRANSITION = "transform 280ms cubic-bezier(0.22, 1, 0.36, 1)";
-const INDICATOR_TRANSITION = `${SLIDE_TRANSITION}, opacity 200ms ease-out`;
+type TabRect = { left: number; width: number };
+
+const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const SLIDE_TRANSITION = `transform 280ms ${EASE}`;
+const INDICATOR_TRANSITION = `transform 280ms ${EASE}, width 280ms ${EASE}, opacity 200ms ease-out`;
+/** How much of the next label shows past the last visible one. */
+const PEEK_PX = 32;
+const EDGE_FADE_PX = 28;
+
+const buildEdgeMask = (fadeStart: boolean, fadeEndAt: number | null): string | undefined => {
+  if (!fadeStart && fadeEndAt === null) return undefined;
+  const start = fadeStart ? `transparent 0px, black ${EDGE_FADE_PX}px` : "black 0px";
+  const end =
+    fadeEndAt === null
+      ? "black 100%"
+      : `black ${Math.max(0, fadeEndAt - EDGE_FADE_PX)}px, transparent ${fadeEndAt}px`;
+  return `linear-gradient(to right, ${start}, ${end})`;
+};
 
 /**
- * Segmented switcher above one order detail section at a time (phone,
- * iPad and desktop). Sections grow to their content so the page is the
- * only thing that scrolls; a card with its own scroll inside the page
- * trapped swipes on the way down.
+ * The order detail sections card: a tab row as its header (phone, iPad and
+ * desktop) above one section at a time. Sections grow to their content so
+ * the page is the only thing that scrolls.
  *
- * At most `ORDER_DETAIL_SECTIONS_VISIBLE` labels show; with more, a chevron
- * slides the row to the rest and back.
+ * Labels keep their natural width. At most `ORDER_DETAIL_SECTIONS_VISIBLE`
+ * show; the next one peeks through a fade and a chevron slides the row to
+ * the rest and back.
  */
 export const OrderDetailSections = ({
   initialIndex = 0,
@@ -46,10 +70,52 @@ export const OrderDetailSections = ({
   );
   const prefersReducedMotion = useReducedMotion();
 
-  const isAtLastWindow = windowStart + visibleCount >= total;
-  // Off-screen, the active pill's shadow would show at the clipped edge.
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [layout, setLayout] = useState<{ viewport: number; tabs: TabRect[] } | null>(null);
+
+  // Labels size to their text, so positions are measured (and re-measured
+  // when the panel or the font changes width).
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const measure = () => {
+      setLayout({
+        viewport: viewport.clientWidth,
+        tabs: tabRefs.current
+          .slice(0, total)
+          .map((tab) => ({ left: tab?.offsetLeft ?? 0, width: tab?.offsetWidth ?? 0 })),
+      });
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    tabRefs.current.forEach((tab) => tab && observer.observe(tab));
+    return () => observer.disconnect();
+  }, [total]);
+
+  const tabs = layout?.tabs ?? [];
+  const lastTab = tabs[total - 1];
+  const contentWidth = lastTab ? lastTab.left + lastTab.width : 0;
+  const maxOffset = Math.max(0, contentWidth - (layout?.viewport ?? 0));
+  // Measured from the first label so the row's own padding is not a slide.
+  const windowLeft = (tabs[windowStart]?.left ?? 0) - (tabs[0]?.left ?? 0);
+  // A narrow row keeps its last window flush right (the previous label then
+  // peeks on the left); a row that fits still slides so only three show.
+  const offset = maxOffset > 0 ? Math.min(windowLeft, maxOffset) : windowLeft;
+  const isAtStart = offset <= 0;
+  const nextHidden = tabs[windowStart + visibleCount];
+  // Cut the row a peek past the last visible label, or at the viewport edge.
+  const peekEnd = nextHidden ? nextHidden.left - offset + PEEK_PX : null;
+  const fadeEndAt =
+    hasOverflow && peekEnd !== null
+      ? Math.min(peekEnd, layout?.viewport ?? peekEnd)
+      : null;
+  const isAtEnd = !nextHidden;
+  const edgeMask = layout ? buildEdgeMask(hasOverflow && !isAtStart, fadeEndAt) : undefined;
   const isActiveInView = index >= windowStart && index < windowStart + visibleCount;
-  const tabWidthPercent = visibleCount > 0 ? 100 / visibleCount : 100;
+  const activeTab = tabs[index];
 
   const selectSection = (nextIndex: number) => {
     if (nextIndex === index) return;
@@ -58,48 +124,67 @@ export const OrderDetailSections = ({
     setWindowStart((current) => resolveSectionWindowStart(nextIndex, current, total));
   };
 
+  const transitionFor = (value: string) =>
+    prefersReducedMotion || !layout ? undefined : value;
+
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div className="flex w-full items-center gap-1 rounded-full border border-border bg-surface-subtle p-1">
-        <div className="relative min-w-0 flex-1 overflow-hidden rounded-full">
+    <div className="admin-glass-panel flex w-full flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+      <div className="flex items-stretch border-b border-border bg-surface-subtle">
+        <div
+          ref={viewportRef}
+          className="relative min-w-0 flex-1 overflow-hidden"
+          style={
+            edgeMask
+              ? ({ maskImage: edgeMask, WebkitMaskImage: edgeMask } as CSSProperties)
+              : undefined
+          }
+        >
           <div
             role="tablist"
             aria-label="Order detail sections"
-            className="relative flex w-full"
+            className="relative flex w-max gap-1 px-2"
             style={{
-              transform: `translateX(-${windowStart * tabWidthPercent}%)`,
-              transition: prefersReducedMotion ? undefined : SLIDE_TRANSITION,
+              transform: `translateX(-${offset}px)`,
+              transition: transitionFor(SLIDE_TRANSITION),
             }}
           >
-            <span
-              aria-hidden="true"
-              className="absolute inset-y-0 left-0 rounded-full bg-surface-raised shadow-[var(--shadow-button-compact)]"
-              style={{
-                width: `${tabWidthPercent}%`,
-                transform: `translateX(${index * 100}%)`,
-                opacity: isActiveInView ? 1 : 0,
-                transition: prefersReducedMotion ? undefined : INDICATOR_TRANSITION,
-              }}
-            />
+            {activeTab ? (
+              <span
+                aria-hidden="true"
+                className="absolute bottom-0 left-0 h-0.5 rounded-full bg-[var(--color-text)]"
+                style={{
+                  width: activeTab.width,
+                  transform: `translateX(${activeTab.left}px)`,
+                  opacity: isActiveInView ? 1 : 0,
+                  transition: transitionFor(INDICATOR_TRANSITION),
+                }}
+              />
+            ) : null}
             {ORDER_DETAIL_SECTIONS.slice(0, total).map((section, sectionIndex) => {
               const isActive = sectionIndex === index;
               const isInView =
                 sectionIndex >= windowStart &&
                 sectionIndex < windowStart + visibleCount;
+              // Past the peeking label everything is faded out; keep it untappable.
+              const isFadedOut = sectionIndex > windowStart + visibleCount;
               return (
                 <button
                   key={section.id}
+                  ref={(node) => {
+                    tabRefs.current[sectionIndex] = node;
+                  }}
                   type="button"
                   role="tab"
                   aria-selected={isActive}
                   tabIndex={isInView ? 0 : -1}
                   onClick={() => selectSection(sectionIndex)}
-                  className={`relative z-10 min-h-10 shrink-0 cursor-pointer truncate rounded-full px-2 text-px-13 font-medium transition-colors duration-200 ${
+                  className={`relative min-h-12 shrink-0 cursor-pointer whitespace-nowrap px-2.5 text-px-15 transition-colors duration-200 ${
+                    isFadedOut ? "pointer-events-none" : ""
+                  } ${
                     isActive
-                      ? "text-[var(--color-text)]"
-                      : "text-[var(--color-muted)] hover:text-[var(--color-text)]"
+                      ? "font-semibold text-[var(--color-text)]"
+                      : "font-medium text-[var(--color-muted)] hover:text-[var(--color-text)]"
                   }`}
-                  style={{ flexBasis: `${tabWidthPercent}%` }}
                 >
                   {section.label}
                 </button>
@@ -114,12 +199,12 @@ export const OrderDetailSections = ({
             onClick={() =>
               setWindowStart((current) => nextSectionWindowStart(current, total))
             }
-            aria-label={isAtLastWindow ? "Show first sections" : "Show more sections"}
-            className="touch-hit-area flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-[var(--color-muted)] transition-colors hover:bg-surface-hover hover:text-[var(--color-text)]"
+            aria-label={isAtEnd ? "Show first sections" : "Show more sections"}
+            className="touch-hit-area flex w-11 shrink-0 cursor-pointer items-center justify-center text-[var(--color-text)] transition-colors hover:bg-surface-hover"
           >
             <ChevronDownIcon
-              className={`h-4 w-4 transition-transform duration-300 ${
-                isAtLastWindow ? "rotate-90" : "-rotate-90"
+              className={`h-5 w-5 transition-transform duration-300 ${
+                isAtEnd ? "rotate-90" : "-rotate-90"
               }`}
             />
           </button>
