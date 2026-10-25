@@ -4,10 +4,10 @@ import { useViewport } from "@/app/viewport";
 import { usePlanContainerView } from "@/features/plan";
 
 import {
-  DESKTOP_PLAN_WIDTH,
   resolveHomeDesktopTracks,
   type DesktopPlanViewMode,
 } from "../domain/homeDesktopLayout.domain";
+import { resolveOrderPanelWidth } from "../domain/orderPanelWidth";
 import {
   useDesktopMapActions,
   useIsDesktopMapVisible,
@@ -56,7 +56,7 @@ export function useHomeDesktopLayout({
 
   const isPlanVisible = isPlanOpen;
 
-  const BASE_WIDTH = isTablet ? 420 : 450;
+  const BASE_WIDTH = resolveOrderPanelWidth(isTablet ? "tablet" : "desktop");
   const ORDER_OVERLAY_WIDTH = isTablet ? 560 : 550;
   const OVERLAY_WIDTH = isTablet ? 560 : 450;
 
@@ -128,7 +128,7 @@ export function useHomeDesktopLayout({
     mapFlex: 1,
     baseWidth: BASE_WIDTH,
     orderOverlayWidth: ORDER_OVERLAY_WIDTH,
-    planWidth: isTablet ? BASE_WIDTH : DESKTOP_PLAN_WIDTH,
+    planWidth: BASE_WIDTH,
     planColumnWidth: tracks.planColumnWidth,
     mapRowHeight: tracks.mapRowHeight,
     planRowHeight: tracks.planRowHeight,

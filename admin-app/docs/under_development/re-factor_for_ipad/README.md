@@ -36,8 +36,8 @@ Everything a session (Claude or Codex) needs to make `Front_end/admin-app` fully
 | 5b Silent auto-update (`10_AUTO_UPDATE.md`) | committed on `ipad/phase-5b-auto-update` (stacked on 5); C9–C12 need a deploy or `npm run preview` | 2026-10-24 Claude session + review |
 | 2b Touch drag intent (`11_TOUCH_DRAG_INTENT.md`) | committed on `ipad/phase-2b-touch-intent` (stacked on 5b; carries the temporary dev logger); cue on every pointer (D8); B16–B20 pending | 2026-10-24 Codex |
 | R1 Order card redesign (`12_ORDER_CARD_REDESIGN.md`) | committed on `ipad/r1-order-cards`, plus D10 (info buttons hidden on phone/iPad); visual rows pending | 2026-10-25 Codex + Claude review |
-| R2 Order panel header (`13_ORDER_PANEL_HEADER.md`) | implemented, uncommitted on `ipad/r2-order-panel-header`; automated gates green; desktop/iPad/phone visual and card-count checks pending | 2026-10-25 Codex |
-| R3 Panel widths | waits for the user's card-width measurement | |
+| R2 Order panel header (`13_ORDER_PANEL_HEADER.md`) | committed on `ipad/r2-order-panel-header` (+ review changes: no pills, compact search, search above the order panel); visual rows pending | 2026-10-25 Codex + Claude |
+| R3 Panel widths | branch `ipad/r3-order-panel-width`: main order panel knob `ORDER_PANEL_WIDTH_FACTOR` = 0.6 (user tuning); plan nested lists next | 2026-10-25 Claude |
 | 6 Printing from the iPad | not started | |
 | 7 Optional (map drawing, AI panel, timeline) | not started | |
 
