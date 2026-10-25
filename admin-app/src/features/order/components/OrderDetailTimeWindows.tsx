@@ -27,7 +27,7 @@ export const OrderDetailTimeWindows = ({ order, headerRight }: OrderDetailTimeWi
   })
 
   return (
-    <div className="admin-glass-panel flex h-[420px] [@media(pointer:coarse)]:h-[min(420px,55dvh)] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+    <div className="admin-glass-panel flex flex-col overflow-hidden rounded-3xl border-border shadow-md!">
       <div className="admin-glass-divider flex items-center justify-between gap-3 border-b px-5 py-4">
         <p className="text-micro font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
           Delivery Windows
@@ -39,7 +39,7 @@ export const OrderDetailTimeWindows = ({ order, headerRight }: OrderDetailTimeWi
         ) : null}
       </div>
 
-      <div className="flex h-full flex-col gap-4 overflow-y-auto px-5 py-4.5 scroll-thin">
+      <div className="flex flex-col gap-4 px-5 py-4.5">
         {order && order.delivery_windows?.length
           ? order.delivery_windows.map((t, i) => {
             const serializeDate = formatIsoDateFriendly(t.start_at)
@@ -64,7 +64,7 @@ export const OrderDetailTimeWindows = ({ order, headerRight }: OrderDetailTimeWi
             )
           })
           : (
-          <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle">
+          <div className="flex min-h-32 items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle px-4 text-center">
             <span className="text-sm text-[var(--color-muted)]">
               No time windows set.
             </span>

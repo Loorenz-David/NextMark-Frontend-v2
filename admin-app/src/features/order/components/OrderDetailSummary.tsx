@@ -43,7 +43,7 @@ export const OrderDetailSummary = ({
   );
 
   return (
-    <div className="admin-glass-panel flex h-[420px] [@media(pointer:coarse)]:h-[min(420px,55dvh)] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+    <div className="admin-glass-panel flex flex-col overflow-hidden rounded-3xl border-border shadow-md!">
       <div className="admin-glass-divider flex flex-wrap items-center justify-between gap-2 border-b px-4 py-4">
         <div className="flex items-center gap-2">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
@@ -84,7 +84,7 @@ export const OrderDetailSummary = ({
         </div>
       </div>
 
-      <dl className="flex flex-1 flex-col divide-y divide-[var(--color-border)] overflow-y-auto px-4 scroll-thin">
+      <dl className="flex flex-col divide-y divide-[var(--color-border)] px-4">
         <DetailRow label="Name" value={fullName} />
         <DetailRow
           label="Email"

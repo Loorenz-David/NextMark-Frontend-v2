@@ -2,7 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RetryIcon } from "@/assets/icons";
 
-import { mapOrderEventsToTimelineViewModel } from "../domain/orderEventTimeline.domain";
+import {
+  findTimelineItemPosition,
+  limitTimelineGroups,
+  mapOrderEventsToTimelineViewModel,
+  ORDER_EVENT_HISTORY_PREVIEW_LIMIT,
+} from "../domain/orderEventTimeline.domain";
 import { useOrderEventFlow } from "../flows/orderEvent.flow";
 import {
   useOrderEventsByOrderId,
@@ -17,7 +22,6 @@ type OrderDetailEventHistoryProps = {
 };
 
 const FOCUS_HIGHLIGHT_MS = 2500;
-const FOCUS_SCROLL_OFFSET_PX = 12;
 
 export const OrderDetailEventHistory = ({
   orderId,
@@ -30,6 +34,7 @@ export const OrderDetailEventHistory = ({
     Record<string, boolean>
   >({});
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isShowAllRequested, setIsShowAllRequested] = useState(false);
   const [settledFocusEventId, setSettledFocusEventId] = useState<
     string | null
   >(null);
@@ -56,6 +61,23 @@ export const OrderDetailEventHistory = ({
     return null;
   }, [focusEventId, timelineGroups]);
 
+  // A focused event past the preview is shown by opening the full list.
+  const isFocusBeyondPreview =
+    findTimelineItemPosition(timelineGroups, focusClientId) >=
+    ORDER_EVENT_HISTORY_PREVIEW_LIMIT;
+  const isShowingAll = isShowAllRequested || isFocusBeyondPreview;
+  const { groups: visibleGroups, hiddenCount } = useMemo(
+    () =>
+      isShowingAll
+        ? { groups: timelineGroups, hiddenCount: 0 }
+        : limitTimelineGroups(timelineGroups, ORDER_EVENT_HISTORY_PREVIEW_LIMIT),
+    [isShowingAll, timelineGroups],
+  );
+  const canShowFewer =
+    isShowAllRequested &&
+    !isFocusBeyondPreview &&
+    visibleEventCount > ORDER_EVENT_HISTORY_PREVIEW_LIMIT;
+
   useEffect(() => {
     if (
       !focusEventId ||
@@ -66,20 +88,12 @@ export const OrderDetailEventHistory = ({
     }
     scrolledFocusEventIdRef.current = focusEventId;
 
-    // Scroll only this panel's list: scrollIntoView would also move the
-    // carousel track the panel sits in.
-    const container = listRef.current;
-    const entry = container?.querySelector<HTMLElement>(
+    // The card grows with its content, so the page scroll brings the
+    // entry into view.
+    const entry = listRef.current?.querySelector<HTMLElement>(
       `[data-order-event-id="${CSS.escape(focusEventId)}"]`,
     );
-    if (container && entry) {
-      const top =
-        entry.getBoundingClientRect().top -
-        container.getBoundingClientRect().top +
-        container.scrollTop -
-        FOCUS_SCROLL_OFFSET_PX;
-      container.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
-    }
+    entry?.scrollIntoView({ behavior: "smooth", block: "center" });
 
     const timeoutId = window.setTimeout(
       () => setSettledFocusEventId(focusEventId),
@@ -112,7 +126,7 @@ export const OrderDetailEventHistory = ({
   };
 
   return (
-    <div className="admin-glass-panel flex h-[420px] [@media(pointer:coarse)]:h-[min(420px,55dvh)] flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+    <div className="admin-glass-panel flex flex-col overflow-hidden rounded-3xl border-border shadow-md!">
       <div className="admin-glass-divider flex items-center justify-between gap-3 border-b px-5 py-4">
         <p className="text-micro font-medium uppercase tracking-[0.22em] text-[var(--color-muted)]">
           Event History
@@ -152,10 +166,10 @@ export const OrderDetailEventHistory = ({
 
       <div
         ref={listRef}
-        className="flex h-full flex-col overflow-y-auto px-5 py-4.5 scroll-thin"
+        className="flex flex-col px-5 py-4.5"
       >
         {typeof orderId !== "number" ? (
-          <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle">
+          <div className="flex min-h-32 items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle px-4 text-center">
             <span className="text-sm text-[var(--color-muted)]">
               Event history is available after the order has a server id.
             </span>
@@ -177,7 +191,7 @@ export const OrderDetailEventHistory = ({
         ) : null}
 
         {typeof orderId === "number" && loaded && orderEvents.length === 0 ? (
-          <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle">
+          <div className="flex min-h-32 items-center justify-center rounded-3xl border border-dashed border-border bg-surface-subtle px-4 text-center">
             <span className="text-sm text-[var(--color-muted)]">
               No order events recorded yet.
             </span>
@@ -186,7 +200,7 @@ export const OrderDetailEventHistory = ({
 
         {typeof orderId === "number" && loaded && orderEvents.length > 0 ? (
           <div className="flex flex-col gap-5 pb-1">
-            {timelineGroups.map((group) => (
+            {visibleGroups.map((group) => (
               <section key={group.key} aria-label={group.label}>
                 <p className="mb-3 text-rem-0_62 font-medium uppercase tracking-[0.18em] text-faint">
                   {group.label}
@@ -208,6 +222,17 @@ export const OrderDetailEventHistory = ({
                 </ol>
               </section>
             ))}
+            {hiddenCount > 0 || canShowFewer ? (
+              <button
+                type="button"
+                onClick={() => setIsShowAllRequested((current) => !current)}
+                className="touch-hit-area self-center rounded-full border border-border bg-surface-raised px-4 py-1.5 text-sm font-medium text-[var(--color-text)] shadow-[var(--shadow-button-compact)] transition-colors hover:bg-surface-hover"
+              >
+                {hiddenCount > 0
+                  ? `Show all ${visibleEventCount} events`
+                  : "Show fewer"}
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

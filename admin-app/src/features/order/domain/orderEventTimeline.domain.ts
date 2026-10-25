@@ -385,3 +385,46 @@ export const mapOrderEventsToTimelineViewModel = (
 
   return groups;
 };
+
+/** How many events the order detail history shows before "Show all". */
+export const ORDER_EVENT_HISTORY_PREVIEW_LIMIT = 5;
+
+/**
+ * Keeps the first `limit` items in display order (newest first), dropping
+ * groups left empty. `hiddenCount` is what "Show all" would add.
+ */
+export const limitTimelineGroups = (
+  groups: OrderEventTimelineGroupViewModel[],
+  limit: number,
+): { groups: OrderEventTimelineGroupViewModel[]; hiddenCount: number } => {
+  const limited: OrderEventTimelineGroupViewModel[] = [];
+  let remaining = Math.max(0, limit);
+  let hiddenCount = 0;
+
+  groups.forEach((group) => {
+    const shown = group.items.slice(0, remaining);
+    hiddenCount += group.items.length - shown.length;
+    remaining -= shown.length;
+    if (shown.length > 0) {
+      limited.push(shown.length === group.items.length ? group : { ...group, items: shown });
+    }
+  });
+
+  return { groups: limited, hiddenCount };
+};
+
+/** Display position of an event across all groups, or -1. */
+export const findTimelineItemPosition = (
+  groups: OrderEventTimelineGroupViewModel[],
+  clientId: string | null,
+): number => {
+  if (!clientId) return -1;
+  let position = 0;
+  for (const group of groups) {
+    for (const item of group.items) {
+      if (item.clientId === clientId) return position;
+      position += 1;
+    }
+  }
+  return -1;
+};
