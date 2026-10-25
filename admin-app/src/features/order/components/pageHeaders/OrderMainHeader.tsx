@@ -4,7 +4,7 @@ import type {
   OrderQueryFilters,
   OrderStats,
 } from "../../types/orderMeta";
-import { ActiveFilterPills, SearchFilterBar } from "@/shared/searchBars";
+import { SearchFilterBar } from "@/shared/searchBars";
 import { useSectionPanel } from "@/shared/section-panel/SectionPanelContext";
 import { type RefObject, useEffect, useMemo } from "react";
 import { pluralLabel } from "@shared-utils";
@@ -13,11 +13,10 @@ import { InfoHover } from "@/shared/layout/InfoHover";
 import { ORDER_MAIN_HEADER_INFO } from "../../info/orderMainHeader.info";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { formatOrderFilterPill } from "../../domain/orderFilterLabelFormatter";
+import { HeaderSlotPortal, HOME_HEADER_CENTER_SLOT } from "@/shared/layout/headerSlot";
 import {
   countActiveOrderFilters,
   draftFromOrderQueryFilters,
-  isOrderFilterPanelKey,
 } from "../../domain/orderFilterPanel.domain";
 
 type OrderMainHeaderProps = {
@@ -29,7 +28,6 @@ type OrderMainHeaderProps = {
   isSelectionMode: boolean;
   applySearch: (input: string) => void;
   onOpenFilters: () => void;
-  onRemoveFilter: (key: string, value?: unknown) => void;
   orderStats?: OrderStats;
   query: {
     q: string;
@@ -38,7 +36,27 @@ type OrderMainHeaderProps = {
   actionStackRef?: RefObject<HTMLDivElement | null>;
   useFloatingActionStack?: boolean;
   isActionStackVisible?: boolean;
+  isMobile: boolean;
 };
+
+type OrderHeaderActionsProps = Pick<OrderMainHeaderProps, 'onCreate' | 'onEnterSelectionMode' | 'onExitSelectionMode' | 'isSelectionMode'>;
+
+function OrderHeaderActions({ onCreate, onEnterSelectionMode, onExitSelectionMode, isSelectionMode }: OrderHeaderActionsProps) {
+  const menuOptions = [
+    { label: "Auto create plans", action: () => {}, icon: "" },
+    isSelectionMode
+      ? { label: "Exit selection", action: onExitSelectionMode, icon: "" }
+      : { label: "Selection mode", action: onEnterSelectionMode, icon: "" },
+  ];
+  return (
+    <div className="flex shrink-0 items-center gap-2">
+      <BasicButton key="order-main-create" params={{ variant: "primary", onClick: onCreate, ariaLabel: "Create order", className: "text-xs" }}>
+        <PlusIcon className="mr-2 h-3 w-3 stroke-[var(--color-secondary)]" />Order
+      </BasicButton>
+      <ThreeDotMenu dotWidth={3} dotHeight={3} dotClassName="bg-[var(--color-muted)]" triggerClassName="touch-hit-area h-11 w-11 cursor-pointer rounded-full" options={menuOptions} />
+    </div>
+  );
+}
 
 export const OrderMainHeader = ({
   onCreate,
@@ -49,24 +67,15 @@ export const OrderMainHeader = ({
   isSelectionMode,
   applySearch,
   onOpenFilters,
-  onRemoveFilter,
   query,
   orderStats,
   actionStackRef,
   useFloatingActionStack = false,
   isActionStackVisible = true,
+  isMobile,
 }: OrderMainHeaderProps) => {
   const { setHeader } = useSectionPanel();
 
-  // Only the keys the filter panel owns become pills; search columns, sort and
-  // cursors stay invisible.
-  const pillFilters = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.entries(query.filters).filter(([key]) => isOrderFilterPanelKey(key)),
-      ),
-    [query.filters],
-  );
   const activeFilterCount = useMemo(
     () => countActiveOrderFilters(draftFromOrderQueryFilters(query.filters)),
     [query.filters],
@@ -90,16 +99,32 @@ export const OrderMainHeader = ({
     );
     setHeader({
       title,
-      icon: <OrderIcon className="h-6 w-6 fill-[var(--color-muted)]" />,
+      icon: <OrderIcon className={`${isMobile ? 'h-6 w-6' : 'h-5 w-5'} fill-[var(--color-muted)]`} />,
       closeButton: false,
+      ...(isMobile ? {} : { size: 'compact' as const, customHeaderButton: <OrderHeaderActions onCreate={onCreate} onEnterSelectionMode={onEnterSelectionMode} onExitSelectionMode={onExitSelectionMode} isSelectionMode={isSelectionMode} /> }),
     });
     return () => {
       setHeader(null);
     };
-  }, [orderStats, setHeader]);
+  }, [orderStats, setHeader, isMobile, onCreate, isSelectionMode, onEnterSelectionMode, onExitSelectionMode]);
+
+  // Active filters show only as the count on the filter button (user, D11).
+  const searchAndFilters = (
+    <div className={isMobile ? "flex gap-4 p-4 pb-3 max-h-[65px] bg-[var(--color-page)]" : "w-full"}>
+      <div className="min-w-0 flex-1">
+        <SearchFilterBar placeholder="Search orders..." applySearch={applySearch} onOpenFilters={onOpenFilters} activeFilterCount={activeFilterCount} searchValue={query.q} />
+      </div>
+      {isMobile && <OrderHeaderActions onCreate={onCreate} onEnterSelectionMode={onEnterSelectionMode} onExitSelectionMode={onExitSelectionMode} isSelectionMode={isSelectionMode} />}
+    </div>
+  );
 
   return (
     <>
+      {!isMobile && (
+        <HeaderSlotPortal name={HOME_HEADER_CENTER_SLOT}>
+          <div className="flex w-full max-w-[560px] flex-col items-center">{searchAndFilters}</div>
+        </HeaderSlotPortal>
+      )}
       <motion.div
         ref={actionStackRef}
         initial={false}
@@ -117,60 +142,7 @@ export const OrderMainHeader = ({
             !useFloatingActionStack || isActionStackVisible ? "auto" : "none",
         }}
       >
-        <div className="flex gap-4 p-4 pb-3 max-h-[65px] bg-[var(--color-page)]">
-          <SearchFilterBar
-            placeholder="Search orders..."
-            applySearch={applySearch}
-            onOpenFilters={onOpenFilters}
-            activeFilterCount={activeFilterCount}
-            searchValue={query.q}
-          />
-
-          <BasicButton
-            key="order-main-create"
-            params={{
-              variant: "primary",
-              onClick: onCreate,
-              ariaLabel: "Create order",
-              className: "text-xs ",
-            }}
-          >
-            <PlusIcon className="mr-2 h-3 w-3 stroke-[var(--color-secondary)]" />
-            Order
-          </BasicButton>
-          <ThreeDotMenu
-            dotWidth={3}
-            dotHeight={3}
-            dotClassName={"bg-[var(--color-muted)]"}
-            triggerClassName={
-              " p-2 w-5 rounded-full    ml-auto  cursor-pointer"
-            }
-            options={[
-              { label: "Auto create plans", action: () => {}, icon: "" },
-              {
-                ...(isSelectionMode
-                  ? {
-                      label: "Exit selection",
-                      action: onExitSelectionMode,
-                      icon: "",
-                    }
-                  : {
-                      label: "Selection mode",
-                      action: onEnterSelectionMode,
-                      icon: "",
-                    }),
-              },
-            ]}
-          />
-        </div>
-        <div className="flex w-full px-2">
-          <ActiveFilterPills
-            className="px-4"
-            filters={pillFilters}
-            removeFilter={onRemoveFilter}
-            formatFilterLabel={formatOrderFilterPill}
-          />
-        </div>
+        {isMobile && searchAndFilters}
         {isSelectionMode && (
           <div className="flex w-full px-2 justify-center gap-3 text-xs ">
             <BasicButton

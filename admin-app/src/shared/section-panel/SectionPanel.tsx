@@ -36,7 +36,7 @@ export const SectionPanel = ({
         {header && (
           <header className="flex w-full flex-col shadow-[var(--shadow-panel-section)]">
             <div
-              className={`admin-glass-divider flex items-center justify-between gap-3 border-b px-4 py-3 transition-colors duration-200 ${header.headerButtonsBgClass ?? ""}`}
+              className={`admin-glass-divider flex items-center justify-between gap-3 border-b px-4 ${header.size === 'compact' ? 'py-3.5' : 'py-3'} transition-colors duration-200 ${header.headerButtonsBgClass ?? ""}`}
               style={{
                 borderBottomColor: header.headerButtonsBgClass?.includes(
                   "border-b-transparent",
@@ -47,12 +47,12 @@ export const SectionPanel = ({
             >
               <div className="flex items-center gap-3">
                 {header.icon && (
-                  <div className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-hover px-3 py-3 shadow-[inset_0_1px_0_var(--color-ligth-bg)]">
+                  <div className={`inline-flex items-center justify-center border border-border-subtle bg-surface-hover shadow-[inset_0_1px_0_var(--color-ligth-bg)] ${header.size === 'compact' ? 'rounded-lg p-2' : 'rounded-xl px-3 py-3'}`}>
                     {header.icon}
                   </div>
                 )}
                 {header.title && (
-                  <div className="text-lg font-semibold text-[var(--color-text)]">
+                  <div className={`${header.size === 'compact' ? 'text-base' : 'text-lg'} font-semibold text-[var(--color-text)]`}>
                     {header.title}
                   </div>
                 )}

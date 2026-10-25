@@ -8,6 +8,7 @@ export type SectionHeaderAction = {
 }
 
 export type SectionHeaderConfig = {
+    size?: 'default' | 'compact'
     icon?: ReactNode
     title?: ReactNode
 

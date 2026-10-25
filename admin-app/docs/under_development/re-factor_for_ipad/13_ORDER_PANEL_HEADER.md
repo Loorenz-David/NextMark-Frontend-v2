@@ -58,3 +58,8 @@ Phone (`isMobile`):
 - Phone 390: the action row scrolls away with the list; everything in it still works.
 - Other panels using `SectionPanel` look exactly as before.
 - Gates green (lint 0 errors, tests incl. the header slot test, build, popup contract, theme regression, PWA checks, `git diff --check`).
+
+## 4. Revisions after the user's review (2026-10-25)
+
+- **Filter pills removed** on every size, header and phone alike. The number of active filters shows only as the count beside the filter icon (as before). `orderFilterLabelFormatter.ts` (`formatOrderFilterPill`) became unused; left in place pending the user's OK to delete.
+- **Compact panel header padding** raised from `py-2` to `py-3.5`; the order panel header felt too tight.

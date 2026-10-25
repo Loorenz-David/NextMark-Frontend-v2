@@ -44,6 +44,19 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — R2 reviewed; pills removed, header padding raised (Claude)
+
+- Codex R2 matches `13`: header slot (provider/target/portal, no feature imports, jsdom test), search projected into the top header, compact opt-in `SectionPanel` header with "+ Order" and the 44px menu, phone row inside the scroll container. "Auto create plans" was already a no-op before R2 (unchanged; needs its own contract).
+- User review: remove the filter pills (count on the filter button is enough) and give the order panel header more vertical padding. Done: pills and their props removed from `OrderMainHeader` and both call sites in `orderMain.page.tsx`; compact header `py-2` → `py-3.5`. `formatOrderFilterPill` is now unused (delete pending user OK).
+
+### 2026-10-25 — Restyle R2 implemented (Codex)
+
+- Branch `ipad/r2-order-panel-header`, stacked on R1; uncommitted. Re-grepped the header, order panel, search, selection bar, slot, SectionPanel and test symbols before editing. Kept the temporary dev logger commit and all panel widths intact.
+- Added `shared/layout/headerSlot` with a provider, registered target and portal, with no feature imports. The desktop/tablet home shell owns the provider and target; the order feature owns search and filter state and renders those controls into the top header. Store pickup and international shipping leave that target empty.
+- The order panel opts into the compact `SectionPanel` header and holds "+ Order" plus the existing menu options. The desktop/iPad in-panel stack holds only the selection bar. On phone, the search/action row, pills and selection bar are inside the order-list scroll container. Other panels retain the default header styling. Added a jsdom Vitest case for absent, registered and replaced targets.
+- Automated gates: lint 0 errors (52 existing warnings); tests 161/161; build, popup contract, theme regression, external-form PWA and `git diff --check` passed. No check or lint rule changed. Chrome was not used. The desktop 1440, iPad 1024 and phone 390 visual/device checks and before/after visible-card counts are pending.
+- Existing behavior retained: the "Auto create plans" menu item is a no-op in the source before and after R2; selection mode works. Wiring an auto-plan operation needs its own behavior contract, so the `13` §3 wording that both options work is not verified for that item.
+
 ### 2026-10-25 — Restyle R2 (order panel header) specified (Claude)
 
 - User: move the order search (with filter button and pills) to the top header, centred, on desktop and iPad; "+ Order" and the menu to the right of a compact order panel header; phone keeps its row but inside the scroll container; header centre empty outside route operations. Decision D11.

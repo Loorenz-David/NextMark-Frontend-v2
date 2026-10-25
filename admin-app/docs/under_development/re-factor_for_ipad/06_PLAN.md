@@ -194,6 +194,8 @@ Spec: `12_ORDER_CARD_REDESIGN.md` (decision D9). One card design for the main li
 
 ## Restyle R2 — Order panel header (1 session) — stacked after R1
 
+**Status (2026-10-25):** implemented, uncommitted on `ipad/r2-order-panel-header`. The shared header slot and compact opt-in panel header are in place; order search, filters and pills render in the top header on desktop/iPad, and the phone row scrolls with the list. Automated gates pass (lint 0 errors, 161 tests, build, popup contract, theme regression, external-form PWA, diff check). Visual/device checks and before/after visible-card counts remain pending without Chrome tooling.
+
 Spec: `13_ORDER_PANEL_HEADER.md` (decision D11). Search, filter button and pills move to the top header (desktop/iPad, route operations only) through a shared header slot; "+ Order" and the menu move to a compact order panel header; on the phone the action row scrolls with the list.
 
 **Acceptance:** `13` §3.

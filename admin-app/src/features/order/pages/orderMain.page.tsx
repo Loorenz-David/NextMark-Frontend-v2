@@ -76,7 +76,7 @@ const OrderMainContent = ({
     isDesktopActionBarBehaviorEnabled,
     handleScroll,
   } = useScrollHideActionBar({
-    enabled: true,
+    enabled: isSelectionMode && !isMobile,
     expandedHeight: actionStackHeight,
   });
 
@@ -97,7 +97,7 @@ const OrderMainContent = ({
 
   return (
     <div className="relative flex h-full w-full flex-col bg-[var(--color-primary)]/5">
-      <OrderMainHeader
+      {!isMobile && <OrderMainHeader
         onCreate={() => orderActions.openOrderForm({ mode: "create" })}
         onEnterSelectionMode={orderSelectionActions.handleEnterSelectionMode}
         onExitSelectionMode={orderSelectionActions.handleExitSelectionMode}
@@ -106,13 +106,13 @@ const OrderMainContent = ({
         isSelectionMode={isSelectionMode}
         applySearch={orderActions.applySearch}
         onOpenFilters={orderActions.openFilterPanel}
-        onRemoveFilter={orderActions.removeFilter}
         query={query}
         orderStats={orderStats}
         actionStackRef={actionStackRef}
         useFloatingActionStack={isDesktopActionBarBehaviorEnabled}
         isActionStackVisible={isActionBarVisible}
-      />
+        isMobile={false}
+      />}
       <div
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto scroll-thin"
@@ -126,6 +126,19 @@ const OrderMainContent = ({
             transition: "padding-top 220ms cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
+          {isMobile && <OrderMainHeader
+            onCreate={() => orderActions.openOrderForm({ mode: "create" })}
+            onEnterSelectionMode={orderSelectionActions.handleEnterSelectionMode}
+            onExitSelectionMode={orderSelectionActions.handleExitSelectionMode}
+            onSelectAllFiltered={orderSelectionActions.handleSelectAllFiltered}
+            onClearSelection={orderSelectionActions.handleClearSelection}
+            isSelectionMode={isSelectionMode}
+            applySearch={orderActions.applySearch}
+            onOpenFilters={orderActions.openFilterPanel}
+                query={query}
+            orderStats={orderStats}
+            isMobile={true}
+          />}
           {isInitialLoading ? (
             <OrderLoadingList variant="orderMain" count={6} />
           ) : (
