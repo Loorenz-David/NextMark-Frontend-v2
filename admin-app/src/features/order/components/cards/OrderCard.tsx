@@ -33,10 +33,8 @@ export const OrderCard = ({
       : order.order_scalar_id != null
         ? `#${order.order_scalar_id}`
         : "#—";
-  const streetAddress = order.client_address?.street_address ?? "No address";
   const itemCount = order.total_items ?? 0;
   const orderState = useOrderStateByServerId(order.order_state_id ?? 1);
-  const external_source = order.external_source;
   const menuOptions: ThreeDotMenuOption[] = order.archive_at
     ? onUnarchive
       ? [
@@ -80,7 +78,7 @@ export const OrderCard = ({
       onClick={() => onOpen?.(order)}
     >
       <div
-        className={`admin-glass-panel admin-surface-compact relative z-10 flex flex-col gap-2.5 overflow-visible rounded-lg p-4 transition-all duration-200 ${
+        className={`admin-glass-panel admin-surface-compact relative z-10 flex flex-col gap-3 overflow-visible rounded-2xl border border-border p-4 transition-all duration-200 ${
           isHovered
             ? "border-[rgb(var(--color-light-blue-r),0.7)] shadow-[var(--shadow-panel-state-strong)]"
             : "border-border group-hover:border-border-accent group-hover:bg-surface-hover"
@@ -92,23 +90,14 @@ export const OrderCard = ({
           </div>
         )}
 
-        <div className="admin-card-sheen pointer-events-none absolute rounded-lg inset-0" />
+        <div className="admin-card-sheen pointer-events-none absolute inset-0 rounded-2xl" />
 
         <div className="relative z-10 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
-            <span className="shrink-0 text-base font-semibold text-[var(--color-text)]">
+            <span className="min-w-0 truncate text-2xl font-bold leading-none tracking-tight text-[var(--color-text)]">
               {orderLabel}
             </span>
-            <OrderOperationTypeBadges operationType={order.operation_type} />
-            {external_source && (
-              <span className="shrink-0 rounded-full border border-border bg-surface-raised px-2 py-0.5 text-rem-0_55 uppercase tracking-[0.16em] text-[var(--color-muted)]">
-                {external_source}
-              </span>
-            )}
-            <span className="shrink-0 text-[var(--color-muted)]/60">·</span>
-            <span className="min-w-0 truncate text-xs text-[var(--color-muted)]/95">
-              {streetAddress}
-            </span>
+            <OrderOperationTypeBadges operationType={order.operation_type} size="md" />
           </div>
           <div className="flex shrink-0 items-center gap-3">
             {orderState && (
@@ -116,15 +105,16 @@ export const OrderCard = ({
                 <StateCard
                   label={orderState.name}
                   color={orderState.color ? orderState.color : "#363636ff"}
+                  size="md"
                 />
               </div>
             )}
             {menuOptions.length > 0 && (
               <ThreeDotMenu
-                dotWidth={3}
-                dotHeight={3}
+                dotWidth={4}
+                dotHeight={4}
                 dotClassName="bg-[var(--color-muted)]"
-                triggerClassName="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full hover:bg-surface-hover"
+                triggerClassName="touch-hit-area -mr-2 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full hover:bg-surface-hover"
                 options={menuOptions}
                 width={190}
                 renderInPortal

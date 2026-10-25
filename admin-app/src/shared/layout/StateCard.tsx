@@ -6,13 +6,14 @@ type Props = {
  label?:string | typeof defaultState | null
  color?:string | typeof defaultColor | null
  style?: React.CSSProperties
+ size?: 'sm' | 'md'
 }
 
-export const StateCard = ({ label, color, style }: Props) => {
+export const StateCard = ({ label, color, style, size = 'sm' }: Props) => {
 
   return (
     <div
-      className="flex items-center justify-center px-2 py-[3px] border  rounded-sm"
+      className={`flex items-center justify-center border ${size === 'md' ? 'rounded-md px-2.5 py-1' : 'rounded-sm px-2 py-[3px]'}`}
       style={{
         ...style,
         backgroundColor: `${verifyHexColor(color) ?? defaultColor}1A`, // 20% opacity
@@ -20,7 +21,7 @@ export const StateCard = ({ label, color, style }: Props) => {
       }}
     >
       <span
-        className="text-xs"
+        className={size === 'md' ? 'text-sm' : 'text-xs'}
         style={{ color: `${verifyHexColor(color) ?? defaultColor}E6` }} // 90% opacity
       >
         {label ?? defaultState }

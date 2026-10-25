@@ -42,6 +42,13 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Restyle R1 implemented (Codex)
+
+- Branch `ipad/r1-order-cards`, stacked on Phase 2b; no commit. Re-grepped card symbols and call sites before editing. Left panel widths and the temporary dev logger commit intact.
+- Rebuilt `OrderCard` to the target layout for phone, iPad and desktop. Removed the source chip and street address; kept external reference number label logic, archive, missing-info banner, notes tray and drag cue. Route-stop cards now wrap `OrderCard`, retaining route-context order opening while removing stop number, ETA and warnings from the card. Item rows are larger, capped at two, and keep `Position` on the third line. Added opt-in `md` sizes to the badge and state pill and an opt-in 64px image thumbnail; defaults stay as before. Updated the drag overlay typography, radius and thumbnails.
+- Added `resolveOrderItemPreviewSummary` with six Vitest cases. Updated the theme codemod's line references for the two unchanged confirmation button tokens after the card shifted; no check or lint rule was relaxed.
+- Automated gates: lint 0 errors (52 existing warnings), tests 160/160, build, popup contract, theme regression and external-form PWA checks passed. Desktop 1440, iPad 1024 coarse-pointer and phone 390 visual/device checks remain pending without Chrome tooling. The user still needs to measure the narrowest comfortable card width for R2.
+
 ### 2026-10-25 — Restyle R1 (order cards) specified (Claude)
 
 - User sent the target card (`assets/order-card-target.png`) and asked to start restyling before the iPad test. Mapped every order card: `OrderCard` (main, store pickup, international shipping, customer history, address-group children) and `RouteGroupOrderCard` (route stops), sharing `OrderCardItemPreviews`.

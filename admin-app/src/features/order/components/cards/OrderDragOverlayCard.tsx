@@ -23,11 +23,11 @@ export const OrderDragOverlayCard = ({
   const previewItems = (order.item_previews ?? []).slice(0, 2);
 
   return (
-    <div className="inline-flex w-fit items-center gap-3 rounded-xl border border-border bg-surface-raised px-3 py-2.5 shadow-lg">
+    <div className="inline-flex w-fit items-center gap-3 rounded-2xl border border-border bg-surface-raised px-3 py-2.5 shadow-lg">
       <div className="flex min-w-[88px] flex-col">
         <div className="flex items-center gap-2">
           {orderNumberAddon}
-          <span className="text-base font-semibold leading-tight text-[var(--color-text)]">
+          <span className="text-2xl font-bold leading-none tracking-tight text-[var(--color-text)]">
             {orderLabel}
           </span>
         </div>
@@ -47,9 +47,9 @@ export const OrderDragOverlayCard = ({
                   ? `${preview.item_type} item`
                   : "Order item preview"
               }
-              widths={[48, 96]}
-              sizes="48px"
-              className="h-12 w-12 shrink-0 rounded-lg border border-border"
+              widths={[64, 128]}
+              sizes="64px"
+              className="h-16 w-16 shrink-0 rounded-xl border border-border"
               loading="eager"
             />
           ))}

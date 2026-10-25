@@ -9,7 +9,6 @@ import { RouteGroupOrderCard } from './RouteGroupOrderCard'
 type DraggableRouteGroupOrderCardProps = {
   order: Order
   stop: RouteSolutionStop
-  displayStopOrder?: number | null
   planStartDate?: string | null
   routeGroupId?: number | null
   allOrderedStopClientIds: string[]
@@ -19,7 +18,6 @@ type DraggableRouteGroupOrderCardProps = {
 export const DraggableRouteGroupOrderCard = ({
   order,
   stop,
-  displayStopOrder,
   planStartDate,
   routeGroupId,
   allOrderedStopClientIds,
@@ -79,8 +77,6 @@ export const DraggableRouteGroupOrderCard = ({
     >
       <RouteGroupOrderCard
         order={order}
-        stop={stop}
-        displayStopOrder={displayStopOrder}
         planStartDate={planStartDate}
         routeGroupId={routeGroupId}
       />

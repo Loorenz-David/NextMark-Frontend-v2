@@ -186,6 +186,8 @@ Spec: `11_TOUCH_DRAG_INTENT.md` (user decision 2026-10-24: hold with a clear cue
 
 ## Restyle R1 — Order card redesign (1 session) — stacked after 2b
 
+**Status (2026-10-25):** implemented, uncommitted on `ipad/r1-order-cards`. Standard and route-stop cards share the new layout; preview summary has six Vitest cases. Lint has 0 errors (52 existing warnings); 160 tests, build, popup contract, theme regression and external-form PWA gates pass. Desktop, iPad and phone visual/device checks in `12` §5 remain pending. Panel widths remain unchanged; the temporary dev logger is retained.
+
 Spec: `12_ORDER_CARD_REDESIGN.md` (decision D9). One card design for the main list, plan lists and route stops on every size; external source, address and route-stop extras removed; larger number, item rows and menu tap area; preview arithmetic moved into a tested domain function.
 
 **Acceptance:** `12` §5.

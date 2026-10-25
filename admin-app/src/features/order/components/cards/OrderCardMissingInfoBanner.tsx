@@ -32,7 +32,7 @@ export const OrderCardMissingInfoBanner = ({
   return (
     <div
       className={cn(
-        "relative z-10 flex items-center justify-between gap-3 rounded-b-lg border-t border-warning-border bg-warning-bg px-4 py-2.5",
+        "relative z-10 flex items-center justify-between gap-3 rounded-b-2xl border-t border-warning-border bg-warning-bg px-4 py-2.5",
         className,
       )}
     >

@@ -9,7 +9,6 @@ import { DraggableRouteGroupOrderCard } from "./cards/DraggableRouteGroupOrderCa
 import { RouteGroupBoundaryLocationCard } from "./cards/RouteGroupBoundaryLocationCard";
 import { useRouteGroupPageContext } from "../context/useRouteGroupPageContext";
 import { useRouteGroupStopOrdering } from "../hooks/useRouteGroupStopOrdering";
-import { useRouteGroupDndProjectionFlow } from "../flows/routeGroupDndProjection.flow";
 import { formatRouteTime } from "@/features/plan/routeGroup/utils/formatRouteTime";
 import { buildRouteGroupStopAddressGroups } from "../domain/routeGroupAddressGroup.flow";
 import { DraggableRouteGroupOrderGroupCard } from "./cards/DraggableRouteGroupOrderGroupCard";
@@ -17,8 +16,6 @@ import {
   useOrderGroupUIActions,
   useOrderGroupUIStore,
 } from "@/features/order/store/orderGroupUI.store";
-import { useResourceManager } from "@/shared/resource-manager/useResourceManager";
-import type { RouteReorderPreview } from "@/features/plan/dnd/controller/resolveDropIntent";
 import { RouteGroupReadyFooter } from "./RouteGroupReadyFooter";
 import { OrderLoadingCard } from "@/shared/loadingCards/order";
 
@@ -40,9 +37,6 @@ export const RouteGroupOrderList = ({
   bottomReservedOffset = 0,
   scrollsWithParent = false,
 }: RouteGroupOrderListProps) => {
-  const { routeReorderPreview } = useResourceManager<{
-    routeReorderPreview?: RouteReorderPreview | null;
-  }>();
   const {
     orders,
     planStartDate,
@@ -67,11 +61,6 @@ export const RouteGroupOrderList = ({
       stopByOrderId,
       ordersById,
     );
-  const { projectedStopOrderByClientId } = useRouteGroupDndProjectionFlow(
-    sortedEntries,
-    routeReorderPreview ?? null,
-    selectedRouteSolution?.id ?? null,
-  );
   const groupedStops = useMemo(
     () => buildRouteGroupStopAddressGroups(sortedEntries),
     [sortedEntries],
@@ -159,11 +148,6 @@ export const RouteGroupOrderList = ({
                     key={entry.stop.client_id}
                     order={entry.order}
                     stop={entry.stop}
-                    displayStopOrder={
-                      projectedStopOrderByClientId?.get(entry.stop.client_id) ??
-                      entry.stop.stop_order ??
-                      null
-                    }
                     planStartDate={planStartDate}
                     routeGroupId={activeRouteGroupId}
                     allOrderedStopClientIds={allOrderedStopClientIds}
@@ -182,7 +166,6 @@ export const RouteGroupOrderList = ({
                   onToggleExpanded={() => toggleGroup(uiKey)}
                   planStartDate={planStartDate}
                   routeGroupId={activeRouteGroupId}
-                  projectedStopOrderByClientId={projectedStopOrderByClientId}
                   allOrderedStopClientIds={allOrderedStopClientIds}
                 />
               );
@@ -192,7 +175,6 @@ export const RouteGroupOrderList = ({
             <RouteGroupOrderCard
               key={order.client_id}
               order={order}
-              stop={null}
               planStartDate={planStartDate}
               routeGroupId={activeRouteGroupId}
             />

@@ -15,7 +15,6 @@ type RouteGroupOrderGroupCardProps = {
   onToggleExpanded: () => void;
   planStartDate?: string | null;
   routeGroupId?: number | null;
-  projectedStopOrderByClientId?: Map<string, number> | null;
   dragAttributes?: DraggableAttributes;
   dragListeners?: DraggableSyntheticListeners;
 };
@@ -37,7 +36,6 @@ export const RouteGroupOrderGroupCard = ({
   onToggleExpanded,
   planStartDate,
   routeGroupId,
-  projectedStopOrderByClientId,
   dragAttributes,
   dragListeners,
 }: RouteGroupOrderGroupCardProps) => {
@@ -122,7 +120,6 @@ export const RouteGroupOrderGroupCard = ({
           entries={group.entries}
           planStartDate={planStartDate}
           routeGroupId={routeGroupId}
-          projectedStopOrderByClientId={projectedStopOrderByClientId}
         />
       ) : null}
     </div>
