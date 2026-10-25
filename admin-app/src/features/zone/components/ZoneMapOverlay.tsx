@@ -62,7 +62,9 @@ export const ZoneMapOverlay = () => {
   if (!isZoneMode) {
     return (
       <>
-        <div className="pointer-events-auto absolute right-10 top-4 z-0">
+        {/* right-16 clears the folded plan tab (44px on touch) that hangs in
+            from the map's right edge. */}
+        <div className="pointer-events-auto absolute right-16 top-4 z-0">
           <BasicButton
             params={{
               variant: "secondaryInvers",
@@ -91,7 +93,7 @@ export const ZoneMapOverlay = () => {
 
   return (
     <>
-      <div className="pointer-events-auto absolute right-10 top-4 z-0">
+      <div className="pointer-events-auto absolute right-16 top-4 z-0">
         <div className="relative w-52 rounded-xl border border-[var(--color-muted)]/30 bg-[var(--color-page)]/95 p-3 shadow-lg backdrop-blur-sm">
           <button
             aria-label="Exit zone mode"
