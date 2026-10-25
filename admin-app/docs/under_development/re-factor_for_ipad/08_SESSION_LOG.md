@@ -48,6 +48,12 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Top bar folds on any click outside it, starts folded (Claude)
+- Scope: user — an interaction outside the top bar closes it ("gives immediate more room and aligns with user intention"); no need to remember the state.
+- `HomeDesktopHeader`: while open, a capture-phase `click` listener on the document folds the bar when the click lands outside it. Click rather than pointerdown so a drag or scroll that starts outside does not fold it mid-gesture (the 50px shift would move the panels under the finger). Clicks inside portaled popovers (`[data-floating-popover-root]`, e.g. the notifications list opened from the bar) count as inside. The chevron in the bar still folds it too.
+- `homeTopBar.store.ts`: starts folded, no persistence; `homeTopBar.storage.ts` removed (the user asked not to remember it).
+- Checked in Chrome (`?viewport=tablet&pointer=coarse`): loads folded; strip opens; notifications popover opens and a click inside it keeps the bar; a click on the calendar folds the bar and closes the popover. Gates green (lint 0 errors / 52 warnings, tests 203, build, popup contract, theme regression, PWA checks, `git diff --check`).
+
 ### 2026-10-25 — Top bar folds away; order search back in the order panel (Claude)
 - Scope: user — the top bar (theme, acting user, notifications, Settings) is the least used part of the screen; it should hide and be revealable, giving its height to the panels. User picked option 1 of five presented (collapsible bar with a reveal strip; others: floating account button, icon rail, hide-on-scroll, hover reveal). The order search moves back into the order panel, under its header, in the scroll area.
 - `HomeDesktopHeader`: a chevron button on the right folds the bar (grid-rows 1fr→0fr, 200ms, `inert` while folded); a 16px strip with a grab handle (finger-sized via `touch-hit-area`) brings it back and shows a red dot while notifications are unread (`useAdminNotificationUnreadCount`, new in `realtime/notifications`). The bar stays mounted so the notifications trigger keeps chiming. Folded state remembered per device (`home-app/stores/homeTopBar.store.ts` + `.storage.ts`, key `home.topBar.hidden.v1`).

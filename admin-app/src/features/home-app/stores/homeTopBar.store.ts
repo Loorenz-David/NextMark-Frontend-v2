@@ -1,17 +1,12 @@
 import { create } from 'zustand'
 
-import { loadHomeTopBarHidden, saveHomeTopBarHidden } from './homeTopBar.storage'
-
 type HomeTopBarState = {
-  /** The top bar is folded away; remembered on this device. */
+  /** The top bar is folded away. It starts folded and is opened on demand. */
   isHidden: boolean
   setHidden: (hidden: boolean) => void
 }
 
 export const useHomeTopBarStore = create<HomeTopBarState>((set) => ({
-  isHidden: loadHomeTopBarHidden(),
-  setHidden: (hidden) => {
-    saveHomeTopBarHidden(hidden)
-    set({ isHidden: hidden })
-  },
+  isHidden: true,
+  setHidden: (hidden) => set({ isHidden: hidden }),
 }))
