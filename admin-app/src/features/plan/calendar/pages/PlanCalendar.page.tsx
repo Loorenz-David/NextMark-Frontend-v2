@@ -23,6 +23,8 @@ export const PlanCalendarPage = () => {
     plansByDay,
     volumeCapacityByPlanId,
     title,
+    dateFilter,
+    setDateFilter,
     isFetchingRange,
     stepPrevious,
     stepNext,
@@ -52,6 +54,8 @@ export const PlanCalendarPage = () => {
     <div className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-[var(--color-page)]">
       <PlanCalendarHeader
         title={title}
+        dateFilter={dateFilter}
+        onDateFilterChange={setDateFilter}
         onStepPrevious={stepPrevious}
         onStepNext={stepNext}
         onGoToToday={goToToday}

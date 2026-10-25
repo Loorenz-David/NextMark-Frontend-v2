@@ -10,7 +10,9 @@ import type { DeliveryPlan } from "@/features/plan/types/plan";
 import { useRoutePlanStore } from "@/features/plan/store/routePlan.slice";
 
 import {
+  buildDateFilterGrid,
   buildMonthGrid,
+  formatDateFilterTitle,
   formatMonthTitle,
   getAssignedVehicleVolumeCapacityCm3,
   getGridRangeKeys,
@@ -29,6 +31,8 @@ export const usePlanCalendarController = () => {
   const openCreatePlanForm = useOpenCreatePlanFormAction();
 
   const monthCursor = usePlanCalendarStore((state) => state.monthCursor);
+  const dateFilter = usePlanCalendarStore((state) => state.dateFilter);
+  const setDateFilter = usePlanCalendarStore((state) => state.setDateFilter);
   const isFetchingRange = usePlanCalendarStore(
     (state) => state.isFetchingRange,
   );
@@ -45,8 +49,11 @@ export const usePlanCalendarController = () => {
   const todayKey = getTodayDayKey();
 
   const cells = useMemo(
-    () => buildMonthGrid(monthCursor, todayKey),
-    [monthCursor, todayKey],
+    () =>
+      dateFilter
+        ? buildDateFilterGrid(dateFilter, todayKey)
+        : buildMonthGrid(monthCursor, todayKey),
+    [dateFilter, monthCursor, todayKey],
   );
 
   const range = useMemo(() => getGridRangeKeys(cells), [cells]);
@@ -152,7 +159,9 @@ export const usePlanCalendarController = () => {
     visiblePlanIds,
   ]);
 
-  const title = formatMonthTitle(monthCursor);
+  const title = dateFilter
+    ? formatDateFilterTitle(dateFilter)
+    : formatMonthTitle(monthCursor);
 
   const stepPrevious = useCallback(() => {
     stepMonth(-1);
@@ -181,6 +190,8 @@ export const usePlanCalendarController = () => {
     plansByDay,
     volumeCapacityByPlanId,
     title,
+    dateFilter,
+    setDateFilter,
     todayKey,
     isFetchingRange,
     stepPrevious,

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 import type {
+  CalendarDateFilter,
   CalendarMonthCursor,
   CalendarDayKey,
 } from "../domain/planCalendar.domain";
@@ -21,6 +22,8 @@ export type CalendarPlanVehicleAssignment = {
 type PlanCalendarState = {
   containerView: PlanContainerView;
   monthCursor: CalendarMonthCursor;
+  /** When set, the grid shows the filter's weeks instead of the month. */
+  dateFilter: CalendarDateFilter | null;
   /** Day whose plans overlay is held open by an in-flight order drag. */
   dragOverlayDateKey: CalendarDayKey | null;
   isFetchingRange: boolean;
@@ -31,6 +34,7 @@ type PlanCalendarState = {
   setContainerView: (view: PlanContainerView) => void;
   stepMonth: (delta: number) => void;
   goToToday: () => void;
+  setDateFilter: (filter: CalendarDateFilter | null) => void;
   setDragOverlayDateKey: (dateKey: CalendarDayKey | null) => void;
   setIsFetchingRange: (isFetching: boolean) => void;
   setPlanVehicleAssignmentLoading: (planId: number) => void;
@@ -44,6 +48,7 @@ type PlanCalendarState = {
 export const usePlanCalendarStore = create<PlanCalendarState>((set) => ({
   containerView: "calendar",
   monthCursor: getMonthCursorForDayKey(getTodayDayKey()),
+  dateFilter: null,
   dragOverlayDateKey: null,
   isFetchingRange: false,
   vehicleAssignmentsByPlanId: {},
@@ -52,6 +57,7 @@ export const usePlanCalendarStore = create<PlanCalendarState>((set) => ({
     set((state) => ({ monthCursor: stepMonthCursor(state.monthCursor, delta) })),
   goToToday: () =>
     set({ monthCursor: getMonthCursorForDayKey(getTodayDayKey()) }),
+  setDateFilter: (filter) => set({ dateFilter: filter }),
   setDragOverlayDateKey: (dateKey) =>
     set((state) =>
       state.dragOverlayDateKey === dateKey
