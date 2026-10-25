@@ -827,6 +827,20 @@ body:has([data-drag-cue="active"]) .drag-preview-lift > * {
   body:has([data-drag-cue="active"]) .drag-preview-lift { animation: none; }
   [data-drag-cue="active"] { animation: none; }
   [data-drag-cue="pressing"] { transition: none; }
+  [data-route-timeline-source][data-drag-cue="pressing"] [data-route-timeline-content] { transition: none; }
+}
+
+/* A dragged route stop keeps its slice of the timeline in the list
+   (RouteTimelineRow), so the row itself never scales or lifts — that would
+   shift the line sideways. Only the card squeezes on press. */
+[data-route-timeline-source][data-drag-cue] {
+  scale: none;
+  box-shadow: none;
+  animation: none;
+}
+[data-route-timeline-source][data-drag-cue="pressing"] [data-route-timeline-content] {
+  scale: 0.97;
+  transition: scale 140ms ease-out;
 }
 
 /* Firefox */

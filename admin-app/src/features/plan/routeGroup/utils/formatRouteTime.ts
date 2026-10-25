@@ -1,4 +1,8 @@
 import { formatIsoToTeamTimeZone } from '@/shared/utils/teamTimeZone'
+import {
+  resolveRouteTimelineTime,
+  type RouteTimelineTime,
+} from '@/features/plan/routeGroup/domain/routeTimeline.domain'
 
 export const formatRouteTime = (
   value?: string | null,
@@ -58,3 +62,10 @@ export const formatRouteTime = (
 
   return `${datePart} - ${timePart}`
 }
+
+/** The timeline label for an arrival time, read against the plan date. */
+export const formatRouteTimelineTime = (
+  value: string | null | undefined,
+  planStartDate?: string | null,
+): RouteTimelineTime =>
+  resolveRouteTimelineTime(value, (time) => formatRouteTime(time, planStartDate ?? null))

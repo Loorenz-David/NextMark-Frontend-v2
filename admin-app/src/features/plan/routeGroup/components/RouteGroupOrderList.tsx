@@ -6,10 +6,11 @@ import {
 
 import { RouteGroupOrderCard } from "./cards/RouteGroupOrderCard";
 import { DraggableRouteGroupOrderCard } from "./cards/DraggableRouteGroupOrderCard";
-import { RouteGroupBoundaryLocationCard } from "./cards/RouteGroupBoundaryLocationCard";
+import { RouteTimelineEdge, RouteTimelineRow } from "./timeline";
+import { RouteSolutionWarnings } from "./warnings/RouteSolutionWarnings";
 import { useRouteGroupPageContext } from "../context/useRouteGroupPageContext";
 import { useRouteGroupStopOrdering } from "../hooks/useRouteGroupStopOrdering";
-import { formatRouteTime } from "@/features/plan/routeGroup/utils/formatRouteTime";
+import { formatRouteTimelineTime } from "@/features/plan/routeGroup/utils/formatRouteTime";
 import { buildRouteGroupStopAddressGroups } from "../domain/routeGroupAddressGroup.flow";
 import { DraggableRouteGroupOrderGroupCard } from "./cards/DraggableRouteGroupOrderGroupCard";
 import {
@@ -89,8 +90,8 @@ export const RouteGroupOrderList = ({
     selectedRouteSolution?.route_end_strategy,
   );
   const activeRouteGroupId = selectedRouteSolution?.route_group_id ?? null
-  const startLocationLabel = `${strategyLabel} · ${boundaryLocations.start.label}`;
-  const endLocationLabel = `${strategyLabel} · ${boundaryLocations.end.label}`;
+  const startLocationLabel = `Start · ${strategyLabel}`;
+  const endLocationLabel = `End · ${strategyLabel}`;
 
   return (
     <div
@@ -103,13 +104,15 @@ export const RouteGroupOrderList = ({
       <div
         className={
           scrollsWithParent
-            ? "px-4"
-            : "flex-1 min-h-0 overflow-y-auto scroll-thin px-4"
+            ? "pl-4 pr-1"
+            : "flex-1 min-h-0 overflow-y-auto scroll-thin pl-4 pr-1"
         }
         onScroll={scrollsWithParent ? undefined : onScrollContainer}
       >
         <div
-          className="flex min-h-full flex-col gap-4"
+          // No gap: rows carry their own spacing so the timeline runs
+          // unbroken from start to end, also while rows shift under a drag.
+          className="flex min-h-full flex-col"
           style={{
             paddingTop: topReservedOffset
               ? `${topReservedOffset}px`
@@ -121,14 +124,14 @@ export const RouteGroupOrderList = ({
           }}
         >
           {boundaryLocations.start.location && (
-            <RouteGroupBoundaryLocationCard
-              label={startLocationLabel}
-              address={boundaryLocations.start.location}
-              time={formatRouteTime(boundaryLocations.start.time, "today")}
-              warnings={boundaryLocations.start.warnings}
-              planStartDate={planStartDate}
-              warningRegistry={routeSolutionWarningRegistry}
-              routeGroupActions={routeGroupPageActions}
+            <RouteTimelineEdge
+              edge="start"
+              title={startLocationLabel}
+              address={boundaryLocations.start.location.street_address ?? "—"}
+              time={formatRouteTimelineTime(
+                boundaryLocations.start.time,
+                planStartDate,
+              )}
             />
           )}
           <SortableContext
@@ -168,27 +171,40 @@ export const RouteGroupOrderList = ({
             })}
           </SortableContext>
           {missingOrders.map((order) => (
-            <RouteGroupOrderCard
-              key={order.client_id}
-              order={order}
-              planStartDate={planStartDate}
-              routeGroupId={activeRouteGroupId}
-            />
+            <RouteTimelineRow key={order.client_id} time={{ status: "none" }}>
+              <RouteGroupOrderCard
+                order={order}
+                planStartDate={planStartDate}
+                routeGroupId={activeRouteGroupId}
+              />
+            </RouteTimelineRow>
           ))}
           {incomingPendingOrderPlaceholderKeys.map((placeholderKey) => (
-            <OrderLoadingCard key={placeholderKey} variant="routeGroup" />
+            <RouteTimelineRow
+              key={placeholderKey}
+              time={{ status: "loading" }}
+            >
+              <OrderLoadingCard variant="routeGroup" />
+            </RouteTimelineRow>
           ))}
           {boundaryLocations.end.location && groupedStops.length > 0 && (
             <div className="pb-10">
-              <RouteGroupBoundaryLocationCard
-                label={endLocationLabel}
-                address={boundaryLocations.end.location}
-                time={formatRouteTime(boundaryLocations.end.time, "today")}
-                warnings={boundaryLocations.end.warnings}
-                planStartDate={planStartDate}
-                warningRegistry={routeSolutionWarningRegistry}
-                routeGroupActions={routeGroupPageActions}
-                containerClassName={" mt-4"}
+              <RouteTimelineEdge
+                edge="end"
+                title={endLocationLabel}
+                address={boundaryLocations.end.location.street_address ?? "—"}
+                time={formatRouteTimelineTime(
+                  boundaryLocations.end.time,
+                  planStartDate,
+                )}
+                addon={
+                  <RouteSolutionWarnings
+                    warnings={boundaryLocations.end.warnings}
+                    planStartDate={planStartDate}
+                    registry={routeSolutionWarningRegistry}
+                    routeGroupActions={routeGroupPageActions}
+                  />
+                }
               />
             </div>
           )}

@@ -4,6 +4,9 @@ import { CSS } from '@dnd-kit/utilities'
 import type { Order } from '@/features/order/types/order'
 import type { RouteSolutionStop } from '@/features/plan/routeGroup/types/routeSolutionStop'
 
+import { formatRouteTimelineTime } from '@/features/plan/routeGroup/utils/formatRouteTime'
+
+import { RouteTimelineRow } from '../timeline'
 import { RouteGroupOrderCard } from './RouteGroupOrderCard'
 
 type DraggableRouteGroupOrderCardProps = {
@@ -48,22 +51,17 @@ export const DraggableRouteGroupOrderCard = ({
     },
   })
 
-  // The DragOverlay tracks the pointer. Sibling rows keep their transform so
-  // the list reflows around the drag; the active row hides in place — its card
-  // body transitions the inherited `visibility` flip, so applying the pointer
-  // transform here would paint a full-size mirror for the transition's duration.
+  // The DragOverlay tracks the pointer. The active row takes the strategy's
+  // transform, which carries it to the slot it will drop into; its card hides
+  // on the same frame (see RouteTimelineRow) while its timeline slice stays,
+  // so the line has no gap and the stop's time moves with it.
   const style = {
-    transform: isDragging ? undefined : CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(transform),
     // Transition only while a sort is in flight: it animates the gap opening
     // under the drag. At drop it would animate the sibling transforms resetting
     // to zero while the store reorder has already moved the DOM — rows gliding
     // to positions they no longer own. Instant reset instead.
     transition: isSorting ? transition : undefined,
-    // Wrapper `opacity` hides on the same frame; `visibility` alone would be
-    // animated by the card body's `transition-all` (see DraggableOrderCard).
-    opacity: isDragging ? 0 : 1,
-    visibility: isDragging ? 'hidden' as const : 'visible' as const,
-    pointerEvents: isDragging ? ('none' as const) : undefined,
     cursor: 'grab',
   }
 
@@ -72,14 +70,20 @@ export const DraggableRouteGroupOrderCard = ({
       ref={setNodeRef}
       style={style}
       className="dnd-touch-source"
+      data-route-timeline-source
       {...attributes}
       {...listeners}
     >
-      <RouteGroupOrderCard
-        order={order}
-        planStartDate={planStartDate}
-        routeGroupId={routeGroupId}
-      />
+      <RouteTimelineRow
+        time={formatRouteTimelineTime(stop.expected_arrival_time, planStartDate)}
+        contentHidden={isDragging}
+      >
+        <RouteGroupOrderCard
+          order={order}
+          planStartDate={planStartDate}
+          routeGroupId={routeGroupId}
+        />
+      </RouteTimelineRow>
     </div>
   )
 }
