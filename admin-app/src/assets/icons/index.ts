@@ -32,6 +32,7 @@ export { default as UserIcon } from "./UserIcon.svg?react";
 export { default as UsersIcon } from "./UsersIcon.svg?react";
 export { default as WeightIcon } from "./WeightIcon.svg?react";
 export { default as LayersIcon } from "./LayersIcon.svg?react";
+export { default as ListIcon } from "./ListIcon.svg?react";
 export { default as LayersIconSrc } from "./LayersIcon.svg";
 export { default as BoldArrowIcon } from "./BoldArrowIcon.svg?react";
 export { default as LockIconLocked } from "./LockIconLocked.svg?react";

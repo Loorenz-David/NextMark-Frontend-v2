@@ -1,6 +1,5 @@
 import type { DesktopPlanViewMode } from '@/features/home-route-operations/hooks/useHomeDesktopLayout'
 import { PlanCalendarPage } from '../calendar/pages/PlanCalendar.page'
-import { PlanContainerViewToggle } from '../calendar/components/PlanContainerViewToggle'
 import { usePlanCalendarStore } from '../calendar/store/planCalendar.store'
 import { RoutePlanPage } from '../pages/Plan.page'
 import { PlanDesktopTimeline } from './PlanDesktopTimeline'
@@ -29,7 +28,7 @@ export const PlanDesktopShell = ({
       <RoutePlanPage
         onRequestClose={onRequestClose}
         showCloseButton
-        headerAccessory={<PlanContainerViewToggle />}
+        showViewSwitch
       />
     )
   }

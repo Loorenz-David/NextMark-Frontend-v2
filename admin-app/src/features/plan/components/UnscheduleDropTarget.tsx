@@ -7,17 +7,7 @@ import type {
   UnscheduleDropFeedback,
 } from "@/shared/resource-manager/ResourceManagerContext";
 
-const isOrderDragActive = (activeDrag: unknown) => {
-  if (!activeDrag || typeof activeDrag !== "object") return false;
-  const dragType = String((activeDrag as { type?: unknown }).type ?? "");
-  return (
-    dragType === "order" ||
-    dragType === "order_batch" ||
-    dragType === "order_group" ||
-    dragType === "route_stop" ||
-    dragType === "route_stop_group"
-  );
-};
+import { isOrderDragActive } from "../domain/orderDragActivity";
 
 /**
  * The drop target that detaches an order from its plan. Shared by the plan list

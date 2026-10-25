@@ -11,7 +11,6 @@ import { useRoutePlanStore } from "@/features/plan/store/routePlan.slice";
 
 import {
   buildMonthGrid,
-  computeCalendarRangeStats,
   formatMonthTitle,
   getAssignedVehicleVolumeCapacityCm3,
   getGridRangeKeys,
@@ -153,13 +152,6 @@ export const usePlanCalendarController = () => {
     visiblePlanIds,
   ]);
 
-  const stats = useMemo(() => {
-    const inMonthKeys = new Set(
-      cells.filter((cell) => cell.inMonth).map((cell) => cell.dateKey),
-    );
-    return computeCalendarRangeStats(plansByDay, inMonthKeys);
-  }, [cells, plansByDay]);
-
   const title = formatMonthTitle(monthCursor);
 
   const stepPrevious = useCallback(() => {
@@ -188,7 +180,6 @@ export const usePlanCalendarController = () => {
     cells,
     plansByDay,
     volumeCapacityByPlanId,
-    stats,
     title,
     todayKey,
     isFetchingRange,

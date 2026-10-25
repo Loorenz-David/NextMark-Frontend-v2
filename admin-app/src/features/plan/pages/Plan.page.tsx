@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useVisibleRoutePlans } from "../store/useRoutePlan.selector";
 
 import { PlanList, PlanLoadingList, PlanMainHeader } from "../components";
 import { usePlanHeaderAction } from "../actions/usePlanActions";
-import { useRoutePlanListStats } from "../store/routePlanList.selector";
 import { BasicButton } from "@/shared/buttons/BasicButton";
 import { usePlanPaginationController } from "../hooks/usePlanPaginationController";
 import type { PlanDateFilterPayload } from "../components/planDateFilter";
@@ -13,8 +12,8 @@ import type { PlanQueryFilters } from "../types/planMeta";
 type RoutePlanPageProps = {
   onRequestClose?: () => void;
   showCloseButton?: boolean;
-  /** Optional control forwarded into the header (e.g. calendar/list toggle). */
-  headerAccessory?: ReactNode;
+  /** Add the calendar/list switch to the header menu. */
+  showViewSwitch?: boolean;
 };
 
 const mergePlanQuery = (
@@ -52,7 +51,7 @@ const queryEquals = (
 export const RoutePlanPage = ({
   onRequestClose,
   showCloseButton,
-  headerAccessory,
+  showViewSwitch,
 }: RoutePlanPageProps) => {
   const [activeQuery, setActiveQuery] = useState<PlanQueryFilters | undefined>(
     undefined,
@@ -64,7 +63,6 @@ export const RoutePlanPage = ({
     }
   }, []);
   const plans = useVisibleRoutePlans();
-  const plansStats = useRoutePlanListStats();
   const planActions = usePlanHeaderAction();
   const handleFilterSelection = useCallback(
     (payload: PlanDateFilterPayload) => {
@@ -110,11 +108,10 @@ export const RoutePlanPage = ({
         onCreate={planActions.onCreatePlan}
         onRequestClose={onRequestClose}
         showCloseButton={showCloseButton}
-        planStats={plansStats}
         applySearch={() => {}}
         applyFilters={handleFiltersChange}
         applyFilterSelection={handleFilterSelection}
-        headerAccessory={headerAccessory}
+        showViewSwitch={showViewSwitch}
       />
       <div
         ref={scrollContainerRef}
