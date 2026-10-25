@@ -44,7 +44,7 @@ const buildEdgeMask = (fadeStart: boolean, fadeEndAt: number | null): string | u
 };
 
 /**
- * The order detail sections card: a tab row as its header (phone, iPad and
+ * The order detail sections block: a tab row as its header (phone, iPad and
  * desktop) above one section at a time. Sections grow to their content so
  * the page is the only thing that scrolls.
  *
@@ -128,7 +128,7 @@ export const OrderDetailSections = ({
     prefersReducedMotion || !layout ? undefined : value;
 
   return (
-    <div className="admin-glass-panel flex w-full flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+    <div className="flex w-full flex-col">
       <div className="flex items-stretch border-b border-border bg-surface-subtle">
         <div
           ref={viewportRef}

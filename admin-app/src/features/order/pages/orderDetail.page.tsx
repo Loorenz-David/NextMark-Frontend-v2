@@ -83,9 +83,9 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
     />,
   ];
 
-  // Items come first; the section cards follow and grow with their
-  // content, so the page is the only scroll area. Cards run the full
-  // width of the panel; only loose text keeps a gutter.
+  // Items come first; the sections follow and grow with their content, so
+  // the page is the only scroll area. Blocks run the full panel width,
+  // separated by divider lines; only loose text keeps a gutter.
   const gutterClassName = isMobile ? "px-3" : "px-5";
 
   return (
@@ -115,8 +115,8 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
         )}
 
         <div
-          className={`flex w-full flex-col bg-[var(--color-page)] pt-3 [[data-theme=light]_&]:bg-transparent ${
-            isMobile ? "gap-5 pb-8" : "gap-6 pb-6"
+          className={`flex w-full flex-col divide-y divide-border border-b border-border bg-[var(--color-page)] [[data-theme=light]_&]:bg-transparent ${
+            isMobile ? "mb-8" : "mb-6"
           }`}
         >
           {orderServerId !== null ? (
@@ -127,7 +127,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
               detailLayout
             />
           ) : (
-            <div className="admin-glass-panel rounded-3xl p-4 text-xs text-[var(--color-muted)]">
+            <div className={`${gutterClassName} py-4 text-xs text-[var(--color-muted)]`}>
               Items are available after the order has a server id.
             </div>
           )}
@@ -140,7 +140,7 @@ const OrderDetailContent = ({ payload }: { payload?: OrderDetailPayload }) => {
           </OrderDetailSections>
 
           {isRefreshing && order ? (
-            <div className={`${gutterClassName} text-xs text-[var(--color-muted)]`}>
+            <div className={`${gutterClassName} py-3 text-xs text-[var(--color-muted)]`}>
               Refreshing order details...
             </div>
           ) : null}

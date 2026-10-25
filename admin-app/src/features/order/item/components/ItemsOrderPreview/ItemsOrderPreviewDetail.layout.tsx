@@ -12,7 +12,7 @@ const ROUND_BUTTON_CLASS_NAME =
   "h-11 w-11 shrink-0 rounded-full border border-border bg-surface-raised shadow-[var(--shadow-button-compact)]";
 
 /**
- * Order detail items card: a header strip (summary and a menu for add and
+ * Order detail items block: a header strip (summary and a menu for add and
  * print) above the item cards and a dashed add button, which is all an
  * empty order shows. Grows with its items; the page owns the scroll.
  */
@@ -87,7 +87,7 @@ export const ItemsOrderPreviewDetailLayout = ({
   );
 
   return (
-    <section className="admin-glass-panel flex w-full flex-col overflow-hidden rounded-3xl border-border shadow-md!">
+    <section className="flex w-full flex-col">
       {header ?? defaultHeader}
 
       <div className="flex flex-col gap-3 p-4">

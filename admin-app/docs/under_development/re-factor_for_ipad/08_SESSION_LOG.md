@@ -48,6 +48,11 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Order detail: blocks separated by divider lines (Claude)
+- Scope: user — full-width cards felt tight; the header, items and sections are no longer cards but full-width blocks separated by divider lines.
+- `OrderDetailHeader` / `OrderDetailHeaderMobile`: no glass card, rounding or shadow; texture and wash kept; `border-b` below. `ItemsOrderPreviewDetail.layout.tsx` and `OrderDetailSections.tsx`: plain blocks, their grey header strips kept. `orderDetail.page.tsx`: body is `divide-y divide-border` with no gaps or top padding; the no-server-id placeholder and refreshing text are plain padded text.
+- Checked in Chrome at tablet width on #4498 (top and scrolled); gates green (lint 0 errors / 52 warnings, tests 187, build, popup contract, theme regression, PWA checks, `git diff --check`).
+
 ### 2026-10-25 — Order detail: items as a bounded card, full-width containers (Claude)
 - Scope: user mockup — the items get a card like the sections (header strip with title, totals and menu; items and the dashed add button in the body), and the page drops its side padding so the containers fill the panel width.
 - `ItemsOrderPreviewDetail.layout.tsx`: card `admin-glass-panel rounded-3xl shadow-md!`, header strip `border-b bg-surface-subtle px-4 py-3`, body `p-4 gap-3`.
