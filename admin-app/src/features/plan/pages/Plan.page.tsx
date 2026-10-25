@@ -8,6 +8,8 @@ import { BasicButton } from "@/shared/buttons/BasicButton";
 import { usePlanPaginationController } from "../hooks/usePlanPaginationController";
 import type { PlanDateFilterPayload } from "../components/planDateFilter";
 import type { PlanQueryFilters } from "../types/planMeta";
+import { usePlanCalendarPeriodController } from "../calendar/controllers/usePlanCalendarPeriod.controller";
+import { PlanCalendarDateControl } from "../calendar/components/PlanCalendarDateControl";
 
 type RoutePlanPageProps = {
   /** Add the calendar/list switch to the header menu. */
@@ -47,8 +49,12 @@ const queryEquals = (
 };
 
 export const RoutePlanPage = ({ showViewSwitch }: RoutePlanPageProps) => {
+  // In the plan column the list shares the calendar's period and date control,
+  // so switching views keeps the same dates. The phone has no calendar and
+  // keeps its own date filter.
+  const period = usePlanCalendarPeriodController();
   const [activeQuery, setActiveQuery] = useState<PlanQueryFilters | undefined>(
-    undefined,
+    () => (showViewSwitch ? period.listFilters : undefined),
   );
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const handleScrollToTop = useCallback(() => {
@@ -80,6 +86,11 @@ export const RoutePlanPage = ({ showViewSwitch }: RoutePlanPageProps) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (!showViewSwitch) return;
+    handleFiltersChange(period.listFilters);
+  }, [showViewSwitch, period.listFilters, handleFiltersChange]);
+
   const {
     hasMore,
     isLoadingPage,
@@ -104,6 +115,18 @@ export const RoutePlanPage = ({ showViewSwitch }: RoutePlanPageProps) => {
         applyFilters={handleFiltersChange}
         applyFilterSelection={handleFilterSelection}
         showViewSwitch={showViewSwitch}
+        dateControl={
+          showViewSwitch ? (
+            <PlanCalendarDateControl
+              title={period.title}
+              dateFilter={period.dateFilter}
+              onDateFilterChange={period.setDateFilter}
+              onStepPrevious={period.stepPrevious}
+              onStepNext={period.stepNext}
+              onGoToToday={period.goToToday}
+            />
+          ) : undefined
+        }
       />
       <div
         ref={scrollContainerRef}

@@ -48,6 +48,13 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Plan list shares the calendar's date control and period; Zones button clears the plan tab (Claude)
+- Scope: user (screenshot) — in the map view the Zones button sat against the folded plan tab. Then: the list view's date control differed from the calendar's; the list should have the same one.
+- Zones: `ZoneMapOverlay` button and zone panel `right-10` → `right-16`, clearing the 44px touch tab that hangs in from the map's right edge (≈20px gap; checked in Chrome).
+- Date control: the calendar's month stepper + date filter panel moved out of `PlanCalendarHeader` into `calendar/components/PlanCalendarDateControl.tsx`; the period logic (title, step, today, date filter) into `calendar/controllers/usePlanCalendarPeriod.controller.ts`, used by `usePlanCalendarController` and by `RoutePlanPage`. In the plan column (`showViewSwitch`) the list renders that control and takes its query from the calendar period (`domain/planCalendarListPeriod.ts`: month → whole month, one day → `date`, range → `range`; tested), so switching views keeps the same dates. The phone Plans tab keeps `PlanDateFilterBar` (no calendar there).
+- Checked in Chrome (`?viewport=tablet&pointer=coarse`): calendar → list shows the same control ("October 2026"); next → "November 2026" with no plans (none exist), previous → October's plans back; the title opens the same From/To/Today panel. Not checked live: a date filter applied from the list.
+- Gates: lint 0 errors (52 warnings), tests 207, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Plan list view gets the calendar's single-row header (Claude)
 - Scope: user — switching the plan column to list put the date filter and the three-dot menu on a row below the header; keep them in the header like the calendar view, and drop the "fold" button (the map's fold-out tab covers it), so both views share one header.
 - `PlanMainHeader`: with `showViewSwitch` (the iPad/desktop plan column) it renders the calendar header's row — same container, icon box and title — with the date filter, drop targets and menu on the right. While an order is dragged the date filter is hidden (not unmounted, so it keeps its dates) and the New plan / Unschedule targets take its place. The phone Plans tab keeps its two-row header (one row cannot fit the 200px filter beside the title on a phone; the phone has no calendar view).

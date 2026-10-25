@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useDndContext } from "@dnd-kit/core";
 
 import { PlanIcon } from "@/assets/icons";
@@ -22,6 +23,8 @@ type PlanMainHeaderProps = {
    * one header; the phone keeps the date filter on its own row.
    */
   showViewSwitch?: boolean;
+  /** The plan column's date control (the calendar's), in place of the date filter. */
+  dateControl?: ReactNode;
 };
 
 export const PlanMainHeader = ({
@@ -29,10 +32,11 @@ export const PlanMainHeader = ({
   applyFilters,
   applyFilterSelection,
   showViewSwitch = false,
+  dateControl,
 }: PlanMainHeaderProps) => {
   const { active } = useDndContext();
-  // While an order is dragged the drop targets take the date filter's place.
-  // Hidden, not unmounted: the filter keeps the chosen dates.
+  // While an order is dragged the drop targets take the date control's place.
+  // Hidden, not unmounted, so an open date panel or chosen dates survive.
   const isDraggingOrder = isOrderDragActive(active?.data.current);
 
   const dateFilter = (
@@ -57,7 +61,9 @@ export const PlanMainHeader = ({
         </div>
         <HeaderTitle className="text-px-19 font-bold tracking-[-0.02em] text-[var(--color-text)]" />
         <div className="ml-auto flex shrink-0 items-center gap-2.5">
-          <div className={isDraggingOrder ? "hidden" : "flex"}>{dateFilter}</div>
+          <div className={isDraggingOrder ? "hidden" : "flex"}>
+            {dateControl ?? dateFilter}
+          </div>
           {actions}
         </div>
       </div>

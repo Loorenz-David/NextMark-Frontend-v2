@@ -12,8 +12,6 @@ import { useRoutePlanStore } from "@/features/plan/store/routePlan.slice";
 import {
   buildDateFilterGrid,
   buildMonthGrid,
-  formatDateFilterTitle,
-  formatMonthTitle,
   getAssignedVehicleVolumeCapacityCm3,
   getGridRangeKeys,
   getTodayDayKey,
@@ -22,6 +20,7 @@ import {
 } from "../domain/planCalendar.domain";
 import { hydrateCalendarVehicleAssignments } from "../flows/hydrateCalendarVehicleAssignments.flow";
 import { usePlanCalendarStore } from "../store/planCalendar.store";
+import { usePlanCalendarPeriodController } from "./usePlanCalendarPeriod.controller";
 
 const CALENDAR_RANGE_FETCH_LIMIT = 300;
 
@@ -30,14 +29,18 @@ export const usePlanCalendarController = () => {
   const { openPlanSection } = usePlanHeaderAction();
   const openCreatePlanForm = useOpenCreatePlanFormAction();
 
-  const monthCursor = usePlanCalendarStore((state) => state.monthCursor);
-  const dateFilter = usePlanCalendarStore((state) => state.dateFilter);
-  const setDateFilter = usePlanCalendarStore((state) => state.setDateFilter);
+  const {
+    monthCursor,
+    dateFilter,
+    setDateFilter,
+    title,
+    stepPrevious,
+    stepNext,
+    goToToday,
+  } = usePlanCalendarPeriodController();
   const isFetchingRange = usePlanCalendarStore(
     (state) => state.isFetchingRange,
   );
-  const stepMonth = usePlanCalendarStore((state) => state.stepMonth);
-  const goToToday = usePlanCalendarStore((state) => state.goToToday);
   const setIsFetchingRange = usePlanCalendarStore(
     (state) => state.setIsFetchingRange,
   );
@@ -158,18 +161,6 @@ export const usePlanCalendarController = () => {
     vehicleAssignmentsByPlanId,
     visiblePlanIds,
   ]);
-
-  const title = dateFilter
-    ? formatDateFilterTitle(dateFilter)
-    : formatMonthTitle(monthCursor);
-
-  const stepPrevious = useCallback(() => {
-    stepMonth(-1);
-  }, [stepMonth]);
-
-  const stepNext = useCallback(() => {
-    stepMonth(1);
-  }, [stepMonth]);
 
   const openPlan = useCallback(
     (plan: DeliveryPlan) => {
