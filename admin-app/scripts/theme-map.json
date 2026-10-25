@@ -42,13 +42,13 @@
     },
     {
       "file": "features/order/components/cards/OrderCard.tsx",
-      "line": 50,
+      "line": 57,
       "from": "text-white",
       "to": "text-success-on-solid"
     },
     {
       "file": "features/order/components/cards/OrderCard.tsx",
-      "line": 68,
+      "line": 75,
       "from": "text-white",
       "to": "text-danger-on-solid"
     },

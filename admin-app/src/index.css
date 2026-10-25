@@ -761,6 +761,37 @@ select:focus {
   touch-action: manipulation;
 }
 
+/* Order card content sizes = the R1 design × --order-card-scale, set on the
+   card from ORDER_CARD_SCALE (features/order/components/cards/orderCardScale.ts). */
+.order-card {
+  padding: calc(1rem * var(--order-card-scale, 1));
+  gap: calc(0.75rem * var(--order-card-scale, 1));
+}
+.order-card-number { font-size: calc(1.5rem * var(--order-card-scale, 1)); }
+.order-card-items { gap: calc(0.75rem * var(--order-card-scale, 1)); }
+.order-card-item { gap: calc(0.75rem * var(--order-card-scale, 1)); }
+.order-card-thumb {
+  width: calc(4rem * var(--order-card-scale, 1));
+  height: calc(4rem * var(--order-card-scale, 1));
+}
+.order-card-article { font-size: calc(1.125rem * var(--order-card-scale, 1)); }
+.order-card-meta {
+  font-size: calc(0.875rem * var(--order-card-scale, 1));
+  line-height: 1.4;
+}
+.order-card-more {
+  padding-left: calc(4.75rem * var(--order-card-scale, 1));
+  font-size: calc(0.875rem * var(--order-card-scale, 1));
+}
+.order-card-bleed {
+  margin-inline: calc(-1rem * var(--order-card-scale, 1));
+  margin-bottom: calc(-1rem * var(--order-card-scale, 1));
+}
+@media (pointer: coarse) {
+  .order-card-meta,
+  .order-card-more { font-size: max(0.75rem, calc(0.875rem * var(--order-card-scale, 1))); }
+}
+
 /* Drag cue for every pointer (user decision 2026-10-24): the held card
    squeezes, then the drag preview lifts in. Attribute set by the sensors in
    shared/dnd (dragCue.ts). `scale` composes with dnd-kit's inline transform. */

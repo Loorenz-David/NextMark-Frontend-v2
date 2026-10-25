@@ -75,3 +75,7 @@ Vitest cases: no previews; one preview with qty 1 and total 1 (no label); two pr
 - Menu: on the iPad, tapping anywhere in the 44px area opens it, and it never starts a drag.
 - Gates green (lint 0 errors, tests incl. §4, build, popup contract, theme regression, PWA checks, `git diff --check`).
 - After it lands, the user measures the narrowest comfortable card width; record it in `08` as the input for R2 (panel widths).
+
+## 6. Content scale knob (user, 2026-10-25)
+
+The R1 content felt too big; it is now 20% smaller through one knob: `ORDER_CARD_SCALE` (0.8) in `features/order/components/cards/orderCardScale.ts`. The card sets `--order-card-scale`; `index.css` `.order-card*` classes size the number, article, Qty/Position lines, "+N more", thumbnails, padding, gaps and the missing-info banner bleed from it. The state pill and arrow badge switch to their small size below `ORDER_CARD_SMALL_CHIPS_BELOW` (0.9). The menu's visible button is 32px with a `touch-hit-area` reaching 52px. On coarse pointers the small text is floored at 12px.

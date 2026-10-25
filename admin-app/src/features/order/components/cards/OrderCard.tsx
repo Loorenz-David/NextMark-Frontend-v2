@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { useOrderStateByServerId } from "@/features/order/store/orderStateHooks.store";
 import { ArchiveOrderIcon, SendBackIcon } from "@/assets/icons";
 
@@ -11,6 +12,12 @@ import { OrderOperationTypeBadges } from "./OrderOperationTypeBadges";
 import { OrderCardItemPreviews } from "./OrderCardItemPreviews";
 import { OrderCardMissingInfoBanner } from "./OrderCardMissingInfoBanner";
 import { OrderCardNotesTray } from "./OrderCardNotesTray";
+import { ORDER_CARD_SCALE, ORDER_CARD_SMALL_CHIPS_BELOW } from "./orderCardScale";
+
+const cardScaleStyle: CSSProperties & { "--order-card-scale": number } = {
+  "--order-card-scale": ORDER_CARD_SCALE,
+};
+const chipSize = ORDER_CARD_SCALE < ORDER_CARD_SMALL_CHIPS_BELOW ? "sm" : "md";
 
 type OrderCardProps = {
   order: Order;
@@ -78,7 +85,8 @@ export const OrderCard = ({
       onClick={() => onOpen?.(order)}
     >
       <div
-        className={`admin-glass-panel admin-surface-compact relative z-10 flex flex-col gap-3 overflow-visible rounded-2xl border border-border p-4 transition-all duration-200 ${
+        style={cardScaleStyle}
+        className={`order-card admin-glass-panel admin-surface-compact relative z-10 flex flex-col overflow-visible rounded-2xl border border-border transition-all duration-200 ${
           isHovered
             ? "border-[rgb(var(--color-light-blue-r),0.7)] shadow-[var(--shadow-panel-state-strong)]"
             : "border-border group-hover:border-border-accent group-hover:bg-surface-hover"
@@ -94,10 +102,10 @@ export const OrderCard = ({
 
         <div className="relative z-10 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
-            <span className="min-w-0 truncate text-2xl font-bold leading-none tracking-tight text-[var(--color-text)]">
+            <span className="order-card-number min-w-0 truncate font-bold leading-none tracking-tight text-[var(--color-text)]">
               {orderLabel}
             </span>
-            <OrderOperationTypeBadges operationType={order.operation_type} size="md" />
+            <OrderOperationTypeBadges operationType={order.operation_type} size={chipSize} />
           </div>
           <div className="flex shrink-0 items-center gap-3">
             {orderState && (
@@ -105,16 +113,16 @@ export const OrderCard = ({
                 <StateCard
                   label={orderState.name}
                   color={orderState.color ? orderState.color : "#363636ff"}
-                  size="md"
+                  size={chipSize}
                 />
               </div>
             )}
             {menuOptions.length > 0 && (
               <ThreeDotMenu
-                dotWidth={4}
-                dotHeight={4}
+                dotWidth={chipSize === "md" ? 4 : 3}
+                dotHeight={chipSize === "md" ? 4 : 3}
                 dotClassName="bg-[var(--color-muted)]"
-                triggerClassName="touch-hit-area -mr-2 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full hover:bg-surface-hover"
+                triggerClassName="touch-hit-area -my-1.5 -mr-1.5 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full hover:bg-surface-hover"
                 options={menuOptions}
                 width={190}
                 renderInPortal
@@ -130,7 +138,7 @@ export const OrderCard = ({
 
         <OrderCardMissingInfoBanner
           order={order}
-          className="-mx-4 -mb-4 mt-0.5"
+          className="order-card-bleed mt-0.5"
         />
       </div>
       <OrderCardNotesTray notes={order.order_notes} />
