@@ -48,6 +48,12 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Route timeline moves to the left of the cards (Claude)
+- Scope: user — "place the timeline on the left side instead".
+- `RouteTimelineRow` / `RouteTimelineEdge`: timeline slice first, card or start/end text after (`pl-1`); list padding `pl-1 pr-4`. An empty route no longer trails a line below the start (`continues` on the edge/marker).
+- Checked in Chrome at phone width (Oct 27 plan, 3 stops; Oct 19 now empty); view only, no drags. Gates green (lint 0 errors / 52 warnings, tests 203, build, popup contract, theme regression, PWA checks, `git diff --check`).
+- Open (user report): moving the first stop of a route to another plan leaves it showing in the source route; later stops are fine. Not reproduced yet (window stuck at 768px, and the dev data is in use). Lead: in `update_order_route_plan.py` the first bundle's `order_stops`/`route_solution` from the destination are overwritten by the old route's (`bundle.update(old_local_delivery_bundle)`).
+
 ### 2026-10-25 — Route plan: arrival timeline beside the stops; drags over the panel stay in the panel (Claude)
 - Scope: user — a modern, simple arrival timeline on the right of the order cards (driver app style, order card unchanged); the line breaks around each stop's time, level with the card; moving an order moves its time; start and end are the two ends of the line, no cards. "Reliable and not buggy."
 - Timeline (`plan/routeGroup/components/timeline/`): `RouteTimelineRow` (card + 44px timeline slice), `RouteTimelineMarker` (line / time / line; dot at start and end; day stacked over time off the plan day; shimmer while the server recalculates; "--" with no time), `RouteTimelineEdge` (start/end as plain text: "Start · Round trip" + street; end keeps the route warnings). Time label logic in `domain/routeTimeline.domain.ts` (tested), bound to the plan date by `formatRouteTimelineTime`.

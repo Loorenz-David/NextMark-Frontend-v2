@@ -9,6 +9,8 @@ type RouteTimelineMarkerProps = {
   edge?: "start" | "end";
   /** The stop being dragged: its time follows it to the new slot. */
   active?: boolean;
+  /** At the start: false ends the line at the start's time. */
+  continues?: boolean;
 };
 
 const LINE_CLASS_NAME =
@@ -76,6 +78,7 @@ export const RouteTimelineMarker = ({
   time,
   edge,
   active = false,
+  continues = true,
 }: RouteTimelineMarkerProps) => (
   <div
     className={`flex w-11 shrink-0 flex-col items-center ${
@@ -90,7 +93,7 @@ export const RouteTimelineMarker = ({
     {time ? <TimelineLabel time={time} active={active} /> : null}
     {edge === "end" ? (
       <EdgeDot />
-    ) : time || edge === "start" ? (
+    ) : (edge === "start" ? continues : time) ? (
       <span aria-hidden="true" className={LINE_CLASS_NAME} />
     ) : null}
   </div>

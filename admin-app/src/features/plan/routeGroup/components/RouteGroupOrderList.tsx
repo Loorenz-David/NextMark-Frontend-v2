@@ -104,8 +104,8 @@ export const RouteGroupOrderList = ({
       <div
         className={
           scrollsWithParent
-            ? "pl-4 pr-1"
-            : "flex-1 min-h-0 overflow-y-auto scroll-thin pl-4 pr-1"
+            ? "pl-1 pr-4"
+            : "flex-1 min-h-0 overflow-y-auto scroll-thin pl-1 pr-4"
         }
         onScroll={scrollsWithParent ? undefined : onScrollContainer}
       >
@@ -132,6 +132,11 @@ export const RouteGroupOrderList = ({
                 boundaryLocations.start.time,
                 planStartDate,
               )}
+              continues={
+                groupedStops.length > 0 ||
+                missingOrders.length > 0 ||
+                incomingPendingOrderPlaceholderKeys.length > 0
+              }
             />
           )}
           <SortableContext

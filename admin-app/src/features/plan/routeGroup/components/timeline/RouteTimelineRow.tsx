@@ -14,16 +14,17 @@ type RouteTimelineRowProps = {
   contentHidden?: boolean;
 };
 
-/** A card beside its slice of the route timeline. */
+/** A card with its slice of the route timeline on its left. */
 export const RouteTimelineRow = ({
   time,
   children,
   contentHidden = false,
 }: RouteTimelineRowProps) => (
   <div className="group/stop flex items-stretch">
+    <RouteTimelineMarker time={time} active={contentHidden} />
     <div
       data-route-timeline-content
-      className="min-w-0 flex-1 py-2 pr-1"
+      className="min-w-0 flex-1 py-2 pl-1"
       style={
         contentHidden
           ? { opacity: 0, visibility: "hidden", pointerEvents: "none" }
@@ -32,6 +33,5 @@ export const RouteTimelineRow = ({
     >
       {children}
     </div>
-    <RouteTimelineMarker time={time} active={contentHidden} />
   </div>
 );
