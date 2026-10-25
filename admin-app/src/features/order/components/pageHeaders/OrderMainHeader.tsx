@@ -112,7 +112,7 @@ export const OrderMainHeader = ({
   const searchAndFilters = (
     <div className={isMobile ? "flex gap-4 p-4 pb-3 max-h-[65px] bg-[var(--color-page)]" : "w-full"}>
       <div className="min-w-0 flex-1">
-        <SearchFilterBar placeholder="Search orders..." applySearch={applySearch} onOpenFilters={onOpenFilters} activeFilterCount={activeFilterCount} searchValue={query.q} />
+        <SearchFilterBar placeholder="Search orders..." applySearch={applySearch} onOpenFilters={onOpenFilters} activeFilterCount={activeFilterCount} searchValue={query.q} size={isMobile ? "default" : "compact"} />
       </div>
       {isMobile && <OrderHeaderActions onCreate={onCreate} onEnterSelectionMode={onEnterSelectionMode} onExitSelectionMode={onExitSelectionMode} isSelectionMode={isSelectionMode} />}
     </div>
@@ -122,7 +122,7 @@ export const OrderMainHeader = ({
     <>
       {!isMobile && (
         <HeaderSlotPortal name={HOME_HEADER_CENTER_SLOT}>
-          <div className="flex w-full max-w-[560px] flex-col items-center">{searchAndFilters}</div>
+          <div className="flex w-full max-w-[360px] flex-col items-center">{searchAndFilters}</div>
         </HeaderSlotPortal>
       )}
       <motion.div

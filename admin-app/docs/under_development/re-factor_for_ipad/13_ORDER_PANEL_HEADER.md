@@ -63,3 +63,4 @@ Phone (`isMobile`):
 
 - **Filter pills removed** on every size, header and phone alike. The number of active filters shows only as the count beside the filter icon (as before). `orderFilterLabelFormatter.ts` (`formatOrderFilterPill`) became unused; left in place pending the user's OK to delete.
 - **Compact panel header padding** raised from `py-2` to `py-3.5`; the order panel header felt too tight.
+- **Header search narrower and shorter:** the header slot content is capped at `max-w-[360px]` (was 560), and `SearchFilterBar` gained an opt-in `size="compact"` (32px, matching the toolbar buttons; on coarse pointers it grows with them). The phone and the other search bars (customer, order case) keep the default size.
