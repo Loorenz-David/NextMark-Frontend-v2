@@ -8,7 +8,7 @@ import {
   type DesktopPlanViewMode,
 } from "../domain/homeDesktopLayout.domain";
 import { resolveOrderPanelWidth } from "../domain/orderPanelWidth";
-import { resolveRoutePlanPanelWidth } from "../domain/routePlanPanelWidth";
+import { resolvePlanPanelWidth } from "../domain/planPanelWidth";
 import {
   useDesktopMapActions,
   useIsDesktopMapVisible,
@@ -19,8 +19,6 @@ export type { DesktopPlanViewMode } from "../domain/homeDesktopLayout.domain";
 type HomeDesktopLayoutParams = {
   openSectionsCount?: number;
   isOrderOverlayOpen?: boolean;
-  /** The open plan is local delivery, which uses the narrower route plan panel. */
-  isRoutePlanWorkspace?: boolean;
 };
 
 const DESKTOP_PLAN_VIEW_MODE_KEY = "home.desktop.planViewMode";
@@ -42,7 +40,6 @@ const resolveInitialViewMode = (): DesktopPlanViewMode => {
 export function useHomeDesktopLayout({
   openSectionsCount = 0,
   isOrderOverlayOpen = false,
-  isRoutePlanWorkspace = false,
 }: HomeDesktopLayoutParams) {
   const { sizeClass, isTablet } = useViewport();
   const isMapVisible = useIsDesktopMapVisible(isTablet);
@@ -61,11 +58,10 @@ export function useHomeDesktopLayout({
   const isPlanVisible = isPlanOpen;
 
   const BASE_WIDTH = resolveOrderPanelWidth(isTablet ? "tablet" : "desktop");
-  const ORDER_OVERLAY_WIDTH = isRoutePlanWorkspace
-    ? resolveRoutePlanPanelWidth(isTablet ? "tablet" : "desktop", BASE_WIDTH)
-    : isTablet
-      ? 560
-      : 550;
+  const ORDER_OVERLAY_WIDTH = resolvePlanPanelWidth(
+    isTablet ? "tablet" : "desktop",
+    BASE_WIDTH,
+  );
   const OVERLAY_WIDTH = isTablet ? 560 : 450;
 
   const hasOverlay = openSectionsCount > 0;

@@ -48,6 +48,15 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Container plans (store pickup, international shipping) get the same panel interface (Claude)
+- Scope: user — the other plan types follow the route plan panel "given their capabilities": round close button, three-dot menu, narrow width.
+- Shared: `shared/popups/PanelMenu` (`PanelMenu` — round trigger with optional attention dot, popover on fine pointers / bottom sheet on coarse, free-form body; `PanelMenuRow`, `PANEL_MENU_ROW_CLASS_NAME`, `PanelMenuAttentionDot`) and `shared/buttons/RoundIconButton`. `RouteGroupMenu` and the route header now use them (no behaviour change).
+- `features/plan/components/ContainerPlanActionsMenu.tsx`: now a `PanelMenu` with the plan's counts and state chip on top and "Delete plan" (two-tap confirm kept) below. Container plans have no other actions today, so none were invented.
+- `StorePickupPlanHeader` / `InternationalShippingPlanHeader`: state chip moved into the menu; "Close" text → round ×.
+- Width: `routePlanPanelWidth.ts` renamed `planPanelWidth.ts` (`PLAN_PANEL_WIDTH_FACTOR = 1.05`); `useHomeDesktopLayout` uses it for every plan type (the `isRoutePlanWorkspace` flag is gone).
+- Checked in Chrome: phone layout (window came up at 768px) for store pickup (Oct 14: header, popover menu with counts + Open + Delete plan) and the route plan (Oct 19: back, menu with hint dot); iPad layout for international shipping (Oct 13: narrow panel, round menu + ×, sheet with counts + state). Delete not clicked. No console errors.
+- Gates: lint 0 errors (52 warnings), tests 195, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Route plan (local delivery) panel: zone tabs menu, narrower panel (Claude)
 - Scope: user — the panel took too much width. Header gets a round close button and a three-dot menu; zones are picked in the menu (user chose tabs like the order detail switcher); the route group actions (add order, edit, optimize, ready for delivery, download, import CSV) move into the menu under the selected zone; panel width = order panel × 1.05 (room for the arrival time flow later). Same menu on phone (user choice).
 - Shared (`c4cfc11`): the order detail tab row moved to `shared/layout/slidingTabs` (`SlidingTabRow`, `slidingTabWindow.domain.ts` + tests, moved from the order domain); `OrderDetailSections` uses it.

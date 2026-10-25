@@ -91,7 +91,6 @@ export function HomeDesktopView() {
   const layout = useHomeDesktopLayout({
     openSectionsCount: derivedState.openSectionsCount,
     isOrderOverlayOpen,
-    isRoutePlanWorkspace: planWorkspace.isLocalDeliveryWorkspace,
   });
   reframeBlockersRef.current = {
     hasOverlay: layout.hasOverlay,

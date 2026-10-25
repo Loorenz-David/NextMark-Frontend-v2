@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { useMobile } from "@/app/viewport";
 import { CloseIcon } from "@/assets/icons";
 import { planIconTypeMap } from "@/features/plan/utils/planIconTypeMap";
-import { PageBackButton } from "@/shared/buttons";
+import { PageBackButton, RoundIconButton } from "@/shared/buttons";
 import type { RouteGroupHeaderSummary } from "../../domain/buildRouteGroupHeaderSummary";
 import { formatMetric } from "@shared-utils";
 
@@ -56,14 +56,12 @@ export const RouteGroupsPageHeader = ({
           <div className="flex shrink-0 items-center gap-2">
             {menu}
             {onRequestClose && !isMobile ? (
-              <button
-                type="button"
+              <RoundIconButton
+                ariaLabel="Close route groups page"
                 onClick={onRequestClose}
-                aria-label="Close route groups page"
-                className="inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border bg-surface-raised shadow-[var(--shadow-button-compact)] transition-colors hover:bg-surface-hover active:bg-surface-hover"
               >
                 <CloseIcon className="h-3.5 w-3.5 text-[var(--color-text)]" />
-              </button>
+              </RoundIconButton>
             ) : null}
           </div>
         ) : null}
