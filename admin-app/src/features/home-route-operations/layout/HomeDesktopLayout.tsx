@@ -1,5 +1,7 @@
-import type { ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
+
+import { useElementWidth } from '@/shared/hooks/useElementWidth'
 
 import type { DesktopPlanViewMode } from '../hooks/useHomeDesktopLayout'
 import { MapArea } from './MapArea'
@@ -61,6 +63,8 @@ export function HomeDesktopLayout({
       ? `${planColumnGridWidth}px`
       : planColumnGridWidth
   const railColumnWidth = isOrderOverlayOpen ? orderOverlayWidth : baseWidth
+  const [foldedMapTabWidth, setFoldedMapTabWidth] = useState(0)
+  const isMapTabOverPlan = !isMapVisible && Boolean(buttonToggleMap)
 
   return (
     <main
@@ -69,7 +73,10 @@ export function HomeDesktopLayout({
         gridTemplateColumns: `minmax(0, 1fr) ${planColumnGridCss} ${railColumnWidth}px`,
         willChange: 'grid-template-columns',
         transition: 'grid-template-columns 220ms cubic-bezier(0.22, 1, 0.36, 1)',
-      }}
+        // With the map folded its tab sits over the plan header's left edge;
+        // plan headers pad by this much so their icon stays visible.
+        ['--plan-header-leading-inset' as string]: `${isMapTabOverPlan ? foldedMapTabWidth : 0}px`,
+      } as CSSProperties}
       onTransitionEnd={(event) => {
         if (event.propertyName !== 'grid-template-columns') return
         onRailTransitionEnd?.()
@@ -143,17 +150,37 @@ export function HomeDesktopLayout({
         onPlanLayoutChange={onPlanLayoutChange}
       />
 
-      {!isMapVisible && buttonToggleMap ? (
-        <motion.div
-          className="absolute left-0 top-0 z-30"
-          initial={{ x: -150 }}
-          animate={{ x: 0 }}
-          exit={{ x: -150 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        >
-          {buttonToggleMap}
-        </motion.div>
+      {isMapTabOverPlan ? (
+        <FoldedMapTab onWidthChange={setFoldedMapTabWidth}>{buttonToggleMap}</FoldedMapTab>
       ) : null}
     </main>
+  )
+}
+
+function FoldedMapTab({
+  children,
+  onWidthChange,
+}: {
+  children: ReactNode
+  onWidthChange: (width: number) => void
+}) {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const width = useElementWidth(ref)
+
+  useEffect(() => {
+    onWidthChange(width ?? 0)
+  }, [onWidthChange, width])
+
+  return (
+    <motion.div
+      ref={ref}
+      className="absolute left-0 top-0 z-30"
+      initial={{ x: -150 }}
+      animate={{ x: 0 }}
+      exit={{ x: -150 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
+      {children}
+    </motion.div>
   )
 }

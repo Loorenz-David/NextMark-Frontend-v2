@@ -34,7 +34,7 @@ export const PlanCalendarHeader = ({
   const isFiltered = dateFilter !== null;
 
   return (
-    <div className="flex shrink-0 items-center gap-3.5 border-b border-border bg-[var(--surface-card-muted)] px-5 py-3">
+    <div className="flex shrink-0 items-center gap-3.5 border-b border-border bg-[var(--surface-card-muted)] py-3 pr-5 pl-[calc(1.25rem+var(--plan-header-leading-inset,0px))] transition-[padding] duration-200">
       <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl bg-surface-raised">
         <PlanIcon className="h-5 w-5 app-icon" />
       </div>
