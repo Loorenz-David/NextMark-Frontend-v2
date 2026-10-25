@@ -3,6 +3,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import { useReducedMotion } from "framer-motion";
 
@@ -24,6 +25,8 @@ type SlidingTabRowProps = {
   ariaLabel: string;
   /** Classes for the strip (border, background). */
   className?: string;
+  /** Rendered at the end of the strip, after the "more" chevron. */
+  trailing?: ReactNode;
 };
 
 type TabRect = { left: number; width: number };
@@ -56,6 +59,7 @@ export const SlidingTabRow = ({
   onSelect,
   ariaLabel,
   className = "",
+  trailing,
 }: SlidingTabRowProps) => {
   const total = tabs.length;
   const visibleCount = Math.min(total, SLIDING_TABS_VISIBLE);
@@ -209,6 +213,7 @@ export const SlidingTabRow = ({
           />
         </button>
       ) : null}
+      {trailing}
     </div>
   );
 };

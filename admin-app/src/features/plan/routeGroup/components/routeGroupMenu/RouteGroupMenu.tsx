@@ -68,8 +68,8 @@ const AttentionDot = () => (
 );
 
 /**
- * The route plan menu: zone tabs pick the route group, and the actions
- * below act on that route group. A popover on desktop, a bottom sheet for
+ * The route plan menu: zone tabs (with "+" for a new route group) pick the
+ * route group, and the actions below act on that route group. A popover on desktop, a bottom sheet for
  * fingers.
  */
 export const RouteGroupMenu = ({
@@ -101,6 +101,17 @@ export const RouteGroupMenu = ({
         }}
         ariaLabel="Zones"
         className="border-b border-border bg-surface-subtle"
+        trailing={
+          <button
+            type="button"
+            onClick={runAndClose(onCreateRouteGroup)}
+            aria-label="New route group"
+            title="New route group"
+            className="touch-hit-area flex w-11 shrink-0 cursor-pointer items-center justify-center border-l border-border transition-colors hover:bg-surface-hover active:bg-surface-hover"
+          >
+            <PlusIcon className="h-4 w-4 stroke-[var(--color-text)]" />
+          </button>
+        }
       />
 
       {activeZone && menu.hasActiveRouteGroup ? (
@@ -175,14 +186,6 @@ export const RouteGroupMenu = ({
           Choose a zone to see its actions.
         </p>
       )}
-
-      <div className="border-t border-border p-2">
-        <MenuRow
-          icon={<PlusIcon className="h-4 w-4 stroke-[var(--color-muted)]" />}
-          label="New route group"
-          onClick={runAndClose(onCreateRouteGroup)}
-        />
-      </div>
     </div>
   );
 
