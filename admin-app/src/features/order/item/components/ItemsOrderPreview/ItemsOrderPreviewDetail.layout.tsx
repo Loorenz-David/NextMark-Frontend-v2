@@ -10,8 +10,8 @@ const ROUND_BUTTON_CLASS_NAME =
 
 /**
  * Order detail items: a title row on the page background (summary and a
- * menu for print), the item cards, then a dashed add button. Grows with its
- * items; the page owns the scroll.
+ * menu for add and print), the item cards, then a dashed add button, which
+ * is all an empty order shows. Grows with its items; the page owns the scroll.
  */
 export const ItemsOrderPreviewDetailLayout = ({
   header,
@@ -35,21 +35,26 @@ export const ItemsOrderPreviewDetailLayout = ({
   totalVolume,
   testNodes,
 }: ItemsOrderPreviewLayoutProps) => {
-  const menuOptions: ThreeDotMenuOption[] = showPrintAction
-    ? [
-        {
-          label: "Print labels",
-          action: onPrintLabels,
-          icon: <PrintIcon className="h-4 w-4 text-[var(--color-muted)]" />,
-          disabled: disablePrintAction,
-        },
-      ]
-    : [];
+  const menuOptions: ThreeDotMenuOption[] = [
+    {
+      label: "Add item",
+      action: onAddItem,
+      icon: <PlusIcon className="h-4 w-4 stroke-[var(--color-muted)]" />,
+    },
+  ];
+  if (showPrintAction) {
+    menuOptions.push({
+      label: "Print labels",
+      action: onPrintLabels,
+      icon: <PrintIcon className="h-4 w-4 text-[var(--color-muted)]" />,
+      disabled: disablePrintAction,
+    });
+  }
 
   const defaultHeader = (
     <div className="flex items-center justify-between gap-3 px-1">
       <div className="min-w-0">
-        <h3 className="text-xl font-bold text-[var(--color-text)]">Items</h3>
+        <h3 className="text-base font-semibold text-[var(--color-text)]">Items</h3>
         <p className="mt-0.5 truncate text-sm text-[var(--color-muted)]">
           {totalItems} {totalItems === 1 ? "item" : "items"} ·{" "}
           {totalWeight.toFixed(2)} kg · {totalVolume.toFixed(2)} m³
@@ -64,7 +69,7 @@ export const ItemsOrderPreviewDetailLayout = ({
         >
           <ItemPrintProgressIcon isLoading progress={printProgress} />
         </span>
-      ) : menuOptions.length ? (
+      ) : (
         <ThreeDotMenu
           dotWidth={4}
           dotHeight={4}
@@ -72,7 +77,7 @@ export const ItemsOrderPreviewDetailLayout = ({
           triggerClassName={`${ROUND_BUTTON_CLASS_NAME} touch-hit-area cursor-pointer transition-colors hover:bg-surface-hover`}
           options={menuOptions}
         />
-      ) : null}
+      )}
     </div>
   );
 
@@ -103,9 +108,7 @@ export const ItemsOrderPreviewDetailLayout = ({
             }
           />
         ))
-      ) : (
-        <div className="px-1 text-sm text-[var(--color-muted)]">No items yet.</div>
-      )}
+      ) : null}
 
       {testNodes.map((node) => node)}
 

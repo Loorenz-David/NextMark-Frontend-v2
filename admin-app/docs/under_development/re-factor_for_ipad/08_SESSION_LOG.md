@@ -54,6 +54,7 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 - `ItemCard.tsx` (shared with the order form previews): flat card, 64px thumbnail with a striped placeholder when there is no photo, position moved to the expanded details only, focus ring on keyboard focus only.
 - Check data kept in step: `theme-map.json` ItemCard override line 136 → 143 (same class required); `theme-functional-color-allowlist.json` `0,0,0,0.04` 4 → 3 (the removed card gradient).
 - Checked in Chrome at tablet width (#4498, 2 items; #2549, empty): matches the mockup; expand/collapse; menu sheet shows Print labels; no console errors.
+- Follow-up (user): "Add item" also in the three-dot menu (first, before Print labels; the menu now always shows); "Items" title down to `text-base font-semibold`; an empty order shows only the dashed Add item button (no "No items yet."). Rechecked in Chrome on #4498 and #2549; gates green.
 - Gates: lint 0 errors (52 warnings), tests 187, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
 
 ### 2026-10-25 — Order detail sections as one card with a tab header (Claude)
