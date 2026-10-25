@@ -48,6 +48,12 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 
 ## Session entries
 
+### 2026-10-25 — Release to main: temporary drag logger removed (Claude)
+- Scope: user — the visual refactor is complete (iPad behaviour verified by the user in Chrome DevTools, iPad mini); merge to main and push, which runs `deploy-admin.yml`.
+- Reverted `0bae682` (TEMPORARY dev touch-drag logger: `app/debug/*`, its `main.tsx` install and `DndDebugMonitor` mount) as its commit message required, plus the dev-only `onIntentDecision` hookup in `shared/dnd/useAppDragSensors.ts` that fed it (added in `d282b8b`); the touch sensor's optional callback stays.
+- The release includes phase 5's `deploy-admin.yml` change (`a7f6ff0`): hashed assets uploaded first and kept, entry files `no-cache`, manifest content type.
+- Gates before merge: lint 0 errors (52 warnings), tests 207, build, popup contract, theme regression, PWA checks, `git diff --check` — green.
+
 ### 2026-10-25 — Plan list shares the calendar's date control and period; Zones button clears the plan tab (Claude)
 - Scope: user (screenshot) — in the map view the Zones button sat against the folded plan tab. Then: the list view's date control differed from the calendar's; the list should have the same one.
 - Zones: `ZoneMapOverlay` button and zone panel `right-10` → `right-16`, clearing the 44px touch tab that hangs in from the map's right edge (≈20px gap; checked in Chrome).

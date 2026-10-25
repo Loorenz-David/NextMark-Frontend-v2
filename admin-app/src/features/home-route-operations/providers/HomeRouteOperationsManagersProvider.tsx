@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { useCallback, useEffect } from "react";
 
 import { DndContext, DragOverlay, MeasuringStrategy } from "@dnd-kit/core";
-import { DndDebugMonitor } from "@/app/debug/DndDebugMonitor";
 
 import { ResourcesManagerProvider } from "@/shared/resource-manager/ResourceManagerContext-components";
 import { preloadMapExtras, useMap } from "@/shared/map";
@@ -126,7 +125,6 @@ export function HomeRouteOperationsManagersProvider({
         onDragCancel={onDragCancel}
       >
         {children}
-        {import.meta.env.DEV ? <DndDebugMonitor /> : null}
 
         {/* No drop animation: every drop commits optimistically, so the real
             card is already in its final slot the moment the drag ends. The
