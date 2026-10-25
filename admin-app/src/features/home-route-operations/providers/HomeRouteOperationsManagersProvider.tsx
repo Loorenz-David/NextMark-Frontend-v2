@@ -131,8 +131,10 @@ export function HomeRouteOperationsManagersProvider({
         {/* No drop animation: every drop commits optimistically, so the real
             card is already in its final slot the moment the drag ends. The
             default animation would fly the overlay back to the source's
-            measured rect — the hidden card at the drag's origin. */}
-        <DragOverlay dropAnimation={null}>
+            measured rect — the hidden card at the drag's origin. The overlay
+            lets the pointer through so collisions can tell which target is
+            really under it (rankedPointerCollision). */}
+        <DragOverlay dropAnimation={null} className="pointer-events-none">
           <RouteOperationsDragOverlay activeDrag={activeDrag} />
         </DragOverlay>
       </DndContext>
