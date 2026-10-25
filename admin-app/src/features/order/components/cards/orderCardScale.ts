@@ -7,7 +7,7 @@
  * The menu keeps a 44px finger target, and on touch screens the small text
  * never drops below 12px.
  */
-export const ORDER_CARD_SCALE = 0.8
+export const ORDER_CARD_SCALE = 0.8;
 
 /** Below this scale the state pill and arrow badge use their small size. */
-export const ORDER_CARD_SMALL_CHIPS_BELOW = 0.9
+export const ORDER_CARD_SMALL_CHIPS_BELOW = 0.9;

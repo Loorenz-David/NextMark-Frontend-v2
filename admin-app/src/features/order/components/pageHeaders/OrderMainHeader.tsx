@@ -42,6 +42,11 @@ type OrderHeaderActionsProps = Pick<OrderMainHeaderProps, 'onCreate' | 'onEnterS
 
 function OrderHeaderActions({ onCreate, onEnterSelectionMode, onExitSelectionMode, isSelectionMode }: OrderHeaderActionsProps) {
   const menuOptions = [
+    {
+      label: "Create order",
+      action: onCreate,
+      icon: <PlusIcon className="h-4 w-4 stroke-[var(--color-muted)]" />,
+    },
     { label: "Auto create plans", action: () => {}, icon: "" },
     isSelectionMode
       ? { label: "Exit selection", action: onExitSelectionMode, icon: "" }
@@ -49,9 +54,6 @@ function OrderHeaderActions({ onCreate, onEnterSelectionMode, onExitSelectionMod
   ];
   return (
     <div className="flex shrink-0 items-center gap-2">
-      <BasicButton key="order-main-create" params={{ variant: "primary", onClick: onCreate, ariaLabel: "Create order", className: "text-xs" }}>
-        <PlusIcon className="mr-2 h-3 w-3 stroke-[var(--color-secondary)]" />Order
-      </BasicButton>
       <ThreeDotMenu dotWidth={3} dotHeight={3} dotClassName="bg-[var(--color-muted)]" triggerClassName="touch-hit-area h-11 w-11 cursor-pointer rounded-full" options={menuOptions} />
     </div>
   );
