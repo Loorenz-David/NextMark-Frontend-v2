@@ -11,6 +11,7 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | D3 | 2026-10-24 | **Revised by the user.** Safari cannot do Bluetooth, so Bluetooth printing goes through a **native bridge app** we build and sideload (wrapper shell with a `navigator.bluetooth` polyfill, WebBLE Apache-2.0 as the base; `nextmarkBridge` for MFi/TCP). The web app keeps a transport layer: share/AirPrint first (works everywhere), bridge transports when present. Parallel native project, separate repo. | WebKit does not ship Web Bluetooth/Serial/USB; a sideloaded WKWebView app can. | `05_PRINTING_AND_BLUETOOTH.md` §6 |
 | D4 | 2026-10-24 | Service worker stays notification-only; admin PWA gets a second manifest with `scope: "/"`. | Guard script + live-deployment requirement. | `04_PWA_AND_PLATFORM.md` |
 | D5 | 2026-10-24 | Desktop ≥ 1440px must stay pixel-identical unless a phase says otherwise. | Client also works on monitors. | `00_GOAL_AND_CONSTRAINTS.md` |
+| D9 | 2026-10-25 | **Restyling starts before the iPad test**, beginning with the order card redesign (R1, `12_ORDER_CARD_REDESIGN.md`), applied to phone, iPad and desktop. External source chip and street address leave the card; route-stop number, ETA and warnings leave the card for a later vertical timeline. Panel widths follow as R2 after the user measures the new card. | The user already knows the target design and wants the process moving; the narrower card frees panel width on every size. | `12`, `06_PLAN.md` R1/R2 |
 | D8 | 2026-10-24 | The drag **press and lift cue** (squeeze while held, preview lifts with shadow and accent ring) applies to **every pointer, desktop included**. Mouse **activation** is unchanged (press and move 6px, no hold). | The user liked the cue on touch and wants the same feel on PC. A hold for the mouse was not adopted: no scroll conflict to solve, and it would swallow slow clicks. | `11_TOUCH_DRAG_INTENT.md` §6, `shared/dnd/CueMouseSensor.ts` |
 | D7 | 2026-10-24 | Content-priority decisions (`09`) are made **after Phases 0–5**, when the user can use the app on the iPad; implemented as Phase 6b before the bridge project. | Decisions need the real device experience. | `06_PLAN.md` Phase 1b/6b |
 | D6 | 2026-10-24 | The native bridge app is **deferred to after the full iPad refactor**. The web app ships share/AirPrint printing and keeps a transport port open for it. | The user wants to explore the bridge as a reusable project for several PWAs. | `06_PLAN.md` Phase 6, `05` §6 |
@@ -40,6 +41,12 @@ Append-only. Newest session at the top. Every implementing session (Claude or Co
 | K8 | Phase 6 | Printer | **Deferred by the user** until the printing phase. Test with "Save to Files" meanwhile. |
 
 ## Session entries
+
+### 2026-10-25 — Restyle R1 (order cards) specified (Claude)
+
+- User sent the target card (`assets/order-card-target.png`) and asked to start restyling before the iPad test. Mapped every order card: `OrderCard` (main, store pickup, international shipping, customer history, address-group children) and `RouteGroupOrderCard` (route stops), sharing `OrderCardItemPreviews`.
+- Answers: remove the address everywhere; keep `Position`; route-stop number, ETA and warnings leave the card (a vertical timeline will bring them back). Decision D9. With the extras gone, `RouteGroupOrderCard` becomes a wrapper around `OrderCard`.
+- Spec `12_ORDER_CARD_REDESIGN.md`; branch `ipad/r1-order-cards` in the `NextMark-ipad/phase-5b` worktree (stacked on 2b; the user's dev server runs there).
 
 ### 2026-10-24 — Phase 2b reviewed; drag cue extended to desktop (Claude)
 

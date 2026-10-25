@@ -184,6 +184,18 @@ Spec: `11_TOUCH_DRAG_INTENT.md` (user decision 2026-10-24: hold with a clear cue
 
 ---
 
+## Restyle R1 — Order card redesign (1 session) — stacked after 2b
+
+Spec: `12_ORDER_CARD_REDESIGN.md` (decision D9). One card design for the main list, plan lists and route stops on every size; external source, address and route-stop extras removed; larger number, item rows and menu tap area; preview arithmetic moved into a tested domain function.
+
+**Acceptance:** `12` §5.
+
+## Restyle R2 — Panel widths after the new card (planned)
+
+Input: the narrowest comfortable card width the user measures after R1. Narrow the order-list rail (desktop 450, tablet 420) and the nested order lists in the plan panels (desktop 550, tablet 560) on every size class. The vertical route timeline (stop number, ETA, warnings) is designed with this panel refactor.
+
+---
+
 ## Phase 6 — Printing from the iPad (1 session, then client decision)
 
 Per `05_PRINTING_AND_BLUETOOTH.md` §4: `features/templates/printDocument/controllers/deliverPdf.controller.ts` chooses Web Share (files) → in-app viewer → download; `downloadByEvent.flow.ts` and `PrintTemplatePreview.tsx` route through it; a small viewer popup (`FeaturePopupShell` `lg`) with the blob in an `<iframe>` and Share/Print buttons. Desktop unchanged (download). Then, per `05` §6: capability detection (`hasWebBluetooth`, `hasNativeBridge`) in `app/`, transport layer in `features/templates/printDocument/transports/`, and printer-language renderers (ZPL/ESC-POS/TSPL) for the client's model once known. The **NextMark Bridge** native app (WKWebView + WebBLE polyfill + `nextmarkBridge` for MFi/TCP) is **deferred until the whole iPad refactor is done** (user decision 2026-10-24, D6): it will serve several of the user's PWAs and deserves its own exploration. Phase 6 therefore ships only the share/AirPrint transport and leaves the transport port ready for `webBluetooth` / `nativeBridge` implementations.
